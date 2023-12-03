@@ -1,0 +1,27 @@
+{
+  "id": "quark_chat",
+  "version": "0.10",
+  "modules": {
+    "auto_gc": {
+      "class": "org.tbstcraft.quark.misc.AutoGC"
+    },
+    "reload_command_fix": {
+      "class": "org.tbstcraft.quark.misc.ReloadCommandFix"
+    },
+    "fly_speed_modifier": {
+      "class": "org.tbstcraft.quark.misc.FlySpeedModifier"
+    },
+    "kick_on_reload": {
+      "class": "org.tbstcraft.quark.misc.KickOnReload"
+    },
+    "maintenance": {
+      "class": "org.tbstcraft.quark.misc.Maintenance"
+    },
+    "advanced_plugin_command": {
+      "class": "org.tbstcraft.quark.misc.AdvancedPluginCommand"
+    },
+    "calculator": {
+      "class": "org.tbstcraft.quark.misc.Calculator"
+    }
+  }
+}

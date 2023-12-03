@@ -1,0 +1,29 @@
+language:
+  auto_gc:
+    gc_start: "[{light_purple}Очистка{white}]{gray}Начата очистка памяти..."
+    gc_end: "[{light_purple}Очистка{white}]{gray}Очистка памяти завершена, освобождено %d МБ."
+  fly_speed_modifier:
+    cmd_speed_set: "[{aqua}Система{white}]Ваша скорость полета установлена на %s."
+  kick_on_reload:
+    kick_message:
+      - "{gold}{bold}{server_name}{white} перезагружается"
+      - "{yellow}------------------------------------------------{return}"
+      - "{white}Для обеспечения нормального опыта игры вы были временно отключены."
+      - "{white}Пожалуйста, вернитесь позже."
+  maintenance:
+    start: "[{light_purple}Система{white}]{gray}Начата техническая обслуживание."
+    end: "[{light_purple}Система{white}]{gray}Техническое обслуживание завершено."
+    kick_message:
+      - '{gold}{bold}{server_name}{white} находится в техническом обслуживании.{reset}'
+      - '{yellow}-----------------------------------------------------{reset}'
+      - 'Из-за технического обслуживания сервера вы временно не можете войти.'
+      - 'Техническое обслуживание занимает некоторое время, пожалуйста, будьте терпеливы, и мы приносим извинения за любые неудобства.'
+      - '{return}'
+      - '{gray}Посетите официальный сайт для получения дополнительной информации: {aqua}{underline}{website}'
+  advanced_plugin_command:
+    list: "[{light_purple}Система{white}]{gray}Вот все плагины: {return}%s"
+    enable: "[{light_purple}Система{white}]{gray}Включен плагин %s."
+    disable: "[{light_purple}Система{white}]{gray}Отключен плагин %s."
+    reload: "[{light_purple}Система{white}]{gray}Перезагружен плагин %s."
+  calculator:
+    calc: "[{blue}Вычисление{white}]{gray} %s = %s"

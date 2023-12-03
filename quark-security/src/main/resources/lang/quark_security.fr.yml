@@ -1,0 +1,23 @@
+language:
+  explosion_defender:
+    block_exploded: '[{yellow}Notification{white}]{gray}Le bloc %s a explosé à la position %d,%d,%d dans le monde.'
+    entity_exploded: '[{yellow}Notification{white}]{gray}entité %s a explosé à la position %d,%d,%d dans le monde.'
+  item_defender:
+    illegal_item: '[{yellow}Avertissement{white}]{gray}objet %s que vous transportez est considéré comme illégal et a été confisqué par le serveur.'
+    warning_item: '[{yellow}Avertissement{white}]{gray}objet %s que vous transportez est considéré comme dangereux et a été enregistré par le serveur !'
+    illegal_item_broadcast: '[{yellow}Notification{white}]{gray}Le joueur %s transporte un objet illégal %s.'
+    warning_item_broadcast: '[{yellow}Notification{white}]{gray}Le joueur %s transporte un objet dangereux %s.'
+  ip_defender:
+    new_ip: '[{aqua}Astuce{white}]{gray}Emplacement IP détecté : %s. (Cette information est visible uniquement pour vous)'
+    ip_warn: '[{yellow}Avertissement{white}]{gray}Emplacement IP détecté : %s, différent de la dernière fois (%s). Votre changement IP a été enregistré.'
+    auto_ban_reason: 'En raison du changement de votre IP, nous soupçonnons un problème de sécurité avec votre compte.'
+  we_size_defender:
+    interact_blocked_we: '[{yellow}Avertissement{white}]{gray}Votre opération dépasse la limite de taille maximale, veuillez réessayer.'
+  protection_area:
+    command_region_add: '[{green}Protection{white}]{gray}La zone de protection %s a été ajoutée.'
+    command_region_add_failed: '[{red}Protection{white}]{gray}La zone de protection %s existe déjà.'
+    command_region_remove: '[{green}Protection{white}]{gray}La zone de protection %s a été supprimée.'
+    command_region_remove_failed: '[{red}Protection{white}]{gray}La zone de protection %s a pas été trouvée.'
+    command_exception: '[{red}Protection{white}]{gray}Commande invalide ou autorisations insuffisantes.'
+    interact_blocked: '[{yellow}Avertissement{white}]{gray}Désolé, vous ne pouvez pas interagir dans la zone de protection.'
+    interact_blocked_we: '[{yellow}Avertissement{white}]{gray}Désolé, votre sélection WorldEdit inclut une zone protégée, vous ne pouvez donc pas effectuer cette opération.'

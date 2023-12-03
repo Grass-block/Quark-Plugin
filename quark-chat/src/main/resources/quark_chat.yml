@@ -1,0 +1,15 @@
+config:
+  chat_format:
+    template: '[{header}{white}]{player}: {gray}{message}'
+  chat_filter:
+    keywords: [
+      '操你', '傻逼', '二逼', '智障',
+      '低能', '妈的', '你妈', '滚',
+      '他妈', 'cb', 'md', 'byd',
+      'sb', 'fw', 'f5', 'SB',
+      'nm', 'NM', 'Sb', 'cd', '™',
+      '鸡巴', 'jb', '精液', 'fuck', 'Fuck',
+      'FUCK', 'mlgb', 'MLGB', '麻了戈壁',
+      'wc', 'cnm', 'jiba', 'JB', 'Jb',
+      '我日', '8178919', '艹', 'tnnd'
+    ]

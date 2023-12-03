@@ -1,0 +1,29 @@
+language:
+  auto_gc:
+    gc_start: "[{light_purple}クリーンアップ{white}]{gray}メモリのクリーンアップが開始されました..."
+    gc_end: "[{light_purple}クリーンアップ{white}]{gray}メモリのクリーンアップが完了し、%d MB 解放されました。"
+  fly_speed_modifier:
+    cmd_speed_set: "[{aqua}システム{white}]飛行速度が %s に設定されました。"
+  kick_on_reload:
+    kick_message:
+      - "{gold}{bold}{server_name}{white}がリロード中です"
+      - "{yellow}------------------------------------------------{return}"
+      - "{white}正常なゲーム体験を確保するために、一時的にキックされました。"
+      - "{white}後で再参加してください。"
+  maintenance:
+    start: "[{light_purple}システム{white}]{gray}メンテナンスが開始されました。"
+    end: "[{light_purple}システム{white}]{gray}メンテナンスが完了しました。"
+    kick_message:
+      - '{gold}{bold}{server_name}{white}はメンテナンス中です。{reset}'
+      - '{yellow}-----------------------------------------------------{reset}'
+      - 'サーバーがメンテナンス中のため、一時的に入場できません。'
+      - 'メンテナンスにはしばらくの時間がかかる場合があります。ご辛抱ください。'
+      - '{return}'
+      - '{gray}詳細は公式ウェブサイトをご覧ください: {aqua}{underline}{website}'
+  advanced_plugin_command:
+    list: "[{light_purple}システム{white}]{gray}以下はすべてのプラグインです: {return}%s"
+    enable: "[{light_purple}システム{white}]{gray}プラグイン %s が有効になりました。"
+    disable: "[{light_purple}システム{white}]{gray}プラグイン %s が無効になりました。"
+    reload: "[{light_purple}システム{white}]{gray}プラグイン %s がリロードされました。"
+  calculator:
+    calc: "[{blue}計算{white}]{gray} %s = %s"

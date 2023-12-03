@@ -1,0 +1,23 @@
+language:
+  explosion_defender:
+    block_exploded: '[{yellow}Уведомление{white}]{gray}Блок %s взорвался в координатах %d,%d,%d в мире.'
+    entity_exploded: '[{yellow}Уведомление{white}]{gray}Сущность %s взорвалась в координатах %d,%d,%d в мире.'
+  item_defender:
+    illegal_item: '[{yellow}Предупреждение{white}]{gray}Предмет %s, который вы несете, считается нелегальным и был конфискован сервером.'
+    warning_item: '[{yellow}Предупреждение{white}]{gray}Предмет %s, который вы несете, считается опасным и был зарегистрирован сервером!'
+    illegal_item_broadcast: '[{yellow}Уведомление{white}]{gray}Игрок %s несет нелегальный предмет %s.'
+    warning_item_broadcast: '[{yellow}Уведомление{white}]{gray}Игрок %s несет опасный предмет %s.'
+  ip_defender:
+    new_ip: '[{aqua}Подсказка{white}]{gray}Обнаруженное местоположение вашего IP: %s. (Эта информация видна только вам)'
+    ip_warn: '[{yellow}Предупреждение{white}]{gray}Обнаружено местоположение вашего IP: %s, отличное от предыдущего (%s). Ваше изменение IP было зарегистрировано.'
+    auto_ban_reason: 'Из-за изменения вашего IP мы подозреваем проблему безопасности с вашей учетной записью.'
+  we_size_defender:
+    interact_blocked_we: '[{yellow}Предупреждение{white}]{gray}Ваше действие превышает максимальный размер, пожалуйста, попробуйте еще раз.'
+  protection_area:
+    command_region_add: '[{green}Защита{white}]{gray}Защитная зона %s была добавлена.'
+    command_region_add_failed: '[{red}Защита{white}]{gray}Защитная зона %s уже существует.'
+    command_region_remove: '[{green}Защита{white}]{gray}Защитная зона %s была удалена.'
+    command_region_remove_failed: '[{red}Защита{white}]{gray}Защитная зона %s не найдена.'
+    command_exception: '[{red}Защита{white}]{gray}Неверная команда или недостаточные права.'
+    interact_blocked: '[{yellow}Предупреждение{white}]{gray}Извините, вы не можете взаимодействовать в защищенной зоне.'
+    interact_blocked_we: '[{yellow}Предупреждение{white}]{gray}Извините, ваше выделение WorldEdit включает в себя защищенную зону, поэтому вы не можете выполнять это действие.'

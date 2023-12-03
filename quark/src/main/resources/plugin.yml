@@ -1,0 +1,4 @@
+name: Quark
+version: '3.43.20'
+main: org.tbstcraft.quark.Quark
+api-version: 1.16

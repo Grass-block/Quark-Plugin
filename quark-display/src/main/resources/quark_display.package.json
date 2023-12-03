@@ -1,0 +1,30 @@
+{
+  "id": "quark_display",
+  "version": "0.10",
+  "modules": {
+    "custom_motd": {
+      "class": "org.tbstcraft.quark.display.CustomMotd"
+    },
+    "custom_ban_message": {
+      "class": "org.tbstcraft.quark.display.CustomBanMessage"
+    },
+    "custom_bossbar": {
+      "class": "org.tbstcraft.quark.display.CustomBossbar"
+    },
+    "join_quit_message": {
+      "class": "org.tbstcraft.quark.display.JoinQuitMessage"
+    },
+    "tab_menu": {
+      "class": "org.tbstcraft.quark.display.TabMenu"
+    },
+    "chat_format":{
+      "class": "org.tbstcraft.quark.display.ChatFormat"
+    },
+    "player_name_header":{
+      "class": "org.tbstcraft.quark.display.PlayerNameHeader"
+    },
+    "we_selection_renderer": {
+      "class": "org.tbstcraft.quark.display.WorldEditSelectionRenderer"
+    }
+  }
+}

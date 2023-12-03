@@ -1,0 +1,56 @@
+plugins {
+    id 'java'
+}
+
+group = 'ink.flybird'
+version = '3.43.20'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "spigotmc-repo"
+        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
+    }
+}
+
+jar {
+    from {
+        (configurations.runtimeClasspath).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    destinationDirectory = file("../run/plugins")
+}
+
+dependencies {
+    implementation 'org.jetbrains:annotations:24.0.0'
+    compileOnly "org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT"
+    implementation 'org.iq80.leveldb:leveldb:0.12'
+}
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = targetJavaVersion
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}

@@ -1,0 +1,10 @@
+language:
+  chat_mute:
+    message_banned: '[{yellow}系统{white}]{gray}你被禁言了.'
+    add: '[{light_purple}系统{white}]{gray}成功将玩家 %s 加入列表。'
+    add_target: '[{yellow}系统{white}]{gray}你被管理员 %s 禁言!'
+    remove: '[{light_purple}系统{white}]{gray}成功将玩家 %s 移出列表。'
+    remove_target: '[{green}系统{white}]{gray}你被管理员 %s 解除禁言!'
+  chat_format:
+    op_header: '{light_purple}管理'
+    player_header: '{dark_aqua}玩家'

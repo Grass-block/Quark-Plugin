@@ -1,0 +1,7 @@
+name: QuarkChat
+version: 0.2.1
+main: org.tbstcraft.quark.chat.PluginMain
+depend: [ Quark ]
+author: GrassBlock2022
+website: https://tbstmc.xyz
+api-version: 1.16

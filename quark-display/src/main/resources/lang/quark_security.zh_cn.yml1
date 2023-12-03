@@ -1,0 +1,39 @@
+message:
+  explosion_defender:
+    block_exploded: '[{yellow}通知{white}]{gray}在 %s 世界中的 %d,%d,%d 发生了方块 %s 爆炸。'
+    entity_exploded: '[{yellow}通知{white}]{gray}在 %s 世界中的 %d,%d,%d 发生了实体 %s 爆炸。'
+  item_defender:
+    illegal_item: '[{yellow}警告{white}]{gray}您所持有的物品 %s 属于非法物品，已被服务器没收并记录'
+    warning_item: '[{yellow}警告{white}]{gray}您所持有的物品 %s 属于危险品，已被服务器记录!'
+    illegal_item_broadcast: '[{yellow}通知{white}]{gray}玩家 %s 持有的物品 %s 属于非法物品。'
+    warning_item_broadcast: '[{yellow}通知{white}]{gray}玩家 %s 持有的物品 %s 属于危险品。'
+  ip_defender:
+    new_ip: '[{aqua}提示{white}]{gray}检测到您的IP属地为%s 。(该信息只对您可见)'
+    ip_warn: '[{yellow}警告{white}]{gray}检测到您的IP属地为%s,与上次(%s)发生变化,您的ip变化已被记录。'
+    auto_ban_reason: '由于您的IP变化,我们怀疑您的账户出现了安全问题。'
+
+
+  chat-mute:
+    message_banned: '[{yellow}禁言{white}]{gray}你被禁言了!'
+    add: '[{light_purple}禁言{white}]{gray}成功将玩家 %s 加入列表!'
+    add_target: '[{yellow}禁言{white}]{gray}你被管理员 %s 禁言!'
+    remove: '[{light_purple}禁言{white}]{gray}成功将玩家 %s 移出列表!'
+    remove_target: '[{green}禁言{white}]{gray}你被管理员 %s 解除禁言!'
+    command_exception: '[{red}禁言{white}]{gray}你输入的命令服务器无法理解...!'
+
+  chat-filter:
+    chat_blocked: '[{red}警告{white}]{gray}请注意聊天用词!'
+    command_keyword_add: '[{green}聊天{white}]{gray}将关键词 %s 添加到列表。'
+    command_keyword_remove: '[{green}聊天{white}]{gray}将关键词 %s 从列表移除。'
+    command_record_set: '[{green}聊天{white}]{gray}记录模式设为 %s 。'
+    command_ignore_op_set: '[{green}聊天{white}]{gray}op豁免设为 %s 。'
+    command_exception: '[{red}聊天{white}]{gray}命令错误,或你没有执行这个命令的权限!'
+
+  chat-hint:
+    msg:
+      - '[{green}提示{white}]{gray}不要乱用stack!'
+      - '[{green}提示{white}]{gray}在服务器内破坏次数过多会被封禁!'
+      - '[{green}提示{white}]{gray}你不能在保护区域内交互!'
+      - '[{green}提示{white}]{gray}少玩高频红石!'
+      - '[{green}提示{white}]{gray}请注意聊天安全，涉及转账、汇款请务必核实对方身份，谨防诈骗。'
+      - '[{green}提示{white}]{gray}道路千万条，安全第一条。行车不规范，亲人两行泪!'

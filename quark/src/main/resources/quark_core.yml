@@ -1,0 +1,3 @@
+config:
+  module:
+    default_status: true

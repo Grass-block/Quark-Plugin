@@ -1,0 +1,23 @@
+language:
+  explosion_defender:
+    block_exploded: '[{yellow}通知{white}]{gray}ワールド %s の座標 %d,%d,%d でブロック %s が爆発しました。'
+    entity_exploded: '[{yellow}通知{white}]{gray}ワールド %s の座標 %d,%d,%d でエンティティ %s が爆発しました。'
+  item_defender:
+    illegal_item: '[{yellow}警告{white}]{gray}所持しているアイテム %s は違法アイテムであり、サーバーに没収されました。'
+    warning_item: '[{yellow}警告{white}]{gray}所持しているアイテム %s は危険物と見なされ、サーバーにログが記録されました！'
+    illegal_item_broadcast: '[{yellow}通知{white}]{gray}プレイヤー %s が違法アイテム %s を所持しています。'
+    warning_item_broadcast: '[{yellow}通知{white}]{gray}プレイヤー %s が危険なアイテム %s を所持しています。'
+  ip_defender:
+    new_ip: '[{aqua}ヒント{white}]{gray}検出されたIPの場所は%s です。(この情報はあなたにだけ見えます)'
+    ip_warn: '[{yellow}警告{white}]{gray}検出されたIPの場所は%s で、前回(%s)と異なります。IPの変更が記録されました。'
+    auto_ban_reason: 'IPの変更が検出されたため、アカウントにセキュリティの問題が疑われます。'
+  we_size_defender:
+    interact_blocked_we: '[{yellow}警告{white}]{gray}操作が最大サイズ制限を超えています。もう一度試してください。'
+  protection_area:
+    command_region_add: '[{green}保護{white}]{gray}保護エリア %s が追加されました。'
+    command_region_add_failed: '[{red}保護{white}]{gray}保護エリア %s は既に存在しています。'
+    command_region_remove: '[{green}保護{white}]{gray}保護エリア %s が削除されました。'
+    command_region_remove_failed: '[{red}保護{white}]{gray}保護エリア %s が見つかりませんでした。'
+    command_exception: '[{red}保護{white}]{gray}無効なコマンドまたは十分な権限がありません。'
+    interact_blocked: '[{yellow}警告{white}]{gray}申し訳ありませんが、保護エリア内での操作はできません。'
+    interact_blocked_we: '[{yellow}警告{white}]{gray}申し訳ありませんが、現在のWorldEditの選択に保護エリアが含まれているため、操作できません。'

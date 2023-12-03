@@ -1,0 +1,48 @@
+tasks.withType(Jar) {
+    destinationDirectory = file("../run/plugins")
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "spigotmc-repo"
+        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
+    }
+}
+
+dependencies {
+    compileOnly 'org.jetbrains:annotations:24.0.0'
+    compileOnly "org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT"
+    compileOnly 'org.iq80.leveldb:leveldb:0.12'
+    compileOnly project(":quark")
+}
+
+group = 'org.tbstcraft'
+version = ''
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = targetJavaVersion
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}

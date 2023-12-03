@@ -1,0 +1,58 @@
+language:
+  custom_motd:
+    motd_title:
+      - '{white}{bold}欢迎来到{aqua}{bold}{server_name}{bold}{white}服务器!{reset}'
+    motd_subtitle:
+      - '{gray}祝你玩得开心!'
+      - '{gray}有能力的话赞助一下我们吧'
+      - '{gray}由Quark提供支持!'
+      - '{gray}官网: {server_website}'
+  join_quit_message:
+    join: '[{aqua}系统{white}]{gray}玩家 {white}%s{gray} 加入了服务器，欢迎。'
+    leave: '[{aqua}系统{white}]{gray}玩家 {white}%s{gray} 离开了服务器。'
+  tab_menu:
+    header:
+      - '{yellow}{bold}----------------------------------------------'
+      - '{yellow}>>{white} 欢迎来到{aqua}{bold}{server_name}{reset}服务器! {yellow}<<{white}'
+      - '{gray}当前在线:{white}{player} {gray}(最大: {max_player})'
+    footer:
+      - '{return}{gray}负载(TPS):{tps}{white}/20  {gray}日期: {white}{date}'
+      - '{gray}官网: {white}{underline}{server_website}'
+      - '{yellow}{bold}----------------------------------------------'
+  custom_ban_message:
+    global_header:
+      - '{white}您已被{gold}{bold}{server_name}{reset}封禁'
+      - '{gray}------------------------------------------------'
+    global_footer:
+      - '{return}如果您确认这是个错误, 请向管理员提供你的完整信息。'
+      - '如果这不是个错误, 那你就好好反思下自己的作为吧{return}'
+      - '{yellow}官网: "{website}'
+    ban_name_permanently:
+      - '很抱歉,{name}, 由于您的行为异常/安全问题/受到处罚, 您已被{server_name}永久封禁。{return}'
+      - '{yellow}原因{white}:{reason}'
+      - '{yellow}操作者{white}:{source}'
+    ban_ip_permanently:
+      - '很抱歉,由于您的行为异常/安全问题/受到处罚, 您的地址{name}已被{server_name}永久封禁。{return}'
+      - '{yellow}原因{white}:{reason}'
+      - '{yellow}操作者{white}:{source}'
+    ban_name:
+      - '很抱歉,{name}, 由于您的行为异常/安全问题/受到处罚, 您已被{server_name}暂时封禁。{return}'
+      - '{yellow}原因{white}:{reason}'
+      - '{yellow}操作者{white}:{source}'
+      - '{yellow}结束时间: {expire}'
+    ban_ip:
+      - '很抱歉,由于您的行为异常/安全问题/受到处罚, 您的地址{name}已被{server_name}暂时封禁。{return}'
+      - '{yellow}原因{white}:{reason}'
+      - '{yellow}操作者{white}:{source}'
+      - '{yellow}结束时间: {expire}'
+  custom_bossbar:
+    bar_texts:
+      - '{server_name} {yellow}>> {white}欢迎来到TBSTCraft!'
+      - '{server_name} {yellow}>> {white}赞助一下?'
+      - '{server_name} {yellow}>> {white}祝你玩得开心!'
+      - '{server_name} {yellow}>> {white}官网: {underline}{server_website}'
+  player_name_header:
+    set_header: '[{light_purple}系统{white}]将 %s 的头衔设置为 %s。'
+    clear_header: '[{light_purple}系统{white}]将 %s 的头衔清除。'
+    op_header: '{dark_purple}管理'
+    player_header: '{dark_aqua}玩家'

@@ -1,0 +1,18 @@
+{
+  "id": "quark_chat",
+  "version": "0.12",
+  "modules": {
+    "chat_filter": {
+      "class": "org.tbstcraft.quark.chat.ChatFilter"
+    },
+    "chat_mute": {
+      "class": "org.tbstcraft.quark.chat.ChatMute"
+    },
+    "chat_translator": {
+      "class": "org.tbstcraft.quark.chat.ChatTranslator"
+    },
+    "chat_component": {
+      "class": "org.tbstcraft.quark.chat.ChatComponent"
+    }
+  }
+}

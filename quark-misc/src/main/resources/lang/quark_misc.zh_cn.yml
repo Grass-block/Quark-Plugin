@@ -1,0 +1,29 @@
+language:
+  auto_gc:
+    gc_start: "[{light_purple}清理{white}]{gray}内存回收开始..."
+    gc_end: "[{light_purple}清理{white}]{gray}内存回收完成, 释放 %d MB。"
+  fly_speed_modifier:
+    cmd_speed_set: "[{aqua}系统{white}]你的飞行速度已被设为 %s 。"
+  kick_on_reload:
+    kick_message:
+      - "{gold}{bold}{server_name}{white}正在重载"
+      - "{yellow}------------------------------------------------{return}"
+      - "{white}为保证您的正常游戏体验，您已被暂时踢出。"
+      - "{white}请在稍后重新加入。"
+  maintenance:
+    start: "[{light_purple}系统{white}]{gray}维护开始。"
+    end: "[{light_purple}系统{white}]{gray}维护结束。"
+    kick_message:
+      - '{gold}{bold}{server_name}{white}正在维护。{reset}'
+      - '{yellow}-----------------------------------------------------{reset}'
+      - '由于服务器正在维护,您暂时无法进入。'
+      - '维护需要一段时间,请您耐心等待,我们对此十分抱歉。'
+      - '{return}'
+      - '{gray}访问官网了解更多: {aqua}{underline}{website}'
+  advanced_plugin_command:
+    list: "[{light_purple}系统{white}]{gray}以下是所有插件: {return}%s"
+    enable: "[{light_purple}系统{white}]{gray}启用插件 %s。"
+    disable: "[{light_purple}系统{white}]{gray}停用插件 %s。"
+    reload: "[{light_purple}系统{white}]{gray}重载插件 %s。"
+  calculator:
+    calc: "[{blue}计算{white}]{gray} %s = %s"

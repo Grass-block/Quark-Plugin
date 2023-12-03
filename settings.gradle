@@ -1,0 +1,8 @@
+rootProject.name = 'Quark'
+include 'quark'
+include 'quark-security'
+include 'quark-web'
+include 'quark-display'
+include 'quark-misc'
+include 'quark-chat'
+
