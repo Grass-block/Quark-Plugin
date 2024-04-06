@@ -2,29 +2,36 @@ package org.tbstcraft.quark.command;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.tbstcraft.quark.config.LanguageEntry;
-import org.tbstcraft.quark.module.PluginModule;
+import org.tbstcraft.quark.module.AbstractModule;
 
-public abstract class ModuleCommand<M extends PluginModule> extends AbstractCommand {
-    private final M module;
+public abstract class ModuleCommand<M extends AbstractModule> extends AbstractCommand {
+    private M module;
 
-    protected ModuleCommand(M module) {
+    public ModuleCommand(M module) {
         this.module = module;
+    }
+
+    protected ModuleCommand() {
         this.init();
     }
 
-    public M getModule() {
+    public final void initContext(M module) {
+        this.module = module;
+    }
+
+    public final M getModule() {
         return module;
     }
 
-    public LanguageEntry getLanguage() {
+    public final LanguageEntry getLanguage() {
         return this.module.getLanguage();
     }
 
-    public String getModuleId() {
+    public final String getModuleId() {
         return this.getModule().getId();
     }
 
-    protected ConfigurationSection getConfig() {
+    public final ConfigurationSection getConfig() {
         return this.module.getConfig();
     }
 }

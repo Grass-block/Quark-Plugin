@@ -1,0 +1,16 @@
+#identifier
+name: quark-proxy
+version: '1.5.3'
+
+#api
+main: org.tbstcraft.quark.QuarkProxy
+api-version: 1.18
+folia-supported: true
+load: POSTWORLD
+depend: ["quark"]
+
+#description
+authors: ["GrassBlock2022","TBSTMC"]
+website: https://quark.tbstmc.xyz
+description: proxy functions extension pack.
+prefix: QuarkProxy

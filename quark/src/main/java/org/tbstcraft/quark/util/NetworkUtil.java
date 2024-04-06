@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 
-public class NetworkUtil {
-    private static final String USER_AGENT = "Mozilla/5.0";
+@SuppressWarnings("unused")
+public interface NetworkUtil {
+    String USER_AGENT = "Mozilla/5.0";
 
-    public static String httpGet(String url) throws IOException {
+    static String httpGet(String url) throws IOException {
         String str;
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 
@@ -21,8 +22,8 @@ public class NetworkUtil {
         return str;
     }
 
-    public static String httpPost(String url){
-        String str="";
+    static String httpPost(String url){
+        String str;
         try {
             HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 
@@ -33,12 +34,12 @@ public class NetworkUtil {
             str = new String(in.readAllBytes());
             in.close();
         }catch (IOException e){
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return str;
     }
 
-    public static InetSocketAddress allocateLocalAddressUDP(){
+    static InetSocketAddress allocateLocalAddressUDP(){
         try {
             DatagramSocket socket=new DatagramSocket();
             InetSocketAddress addr= new InetSocketAddress(socket.getLocalAddress(), socket.getLocalPort());
@@ -49,7 +50,7 @@ public class NetworkUtil {
         }
     }
 
-    public static InetSocketAddress allocateLocalAddressTCP(){
+    static InetSocketAddress allocateLocalAddressTCP(){
         try {
             Socket socket=new Socket();
             InetSocketAddress addr= new InetSocketAddress(socket.getLocalAddress(), socket.getLocalPort());

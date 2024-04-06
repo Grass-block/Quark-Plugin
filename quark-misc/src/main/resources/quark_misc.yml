@@ -1,6 +1,0 @@
-config:
-  auto_gc:
-    broadcast: false
-    period: 10000
-  kick_on_reload:
-    op_ignore: true

@@ -1,0 +1,8 @@
+{
+  "id": "quark-demo",
+  "version": "0.28",
+  "package_namespace": "org.tbstcraft.quark.internal.demo",
+  "modules": {
+    "advertisements": ".Ads"
+  }
+}

@@ -1,9 +1,0 @@
-name: QuarkDisplay
-author: GrassBlock2022
-website: https://tbstmc.xyz
-load: POSTWORLD
-version: '1.0.0'
-main: org.tbstcraft.quark.display.PluginMain
-api-version: 1.16
-depend:
-  - Quark

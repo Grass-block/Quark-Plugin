@@ -1,4 +1,18 @@
-name: Quark
-version: '3.43.20'
+#identifier
+name: quark
+version: '3.54.16'
+
+#api
 main: org.tbstcraft.quark.Quark
-api-version: 1.16
+api-version: 1.18
+folia-supported: true
+load: POSTWORLD
+
+#description
+authors: [ "GrassBlock2022","TBSTMC" ]
+website: https://quark.tbstmc.xyz
+prefix: QuarkCore
+description: core plugin of Quark.
+
+
+

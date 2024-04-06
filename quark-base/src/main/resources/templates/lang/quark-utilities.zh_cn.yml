@@ -1,0 +1,60 @@
+language:
+  kick-on-reload:
+    reload-hint:
+      - "{#white}服务器正在重载。为保证游戏正常您已被暂时踢出。"
+      - "{#white}请在稍后重新加入。{#return}"
+    stop-hint:
+      - "{#white}因故障或维护需要，服务器现已关闭。"
+      - "{#white}很抱歉给您带来不便。{#return}"
+  maintenance:
+    start: "{global#sys-operation}{#gray}维护开始。"
+    end: "{global#sys-operation}{#gray}维护结束。"
+    kick-message:
+      - '由于服务器正在维护,您暂时无法进入。'
+      - '维护需要一段时间,请您耐心等待,我们对此十分抱歉。'
+  advanced-plugin-command:
+    list: "{global#sys-operation}以下是所有插件: {#return}{#var}"
+    enable: "{global#sys-operation}启用插件 {#var}。"
+    disable: "{global#sys-operation}停用插件 {#var}。"
+    load: "{global#sys-operation}加载插件 {#var}。"
+    unload: "{global#sys-operation}卸载插件 {#var}。"
+    reload: "{global#sys-operation}重载插件 {#var}。"
+    info: "{global#sys-operation}以下是关于 {#var} 插件的信息:{#return}%s"
+    info-name: "{#gold}名称{#white}: %s[%s]"
+    info-version: "{#gold}版本{#white}: %s"
+    info-author: "{#gold}作者{#white}: %s"
+    info-desc: "{#gold}简介{#white}: %s"
+    info-api: "{#gold}API版本{#white}: %s"
+    info-depend: "{#gold}前置{#white}: %s"
+    info-soft-depend: "{#gold}软前置{#white}: %s"
+    info-main: "{#gold}启动类{#white}: %s"
+    info-libs: "{#gold}依赖库{#white}:"
+  calculator:
+    calc: "[{#blue}计算{#white}]{#gray} {#var} = {#var}"
+  player-ping-command:
+    ping-msg: "{global#sys-info}你的延迟是: {#var} {#gray}ms"
+  block-update-locker:
+    lock: "{global#sys-info}已锁定方块更新。"
+    unlock: "{global#sys-info}已解锁方块更新。"
+  item-command:
+    bind: "{global#sys-info}已将物品 %s 绑定到命令行 %s。"
+    unbind: "{global#sys-info}已将清除物品 %s 的命令行绑定。"
+    bind-fail: "{global#sys-error}无法将命令行绑定到空手。"
+  custom-log-format:
+    enable: "{global#sys-operation}{#gray}自定义服务端日志格式已启用。"
+    disable: "{global#sys-operation}{#gray}自定义服务端日志格式已停用。"
+    reload: "{global#sys-operation}{#gray}已重载自定义服务端日志格式。"
+    restore: "{global#sys-operation}{#gray}已重置自定义服务端日志格式。"
+  dynamic-view-distance:
+    set: "{global#sys-operation}已将玩家 {#var} 的视野距离设置为 {#white}%d{#gray} 个区块。"
+    unset: "{global#sys-operation}已去除玩家 {#var} 的视野距离设置。"
+    set-target: "{global#sys-success}你的视野距离被设置为 {#white}%d{#gray} 个区块。"
+  console-command:
+    execute: "{global#sys-operation}已提交命令行: {#var}"
+  advanced-ban-command:
+    msg-ban-complete: "{global#sys-success}已封禁玩家 {#var} 至 {#var},原因: {#var}"
+  player-position-lock:
+    lock: '{global#sys-info}您的位置已被锁定。'
+    unlock: '{global#sys-info}您的位置已被解锁。'
+    lock-player: '{global#sys-operation}您已锁定 {#var} 的位置。'
+    unlock-player: '{global#sys-operation}您已解锁 {#var} 的位置。'

@@ -1,50 +1,44 @@
 package org.tbstcraft.quark.service;
 
-import org.bukkit.Bukkit;
+import me.gb2022.commons.math.SHA;
+import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.util.BukkitUtil;
-import org.tbstcraft.quark.util.nbt.NBTTagCompound;
+import org.tbstcraft.quark.service.data.PlayerDataService;
+import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.api.BukkitUtil;
+import org.tbstcraft.quark.util.api.PlayerUtil;
 
 import java.util.Base64;
 import java.util.Objects;
 import java.util.Random;
 
-public interface PlayerAuthService {
+public interface PlayerAuthService extends Service {
+    String DATA_SECTION_ID = "auth_service";
     String PATH = "auth:/encrypted";
-    EventHolder EVENT_HOLDER = new EventHolder();
+    ObjectContainer<PlayerAuthService> INSTANCE = new ObjectContainer<>();
 
     static void init() {
-        Bukkit.getPluginManager().registerEvents(EVENT_HOLDER, Quark.PLUGIN);
+        INSTANCE.set(create(PlayerDataService.INSTANCE.get()));
+        INSTANCE.get().onEnable();
     }
 
     static void stop() {
-        PlayerJoinEvent.getHandlerList().unregister(EVENT_HOLDER);
+        INSTANCE.get().onDisable();
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     static boolean verify(String name, String password) {
-        NBTTagCompound tag = PlayerDataService.getEntry(name);
-
-        if (!tag.hasKey(PATH)) {
-            return false;
-        }
-
-        if (Bukkit.getPlayer(name) == null) {
-            return false;
-        }
-        return Objects.equals(BukkitUtil.encrypt(password), tag.getString(PATH));
+        return INSTANCE.get().verifyPlayer(name, password);
     }
 
     static void set(String name, String password) {
-        NBTTagCompound tag = PlayerDataService.getEntry(name);
-        if (tag.hasKey(PATH)) {
-            return;
-        }
-        tag.setString(PATH, BukkitUtil.encrypt(password));
-        PlayerDataService.save(name);
+        INSTANCE.get().setPlayerPassword(name, password);
+    }
+
+    static PlayerAuthService create(PlayerDataService dataSupport) {
+        return new ServiceImplementation(dataSupport);
     }
 
     static String generateRandom() {
@@ -53,10 +47,56 @@ public interface PlayerAuthService {
         return Base64.getEncoder().encodeToString(b);
     }
 
-    class EventHolder implements Listener {
+    void setPlayerPassword(String player, String password);
+
+    boolean verifyPlayer(String player, String password);
+
+
+    final class ServiceImplementation implements PlayerAuthService, Listener {
+        private final PlayerDataService dataSupport;
+
+        public ServiceImplementation(PlayerDataService dataSupport) {
+            this.dataSupport = dataSupport;
+        }
+
+        @Override
+        public void onEnable() {
+            BukkitUtil.registerEventListener(this);
+        }
+
+        @Override
+        public void onDisable() {
+            BukkitUtil.unregisterEventListener(this);
+        }
+
+        @Override
+        public void setPlayerPassword(String player, String password) {
+            NBTTagCompound tag = this.dataSupport.getDataEntry(player, DATA_SECTION_ID);
+            if (tag.hasKey(PATH)) {
+                return;
+            }
+            tag.setString(PATH, SHA.getSHA512(password, false));
+            this.dataSupport.saveData(player);
+        }
+
+        @Override
+        @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+        public boolean verifyPlayer(String player, String password) {
+            NBTTagCompound tag = PlayerDataService.getEntry(player, "auth_service");
+
+            if (!tag.hasKey(PATH)) {
+                return false;
+            }
+
+            if (PlayerUtil.strictFindPlayer(player) == null) {
+                return false;
+            }
+            return Objects.equals(SHA.getSHA512(password, false), tag.getString(PATH));
+        }
+
         @EventHandler
         public void onPlayerJoin(PlayerJoinEvent event) {
-            NBTTagCompound tag = PlayerDataService.getEntry(event.getPlayer().getName());
+            NBTTagCompound tag = PlayerDataService.getEntry(event.getPlayer().getName(), "auth_service");
             if (tag.hasKey(PATH)) {
                 return;
             }

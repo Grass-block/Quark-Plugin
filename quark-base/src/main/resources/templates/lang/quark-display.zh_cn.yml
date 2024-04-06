@@ -1,0 +1,75 @@
+language:
+  custom-motd:
+    motd-command: '{global#sys-info}Quark生成的服务器MOTD信息: '
+  join-quit-message:
+    join: '{global#sys-info}{#gray}玩家 {#white}{#var}{#gray} 加入了服务器，欢迎。'
+    leave: '{global#sys-info}玩家 {#white}{#var}{#gray} 离开了服务器。'
+  tab-menu:
+    welcome-header: 欢迎来到{#aqua}{#server-name}{#reset}服务器!
+    tps: '{#gray}TPS: {#white}{#tps}{#white}/20'
+    mspt: '{#gray}MSPT: {#white}{#mspt}{#white}'
+    ping: '{#gray}Ping: {#white}{#ping}'
+    player: '{#gray}当前在线: {#white}{#player}'
+    max-player: '{#gray}最大: {#white}{#max-player}'
+    date: '{#gray}日期/时间: {#white}{#date}'
+    website: '{#gray}官网: {#aqua}{#underline}{#server-website}'
+  custom-ban-message:
+    header: '{#white}您已被{#aqua}{#server-name}{#reset}封禁'
+    name: 很抱歉,您的玩家身份已被{#server-name}封禁。
+    ip: 很抱歉,您的地址已被{#server-name}封禁。
+    hint: 如果您确认这是个错误, 请向管理员提供你的完整信息。
+    reason: '{#yellow}封禁原因{#white}: {reason}'
+    info: '{#gray}操作者{#white}: {source}    {#gray}结束时间: {expire}'
+    website-hint: '{#gray}访问官网: {#aqua}{#underline}{#server-website}'
+  custom-kick-message:
+    header: '{#white}您已被踢出{#aqua}{#server-name}{#white}服务器'
+    website-hint: '{#gray}访问官网: {#aqua}{#underline}{#server-website}'
+  bossbar-announcement:
+    custom-set: '{global#sys-operation}成功设置自定义Boss栏内容: {#white}%s'
+    custom-clear: '{global#sys-operation}成功清除自定义Boss栏内容。'
+    text:
+      - '{#white}欢迎来到{#server-name}!'
+      - '{#white}赞助一下?'
+      - '{#white}祝你玩得开心!'
+      - '{#white}官网: {#aqua}{#underline}{#server-website}'
+  player-name-header:
+    set-header: '{global#sys-operation}将 {#var} 的头衔设置为 {#var}。'
+    clear-header: '{global#sys-operation}将 {#var} 的头衔清除。'
+    op-header: '{#dark-purple}管理'
+    player-header: '{#dark-aqua}玩家'
+  welcome-message:
+    welcome-title: '  {#white}欢迎来到{#aqua}{#server-name}{#reset}服务器!'
+    welcome-message:
+      - '    {#gray}欢迎来到{#server-name}, 一个充满激情与创造力的MC服务器。'
+      - '    {#gray}我们致力于各种新的技术和玩法, 为玩家提供新鲜刺激的游戏体验。'
+      - '    {#gray}无论你是喜欢探险还是热衷于创造, 我们都有适合你的游戏内容。'
+    info-title: ' {#gray}在开始游玩之前，请确保您已经了解以下内容:'
+    website: '{#gray}我们的官方网站: {color(aqua);underline;click(link,{#server-website})}{#server-website}{none}'
+    qq-group: '{#gray}我们的QQ群: {color(green);click(copy,{#qq-group})}{#qq-group}{none}
+      {click(link,{#qq-invite-link})}{#white}[{#green}一键加群{#white}]'
+    wiki: '{#gray}我们的官方百科: {color(aqua);underline;click(link,{#wiki})}{#wiki}{none}'
+    policy: '{#gray}请阅读并同意我们的 {color(purple);click(link,{#terms-of-service})}用户协议{color(gray)}
+      和 {color(purple);click(link,{#privacy-policy})}隐私政策{none}'
+    post-title: '  {#gray}去探索吧, 这个世界的故事将由你们书写。'
+    callback: '     {#gray}(本消息可用{#gold}/welcome-message{#gray}再次呼出)'
+  custom-scoreboard:
+    title: '{#aqua}{#server-name}{#reset}'
+    date: '{#gray}日期: {#white}{#date}'
+    player: '{#gray}玩家名称: {#white}{player}'
+    play-time: '{#gray}游戏时间: {#white}{#play-time}'
+    world-time: '{#gray}世界时间: {#white}{#world-time}'
+    player-count: '{#gray}在线玩家: {#white}{#player}'
+    ping: '{#gray}当前延迟(参考): {#white}{#ping}'
+    tps: '{#gray}TPS: {#white}{#tps}{#white}/20'
+    mspt: '{#gray}MSPT: {#white}{#mspt}{#white}'
+    website: '{#yellow}{#server-website}'
+    qq-group: '{#gray}QQ群:{#aqua}{#underline}{#qq-group}'
+  chat-announce:
+    title: '提示:'
+    content:
+      - - '{#purple}{#server-name}{#white}全服包括子服范围内严禁开挂、盗窃、不文明行为。'
+        - '{#white}若有不文明行为，我们将会在累积后对您作出处罚。'
+        - '{#white}开挂和盗窃将进行封禁、回档，抹除您的一切痕迹。'
+      - - '{#purple}{#server-name}{#white}禁止一切违反国家法律法规条例的行为。'
+        - '{#white}若有发现我们将直接举报，严重者我们将会交给警方处理。'
+        - '{#white}我们将会保留您的行为直到取证结束。'

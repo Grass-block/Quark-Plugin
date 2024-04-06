@@ -1,0 +1,10 @@
+global-vars:
+  server-name: '{#purple}ATCraft Network'
+  server-website: https://www.tbstmc.xyz
+  qq-group: 733345889
+  wiki: https://wiki.tbstmc.xyz
+  terms-of-service: https://wiki.tbstmc.xyz/#/server/rule/tems-of-service
+  privacy-policy: https://wiki.tbstmc.xyz/#/server/rule/privacy-policy
+  qq-invite-link: https://qm.qq.com/cgi-bin/qm/qr?-wv=1027&k=Ac0aa6hRRS-tQg13ejKX0T9ju5bvBYNW&group-code=733345889
+
+  var: '{#white}%s{#gray}'

@@ -1,0 +1,16 @@
+language:
+  chat-mute:
+    message-banned: '[{#yellow}系统{#white}]{#gray}你被禁言了.'
+    add: '[{#light-purple}系统{#white}]{#gray}成功将玩家 {#var} 加入列表。'
+    add-target: '[{#yellow}系统{#white}]{#gray}你被管理员 {#var} 禁言!'
+    remove: '[{#light-purple}系统{#white}]{#gray}成功将玩家 {#var} 移出列表。'
+    remove-target: '[{green}系统{#white}]{#gray}你被管理员 {#var} 解除禁言!'
+  chat-format:
+    op-header: '{#light-purple}管理'
+    player-header: '{#dark-aqua}玩家'
+  mail:
+    receive-direct: "{global#sys-info}玩家 {#var} 向你发送了留言: {#var}"
+    send-success: "{global#sys-info}成功向玩家 {#var} 发送留言: {#var}"
+    view: "{global#sys-info}以下是您在离线期间收到的留言:{#return}%s"
+    view-hint: "{global#sys-info}您在离线期间收到了 {#var} 条留言，使用命令{#gold}/mail view{#gray} 或 {click(command,/mail view)}{#white}[{#aqua}点击查看{#white}]"
+    view-none: "{global#sys-info}您在离线期间未收到任何留言。"

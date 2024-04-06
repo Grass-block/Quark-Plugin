@@ -1,0 +1,13 @@
+language:
+  vm-garbage-cleaner:
+    gc-start: "{global#sys-operation}内存回收开始..."
+    gc-end: "{global#sys-operation}内存回收完成, 释放 %d MB。"
+  garbage-cleaner:
+    remain: "{global#sys-info}距离垃圾回收剩余: {#var} {#gray}秒，请注意保管个人物品。"
+    start: "{global#sys-info}垃圾回收开始!"
+    complete: "{global#sys-info}垃圾回收完成!"
+  auto-save:
+    start: "{global#sys-info}正在保存你所在的世界 {#var}, 这可能导致卡顿。"
+    finish: "{global#sys-info}成功保存了你所在的世界 {#var}。"
+    command: "{global#sys-operation}开始异步世界保存。"
+

@@ -1,0 +1,45 @@
+config:
+  vm-garbage-cleaner:
+    broadcast: false
+    period: 10000
+  garbage-cleaner:
+    world-whitelist: [ ]
+    clean-interval: 24000
+    clean-dense-entity: true
+    dense-entity-max-count: 40
+    clean-drops: true
+    ignore-enchant-item: true
+    item-whitelist:
+      - "diamond-sword"
+      - "diamond-pickaxe"
+      - "diamond-axe"
+      - "diamond-shovel"
+      - "diamond"
+      - "diamond-block"
+      - "netherite-sword"
+      - "netherite-pickaxe"
+      - "netherite-axe"
+      - "netherite-shovel"
+      - "netherite-ingot"
+      - "netherite-block"
+  auto-plugin-reload:
+    reload-command: "plugins reload {plugin}"
+    reload-time: "02:00"
+    reload-items:
+      - Dynmap
+      - Bluemap
+  auto-run-command:
+    commands:
+      example:
+  auto-save:
+    delay: 60
+    period: 72000
+    broadcast-op-only: false
+    silent: true
+    worlds:
+      - "world"
+      - "world-nether"
+      - "world-the-end"
+  auto-restart:
+    time: "02:00"
+    restart-command: "restart"

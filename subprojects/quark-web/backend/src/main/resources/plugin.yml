@@ -1,0 +1,16 @@
+#identifier
+name: quark-web
+version: '1.4.2-BETA'
+
+#api
+main: org.tbstcraft.quark.web.PluginMain
+api-version: 1.18
+folia-supported: true
+load: POSTWORLD
+depend: ["quark"]
+
+#description
+authors: ["GrassBlock2022","TBSTMC"]
+website: https://quark.tbstmc.xyz
+description: Extension pack of Quark including network HTTP API.
+prefix: QuarkWeb

@@ -7,12 +7,9 @@ import org.tbstcraft.quark.Quark;
 import java.io.*;
 import java.util.Objects;
 import java.util.jar.JarFile;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 
 public interface FilePath {
-    File PLUGIN_FOLDER = new File(System.getProperty("user.dir") + "/plugins");
-    Logger LOGGER = Quark.PLUGIN.getLogger();
 
     static File tryReleaseAndGetFile(String src, String dest) {
         File f = new File(dest);
@@ -23,96 +20,82 @@ public interface FilePath {
         return f;
     }
 
-    static String pluginFolder() {
-        return System.getProperty("user.dir") + "/plugins/Quark";
-    }
-
-    static JsonObject packageDescriptor(String packageId) {
+    static JsonObject packageDescriptor(String id) {
         try {
             JsonObject obj;
-            InputStream stream = getResourceInPlugins("/%s.package.json".formatted(packageId));
+            InputStream stream = getPluginResource("/packages/%s.json".formatted(id));
             if (stream == null) {
-                LOGGER.warning("failed to load package descriptor.");
+                Quark.LOGGER.warning("failed to load package descriptor.");
                 return null;
             }
             obj = ((JsonObject) new JsonParser().parse(new InputStreamReader(stream)));
             stream.close();
             return obj;
         } catch (IOException e) {
-            LOGGER.warning("failed to load package descriptor:");
-            LOGGER.severe(e.getMessage());
+            Quark.LOGGER.warning("failed to load package descriptor of %s: %s".formatted(id, e.getMessage()));
+            Quark.LOGGER.severe(e.getMessage());
         }
         return null;
     }
 
-    static File languageFile(String packageId, String locale) {
-        String fileDir = "%s/lang/%s/%s.yml".formatted(pluginFolder(), BukkitUtil.fixLocaleId(locale), packageId);
-        String srcDir = "/lang/%s.%s.yml".formatted(packageId, BukkitUtil.fixLocaleId(locale));
-        return tryReleaseAndGetFile(srcDir, fileDir);
-    }
-
-    static void coverLanguageFile(String packageId, String locale) {
-        String fileDir = "%s/lang/%s/%s.yml".formatted(pluginFolder(), BukkitUtil.fixLocaleId(locale), packageId);
-        String srcDir = "/lang/%s.%s.yml".formatted(packageId, BukkitUtil.fixLocaleId(locale));
-        coverFile(srcDir, fileDir);
-    }
-
     static void coverFile(String srcDir, String fileDir) {
         File f = new File(fileDir);
-        if (!f.getParentFile().mkdirs()) {
-            LOGGER.info("failed to create folder.");
+        if (f.getParentFile().mkdirs()) {
+            Quark.LOGGER.info("created folder of file: " + fileDir);
         }
         try {
-            if (!f.createNewFile()) {
-                LOGGER.info("failed to create file.");
-            }
-            InputStream is = getResourceInPlugins(srcDir);
+            InputStream is = getPluginResource(srcDir);
             OutputStream s = new FileOutputStream(f);
             if (is == null) {
-                if (!f.delete()) {
-                    LOGGER.warning("failed to delete release-failed file.");
+                if (f.createNewFile()) {
+                    Quark.LOGGER.info("created file:" + fileDir);
                 }
                 return;
             }
             s.write(is.readAllBytes());
             s.close();
         } catch (Exception e) {
-            LOGGER.severe(e.getMessage() + "(src: %s,dest: %s)".formatted(srcDir, fileDir));
+            Quark.LOGGER.severe("failed to save resource(src: %s,dest: %s): %s".formatted(srcDir, fileDir, e.getMessage()));
         }
     }
 
-    static void coverConfigFile(String moduleId) {
-        String fileDir = "%s/config/%s.yml".formatted(pluginFolder(), moduleId);
-        String srcDir = "/%s.yml".formatted(moduleId);
-        coverFile(srcDir, fileDir);
+
+    static String server() {
+        return System.getProperty("user.dir");
     }
 
-    static File configFile(String moduleId) {
-        String fileDir = "%s/config/%s.yml".formatted(pluginFolder(), moduleId);
-        String srcDir = "/%s.yml".formatted(moduleId);
-        return tryReleaseAndGetFile(srcDir, fileDir);
+
+    static String pluginsFolder() {
+        return server() + "/plugins";
     }
 
-    static File data(String file) {
-        File f = new File(file);
-        if (!f.exists()) {
-            if (f.getParentFile().mkdirs()) {
-                LOGGER.severe("failed to create data folder.");
-            }
-            try {
-                if (f.createNewFile()) {
-                    LOGGER.severe("failed to create data file.");
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return f;
+    static String pluginFolder(String plugin) {
+        plugin = Objects.equals(plugin, "quark") ? "Quark" : plugin;
+        return server() + "/plugins/" + plugin;
     }
 
-    static InputStream getResourceInPlugins(String path) {
+    static String recordFolder(String plugin) {
+        plugin = Objects.equals(plugin, "quark") ? "Quark" : plugin;
+        return pluginFolder(plugin) + "/record";
+    }
+
+    static String moduleData(String plugin) {
+        plugin = Objects.equals(plugin, "quark") ? "Quark" : plugin;
+        return pluginFolder(plugin) + "/module_data";
+    }
+
+    static String playerData(String plugin) {
+        plugin = Objects.equals(plugin, "quark") ? "Quark" : plugin;
+        return pluginFolder(plugin) + "/player_data";
+    }
+
+
+    static InputStream getPluginResource(String path) {
         String fixedPath = path.replaceFirst("/", "");
-        for (File f : Objects.requireNonNull(PLUGIN_FOLDER.listFiles())) {
+
+        File folder = new File(pluginsFolder());
+
+        for (File f : Objects.requireNonNull(folder.listFiles())) {
             if (!f.getName().endsWith(".jar")) {
                 continue;
             }
@@ -132,11 +115,24 @@ public interface FilePath {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
     }
 
-    static File moduleData() {
-        return new File(pluginFolder() + "/module_data");
-    }
-
-    static File playerData() {
-        return new File(pluginFolder() + "/player_data");
+    static void cover(File target, InputStream stream) {
+        if (stream == null) {
+            Quark.LOGGER.severe("null source!");
+            return;
+        }
+        try {
+            if (target.getParentFile().mkdirs()) {
+                Quark.LOGGER.info("created folder of file: " + target.getName());
+            }
+            if (target.createNewFile()) {
+                Quark.LOGGER.info("created file:" + target.getName());
+            }
+            FileOutputStream out = new FileOutputStream(target);
+            out.write(stream.readAllBytes());
+            stream.close();
+            out.close();
+        } catch (IOException e) {
+            Quark.LOGGER.severe("failed to save resource(dest: %s): %s".formatted(target.getName(), e.getMessage()));
+        }
     }
 }

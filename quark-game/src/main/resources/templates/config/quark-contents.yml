@@ -1,0 +1,80 @@
+config:
+  minecart-controller:
+    ui: '{run-mode}{#white}({msg#level}{level}) {#yellow}|{#white} {msg#speed}{speed} {#yellow}|{#white} {msg#acceleration}{acceleration}m/s^2'
+    max-speed: 1.5
+    thrust-1-acceleration: 0.08
+    thrust-2-acceleration: 0.16
+    thrust-3-acceleration: 0.27
+    thrust-4-acceleration: 0.32
+    thrust--1-acceleration: -0.08
+    thrust--2-acceleration: -0.29
+    thrust--3-acceleration: -0.32
+    thrust--4-acceleration: -0.5
+  waypoint:
+    allow-coordinate-add: true
+    home: true
+    back-to-death: true
+  custom-recipe:
+    recipes:
+      stick-batch:
+        type: "shaped"
+        output: "minecraft:stick*16"
+        shape: "#;#"
+        map:
+          "#": "#minecraft:logs"
+      planks-slab-combine:
+        type: "shaped"
+        repeat:
+          - "oak"
+          - "spruce"
+          - "acacia"
+          - "dark_oak"
+          - "birch"
+          - "jungle"
+        shape: "#;#"
+        output: "minecraft:{#type}_planks*1"
+        map:
+          "#": "minecraft:{#type}_slab"
+      planks-cutting:
+        type: "stone_cutter"
+        repeat:
+          - "oak"
+          - "spruce"
+          - "acacia"
+          - "dark_oak"
+          - "birch"
+          - "jungle"
+        input: "minecraft:{#type}_log"
+        output: "minecraft:{#type}_planks*8"
+      planks-slab-cutting:
+        type: "stone_cutter"
+        repeat:
+          - "oak"
+          - "spruce"
+          - "acacia"
+          - "dark_oak"
+          - "birch"
+          - "jungle"
+        input: "minecraft:{#type}_planks"
+        output: "minecraft:{#type}_slab*2"
+      planks-stairs-cutting:
+        type: "stone_cutter"
+        repeat:
+          - "oak"
+          - "spruce"
+          - "acacia"
+          - "dark_oak"
+          - "birch"
+          - "jungle"
+        input: "minecraft:{#type}_planks"
+        output: "minecraft:{#type}_stairs*2"
+      quartz-split:
+        type: "shapeless"
+        output: "minecraft:quartz*4"
+        requirements:
+          - "minecraft:quartz_block"
+  midi-node-block-player:
+    pitch-offsets:
+      "avicii-Waiting_For_Love.mid": -4
+      "Beyond-海阔天空.mid": 6
+      "Kiss_The_Rain.mid": -12

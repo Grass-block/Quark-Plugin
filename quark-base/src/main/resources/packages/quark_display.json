@@ -1,0 +1,19 @@
+{
+  "id": "quark-display",
+  "version": "0.12",
+  "package_namespace": "org.tbstcraft.quark.display",
+  "modules": {
+    "custom-motd": ".CustomMotd",
+    "custom-ban-message": ".CustomBanMessage",
+    "custom-kick-message": ".CustomKickMessage",
+    "bossbar-announcement": ".BossbarAnnouncement",
+    "join-quit-message": ".JoinQuitMessage",
+    "tab-menu": ".TabMenu",
+    "chat-format": ".ChatFormat",
+    "player-name-header": ".PlayerNameHeader",
+    "we-selection-renderer": ".WorldEditSelectionRenderer",
+    "welcome-message": ".WelcomeMessage",
+    "custom-scoreboard": ".CustomScoreboard",
+    "chat-announce": ".ChatAnnounce"
+  }
+}

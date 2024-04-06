@@ -1,0 +1,13 @@
+{
+  "id": "quark-chat",
+  "version": "0.12",
+  "package_namespace": "org.tbstcraft.quark.chat",
+  "modules": {
+    "chat-filter": ".ChatFilter",
+    "chat-mute": ".ChatMute",
+    "chat-translator": ".ChatTranslator",
+    "chat-component": ".ChatComponent",
+    "chat-at": ".ChatAt",
+    "mail": ".Mail"
+  }
+}

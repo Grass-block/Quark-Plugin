@@ -1,0 +1,15 @@
+config:
+  default-status:
+    module: true
+    package: true
+  http-server:
+    host: 127.0.0.1
+    port: 8125
+    backlog: 10
+  task:
+    async: true
+    threads: 16
+  mail-service:
+    smtp-server: 'smtp.example.com:25'
+    smtp-user-name: 'example@example.com'
+    smtp-password: ''

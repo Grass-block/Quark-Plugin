@@ -1,8 +1,10 @@
 rootProject.name = 'Quark'
-include 'quark'
-include 'quark-security'
-include 'quark-web'
-include 'quark-display'
-include 'quark-misc'
-include 'quark-chat'
+include('quark')
+
+include('quark-base')
+include('quark-game')
+
+include('quark-proxy')
+include('quark-proxy:waterfall')
+
 

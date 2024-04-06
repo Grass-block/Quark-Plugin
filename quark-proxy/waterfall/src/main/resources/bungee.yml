@@ -1,0 +1,3 @@
+name: quark-proxy
+version: '1.0.0'
+main: org.tbstcraft.quark.proxy.QuarkProxy

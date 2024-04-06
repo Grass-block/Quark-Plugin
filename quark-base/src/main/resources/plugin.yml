@@ -1,0 +1,23 @@
+#identifier
+name: quark-base
+version: '1.0.3'
+
+#api
+main: org.tbstcraft.quark.QuarkBase
+api-version: 1.16
+folia-supported: true
+load: POSTWORLD
+depend: [ "quark" ]
+
+#description
+authors: [ "GrassBlock2022","TBSTCraft" ]
+website: https://quark.tbstmc.xyz
+description: |
+  Extension pack of Quark plugin ecosystem, providing base features.
+  including packs:
+    - security
+    - chat
+    - display
+    - automatic
+    - utilities
+prefix: QuarkBase

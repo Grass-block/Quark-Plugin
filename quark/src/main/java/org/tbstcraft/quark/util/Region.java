@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.util;
 
-import org.tbstcraft.quark.util.nbt.NBTTagCompound;
+import me.gb2022.commons.math.AABB;
+import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -45,6 +46,7 @@ public final class Region {
         point1 = location;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isComplete() {
         return point0 != null && point1 != null;
     }
@@ -98,14 +100,14 @@ public final class Region {
     }
 
     public String toString() {
-        return "%s : [%d,%d,%d] - [%d,%d,%d]".formatted(
-                this.world.getName(),
+        return "[%d,%d,%d] -> [%d,%d,%d] @%s".formatted(
                 (int) Math.min(point0.getX(), point1.getX()),
                 (int) Math.min(point0.getY(), point1.getY()),
                 (int) Math.min(point0.getZ(), point1.getZ()),
                 (int) Math.max(point0.getX(), point1.getX()),
                 (int) Math.max(point0.getY(), point1.getY()),
-                (int) Math.max(point0.getZ(), point1.getZ())
+                (int) Math.max(point0.getZ(), point1.getZ()),
+                this.world.getName()
         );
     }
 
@@ -118,5 +120,12 @@ public final class Region {
                 this.getPoint1().getY(),
                 this.getPoint1().getZ()
         );
+    }
+
+    public boolean contains(Location location) {
+        if (location.getWorld() != this.getPoint0().getWorld()) {
+            return false;
+        }
+        return this.asAABB().isVectorInside(location.getX(), location.y(), location.getZ());
     }
 }

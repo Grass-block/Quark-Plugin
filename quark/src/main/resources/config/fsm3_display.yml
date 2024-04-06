@@ -1,6 +1,0 @@
-config:
-  custom_bossbar:
-    period: 500
-    bar_color: WHITE
-  player_chat_format:
-  player_name_format:

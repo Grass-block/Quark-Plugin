@@ -1,0 +1,3 @@
+config:
+  bungee-connection-protect:
+    accept-delay: 20

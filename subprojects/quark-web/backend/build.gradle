@@ -1,0 +1,9 @@
+plugins{
+    id 'java'
+}
+
+apply from:"E:/Java/Projects/Quark/modules.gradle"
+
+jar {
+    archiveBaseName = "quark-web-backend"
+}

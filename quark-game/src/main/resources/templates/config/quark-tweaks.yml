@@ -1,0 +1,8 @@
+config:
+  vanilla-tweaks:
+    double-door-sync: true
+    dispenser-block-placing: true
+    crop-click-harvest: true
+  time-scale:
+    scale-factor: 10
+    sync-with-real-time: false

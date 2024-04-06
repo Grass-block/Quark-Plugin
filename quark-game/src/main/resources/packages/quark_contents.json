@@ -1,0 +1,17 @@
+{
+  "id": "quark-contents",
+  "version": "0.10",
+  "package_namespace": "org.tbstcraft.quark.contents",
+  "modules": {
+    "elevator": ".Elevator",
+    "stair-seat": ".StairSeat",
+    "minecart-controller": ".MinecartController",
+    "custom-recipe": ".CustomRecipe",
+    "114514": "._114514",
+    "neko": ".Neko",
+    "tpa": ".TPA",
+    "waypoint": ".Waypoint",
+    "elytra-aeronautics": ".ElytraAeronautics",
+    "midi-node-block-player": ".MidiNodeBlockPlayer"
+  }
+}

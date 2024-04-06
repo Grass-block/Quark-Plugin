@@ -1,8 +1,0 @@
-config:
-  custom_bossbar:
-    period: 1200
-    bar_color: white
-  chat_format:
-    template: "{player}: {gray}{message}"
-  player_name_header:
-    template: "[{white}{header}{white}]{player}"

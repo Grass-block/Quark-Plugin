@@ -1,56 +1,56 @@
-plugins {
+import java.text.SimpleDateFormat
+
+plugins{
     id 'java'
 }
 
-group = 'ink.flybird'
-version = '3.43.20'
+apply from: "E:/Java/GradleScripts/build-base.gradle"
+
+applyGlobalScript("Publish/MinecraftServerTest.gradle")
+applyGlobalScript("Publish/ProjectOutput.gradle")
+applyGlobalScript("Repo/MinecraftPlugins.gradle")
+applyGlobalScript("/Dependencies.gradle")
+
+version = ""
 
 repositories {
-    mavenCentral()
     maven {
-        name = "spigotmc-repo"
-        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
-    }
-    maven {
-        name = "sonatype"
-        url = "https://oss.sonatype.org/content/groups/public/"
+        name="dmulloy2-repo"
+        url="https://repo.dmulloy2.net/repository/public/"
     }
 }
 
-jar {
-    from {
-        (configurations.runtimeClasspath).collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-    destinationDirectory = file("../run/plugins")
-}
-
+//quark libraries
 dependencies {
-    implementation 'org.jetbrains:annotations:24.0.0'
-    compileOnly "org.spigotmc:spigot-api:1.16.4-R0.1-SNAPSHOT"
     implementation 'org.iq80.leveldb:leveldb:0.12'
+
+    implementation 'org.jetbrains:annotations:24.0.0'
+    implementation 'com.sun.mail:javax.mail:1.6.2'
+    implementation 'net.kyori:adventure-api:4.11.0'
+    implementation 'net.kyori:adventure-text-serializer-gson:4.11.0'
+    implementation 'net.kyori:adventure-text-serializer-legacy:4.11.0'
+    implementation 'net.kyori:adventure-text-minimessage:4.11.0'
+    implementation 'net.kyori:adventure-platform-bukkit:4.0.0'
+    implementation 'net.kyori:adventure-platform-bungeecord:4.0.0'
+
+    implementation localStorage("me.gb2022.commons-nbt")
+    implementation localStorage("me.gb2022.commons-math")
+    implementation localStorage('me.gb2022.commons-crypto')
+
+    compileOnly projectLocal('paper-threadedregions')
+    compileOnly 'io.netty:netty-buffer:4.1.25.Final'
+    //implementation localStorage('io.wdsj.asg')
 }
 
-def targetJavaVersion = 17
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.release = targetJavaVersion
+//api
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
 }
 
 processResources {
-    def props = [version: version]
-    inputs.properties props
-    filteringCharset 'UTF-8'
-    filesMatching('plugin.yml') {
-        expand props
+    doFirst {
+        filesMatching('**/metadata.properties') {
+            expand 'build_time': new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
+        }
     }
 }

@@ -1,0 +1,64 @@
+language:
+  global-vars:
+    sys-info: "[{#aqua}系统{#white}]{#gray}"
+    sys-warning: "[{#yellow}系统{#white}]{#gray}"
+    sys-error: "[{#red}系统{#white}]{#gray}"
+    sys-success: "[{#green}系统{#white}]{#gray}"
+    sys-operation: "[{#light-purple}系统{#white}]{#gray}"
+    hint: "[{#aqua}提示{#white}]{#gray}"
+    warning: "[{#yellow}警告{#white}]{#gray}"
+    error: "[{#error}错误{#white}]{#gray}"
+  command:
+    exception: "{global#sys-error}语法有误，或执行该命令时出现了内部错误。"
+    lack-permission: "{global#sys-error}很抱歉，你没有执行该命令的权限。"
+    player-only: "{global#sys-error}该命令只允许玩家执行。"
+    sync-commands: "{global#sys-operation}命令同步完成。"
+  module:
+    list: "{global#sys-operation}以下是全部模块: {#return}%s"
+    enable-all: "{global#sys-operation}成功启用所有模块。"
+    disable-all: "{global#sys-operation}成功关闭所有模块。"
+    reload-all: "{global#sys-operation}成功重载所有模块。"
+    enable: "{global#sys-operation}成功启用模块 {#var}。"
+    disable: "{global#sys-operation}成功关闭模块 {#var}。"
+    reload: "{global#sys-operation}成功重载模块 {#var}。"
+    not-found: "{global#sys-error}未找到模块 {#var}。"
+    internal-error: "{global#sys-error}操作模块 {#var} 时出现内部错误。"
+    already-op: "{global#sys-error}模块 {#var} 已处于请求的状态。"
+  package:
+    list: "{global#sys-operation}以下是全部扩展包: {#return}%s"
+    enable-all: "{global#sys-operation}成功启用所有扩展包。"
+    disable-all: "{global#sys-operation}成功关闭所有扩展包。"
+    reload-all: "{global#sys-operation}成功重载所有扩展包。"
+    enable: "{global#sys-operation}成功启用扩展包 {#var}。"
+    disable: "{global#sys-operation}成功关闭扩展包 {#var}。"
+    reload: "{global#sys-operation}成功重载扩展包 {#var}。"
+    not-found: "{global#sys-error}未找到扩展包 {#var}。"
+    internal-error: "{global#sys-error}操作扩展包 {#var} 时出现内部错误。"
+    already-op: "{global#sys-error}扩展包 {#var} 已处于请求的状态。"
+  packages:
+    load: "{global#sys-operation}成功重载quark及全部拓展包。"
+  config:
+    reload-all: "{global#sys-operation}已重载所有配置文件。"
+    restore-all: "{global#sys-operation}已重置所有配置文件。"
+    sync-all: "{global#sys-operation}已同步所有配置文件。"
+    reload: "{global#sys-operation}已重载配置文件 {#var}。"
+    restore: "{global#sys-operation}已重置配置文件 {#var}。"
+    sync: "{global#sys-operation}已同步配置文件 {#var}。"
+  global-var:
+    reload: "{global#sys-operation}成功重载全局变量。"
+    restore: "{global#sys-operation}成功重置全局变量。"
+    sync: "{global#sys-operation}成功同步全局变量。"
+  language:
+    restore-all: "{global#sys-operation}已重置所有语言文件。"
+    reload-all: "{global#sys-operation}已重载所有语言文件。"
+    sync-all: "{global#sys-operation}已同步所有语言文件。"
+    restore: "{global#sys-operation}已重置语言文件 {#var}。"
+    reload: "{global#sys-operation}已重载语言文件 {#var}。"
+    sync: "{global#sys-operation}已同步语言文件 {#var}。"
+  auth:
+    password-set: "{global#sys-info}你的密码被设为 {#white}{#var}{#gray} ,请注意妥善保存。当然, 你可以用/password来改变它。"
+  about:
+    version: "{global#sys-info}当前版本: {#var}"
+  folia-compat:
+    disabled: "{global#sys-error}该功能因为Folia无相应兼容API以无法使用。"
+    reload-warn:  "{global#sys-error}Folia的重载会导致所有插件和命令无法正常加载, 你应该重启服务器!"

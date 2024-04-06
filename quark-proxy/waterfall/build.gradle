@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+}
+
+apply from: "E:/Java/GradleScripts/build-base.gradle"
+
+applyGlobalScript("Publish/ProjectOutput.gradle")
+applyGlobalScript("/Dependencies.gradle")
+
+group = 'org.tbstcraft'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
+    }
+    maven {
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+}
+
+dependencies {
+    compileOnly "io.github.waterfallmc:waterfall-api:1.18-R0.1-SNAPSHOT"
+
+    implementation localStorage('me.gb2022.commons-crypto')
+}
+
+jar{
+    archiveBaseName="quark-proxy-waterfall"
+}

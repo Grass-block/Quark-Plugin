@@ -1,0 +1,8 @@
+{
+  "id": "quark-web",
+  "version": "0.10",
+  "package_namespace": "org.tbstcraft.quark.web",
+  "modules": {
+    "token-authorizer": ".HttpTokenAuthorizer"
+  }
+}

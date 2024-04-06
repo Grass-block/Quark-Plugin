@@ -1,0 +1,92 @@
+config:
+  custom-motd:
+    play: '{#green}创造{#white} / {#green}生存{#white} / {#green}小游戏'
+    tag:
+      - '{#blue}#贵州消防栓事件'
+      - '{#blue}#Minecraft2024'
+      - '{#blue}#MakeMCGreatAgain'
+    motd-title: '{#server-name} {#white}> {cfg#play} {#red}[{#white}BE /JE 1.12-1.20{#red}]'
+    motd-subtitle: '{cfg#tag}{#gold}  |  {#gray}{cfg#splash}'
+    splash:
+      - '玩Minecraft？你作业写完了？'
+      - '大厅服务器现已正式开放！'
+      - "可以给个赞助嘛(〃'▽'〃)"
+      - '原[][]动? 原封不动!'
+      - 'java.lang.NullPointerException!!!'
+      - '你确定还要玩下去吗？看看你的作业吧~'
+      - 'WHO cares you(世卫组织关心您)'
+      - '{#gold}{#bold}Technoblade never dies!'
+      - '\海星/\海星/\海星/\海星/\海星/'
+  tab-menu:
+    header-ui:
+      - '{#yellow} ───────────────────────────────── '
+      - '{#yellow}>>{#white} {msg#welcome-header} {#yellow}<<{#white}'
+      - '{msg#player}    {msg#max-player}'
+    footer-ui:
+      - ' '
+      - '{msg#tps}   {msg#mspt}   {msg#ping}'
+      - '{msg#date}'
+      - '{#yellow} ───────────────────────────────── '
+  custom-ban-message:
+    ui:
+      - '{msg#header}'
+      - '{#return}{#yellow} ─────────────────────────────────  {#return}'
+      - '{#reset}{msg#@type}'
+      - '{msg#hint}{#return}'
+      - '{msg#reason}{#return}{#return}'
+      - '{msg#info}'
+      - '{msg#website-hint}'
+  custom-kick-message:
+    ui:
+      - '{msg#header}'
+      - '{#return}{#yellow} ─────────────────────────────────  {#return}'
+      - '{#reset}{reason}{#return}{#return}'
+      - '{msg#website-hint}'
+  bossbar-announcement:
+    period: 1200
+    bar-color: white
+    ui: '{#aqua}{#server-name} {#yellow}>> {rand#text}'
+  chat-format:
+    template: '{0} {color(gold)}> {color(gray)}{1}'
+  player-name-header:
+    template: "[{#white}{header}{#white}] {player}"
+    test: "test"
+  welcome-message:
+    ui:
+      - '{color(yellow)} ───────────────────────────────── '
+      - '{msg#welcome-title}'
+      - '{msg#welcome-message}'
+      - ' '
+      - '{msg#info-title}'
+      - '   {color(white)}- {msg#website}{#reset}'
+      - '   {color(white)}- {msg#qq-group}{#reset}'
+      - '   {color(white)}- {msg#wiki}{#reset}'
+      - '   {color(white)}- {msg#policy}{#reset}'
+      - ' '
+      - '{msg#post-title}'
+      - '{msg#callback}'
+      - '{color(yellow)} ─────────────────────────────────  '
+  custom-scoreboard:
+    ui:
+      - ' '
+      - ' {msg#date}'
+      - ' '
+      - ' {msg#player}'
+      - ' {msg#play-time}'
+      - ' {msg#world-time}'
+      - ' '
+      - ' {msg#player-count}'
+      - ' {msg#tps}'
+      - ' {msg#mspt}'
+      - ' {msg#ping}'
+      - ' '
+      - ' {msg#qq-group}'
+      - ' {msg#website}'
+      - ' '
+  chat-announce:
+    period: 12000
+    ui:
+      - "{color(yellow)} ─────────────────────────────────"
+      - " {msg#title}"
+      - "   %s"
+      - "{color(yellow)} ─────────────────────────────────"

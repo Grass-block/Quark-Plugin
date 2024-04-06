@@ -1,0 +1,16 @@
+#identifier
+name: quark-game
+version: '1.8.2'
+
+#api
+main: org.tbstcraft.quark.QuarkGame
+api-version: 1.18
+folia-supported: true
+load: POSTWORLD
+depend: ["quark"]
+
+#description
+authors: ["GrassBlock2022","TBSTMC"]
+website: https://quark.tbstmc.xyz
+description: Extension pack of Quark ecosystem, including game-tweaking and contents.
+prefix: QuarkGame

@@ -1,0 +1,12 @@
+{
+  "id": "quark-tweaks",
+  "version": "1.0.23",
+  "package_namespace": "org.tbstcraft.quark.tweaks",
+  "modules": {
+    "time-scale": ".TimeScale",
+    "vein-miner": ".VeinMiner",
+    "vanilla-tweaks": ".VanillaTweaks",
+    "fly-speed-modifier": ".FlySpeedModifier",
+    "freecam": ".FreeCam"
+  }
+}
