@@ -8,10 +8,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.event.BanMessageFetchEvent;
-import org.tbstcraft.quark.module.services.EventListener;
-import org.tbstcraft.quark.module.PackageModule;
-import org.tbstcraft.quark.module.QuarkModule;
+import org.tbstcraft.quark.framework.event.BanMessageFetchEvent;
+import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
 
 @EventListener
 @QuarkModule(version = "1.0.2")

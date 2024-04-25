@@ -5,7 +5,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.SharedObjects;
 
 import java.util.UUID;
 
@@ -39,7 +39,7 @@ public final class BukkitTaskManager extends TaskManager {
         try {
             BukkitTaskWrapper.once(id, this, task).runTaskAsynchronously(this.getPlugin());
         } catch (IllegalPluginAccessException e) {
-            Quark.SHARED_THREAD_POOL.submit(task);
+            SharedObjects.SHARED_THREAD_POOL.submit(task);
         }
     }
 

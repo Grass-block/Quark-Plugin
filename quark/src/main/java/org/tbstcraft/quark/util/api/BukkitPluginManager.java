@@ -19,23 +19,28 @@ public interface BukkitPluginManager {
     HashMap<String, String> CACHE = new HashMap<>();
 
     static boolean load(String file) {
-        File f = new File(System.getProperty("user.dir") + "/plugins/" + file);
-        Plugin p;
         try {
-            unload(BukkitUtil.getPluginDescription(f).getName());
-            p = Bukkit.getPluginManager().loadPlugin(f);
-        } catch (InvalidPluginException | InvalidDescriptionException e) {
-            Quark.LOGGER.severe(e.getMessage());
-            return false;
+            File f = new File(System.getProperty("user.dir") + "/plugins/" + file);
+            Plugin p;
+            try {
+                unload(BukkitUtil.getPluginDescription(f).getName());
+                p = Bukkit.getPluginManager().loadPlugin(f);
+            } catch (InvalidPluginException | InvalidDescriptionException e) {
+                Quark.LOGGER.severe(e.getMessage());
+                return false;
+            }
+            if (p == null) {
+                return false;
+            }
+            if (Bukkit.getPluginManager().isPluginEnabled(p.getName())) {
+                return false;
+            }
+            p.onLoad();
+            Bukkit.getPluginManager().enablePlugin(p);
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        if (p == null) {
-            return false;
-        }
-        if (Bukkit.getPluginManager().isPluginEnabled(p.getName())) {
-            return false;
-        }
-        p.onLoad();
-        Bukkit.getPluginManager().enablePlugin(p);
         return true;
     }
 
@@ -88,7 +93,7 @@ public interface BukkitPluginManager {
                 Quark.LOGGER.warning("failed to close pluginLoader: " + e.getMessage());
             }
         } catch (Throwable e) {
-            ExceptionUtil.log(e);
+            e.printStackTrace();
         }
         return true;
     }

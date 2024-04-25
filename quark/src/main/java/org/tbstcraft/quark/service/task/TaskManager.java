@@ -2,7 +2,6 @@ package org.tbstcraft.quark.service.task;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;

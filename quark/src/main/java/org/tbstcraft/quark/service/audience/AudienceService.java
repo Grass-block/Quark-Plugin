@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.service.Service;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 import org.tbstcraft.quark.util.api.APIProfileTest;
 
 import java.util.Collection;

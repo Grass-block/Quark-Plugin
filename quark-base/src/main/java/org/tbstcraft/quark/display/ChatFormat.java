@@ -9,12 +9,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.tbstcraft.quark.module.*;
-import org.tbstcraft.quark.module.compat.Compat;
-import org.tbstcraft.quark.module.compat.CompatContainer;
-import org.tbstcraft.quark.module.compat.CompatDelegate;
-import org.tbstcraft.quark.module.services.EventListener;
-import org.tbstcraft.quark.text.TextBuilder;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.compat.Compat;
+import org.tbstcraft.quark.framework.module.compat.CompatContainer;
+import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
+import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.text.TextBuilder;
 import org.tbstcraft.quark.util.api.APIProfile;
 
 @EventListener

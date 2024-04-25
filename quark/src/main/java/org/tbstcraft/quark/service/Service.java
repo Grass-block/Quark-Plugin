@@ -15,7 +15,7 @@ import org.tbstcraft.quark.service.web.HTTPService;
 import org.tbstcraft.quark.service.web.SMTPMailService;
 import org.tbstcraft.quark.service.web.TokenStorage;
 import org.tbstcraft.quark.util.ExceptionUtil;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.lang.reflect.Field;
 

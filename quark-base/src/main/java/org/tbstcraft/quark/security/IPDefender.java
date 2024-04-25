@@ -1,28 +1,29 @@
 package org.tbstcraft.quark.security;
 
 import com.google.gson.JsonParser;
+import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.BanList;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.event.MessageEvent;
-import org.tbstcraft.quark.module.services.EventListener;
-import org.tbstcraft.quark.module.PackageModule;
-import org.tbstcraft.quark.module.QuarkModule;
-import org.tbstcraft.quark.service.task.TaskService;
+import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.framework.event.messenging.Messenger;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.EventListener;
 import org.tbstcraft.quark.service.data.PlayerDataService;
+import org.tbstcraft.quark.service.task.TaskService;
 import org.tbstcraft.quark.util.NetworkUtil;
 import org.tbstcraft.quark.util.api.PlayerUtil;
-import me.gb2022.commons.nbt.NBTTagCompound;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 @EventListener
-@QuarkModule(version = "1.3.4", recordFormat = "player: %s  ip: %s -> %s")
+@QuarkModule(version = "1.3.4", recordFormat = {"Time", "Player", "OldIP", "NewIP"})
 public final class IPDefender extends PackageModule {
 
     @EventHandler
@@ -60,7 +61,10 @@ public final class IPDefender extends PackageModule {
 
         this.getLanguage().sendMessageTo(player, "ip_warn", ipLoc, oldIP);
 
-        Bukkit.getPluginManager().callEvent(MessageEvent.builder("ip_change").param("player", player.getName()).build());
+        Messenger.broadcastMapped("ip:change", (map) -> map
+                .put("player", player.getName())
+                .put("old-ip", oldIP)
+                .put("new-ip", ipLoc));
 
         tag.setString("ip", ipLoc);
         PlayerDataService.save((player.getName()));
@@ -84,7 +88,8 @@ public final class IPDefender extends PackageModule {
         }
 
         if (this.getConfig().getBoolean("record")) {
-            this.getRecord().record("",
+            this.getRecord().addLine(
+                    SharedObjects.DATE_FORMAT.format(new Date()),
                     player.getName(),
                     oldIP,
                     ipLoc

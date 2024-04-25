@@ -1,15 +1,15 @@
 package org.tbstcraft.quark.service.framework;
 
 import org.bukkit.plugin.Plugin;
-import org.tbstcraft.quark.ObjectOperationResult;
-import org.tbstcraft.quark.ObjectStatus;
+import org.tbstcraft.quark.util.ObjectOperationResult;
+import org.tbstcraft.quark.util.ObjectStatus;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.module.AbstractModule;
-import org.tbstcraft.quark.module.PackageModule;
+import org.tbstcraft.quark.framework.module.AbstractModule;
+import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.service.Service;
 import org.tbstcraft.quark.util.ExceptionUtil;
 import org.tbstcraft.quark.util.FilePath;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 import org.tbstcraft.quark.util.api.APIProfileTest;
 
 import java.io.File;
@@ -20,6 +20,8 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public interface ModuleManager extends Service {
+    String DATA_FILE = "%s/config/modules.properties";
+
     ObjectContainer<ModuleManager> INSTANCE = new ObjectContainer<>();
 
     static ModuleManager getInstance() {
@@ -205,7 +207,7 @@ public interface ModuleManager extends Service {
         }
 
         private File getStatusFile() {
-            String path = FilePath.pluginFolder(this.parentName) + "/modules.properties";
+            String path = DATA_FILE.formatted(FilePath.pluginFolder(this.parentName));
             File file = new File(path);
             if (!file.exists() || file.length() == 0) {
                 if (file.getParentFile().mkdirs()) {

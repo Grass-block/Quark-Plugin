@@ -1,0 +1,17 @@
+motd.show={global#sys-info}Quark生成的服务器MOTD信息:
+join-message={global#sys-info}{#gray}玩家 {#white}{#var}{#gray} 加入了服务器，欢迎。
+leave-message={global#sys-info}玩家 {#white}{#var}{#gray} 离开了服务器。
+
+
+tab.tps={#gray}TPS: {#white}{#tps}{#white}/20
+tab.mspt={#gray}MSPT: {#white}{#mspt}{#white}
+tab.ping={#gray}Ping: {#white}{#ping}
+tab.player={#gray}当前在线: {#white}{#player}
+tab.max-player={#gray}最大: {#white}{#max-player}
+tab.date={#gray}日期/时间: {#white}{#date}
+
+
+info.website={#gray}官网: {#aqua}{#underline}{#server-website}
+info.website-hint={#gray}访问官网: {#aqua}{#underline}{#server-website}
+
+

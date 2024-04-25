@@ -5,7 +5,7 @@ config:
   explosion-defender:
     override-explosion: true
     record: true
-    broadcast: false
+    broadcast: true
   protection-area:
     record: true
     broadcast: false
@@ -18,8 +18,11 @@ config:
       - "--placeholder--"
     warning-list:
       - "tnt"
-      - "flint-and-steel"
-      - "lava-bucket"
+      - "flint_and_steel"
+      - "lava_bucket"
+      - "water_bucket"
+      - "respawn_anchor"
+      - "end_crystal"
   ip-defender:
     record: true
     auto-ban: false

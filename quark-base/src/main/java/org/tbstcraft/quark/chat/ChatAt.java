@@ -6,12 +6,12 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.tbstcraft.quark.config.Queries;
-import org.tbstcraft.quark.module.services.EventListener;
-import org.tbstcraft.quark.module.PackageModule;
-import org.tbstcraft.quark.module.QuarkModule;
-import org.tbstcraft.quark.text.TextBuilder;
-import org.tbstcraft.quark.text.TextSender;
+import org.tbstcraft.quark.framework.config.Queries;
+import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.text.TextBuilder;
+import org.tbstcraft.quark.framework.text.TextSender;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 
 import java.util.HashSet;

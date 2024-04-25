@@ -1,16 +1,17 @@
 package org.tbstcraft.quark.utilities;
 
+import me.gb2022.commons.nbt.NBTTagCompound;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.module.CommandModule;
-import org.tbstcraft.quark.module.QuarkModule;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.module.CommandModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.service.data.ModuleDataService;
 import org.tbstcraft.quark.util.FilePath;
 import org.tbstcraft.quark.util.api.APIProfile;
-import me.gb2022.commons.nbt.NBTTagCompound;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +21,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
-@QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT,APIProfile.SPIGOT})
-@QuarkCommand(name = "log-format", op = true)
+@QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT, APIProfile.SPIGOT})
+@QuarkCommand(name = "log-format", permission = "quark.log-format")
 public final class CustomLogFormat extends CommandModule {
     @Override
     public void enable() {
@@ -34,12 +35,6 @@ public final class CustomLogFormat extends CommandModule {
         }
         if (tag.getBoolean("enable")) {
             this.setFormat();
-        }
-    }
-
-    public void resetFormat() {
-        if (!this.setLoggerFormat(this.getResourceURL("/default_log.xml"))) {
-            this.logger.severe("failed to inject log format, consider checking resource.");
         }
     }
 
@@ -113,7 +108,9 @@ public final class CustomLogFormat extends CommandModule {
             }
             case "off" -> {
                 this.setDataEnable(false);
-                this.resetFormat();
+                if (!this.setLoggerFormat(Bukkit.class.getResource("/log4j2.xml"))) {
+                    this.logger.severe("failed to inject log format, consider checking resource.");
+                }
                 this.getLanguage().sendMessageTo(sender, "disable");
             }
         }

@@ -30,3 +30,5 @@ dependencies {
 jar{
     archiveBaseName="quark-proxy-waterfall"
 }
+
+task prepareKotlinBuildScriptModel{}

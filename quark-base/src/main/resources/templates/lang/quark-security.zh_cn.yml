@@ -1,7 +1,6 @@
 language:
   explosion-defender:
-    block-exploded: '{global#warning}在 {#var} 世界中的 %d,%d,%d 发生了方块 {#var} 爆炸。'
-    entity-exploded: '{global#warning}在 {#var} 世界中的 %d,%d,%d 发生了实体 {#var} 爆炸。'
+    exploded: '{global#warning}在 {#var} 世界中的 {#var},{#var},{#var} 发生了 {#var} 爆炸。'
     region-list: '{global#sys-operation}以下是全部爆炸白名区域: '
     region-add: '{global#sys-operation}已添加爆炸白名区域{#var}。'
     region-add-failed: '{global#sys-error}爆炸白名区域{#var}已经存在。'

@@ -11,10 +11,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.tbstcraft.quark.event.WorldeditSectionUpdateEvent;
+import org.tbstcraft.quark.framework.event.WorldeditSectionUpdateEvent;
 import org.tbstcraft.quark.util.api.BukkitUtil;
 import org.tbstcraft.quark.util.Region;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.util.HashMap;
 import java.util.Objects;

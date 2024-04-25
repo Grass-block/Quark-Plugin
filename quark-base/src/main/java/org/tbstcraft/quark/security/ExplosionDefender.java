@@ -1,5 +1,7 @@
 package org.tbstcraft.quark.security;
 
+import io.papermc.paper.event.block.BlockBreakBlockEvent;
+import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,22 +12,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.config.Queries;
-import org.tbstcraft.quark.module.services.EventListener;
-import org.tbstcraft.quark.module.PackageModule;
-import org.tbstcraft.quark.module.QuarkModule;
+import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.framework.command.CommandRegistry;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.config.Queries;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.EventListener;
 import org.tbstcraft.quark.service.data.ModuleDataService;
 import org.tbstcraft.quark.util.Region;
-import me.gb2022.commons.nbt.NBTTagCompound;
 
 import java.util.*;
 
 @EventListener
 @CommandRegistry(ExplosionDefender.ExplosionWhitelistCommand.class)
-@QuarkModule(version = "1.3.2", recordFormat = "world: %s  pos: [%s, %s, %s]  type: %s")
+@QuarkModule(version = "1.3.3", recordFormat = {"Time", "World", "X", "Y", "Z", "Type"})
 public final class ExplosionDefender extends PackageModule {
     private final HashMap<String, Region> whiteListedRegions = new HashMap<>();
 
@@ -72,11 +74,12 @@ public final class ExplosionDefender extends PackageModule {
     @EventHandler
     public void onBlockExplode(BlockExplodeEvent event) {
         Block b = event.getBlock();
+
         if (matchRegion(b.getLocation())) {
             return;
         }
         event.setCancelled(true);
-        this.handle(b.getLocation(), b.getType().getKey().getKey());
+        this.handle(b.getLocation(), "[?]");
     }
 
     @EventHandler
@@ -86,15 +89,15 @@ public final class ExplosionDefender extends PackageModule {
             return;
         }
         event.setCancelled(true);
-        this.handle(e.getLocation(), e.getType().getKey().getKey());
+        this.handle(e.getLocation(), e.getType().getKey().toString());
     }
 
     public void handle(Location loc, String explodedId) {
-        if (this.getConfig().getBoolean("override_explosion")) {
+        if (this.getConfig().getBoolean("override-explosion")) {
             Objects.requireNonNull(loc.getWorld()).createExplosion(loc, 4f, false, false);
         }
         if (this.getConfig().getBoolean("broadcast")) {
-            this.getLanguage().broadcastMessage(true, "block_exploded",
+            this.getLanguage().broadcastMessage(true, "exploded",
                     Objects.requireNonNull(loc.getWorld()).getName(),
                     loc.getBlockX(),
                     loc.getBlockY(),
@@ -103,14 +106,13 @@ public final class ExplosionDefender extends PackageModule {
             );
         }
         if (this.getConfig().getBoolean("record")) {
-            this.getRecord().record(
-                    "",
+            this.getRecord().addLine(
+                    SharedObjects.DATE_FORMAT.format(new Date()),
                     Objects.requireNonNull(loc.getWorld()).getName(),
                     loc.getBlockX(),
                     loc.getBlockY(),
                     loc.getBlockZ(),
-                    explodedId
-            );
+                    explodedId);
         }
     }
 
@@ -122,7 +124,7 @@ public final class ExplosionDefender extends PackageModule {
         public void onCommand(CommandSender sender, String[] args) {
             String operation = args[0];
             if (Objects.equals(operation, "list")) {
-                this.getLanguage().sendMessageTo(sender, "region_list");
+                this.getLanguage().sendMessageTo(sender, "region-list");
                 Map<String, Region> map = this.getModule().getWhiteListedRegions();
                 for (String s : map.keySet()) {
                     sender.sendMessage(Queries.GLOBAL_TEMPLATE_ENGINE.handle("{#gold}%s {#gray}-> {#white}%s".formatted(s, map.get(s).toString())));
@@ -133,22 +135,22 @@ public final class ExplosionDefender extends PackageModule {
             if (Objects.equals(operation, "add")) {
                 this.checkException(args.length == 9);
                 if (this.getModule().getWhiteListedRegions().containsKey(arg2)) {
-                    this.getLanguage().sendMessageTo(sender, "region_add_failed", arg2);
+                    this.getLanguage().sendMessageTo(sender, "region-add-failed", arg2);
                     return;
                 }
                 this.getModule().getWhiteListedRegions().put(arg2, new Region(Bukkit.getWorld(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]), Integer.parseInt(args[8])));
-                this.getLanguage().sendMessageTo(sender, "region_add", arg2);
+                this.getLanguage().sendMessageTo(sender, "region-add", arg2);
                 this.getModule().saveRegions();
                 return;
             }
             if (Objects.equals(operation, "remove")) {
                 this.checkException(args.length == 2);
                 if (!this.getModule().getWhiteListedRegions().containsKey(arg2)) {
-                    this.getLanguage().sendMessageTo(sender, "region_remove_failed", arg2);
+                    this.getLanguage().sendMessageTo(sender, "region-remove-failed", arg2);
                     throw new RuntimeException("???");
                 }
                 this.getModule().getWhiteListedRegions().remove(arg2);
-                this.getLanguage().sendMessageTo(sender, "region_remove", arg2);
+                this.getLanguage().sendMessageTo(sender, "region-remove", arg2);
             }
         }
 

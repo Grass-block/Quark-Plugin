@@ -3,6 +3,7 @@ package org.tbstcraft.quark.service.data;
 import me.gb2022.commons.math.SHA;
 import me.gb2022.commons.nbt.NBT;
 import me.gb2022.commons.nbt.NBTTagCompound;
+import org.tbstcraft.quark.util.Identifiers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -99,6 +100,7 @@ public final class DataService {
     }
 
     public synchronized NBTTagCompound getEntry(String id) {
+        id = Identifiers.internal(id);
         if (!this.cache.containsKey(id)) {
             this.cache.put(id, this.backend.load(hash(id)));
         }
@@ -106,9 +108,11 @@ public final class DataService {
     }
 
     public synchronized void saveEntry(String id) {
+        id = Identifiers.internal(id);
         if (!this.available) {
-            this.addSaveRequest(id);
-            return;
+            if (!this.saveRequest.contains(id)) {
+                this.saveRequest.add(id);
+            }
         }
         this.batchSaveRequest();
         if (!this.cache.containsKey(id)) {
@@ -121,13 +125,6 @@ public final class DataService {
         while (!this.saveRequest.isEmpty()) {
             this.saveEntry(this.saveRequest.poll());
         }
-    }
-
-    public void addSaveRequest(String id) {
-        if (this.saveRequest.contains(id)) {
-            return;
-        }
-        this.saveRequest.add(id);
     }
 
 

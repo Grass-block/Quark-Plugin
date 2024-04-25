@@ -1,6 +1,5 @@
 package org.tbstcraft.quark.security;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,94 +8,108 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
-import org.tbstcraft.quark.event.MessageEvent;
-import org.tbstcraft.quark.module.services.EventListener;
-import org.tbstcraft.quark.module.PackageModule;
-import org.tbstcraft.quark.module.QuarkModule;
+import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.framework.event.messenging.Messenger;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.EventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 @EventListener
-@QuarkModule(version = "1.2.2")
+@QuarkModule(version = "1.2.2", recordFormat = {"Time", "Level", "Player", "World", "X", "Y", "Z", "Type", "Action"})
 public final class ItemDefender extends PackageModule {
 
     @EventHandler
     public void onItemHeld(PlayerItemHeldEvent event) {
-        this.checkEvent(event.getPlayer(), event.getPlayer().getInventory().getItem(event.getNewSlot()), true);
+        this.checkEvent(event.getPlayer(), event.getPlayer().getInventory().getItem(event.getNewSlot()), true, "Held");
     }
 
     @EventHandler
     public void onItemConsume(PlayerItemConsumeEvent event) {
-        this.checkEvent(event.getPlayer(), event.getItem(), true);
+        this.checkEvent(event.getPlayer(), event.getItem(), true, "Consume");
     }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        this.checkEvent(event.getPlayer(), event.getItem(), false);
+        this.checkEvent(event.getPlayer(), event.getItem(), false, "Interact");
     }
 
     @EventHandler
     public void onItemSwap(PlayerSwapHandItemsEvent event) {
-        this.checkEvent(event.getPlayer(), event.getMainHandItem(), true);
-        this.checkEvent(event.getPlayer(), event.getOffHandItem(), true);
+        this.checkEvent(event.getPlayer(), event.getMainHandItem(), true, "Swap");
+        this.checkEvent(event.getPlayer(), event.getOffHandItem(), true, "Swap");
     }
 
-    private void checkEvent(Player p, ItemStack stack, boolean say) {
+    private void checkEvent(Player p, ItemStack stack, boolean say, String action) {
         if (stack == null) {
             return;
         }
 
-        if (this.getConfig().getBoolean("op_ignore") && p.isOp()) {
+        if (this.getConfig().getBoolean("op-ignore") && p.isOp()) {
             return;
         }
 
         Material m = stack.getType();
-        if (this.isItemIllegal(m)) {
-            if (say) {
-                this.getLanguage().sendMessageTo(p, "illegal_item", m.name());
-            }
-            p.getInventory().remove(m);
-            if (this.getConfig().getBoolean("broadcast")) {
-                this.getLanguage().broadcastMessage(true, "illegal_item_broadcast", p.getName(), m.name());
-            }
-            Bukkit.getPluginManager().callEvent(MessageEvent.builder("defended_item_access")
-                    .param("type", "illegal")
-                    .param("player", p.getName())
-                    .param("item", m.getKey().getKey())
-                    .build());
-            if (!this.getConfig().getBoolean("record")) {
-                return;
-            }
-            this.getRecord().record("[%s] illegal player=%s item=%s".formatted(new SimpleDateFormat().format(new Date()), p.getName(), m.name()));
+        boolean b1 = this.isItemIllegal(m);
+        boolean b2 = this.isItemWarning(m);
+
+        if (!(b1 || b2)) {
+            return;
         }
-        if (this.isItemWarning(m)) {
-            if (say) {
-                this.getLanguage().sendMessageTo(p, "warning_item", m.name());
+
+        if (b1) {
+            p.getInventory().remove(m);
+        }
+
+        if (b1 && b2) {
+            b2 = false;
+        }
+
+        if (say) {
+            if (b1) {
+                this.getLanguage().sendMessageTo(p, "illegal-item", m.getKey().toString());
+            } else {
+                this.getLanguage().sendMessageTo(p, "warning-item", m.getKey().toString());
             }
-            if (this.getConfig().getBoolean("broadcast")) {
-                this.getLanguage().broadcastMessage(true, "warning_item_broadcast", p.getName(), m.name());
+        }
+
+        if (this.getConfig().getBoolean("record")) {
+            this.getRecord().addLine(
+                    SharedObjects.DATE_FORMAT.format(new Date()),
+                    b2 ? "Warning" : "Illegal",
+                    p.getName(),
+                    p.getLocation().getWorld().getName(),
+                    p.getLocation().getBlockX(),
+                    p.getLocation().getBlockY(),
+                    p.getLocation().getBlockZ(),
+                    m.getKey().toString(),
+                    action
+            );
+        }
+
+        Messenger.broadcastMapped("item:access", (map) -> map
+                        .put("player", p.getName())
+                        .put("type", b1 ? "illegal" : "warning")
+                        .put("item", m.getKey().getKey()));
+
+        if (this.getConfig().getBoolean("broadcast")) {
+            if (b1) {
+                this.getLanguage().broadcastMessage(true, "illegal-item-broadcast", p.getName(), m.getKey().toString());
+            } else {
+                this.getLanguage().broadcastMessage(true, "warning-item-broadcast", p.getName(), m.getKey().toString());
             }
-            Bukkit.getPluginManager().callEvent(MessageEvent.builder("defended_item_access")
-                    .param("type", "warning")
-                    .param("player", p.getName())
-                    .param("item", m.getKey().getKey())
-                    .build());
-            if (!this.getConfig().getBoolean("record")) {
-                return;
-            }
-            this.getRecord().record("[%s] warning player=%s item=%s".formatted(new SimpleDateFormat().format(new Date()), p.getName(), m.name()));
         }
     }
 
     private boolean isItemIllegal(Material material) {
-        List<String> list = this.getConfig().getStringList("illegal_list");
+        List<String> list = this.getConfig().getStringList("illegal-list");
         return list.contains(material.getKey().getKey());
     }
 
     private boolean isItemWarning(Material material) {
-        List<String> list = this.getConfig().getStringList("warning_list");
+        List<String> list = this.getConfig().getStringList("warning-list");
         return list.contains(material.getKey().getKey());
     }
 }

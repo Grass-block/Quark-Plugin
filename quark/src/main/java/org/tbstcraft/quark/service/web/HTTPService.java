@@ -1,11 +1,10 @@
 package org.tbstcraft.quark.service.web;
 
-import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.module.PackageModule;
+import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.service.Service;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 
 public interface HTTPService extends Service {
     ObjectContainer<HTTPService> INSTANCE = new ObjectContainer<>();

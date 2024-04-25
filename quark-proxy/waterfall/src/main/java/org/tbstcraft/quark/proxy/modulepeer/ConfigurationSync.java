@@ -9,6 +9,7 @@ public class ConfigurationSync {
 
     @EventHandler
     public void onPluginMesssage(PluginMessageEvent event){
-        if(event.getTag())
     }
+
+
 }

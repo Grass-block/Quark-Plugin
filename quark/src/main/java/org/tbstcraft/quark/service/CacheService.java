@@ -1,7 +1,7 @@
 package org.tbstcraft.quark.service;
 
-import org.tbstcraft.quark.util.CachedInfo;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.container.CachedInfo;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -14,3 +14,5 @@ language:
     view: "{global#sys-info}以下是您在离线期间收到的留言:{#return}%s"
     view-hint: "{global#sys-info}您在离线期间收到了 {#var} 条留言，使用命令{#gold}/mail view{#gray} 或 {click(command,/mail view)}{#white}[{#aqua}点击查看{#white}]"
     view-none: "{global#sys-info}您在离线期间未收到任何留言。"
+  chat-report:
+    report-postfix: '{click(command,/report chat %s);hover(text,点击举报)}[!]'

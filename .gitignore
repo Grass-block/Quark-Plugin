@@ -3,6 +3,10 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 **/src/build/
 
+**/build
+**/gradle
+/productions
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
@@ -41,3 +45,4 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/productions/

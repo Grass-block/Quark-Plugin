@@ -3,15 +3,15 @@ package org.tbstcraft.quark.service.framework;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
-import org.tbstcraft.quark.ObjectOperationResult;
-import org.tbstcraft.quark.ObjectStatus;
+import org.tbstcraft.quark.util.ObjectOperationResult;
+import org.tbstcraft.quark.util.ObjectStatus;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.packages.AbstractPackage;
+import org.tbstcraft.quark.framework.packages.AbstractPackage;
 import org.tbstcraft.quark.service.Service;
 import org.tbstcraft.quark.service.ServiceImplementation;
 import org.tbstcraft.quark.util.ExceptionUtil;
 import org.tbstcraft.quark.util.FilePath;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 import org.tbstcraft.quark.util.api.BukkitPluginManager;
 import org.tbstcraft.quark.util.api.BukkitUtil;
 
@@ -246,7 +246,7 @@ public interface PackageManager extends Service {
         }
 
         private File getStatusFile() {
-            String path = FilePath.pluginFolder("quark") + "/packages.properties";
+            String path = FilePath.pluginFolder("quark") + "/config/packages.properties";
             File file = new File(path);
             if (!file.exists() || file.length() == 0) {
                 if (file.getParentFile().mkdirs()) {

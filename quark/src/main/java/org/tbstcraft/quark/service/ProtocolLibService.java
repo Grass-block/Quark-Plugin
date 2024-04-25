@@ -10,7 +10,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import io.wdsj.asg.libs.packetevents.api.factory.spigot.SpigotPacketEventsBuilder;
 import io.wdsj.asg.libs.packetevents.impl.PacketEvents;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.util.function.Consumer;
 

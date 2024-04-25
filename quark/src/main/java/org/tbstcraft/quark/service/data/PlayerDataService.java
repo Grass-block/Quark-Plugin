@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.service.Service;
 import org.tbstcraft.quark.util.FilePath;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 import org.tbstcraft.quark.util.api.BukkitUtil;
 
 import java.io.File;

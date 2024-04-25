@@ -6,7 +6,7 @@ import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
-import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.util.api.FoliaUtil;
 
 import java.util.concurrent.TimeUnit;
@@ -45,7 +45,7 @@ public final class FoliaTaskManager extends TaskManager {
             Task t = new FoliaTask(this.async.runNow(this.getPlugin(), wrapper));
             this.register(id, t);
         } catch (Exception e) {
-            Quark.SHARED_THREAD_POOL.submit(task);
+            SharedObjects.SHARED_THREAD_POOL.submit(task);
         }
     }
 

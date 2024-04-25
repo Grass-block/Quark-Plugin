@@ -5,15 +5,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.event.KickMessageFetchEvent;
-import org.tbstcraft.quark.module.services.EventListener;
-import org.tbstcraft.quark.module.PackageModule;
-import org.tbstcraft.quark.module.QuarkModule;
+import org.tbstcraft.quark.framework.command.CommandRegistry;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.event.messenging.Messenger;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.EventListener;
 import org.tbstcraft.quark.service.PermissionService;
-import org.tbstcraft.quark.util.api.BukkitUtil;
 
 import java.util.List;
 
@@ -44,8 +43,9 @@ public class Maintenance extends PackageModule {
             }
         }
         String message = this.getLanguage().getMessage(locale, "kick-message");
-        String msg = BukkitUtil.callEventAsync(new KickMessageFetchEvent(locale, message, event.getPlayerProfile().getName())).getMessage();
-        event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, msg);
+        String name = event.getPlayerProfile().getName();
+
+        event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Messenger.queryKickMessage(name, message, locale));
     }
 
     public void kickAll() {

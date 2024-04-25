@@ -2,7 +2,8 @@ package org.tbstcraft.quark.service.web;
 
 import com.sun.net.httpserver.HttpServer;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.module.PackageModule;
+import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.framework.module.PackageModule;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -25,7 +26,7 @@ public final class HTTPServer {
         }
         try {
             this.server = HttpServer.create(new InetSocketAddress(host, port), backlog);
-            this.server.setExecutor(Quark.SHARED_THREAD_POOL);
+            this.server.setExecutor(SharedObjects.SHARED_THREAD_POOL);
             this.server.start();
             this.running = true;
         } catch (IOException e) {

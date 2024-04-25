@@ -3,8 +3,8 @@ package org.tbstcraft.quark.service.web;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.tbstcraft.quark.service.framework.ModuleManager;
-import org.tbstcraft.quark.ObjectStatus;
-import org.tbstcraft.quark.module.PackageModule;
+import org.tbstcraft.quark.util.ObjectStatus;
+import org.tbstcraft.quark.framework.module.PackageModule;
 
 import java.io.IOException;
 import java.io.OutputStream;

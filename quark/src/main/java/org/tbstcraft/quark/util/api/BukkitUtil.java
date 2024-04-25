@@ -20,7 +20,7 @@ import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.Vector;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.text.TextBuilder;
+import org.tbstcraft.quark.framework.text.TextBuilder;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;

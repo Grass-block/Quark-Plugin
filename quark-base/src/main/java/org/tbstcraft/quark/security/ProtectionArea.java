@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.security;
 
+import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,24 +14,23 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.config.Queries;
-import org.tbstcraft.quark.module.services.EventListener;
-import org.tbstcraft.quark.module.PackageModule;
-import org.tbstcraft.quark.module.QuarkModule;
+import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.framework.command.CommandRegistry;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.config.Queries;
 import org.tbstcraft.quark.service.data.ModuleDataService;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.EventListener;
 import org.tbstcraft.quark.service.WESessionTrackService;
 import org.tbstcraft.quark.util.Region;
-import me.gb2022.commons.nbt.NBTTagCompound;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @EventListener
 @CommandRegistry({ProtectionArea.ProtectionAreaCommand.class})
-@QuarkModule(version = "1.3.4")
+@QuarkModule(version = "1.3.4", recordFormat = {"Time", "Player", "World", "X", "Y", "Z", "Region"})
 public final class ProtectionArea extends PackageModule {
     private final HashMap<String, Region> regions = new HashMap<>();
 
@@ -107,7 +107,17 @@ public final class ProtectionArea extends PackageModule {
                     if (!this.getConfig().getBoolean("record")) {
                         return;
                     }
-                    this.getRecord().record("[%s]player:%s world:%s session:%s".formatted(new SimpleDateFormat().format(new Date()), player.getName(), Objects.requireNonNull(event.getPlayer().getEyeLocation().getWorld()).getName(), r.toString()));
+                    Player p = event.getPlayer();
+                    Location loc = p.getLocation();
+                    this.getRecord().addLine(
+                            SharedObjects.DATE_FORMAT.format(new Date()),
+                            p.getName(),
+                            p.getLocation().getWorld().getName(),
+                            loc.getBlockX(),
+                            loc.getBlockY(),
+                            loc.getBlockZ(),
+                            s.toString()
+                    );
                     return;
                 }
             }
@@ -129,7 +139,15 @@ public final class ProtectionArea extends PackageModule {
                 if (!this.getConfig().getBoolean("record")) {
                     return;
                 }
-                this.getRecord().record("[%s]player:%s world:%s pos:%s,%s,%s".formatted(new SimpleDateFormat().format(new Date()), player.getName(), Objects.requireNonNull(loc.getWorld()).getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+                this.getRecord().addLine(
+                        SharedObjects.DATE_FORMAT.format(new Date()),
+                        player.getName(),
+                        player.getLocation().getWorld().getName(),
+                        loc.getBlockX(),
+                        loc.getBlockY(),
+                        loc.getBlockZ(),
+                        s.toString()
+                );
                 return;
             }
         }

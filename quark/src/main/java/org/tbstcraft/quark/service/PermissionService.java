@@ -3,7 +3,7 @@ package org.tbstcraft.quark.service;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.util.HashMap;
 import java.util.Map;

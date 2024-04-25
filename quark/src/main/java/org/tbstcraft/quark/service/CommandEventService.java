@@ -7,8 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.server.TabCompleteEvent;
-import org.tbstcraft.quark.command.event.CommandEvent;
-import org.tbstcraft.quark.command.event.CommandTabEvent;
+import org.tbstcraft.quark.framework.event.command.CommandEvent;
+import org.tbstcraft.quark.framework.event.command.CommandTabEvent;
 import org.tbstcraft.quark.util.api.BukkitUtil;
 
 public interface CommandEventService {

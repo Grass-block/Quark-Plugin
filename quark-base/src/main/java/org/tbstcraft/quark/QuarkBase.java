@@ -1,9 +1,9 @@
 package org.tbstcraft.quark;
 
-import org.tbstcraft.quark.packages.initializer.JsonPackageInitializer;
-import org.tbstcraft.quark.packages.initializer.PackageInitializer;
-import org.tbstcraft.quark.packages.provider.MultiPackageProvider;
-import org.tbstcraft.quark.packages.provider.QuarkPackageProvider;
+import org.tbstcraft.quark.framework.packages.initializer.JsonPackageInitializer;
+import org.tbstcraft.quark.framework.packages.initializer.PackageInitializer;
+import org.tbstcraft.quark.framework.packages.provider.MultiPackageProvider;
+import org.tbstcraft.quark.framework.packages.provider.QuarkPackageProvider;
 
 import java.util.Set;
 

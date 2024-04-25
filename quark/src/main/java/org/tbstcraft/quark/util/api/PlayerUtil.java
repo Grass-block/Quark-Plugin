@@ -6,10 +6,10 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.config.Queries;
-import org.tbstcraft.quark.event.BanMessageFetchEvent;
+import org.tbstcraft.quark.framework.config.Queries;
+import org.tbstcraft.quark.framework.event.BanMessageFetchEvent;
 import org.tbstcraft.quark.service.framework.ModuleManager;
-import org.tbstcraft.quark.text.TextBuilder;
+import org.tbstcraft.quark.framework.text.TextBuilder;
 
 import java.util.*;
 import java.util.function.Predicate;

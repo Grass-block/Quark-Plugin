@@ -1,7 +1,7 @@
 package org.tbstcraft.quark.automatic;
 
 import org.bukkit.Bukkit;
-import org.tbstcraft.quark.module.PackageModule;
+import org.tbstcraft.quark.framework.module.PackageModule;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

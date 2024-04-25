@@ -2,8 +2,9 @@ package org.tbstcraft.quark.contents;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.Recipe;
-import org.tbstcraft.quark.module.PackageModule;
-import org.tbstcraft.quark.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.util.crafting.RecipeDeserializer;
 import org.tbstcraft.quark.util.crafting.RecipeManager;
 
 import java.util.HashSet;
@@ -22,9 +23,9 @@ public final class CustomRecipe extends PackageModule {
             for (String s : map.getKeys(false)) {
                 ConfigurationSection recipe = Objects.requireNonNull(map.getConfigurationSection(s));
                 if (recipe.contains("repeat")) {
-                    recipes.addAll(RecipeManager.deserializeRepeatable(s, recipe));
+                    recipes.addAll(RecipeDeserializer.deserializeRepeatable(s, recipe));
                 } else {
-                    recipes.add(RecipeManager.deserialize(s, recipe));
+                    recipes.add(RecipeDeserializer.deserialize(s, recipe));
                 }
             }
         }

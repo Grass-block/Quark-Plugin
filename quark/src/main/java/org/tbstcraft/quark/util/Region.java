@@ -100,7 +100,7 @@ public final class Region {
     }
 
     public String toString() {
-        return "[%d,%d,%d] -> [%d,%d,%d] @%s".formatted(
+        return "[%d %d %d] -> [%d %d %d] @%s".formatted(
                 (int) Math.min(point0.getX(), point1.getX()),
                 (int) Math.min(point0.getY(), point1.getY()),
                 (int) Math.min(point0.getZ(), point1.getZ()),

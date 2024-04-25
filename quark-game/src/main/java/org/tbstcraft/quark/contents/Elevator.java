@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.contents;
 
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,16 +18,21 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.module.services.EventListener;
-import org.tbstcraft.quark.module.PackageModule;
-import org.tbstcraft.quark.module.QuarkModule;
+import org.tbstcraft.quark.framework.command.CommandRegistry;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.customcontent.item.CustomItem;
+import org.tbstcraft.quark.framework.customcontent.item.QuarkItem;
+import org.tbstcraft.quark.framework.language.LanguageKey;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.EventListener;
 import org.tbstcraft.quark.util.api.BukkitUtil;
 import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.crafting.RecipeBuilder;
 import org.tbstcraft.quark.util.crafting.RecipeManager;
 
+import java.util.Locale;
 import java.util.Objects;
 
 @EventListener
@@ -34,11 +40,11 @@ import java.util.Objects;
 @QuarkModule(version = "1.0.0")
 @SuppressWarnings("deprecation")
 public final class Elevator extends PackageModule {
-    public static final Recipe RECIPE = RecipeManager.shaped("elevator", "@#@;#*#;@#@",
+    public static final Recipe RECIPE = RecipeBuilder.shaped("elevator", "@#@;#*#;@#@",
             createElevatorItem(1),
-            RecipeManager.symbol('#', Material.IRON_INGOT),
-            RecipeManager.symbol('*', Material.PISTON),
-            RecipeManager.symbol('@', Material.REDSTONE)
+            RecipeBuilder.symbol('#', Material.IRON_INGOT),
+            RecipeBuilder.symbol('*', Material.PISTON),
+            RecipeBuilder.symbol('@', Material.REDSTONE)
     );
 
     public static ItemStack createElevatorItem(int amount) {
@@ -178,6 +184,20 @@ public final class Elevator extends PackageModule {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
             ((Player) sender).getInventory().addItem(Objects.requireNonNull(createElevatorItem(64)));
+        }
+    }
+
+    @QuarkItem(id = "quark:elevator", icon = Material.FURNACE, enchantGlow = true)
+    public static final class ElevatorItem extends CustomItem {
+
+        @Override
+        public ComponentLike renderDisplayName(ItemStack stack, Locale locale) {
+            return getLanguageKey().getMessageComponent(locale);
+        }
+
+        @Override
+        public LanguageKey getLanguageKey() {
+            return new LanguageKey(null, "elevator", "item-name");
         }
     }
 }

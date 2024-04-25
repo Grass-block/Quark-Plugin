@@ -1,0 +1,10 @@
+plugins{
+    id 'java'
+}
+
+apply from:"E:/Java/Projects/Quark/modules.gradle"
+
+dependencies {
+    compileOnly("io.netty:netty-all:4.1.25.Final")
+    implementation project(":quark-proxy:protocol")
+}

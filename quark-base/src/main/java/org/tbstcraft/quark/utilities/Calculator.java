@@ -1,9 +1,9 @@
 package org.tbstcraft.quark.utilities;
 
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.module.CommandModule;
-import org.tbstcraft.quark.module.QuarkModule;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.module.CommandModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
 
 import java.util.List;
 import java.util.Stack;

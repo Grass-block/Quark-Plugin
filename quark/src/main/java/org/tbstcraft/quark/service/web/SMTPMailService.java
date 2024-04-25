@@ -3,7 +3,7 @@ package org.tbstcraft.quark.service.web;
 import org.bukkit.configuration.ConfigurationSection;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.service.Service;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;

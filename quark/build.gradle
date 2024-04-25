@@ -22,7 +22,7 @@ repositories {
 
 //quark libraries
 dependencies {
-    implementation 'org.iq80.leveldb:leveldb:0.12'
+    compileOnly 'org.iq80.leveldb:leveldb:0.12'
 
     implementation 'org.jetbrains:annotations:24.0.0'
     implementation 'com.sun.mail:javax.mail:1.6.2'
@@ -36,15 +36,18 @@ dependencies {
     implementation localStorage("me.gb2022.commons-nbt")
     implementation localStorage("me.gb2022.commons-math")
     implementation localStorage('me.gb2022.commons-crypto')
+    implementation localStorage('me.gb2022.commons-container')
 
-    compileOnly projectLocal('paper-threadedregions')
-    compileOnly 'io.netty:netty-buffer:4.1.25.Final'
-    //implementation localStorage('io.wdsj.asg')
+    implementation localStorage('me.gb2022.apm-plugin')
 }
 
-//api
+//platform api reference
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
+    compileOnly 'io.netty:netty-buffer:4.1.25.Final'
+    compileOnly projectLocal('paper-threadedregions')
+
+    //implementation localStorage('io.wdsj.asg')
 }
 
 processResources {

@@ -7,11 +7,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.PluginsCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.config.Language;
-import org.tbstcraft.quark.config.LanguageEntry;
-import org.tbstcraft.quark.module.CommandModule;
-import org.tbstcraft.quark.module.QuarkModule;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.config.Language;
+import org.tbstcraft.quark.framework.config.LanguageEntry;
+import org.tbstcraft.quark.framework.module.CommandModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.util.api.BukkitPluginManager;
 
 import java.io.File;

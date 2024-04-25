@@ -2,7 +2,9 @@ package org.tbstcraft.quark.proxy.modulepeer;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
@@ -26,18 +28,21 @@ public class BungeeConnectionProtect extends Sync {
 
     @EventHandler
     public void onPlayerJoinProxy(PostLoginEvent event) {
+        for (ServerInfo server : getServer().getServersCopy().values()) {
+            ServerMessageService.send(server, "quark:player-ip-record.add", getVerificationData(event.getPlayer()));
+        }
+    }
+
+    private byte[] getVerificationData(ProxiedPlayer player) {
         ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();
 
-        writeBytes(buffer, event.getPlayer().getName().getBytes(StandardCharsets.UTF_8));
-        writeBytes(buffer, event.getPlayer().getAddress().getHostName().getBytes(StandardCharsets.UTF_8));
+        writeBytes(buffer, player.getName().getBytes(StandardCharsets.UTF_8));
+        writeBytes(buffer, player.getAddress().getHostName().getBytes(StandardCharsets.UTF_8));
 
-        byte[] data = buffer.array();
-
+        byte[] data = new byte[buffer.writerIndex()];
+        buffer.readBytes(data);
         buffer.release();
-
-        for (ServerInfo server : getServer().getServersCopy().values()) {
-            ServerMessageService.send(server, "quark:player-ip-record.add", data);
-        }
+        return data;
     }
 
     @EventHandler
@@ -55,5 +60,11 @@ public class BungeeConnectionProtect extends Sync {
         byte[] data = name.getBytes(StandardCharsets.UTF_8);
 
         ServerMessageService.send(event.getTarget(), "quark:bc.player-add", data);
+
+
+        event.getPlayer().getUUID();
+
+        event.getPlayer().setTabHeader(new TextComponent("114514"), null);
+        ServerMessageService.send(event.getTarget(), "quark:player-ip-record.add", getVerificationData(event.getPlayer()));
     }
 }

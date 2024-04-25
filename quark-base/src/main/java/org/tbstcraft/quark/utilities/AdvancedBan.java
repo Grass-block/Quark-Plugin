@@ -4,11 +4,11 @@ import org.bukkit.BanList;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.command.CommandManager;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.module.CommandModule;
-import org.tbstcraft.quark.module.QuarkModule;
-import org.tbstcraft.quark.util.CachedInfo;
+import org.tbstcraft.quark.framework.command.CommandManager;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.module.CommandModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.util.container.CachedInfo;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 
 import java.util.Calendar;

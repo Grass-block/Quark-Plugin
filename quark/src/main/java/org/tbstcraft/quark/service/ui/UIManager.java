@@ -3,15 +3,15 @@ package org.tbstcraft.quark.service.ui;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.command.CommandManager;
-import org.tbstcraft.quark.command.CoreCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.CommandManager;
+import org.tbstcraft.quark.framework.command.CoreCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.service.Service;
 import org.tbstcraft.quark.service.ServiceImplementation;
 import org.tbstcraft.quark.service.ui.builder.InventoryUIBuilder;
 import org.tbstcraft.quark.service.ui.builder.UIBuilder;
 import org.tbstcraft.quark.service.ui.inventory.InventoryIcon;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.util.*;
 

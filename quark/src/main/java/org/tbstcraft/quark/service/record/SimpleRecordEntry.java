@@ -1,93 +1,92 @@
 package org.tbstcraft.quark.service.record;
 
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.util.FilePath;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.logging.Logger;
 
 public final class SimpleRecordEntry implements RecordEntry {
-    private final String format;
-    private final Logger logger = Quark.LOGGER;
-    private final String group;
+    public static final String FILE_LOCATION = "%s/record/%s.csv";
+    public static final int MAX_SAVE_INTERVAL = 1000;
+
+    private final String[] format;
     private final String id;
-    private final String folder;
-    private FileOutputStream stream;
 
-    public SimpleRecordEntry(String folder, String group, String id, String recordFormat) {
+    private FileWriter writer;
+    private long lastSaved;
+
+
+    public SimpleRecordEntry(String id, String... recordFormat) {
         this.format = recordFormat;
-        this.group = group;
         this.id = id;
-        this.folder = folder;
     }
 
-    private static File getFile(String folder, String group, String id) {
-        String date = SharedObjects.DATE_FORMAT_FILE.format(new Date());
-        String path = folder + "/%s/%s-%s.txt".formatted(group, id, date);
-        File f = new File(path);
-        if (f.getParentFile().mkdirs()) {
-            Quark.LOGGER.info("created record folder of " + f.getName());
-        }
-        try {
-            if (f.createNewFile()) {
-                Quark.LOGGER.info("created record file " + f.getName());
+    public void open() {
+        File f = new File(FILE_LOCATION.formatted(FilePath.pluginFolder(Quark.PLUGIN_ID), this.id));
+
+        if (!f.exists() || f.length() == 0) {
+            if (f.getParentFile().mkdirs()) {
+                Quark.LOGGER.info("created record folder of " + f.getName());
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return f;
-    }
-
-    @Override
-    public void record(String str, Object... format) {
-        if (this.stream == null) {
             try {
-                this.stream = new FileOutputStream(getFile(this.folder, this.group, this.id));
-            } catch (FileNotFoundException e) {
+                if (f.createNewFile()) {
+                    Quark.LOGGER.info("created record file " + f.getName());
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            try (FileOutputStream stream = new FileOutputStream(f)) {
+                for (int i = 0; i < this.format.length; i++) {
+                    stream.write(this.format[i].getBytes(StandardCharsets.UTF_8));
+                    if (i == this.format.length - 1) {
+                        stream.write("\n".getBytes(StandardCharsets.UTF_8));
+                        continue;
+                    }
+                    stream.write(",".getBytes(StandardCharsets.UTF_8));
+                }
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-        String info = this.format.formatted(format);
-        String date = SharedObjects.DATE_FORMAT.format(new Date());
-        this.logger.info("[record] %s/%s: %s".formatted(this.group, this.id, info));
+
         try {
-            this.stream.write("[%s] %s%n".formatted(date, info).getBytes(StandardCharsets.UTF_8));
+            this.writer = new FileWriter(f, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public void save() {
-        if (this.stream == null) {
-            return;
-        }
+    public void addLine(Object... components) {
         try {
-            this.stream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void close() {
-        this.save();
-        if (this.stream == null) {
-            return;
-        }
-        try {
-            this.stream.close();
-        } catch (IOException e) {
-            try {
-                this.stream.close();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
+            for (int i = 0; i < components.length; i++) {
+                this.writer.write(components[i].toString());
+                if (i == components.length - 1) {
+                    this.writer.write("\n");
+                    continue;
+                }
+                this.writer.write(",");
             }
+
+            if (System.currentTimeMillis() - this.lastSaved > MAX_SAVE_INTERVAL) {
+                this.lastSaved = System.currentTimeMillis();
+                this.writer.flush();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void close() {
+        try {
+            this.writer.flush();
+            this.writer.close();
+        } catch (IOException e) {
+            Quark.LOGGER.info("failed to close record entry %s: %s".formatted(this.id, e.getMessage()));
         }
     }
 }

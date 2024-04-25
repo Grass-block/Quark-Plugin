@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.security;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
+import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
@@ -9,23 +10,21 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.*;
-import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.config.LanguageEntry;
-import org.tbstcraft.quark.event.MessageEvent;
-import org.tbstcraft.quark.module.PackageModule;
-import org.tbstcraft.quark.module.QuarkModule;
-import org.tbstcraft.quark.module.services.EventListener;
+import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.framework.command.CommandRegistry;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.config.LanguageEntry;
+import org.tbstcraft.quark.framework.event.messenging.MappedBroadcastEvent;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.EventListener;
 import org.tbstcraft.quark.service.data.PlayerDataService;
 import org.tbstcraft.quark.service.web.HTTPService;
 import org.tbstcraft.quark.service.web.HttpHandlerContext;
 import org.tbstcraft.quark.service.web.HttpRequest;
 import org.tbstcraft.quark.service.web.SMTPMailService;
-import org.tbstcraft.quark.util.FilePath;
 import org.tbstcraft.quark.util.api.PlayerUtil;
-import me.gb2022.commons.nbt.NBTTagCompound;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -78,6 +77,7 @@ public final class AccountActivation extends PackageModule {
     public void onPlayerJoin(PlayerJoinEvent event) {
         this.testPlayer(event.getPlayer());
     }
+
 
     public void testPlayer(Player p) {
         if (this.checkCache.contains(p.getName())) {
@@ -179,7 +179,7 @@ public final class AccountActivation extends PackageModule {
     }
 
     public void sendVerifyMail(Player player, String mailBox, String code) {
-        Quark.SHARED_THREAD_POOL.submit(() -> {
+        SharedObjects.SHARED_THREAD_POOL.submit(() -> {
             String content = this.getLanguage().buildUI(this.verifyHTML, player.getLocale());
             int safetyCode = new Random().nextInt(10000, 99999);
             content = content.replace("{player}", player.getName());
@@ -194,14 +194,13 @@ public final class AccountActivation extends PackageModule {
         });
     }
 
-
     @EventHandler
-    public void onIpFailure(MessageEvent event) {
-        if (!Objects.equals(event.getMessage(), "ip_change")) {
+    public void onIpFailure(MappedBroadcastEvent event) {
+        if(!event.isRequestedEvent("ip:change")){
             return;
         }
-        AccountStatus.unverify(event.getParam("player"));
-        Player p = PlayerUtil.strictFindPlayer(event.getParam("player"));
+        AccountStatus.unverify(event.getProperty("player",String.class));
+        Player p = PlayerUtil.strictFindPlayer(event.getProperty("player",String.class));
         if (p == null) {
             return;
         }
@@ -318,34 +317,55 @@ public final class AccountActivation extends PackageModule {
         }
     }
 
-    @QuarkCommand(name = "account")
-    public static final class AccountCommand extends ModuleCommand<AccountActivation> {
+    @QuarkCommand(name = "link")
+    public static final class LinkCommand extends ModuleCommand<AccountActivation> {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
             String prefix = this.getConfig().getString("verify_link_delegation");
+            if (AccountStatus.isLinked(sender.getName())) {
+                this.getLanguage().sendMessageTo(sender, "link_failed");
+            }
+            String code = ActivateService.linkAccount(prefix, ((Player) sender), this.getLanguage(), args[1]);
+            this.getModule().sendVerifyMail(((Player) sender), args[1], code);
+        }
 
-            switch (args[0]) {
-                case "link" -> {
-                    if (AccountStatus.isLinked(sender.getName())) {
-                        this.getLanguage().sendMessageTo(sender, "link_failed");
-                    }
-                    String code = ActivateService.linkAccount(prefix, ((Player) sender), this.getLanguage(), args[1]);
-                    this.getModule().sendVerifyMail(((Player) sender), args[1], code);
-                }
-                case "verify" -> {
-                    NBTTagCompound tag = PlayerDataService.getEntry(sender.getName(), "account_activation");
-                    String mail = tag.getString("mail");
-                    if (!AccountStatus.isLinked(sender.getName())) {
-                        this.getLanguage().sendMessageTo(sender, "verify_failed", mail);
-                    }
-                    String code = ActivateService.verifyAccount(prefix, ((Player) sender), this.getLanguage());
+        @Override
+        public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
+            if(buffer.length==2){
+                tabList.add("example@example.com");
+                tabList.add("@163.com");
+                tabList.add("@126.com");
+                tabList.add("@qq.com");
+                tabList.add("@gmail.com");
+            }
+        }
+    }
 
-                    this.getModule().sendVerifyMail(((Player) sender), mail, code);
-                }
-                case "unverify" -> {
-                    AccountStatus.unverify(sender.getName());
-                    this.getLanguage().sendMessageTo(sender, "unverify_success");
-                }
+    @QuarkCommand(name = "verify")
+    public static final class VerifyCommand extends ModuleCommand<AccountActivation>{
+        @Override
+        public void onCommand(CommandSender sender, String[] args) {
+            NBTTagCompound tag = PlayerDataService.getEntry(sender.getName(), "account_activation");
+            String mail = tag.getString("mail");
+            if (!AccountStatus.isLinked(sender.getName())) {
+                this.getLanguage().sendMessageTo(sender, "verify_failed", mail);
+            }
+            String prefix = this.getConfig().getString("verify_link_delegation");
+            String code = ActivateService.verifyAccount(prefix, ((Player) sender), this.getLanguage());
+
+            this.getModule().sendVerifyMail(((Player) sender), mail, code);
+        }
+    }
+
+
+
+    @QuarkCommand(name = "account", subCommands = {VerifyCommand.class, LinkCommand.class})
+    public static final class AccountCommand extends ModuleCommand<AccountActivation> {
+        @Override
+        public void onCommand(CommandSender sender, String[] args) {
+            if (args[0].equals("unverify")) {
+                AccountStatus.unverify(sender.getName());
+                this.getLanguage().sendMessageTo(sender, "unverify_success");
             }
         }
 

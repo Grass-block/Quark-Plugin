@@ -1,44 +1,31 @@
 package org.tbstcraft.quark.service.record;
 
-import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.service.Service;
-import org.tbstcraft.quark.util.FilePath;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.service.ServiceImplementation;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.util.HashMap;
 
+@ServiceImplementation(impl = RecordService.ServiceImplementation.class)
 public interface RecordService extends Service {
     ObjectContainer<RecordService> INSTANCE = new ObjectContainer<>();
 
-    static void init() {
-        INSTANCE.set(create(FilePath.recordFolder(Quark.PLUGIN_ID)));
-        INSTANCE.get().onEnable();
+    static RecordService create() {
+        return new ServiceImplementation();
     }
 
-    static void stop() {
-        INSTANCE.get().onDisable();
+    static RecordEntry create(String id, String[] recordFormat) {
+        RecordEntry entry = INSTANCE.get().createEntry(id, recordFormat);
+        entry.open();
+        return entry;
     }
 
-    static ServiceImplementation create(String folder) {
-        return new ServiceImplementation(folder);
-    }
-
-    static RecordEntry create(String namespace, String module, String recordFormat) {
-        return INSTANCE.get().createEntry(namespace, module, recordFormat);
-    }
-
-
-    RecordEntry createEntry(String namespace, String module, String recordFormat);
+    RecordEntry createEntry(String id, String[] recordFormat);
 
     void save();
 
     final class ServiceImplementation implements RecordService {
         private final HashMap<String, RecordEntry> entries = new HashMap<>();
-        private final String folder;
-
-        public ServiceImplementation(String folder) {
-            this.folder = folder;
-        }
 
         @Override
         public void onDisable() {
@@ -48,20 +35,19 @@ public interface RecordService extends Service {
         }
 
         @Override
-        public RecordEntry createEntry(String namespace, String module, String recordFormat) {
-            String key = namespace + ":" + module;
-            if (this.entries.containsKey(key)) {
-                return this.entries.get(key);
+        public RecordEntry createEntry(String id, String[] recordFormat) {
+            if (this.entries.containsKey(id)) {
+                return this.entries.get(id);
             }
-            RecordEntry entry = new SimpleRecordEntry(this.folder, namespace, module, recordFormat);
-            this.entries.put(key, entry);
+            RecordEntry entry = new SimpleRecordEntry(id, recordFormat);
+            this.entries.put(id, entry);
             return entry;
         }
 
         @Override
         public void save() {
             for (RecordEntry entry : this.entries.values()) {
-                entry.save();
+                entry.close();
             }
         }
     }

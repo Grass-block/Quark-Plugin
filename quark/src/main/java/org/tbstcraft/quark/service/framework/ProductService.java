@@ -17,7 +17,7 @@ import java.util.Objects;
 //激活：发送mac地址和访问码，远端服务器返回激活信息，并删除所有旧设备的激活信息。
 
 
-@Comments("Remove this from service list to crack. You can use it personally,but DO NOT sell them.")
+@Comments("Remove this from service list to crack. You win :D")
 public interface ProductService extends Service {
     Activator ACTIVATOR = new DevActivator();
 

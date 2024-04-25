@@ -7,4 +7,8 @@ include('quark-game')
 include('quark-proxy')
 include('quark-proxy:waterfall')
 
+include 'quark-proxy:protocol'
+findProject(':quark-proxy:protocol')?.name = 'protocol'
+include 'quark-proxy:bukkit'
+findProject(':quark-proxy:bukkit')?.name = 'bukkit'
 

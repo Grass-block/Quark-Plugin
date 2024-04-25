@@ -2,11 +2,9 @@ package org.tbstcraft.quark.automatic;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-import org.tbstcraft.quark.module.PackageModule;
-import org.tbstcraft.quark.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.service.task.TaskService;
-
-import java.util.Objects;
 
 @QuarkModule(version = "0.3", beta = true)
 public final class AutoPluginReload extends PackageModule {

@@ -4,7 +4,7 @@ import me.gb2022.commons.nbt.NBTTagCompound;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.service.Service;
 import org.tbstcraft.quark.util.FilePath;
-import org.tbstcraft.quark.util.ObjectContainer;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.io.File;
 

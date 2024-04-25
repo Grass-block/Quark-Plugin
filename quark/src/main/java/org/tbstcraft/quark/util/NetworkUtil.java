@@ -38,26 +38,4 @@ public interface NetworkUtil {
         }
         return str;
     }
-
-    static InetSocketAddress allocateLocalAddressUDP(){
-        try {
-            DatagramSocket socket=new DatagramSocket();
-            InetSocketAddress addr= new InetSocketAddress(socket.getLocalAddress(), socket.getLocalPort());
-            socket.close();
-            return addr;
-        } catch (SocketException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    static InetSocketAddress allocateLocalAddressTCP(){
-        try {
-            Socket socket=new Socket();
-            InetSocketAddress addr= new InetSocketAddress(socket.getLocalAddress(), socket.getLocalPort());
-            socket.close();
-            return addr;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
