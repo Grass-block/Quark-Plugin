@@ -24,6 +24,7 @@ language:
     not-found: "{global#sys-error}未找到模块 {#var}。"
     internal-error: "{global#sys-error}操作模块 {#var} 时出现内部错误。"
     already-op: "{global#sys-error}模块 {#var} 已处于请求的状态。"
+    blocked-internal: "{global#sys-error}你无法操作 [内建] 模块 {#var} , 因为这可能导致错误。"
   package:
     list: "{global#sys-operation}以下是全部扩展包: {#return}%s"
     enable-all: "{global#sys-operation}成功启用所有扩展包。"
@@ -35,6 +36,7 @@ language:
     not-found: "{global#sys-error}未找到扩展包 {#var}。"
     internal-error: "{global#sys-error}操作扩展包 {#var} 时出现内部错误。"
     already-op: "{global#sys-error}扩展包 {#var} 已处于请求的状态。"
+    blocked-internal: "{global#sys-error}你无法操作 [内建] 包 {#var} , 因为这可能导致错误。"
   packages:
     load: "{global#sys-operation}成功重载quark及全部拓展包。"
   config:

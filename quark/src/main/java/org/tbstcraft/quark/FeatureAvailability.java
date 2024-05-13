@@ -1,6 +1,6 @@
 package org.tbstcraft.quark;
 
-import org.tbstcraft.quark.service.framework.ProductService;
+import org.tbstcraft.quark.service.base.ProductService;
 
 public enum FeatureAvailability {
     DEMO_ONLY("demo_only"),

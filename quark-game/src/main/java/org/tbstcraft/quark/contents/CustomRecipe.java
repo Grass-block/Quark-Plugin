@@ -34,6 +34,6 @@ public final class CustomRecipe extends PackageModule {
 
     @Override
     public void disable() {
-        RecipeManager.register(this.recipes.toArray(new Recipe[0]));
+        RecipeManager.unregister(this.recipes.toArray(new Recipe[0]));
     }
 }

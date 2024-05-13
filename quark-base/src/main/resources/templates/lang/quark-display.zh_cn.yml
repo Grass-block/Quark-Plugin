@@ -4,6 +4,10 @@ language:
   join-quit-message:
     join: '{global#sys-info}{#gray}玩家 {#white}{#var}{#gray} 加入了服务器，欢迎。'
     leave: '{global#sys-info}玩家 {#white}{#var}{#gray} 离开了服务器。'
+    proxy-join: '{global#sys-info}{#gray}玩家 {#white}{#var}{#gray} (来自{#var}) 加入了服务器，欢迎。'
+    proxy-leave: '{global#sys-info}玩家 {#white}{#var}{#gray} (去往{#var}) 离开了服务器。'
+    welcome-message: '{global#sys-info}欢迎您({#var})来到 {#server-name}{#gray} 服务器, 祝您玩得开心。'
+    proxy-send: '{global#sys-info}已将您发送至 {#var} 服务器。使用 {#gold}/hub,/lobby{#gray}来回到大厅！'
   tab-menu:
     welcome-header: 欢迎来到{#aqua}{#server-name}{#reset}服务器!
     tps: '{#gray}TPS: {#white}{#tps}{#white}/20'

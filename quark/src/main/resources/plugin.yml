@@ -1,12 +1,13 @@
 #identifier
 name: quark
-version: '3.60.0'
+version: '${version}'
 
 #api
 main: org.tbstcraft.quark.Quark
 api-version: 1.18
 folia-supported: true
 load: POSTWORLD
+softdepend: ['quark-platform']
 
 #description
 authors: [ "GrassBlock2022","TBSTMC" ]

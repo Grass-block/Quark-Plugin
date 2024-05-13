@@ -5,7 +5,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.tbstcraft.quark.framework.command.CommandManager;
+import org.tbstcraft.quark.command.CommandManager;
 import org.tbstcraft.quark.framework.config.Queries;
 import org.tbstcraft.quark.framework.module.services.EventListener;
 import org.tbstcraft.quark.framework.module.PackageModule;

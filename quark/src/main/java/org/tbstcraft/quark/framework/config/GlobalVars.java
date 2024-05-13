@@ -9,12 +9,13 @@ import org.tbstcraft.quark.util.query.TemplateEngine;
 import org.tbstcraft.quark.util.query.ValueSupplier;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public final class GlobalVars {
-    private final Map<String, String> map = new HashMap<>();
+    private final Set<String> keys = new HashSet<>();
+
     private final TemplateEngine target;
     private Plugin holder;
 
@@ -35,20 +36,52 @@ public final class GlobalVars {
             File f = this.getExternalFile();
             this._update(false, f);
             YamlConfiguration external = new YamlConfiguration();
-            external.load(f);
-            ConfigurationSection section = external.getConfigurationSection("global-vars");
-            if (section == null) {
+            try {
+                external.load(f);
+            }catch (IOException | InvalidConfigurationException e){
+                restore();
+                external.load(f);
+            }
+
+
+            ConfigurationSection root = external.getConfigurationSection("global-vars");
+            if (root == null) {
                 return;
             }
-            for (String s : this.map.keySet()) {
+
+            for (String s : this.keys) {
                 this.target.unregister(s);
             }
-            this.map.clear();
-            for (String s : section.getKeys(false)) {
-                this.map.put(s, section.getString(s));
-                this.target.register(s, new ValueSupplier(section.getString(s)));
+            this.keys.clear();
+
+            for (String s : root.getKeys(false)) {
+                if (!root.isConfigurationSection(s)) {
+                    if (this.keys.contains(s)) {
+                        continue;
+                    }
+                    this.target.register(s, new ValueSupplier(root.get(s)));
+                    this.keys.add(s);
+                    continue;
+                }
+
+                ConfigurationSection section = root.getConfigurationSection(s);
+
+                assert section != null;
+
+                for (String key2 : section.getKeys(false)) {
+                    String id = s + ":" + key2;
+
+                    if (!this.keys.contains(key2)) {
+                        this.target.register(key2, new ValueSupplier(section.get(key2)));
+                        this.keys.add(key2);
+                    }
+                    if (!this.keys.contains(id)) {
+                        this.target.register(id, new ValueSupplier(section.get(key2)));
+                        this.keys.add(id);
+                    }
+                }
             }
-        } catch (IOException | InvalidConfigurationException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

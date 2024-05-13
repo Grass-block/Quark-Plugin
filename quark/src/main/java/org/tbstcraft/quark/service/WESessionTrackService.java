@@ -12,9 +12,12 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.framework.event.WorldeditSectionUpdateEvent;
+import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.util.api.BukkitUtil;
-import org.tbstcraft.quark.util.Region;
+import org.tbstcraft.quark.util.region.Region;
+import org.tbstcraft.quark.util.region.SimpleRegion;
 import org.tbstcraft.quark.util.container.ObjectContainer;
+import org.tbstcraft.quark.util.region.SimpleRegion;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -39,7 +42,7 @@ public interface WESessionTrackService extends Service {
         INSTANCE.get().updatePoint1(player, loc);
     }
 
-    static Region getRegion(Player p) {
+    static SimpleRegion getRegion(Player p) {
         return INSTANCE.get().getPlayerRegion(p);
     }
 
@@ -55,13 +58,13 @@ public interface WESessionTrackService extends Service {
 
     void updatePoint1(Player player, Location loc);
 
-    Region getPlayerRegion(Player p);
+    SimpleRegion getPlayerRegion(Player p);
 
     void updateRegion(Player p);
 
 
     final class ServiceImplementation implements WESessionTrackService, Listener {
-        private final HashMap<String, Region> sessions = new HashMap<>();
+        private final HashMap<String, SimpleRegion> sessions = new HashMap<>();
 
         @Override
         public void onEnable() {
@@ -86,11 +89,11 @@ public interface WESessionTrackService extends Service {
         }
 
         @Override
-        public Region getPlayerRegion(Player p) {
+        public SimpleRegion getPlayerRegion(Player p) {
             if (sessions.containsKey(p.getName())) {
                 return sessions.get(p.getName());
             }
-            Region r = new Region(
+            SimpleRegion r = new SimpleRegion(
                     p.getWorld(),
                     Integer.MAX_VALUE,
                     Integer.MAX_VALUE,
@@ -105,7 +108,7 @@ public interface WESessionTrackService extends Service {
 
         @Override
         public void updateRegion(Player p) {
-            Region r = sessions.get(p.getName());
+            SimpleRegion r = sessions.get(p.getName());
             if (r == null) {
                 return;
             }

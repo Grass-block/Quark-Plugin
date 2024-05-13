@@ -1,0 +1,18 @@
+#identifier
+name: quark-platform
+version: '1.0.36'
+
+#api
+main: org.tbstcraft.quark.platform.Main
+api-version: 1.18
+folia-supported: true
+load: POSTWORLD
+
+#description
+authors: [ "GrassBlock2022","TBSTMC" ]
+website: https://quark.tbstmc.xyz
+prefix: QuarkPlatform
+description: platform for non-paper based server.
+
+
+

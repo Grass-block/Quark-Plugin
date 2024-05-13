@@ -1,0 +1,7 @@
+config:
+  bungee-connection-protect:
+    accept-delay: 350
+  forge-server-teleportation:
+    hub: false
+    servers:
+      hub: mc.atforever.world

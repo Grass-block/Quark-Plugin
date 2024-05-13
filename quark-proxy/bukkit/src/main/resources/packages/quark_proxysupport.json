@@ -1,0 +1,10 @@
+{
+  "id": "quark-proxysupport",
+  "version": "0.10",
+  "package_namespace": "org.tbstcraft.quark.proxysupport",
+  "modules": {
+    "bungee-connection-protect": ".BungeeConnectionProtect",
+    "proxy-transfer-display": ".ProxyTransferDisplay",
+    "forge-server-teleportation": ".ForgeServerTeleportation"
+  }
+}

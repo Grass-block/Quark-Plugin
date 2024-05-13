@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.security;
 
+import me.gb2022.apm.local.PluginMessenger;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,7 +10,6 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.framework.event.messenging.Messenger;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.EventListener;
@@ -89,7 +89,7 @@ public final class ItemDefender extends PackageModule {
             );
         }
 
-        Messenger.broadcastMapped("item:access", (map) -> map
+        PluginMessenger.broadcastMapped("item:access", (map) -> map
                         .put("player", p.getName())
                         .put("type", b1 ? "illegal" : "warning")
                         .put("item", m.getKey().getKey()));

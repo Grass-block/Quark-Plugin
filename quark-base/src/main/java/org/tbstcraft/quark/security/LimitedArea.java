@@ -14,16 +14,18 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.framework.command.CommandRegistry;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.command.CommandRegistry;
+import org.tbstcraft.quark.command.ModuleCommand;
+import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.services.EventListener;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.service.data.ModuleDataService;
+import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.service.WESessionTrackService;
-import org.tbstcraft.quark.util.Region;
+import org.tbstcraft.quark.util.region.Region;
+import org.tbstcraft.quark.util.region.SimpleRegion;
 import me.gb2022.commons.nbt.NBTTagCompound;
+import org.tbstcraft.quark.util.region.SimpleRegion;
 
 import java.util.*;
 
@@ -31,7 +33,7 @@ import java.util.*;
 @CommandRegistry({LimitedArea.LimitedAreaCommand.class})
 @QuarkModule(version = "1.3.0",recordFormat = {"Time","Player", "World", "X", "Y", "Z", "Region"})
 public final class LimitedArea extends PackageModule {
-    private final HashMap<String, Region> regions = new HashMap<>();
+    private final HashMap<String, SimpleRegion> regions = new HashMap<>();
 
     @Override
     public void enable() {
@@ -48,7 +50,7 @@ public final class LimitedArea extends PackageModule {
         NBTTagCompound tag = ModuleDataService.getEntry(this.getId());
         this.regions.clear();
         for (String s : tag.getTagMap().keySet()) {
-            this.regions.put(s, new Region(tag.getCompoundTag(s)));
+            this.regions.put(s, new SimpleRegion(tag.getCompoundTag(s)));
         }
     }
 
@@ -146,7 +148,7 @@ public final class LimitedArea extends PackageModule {
         );
     }
 
-    public HashMap<String, Region> getRegions() {
+    public HashMap<String, SimpleRegion> getRegions() {
         return regions;
     }
 
@@ -163,7 +165,7 @@ public final class LimitedArea extends PackageModule {
                         this.getLanguage().sendMessageTo(sender, "region_add_failed", arg2);
                         return;
                     }
-                    this.getModule().getRegions().put(arg2, new Region(
+                    this.getModule().getRegions().put(arg2, new SimpleRegion(
                             Bukkit.getWorld(args[2]),
                             Integer.parseInt(args[3]),
                             Integer.parseInt(args[4]),

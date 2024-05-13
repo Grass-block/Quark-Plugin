@@ -1,14 +1,17 @@
 package org.tbstcraft.quark;
 
-import org.tbstcraft.quark.framework.command.internal.InternalCommands;
-import org.tbstcraft.quark.framework.command.internal.core.QuarkPluginCommand;
+import me.gb2022.apm.client.ClientMessenger;
+import me.gb2022.apm.client.backend.MessageBackend;
+import org.tbstcraft.quark.command.internal.InternalCommands;
+import org.tbstcraft.quark.command.internal.core.QuarkPluginCommand;
 import org.tbstcraft.quark.framework.config.Configuration;
 import org.tbstcraft.quark.framework.config.Language;
 import org.tbstcraft.quark.framework.config.Queries;
-import org.tbstcraft.quark.framework.packages.InternalPackages;
+import org.tbstcraft.quark.framework.packages.PackageManager;
+import org.tbstcraft.quark.framework.service.Service;
+import org.tbstcraft.quark.framework.service.ServiceManager;
 import org.tbstcraft.quark.framework.text.TextBuilder;
 import org.tbstcraft.quark.framework.text.TextSender;
-import org.tbstcraft.quark.service.Service;
 import org.tbstcraft.quark.util.DeferredLogger;
 import org.tbstcraft.quark.util.Timer;
 import org.tbstcraft.quark.util.api.APIProfileTest;
@@ -57,9 +60,8 @@ public interface Bootstrap {
         @ContextComponent(order = 1, text = "Bootstrap initialization completed")
         static void bootstrap(Quark instance) throws Exception {
             Quark.LOGGER = new DeferredLogger(instance.getLogger());
-            ProductInfo.METADATA.load(instance.getClass().getResourceAsStream("/metadata.properties"));
+            ProductInfo.METADATA.load(instance.getClass().getResourceAsStream("/product-info.properties"));
 
-            Service.initBase();
             APIProfileTest.test();
             TextSender.initContext();
         }
@@ -95,9 +97,9 @@ public interface Bootstrap {
         @ContextComponent(order = 3, text = "Full JAR loaded")
         static void loadFullJar(Quark instance) {
             if (!APIProfileTest.isArclightBasedServer()) {
-                return;
+               // return;
             }
-            Quark.LOGGER.info("detected mohist/arclight platform, loading full jar...");
+            //Quark.LOGGER.info("detected mohist/arclight platform, loading full jar...");
             try (JarFile jarFile = new JarFile(new File(System.getProperty("user.dir") + "/plugins/quark.jar"))) {
                 Enumeration<JarEntry> entries = jarFile.entries();
 
@@ -133,29 +135,37 @@ public interface Bootstrap {
 
         @ContextComponent(order = 5, text = "Service started")
         static void startService(Quark instance) {
+            Service.initBase();
+            QuarkInternalPackage.register(PackageManager.INSTANCE.get());
+
             Service.init();
             Queries.initialize();
             QuarkPluginCommand.ReloadCommand.ReloadTask.initLoaders();
+
+            ClientMessenger.setBackend(MessageBackend.bukkit(Quark.PLUGIN));
+            ClientMessenger.getBackend().start();
         }
 
         @ContextComponent(order = 6, text = "Internal content registered")
         static void internalContent(Quark instance) {
             InternalCommands.register();
-            InternalPackages.registerAll();
         }
     }
 
     interface StopOperations {
         @ContextComponent(order = 0, text = "Internal contents unregistered.")
         static void unregisterAllPackages(Quark instance) {
-            InternalPackages.unregisterAll();
             InternalCommands.unregister();
         }
 
         @ContextComponent(order = 1, text = "Service stopped.")
         static void stopService(Quark instance) {
+            ServiceManager.unregisterAll();
+
             Service.stop();
             Service.stopBase();
+
+            ClientMessenger.getBackend().stop();
         }
 
         @ContextComponent(order = 2, text = "Context destroyed")

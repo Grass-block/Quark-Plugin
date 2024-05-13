@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.framework.config.Queries;
 import org.tbstcraft.quark.framework.event.BanMessageFetchEvent;
-import org.tbstcraft.quark.service.framework.ModuleManager;
+import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.framework.text.TextBuilder;
 
 import java.util.*;

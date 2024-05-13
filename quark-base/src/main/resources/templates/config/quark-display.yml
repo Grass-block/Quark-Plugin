@@ -90,3 +90,5 @@ config:
       - " {msg#title}"
       - "   %s"
       - "{color(yellow)} ─────────────────────────────────"
+  join-quit-message:
+    proxy: false

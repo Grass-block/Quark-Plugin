@@ -1,0 +1,22 @@
+[remote]
+role = "proxy"
+address = "127.0.0.1"
+port = 25843
+identifier = "example-proxy-server"
+key = '8de92956830ec2f750303e20ac89dc40cb1fd7d170a07a3d5424becf09229b8fb0eb15d772752ff700212265a1b8ab50ce392ed3813fa36fdc6d99cba70799e5'
+
+[sync]
+motd-provider = "lobby"
+motd-update-interval = 1
+sync-kick = true
+
+[server]
+lobby="{color(#AED1C5)}大厅"
+artistic-craft="{color(#CDAED1)}原版生存"
+tbst-craft="{color(#7BCF83)}原版创造"
+tbst-legacy="{color(#ACD3ED)}原版城建"
+tbst-mod="{color(#6CAAB3)}模组城建"
+artistic-guns="{#yellow}模组生存"
+test="测试服务器"
+
+

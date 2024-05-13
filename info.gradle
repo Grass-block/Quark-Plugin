@@ -1,0 +1,37 @@
+import java.text.SimpleDateFormat
+
+project.ext.getModuleProperty = {
+    Properties p2 = new Properties()
+    p2.load(new FileReader(projectDir.getAbsolutePath() + "/src/main/resources/product-info.properties"))
+
+    return p2
+}
+
+
+project.ext.getProductProperty = {
+    var dir = projectDir.getAbsolutePath() + "/src/main/resources/product-info.properties"
+    Properties p = new Properties()
+    p.load(new FileReader(dir))
+    return p
+}
+
+project.ext.getCoreProperty = {
+    Properties p = new Properties()
+    p.load(new FileReader(rootDir.getAbsolutePath() + "/quark/src/main/resources/product-info.properties"))
+
+    return p
+}
+
+processResources {
+    doFirst {
+        filesMatching('**/product-info.properties') {
+            expand 'build_time' : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
+        }
+        filesMatching("**/plugin.yml") {
+            expand([
+                    'version': getProductProperty().getProperty('version'),
+                    'core_version': getCoreProperty().getProperty('version')
+            ])
+        }
+    }
+}

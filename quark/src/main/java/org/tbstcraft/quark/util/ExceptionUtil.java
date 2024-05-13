@@ -11,7 +11,7 @@ public interface ExceptionUtil {
 
     static String getStackTraceMessage(StringBuilder sb, Throwable throwable) {
         for (StackTraceElement element : throwable.getStackTrace()) {
-            sb.append("↘").append(element.toString()).append("\n");
+            sb.append("  ").append(element.toString()).append("\n");
         }
         Throwable cause = throwable.getCause();
         if (cause != null) {

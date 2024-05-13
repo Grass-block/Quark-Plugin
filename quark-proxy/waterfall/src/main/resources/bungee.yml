@@ -1,3 +1,4 @@
 name: quark-proxy
 version: '1.0.0'
 main: org.tbstcraft.quark.proxy.QuarkProxy
+author: "GrassBlock2022, tbstmc"

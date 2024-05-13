@@ -15,16 +15,17 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.framework.command.CommandRegistry;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.command.CommandRegistry;
+import org.tbstcraft.quark.command.ModuleCommand;
+import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.config.Queries;
-import org.tbstcraft.quark.service.data.ModuleDataService;
+import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.EventListener;
 import org.tbstcraft.quark.service.WESessionTrackService;
-import org.tbstcraft.quark.util.Region;
+import org.tbstcraft.quark.util.region.Region;
+import org.tbstcraft.quark.util.region.SimpleRegion;
 
 import java.util.*;
 
@@ -32,7 +33,7 @@ import java.util.*;
 @CommandRegistry({ProtectionArea.ProtectionAreaCommand.class})
 @QuarkModule(version = "1.3.4", recordFormat = {"Time", "Player", "World", "X", "Y", "Z", "Region"})
 public final class ProtectionArea extends PackageModule {
-    private final HashMap<String, Region> regions = new HashMap<>();
+    private final HashMap<String, SimpleRegion> regions = new HashMap<>();
 
     @Override
     public void enable() {
@@ -49,7 +50,7 @@ public final class ProtectionArea extends PackageModule {
         NBTTagCompound tag = ModuleDataService.getEntry(this.getId());
         this.regions.clear();
         for (String s : tag.getTagMap().keySet()) {
-            this.regions.put(s, new Region(tag.getCompoundTag(s)));
+            this.regions.put(s, new SimpleRegion(tag.getCompoundTag(s)));
         }
     }
 
@@ -153,7 +154,7 @@ public final class ProtectionArea extends PackageModule {
         }
     }
 
-    public HashMap<String, Region> getRegions() {
+    public HashMap<String, SimpleRegion> getRegions() {
         return regions;
     }
 
@@ -165,7 +166,7 @@ public final class ProtectionArea extends PackageModule {
             String operation = args[0];
             if (Objects.equals(operation, "list")) {
                 this.getLanguage().sendMessageTo(sender, "region_list");
-                Map<String, Region> map = this.getModule().getRegions();
+                Map<String, SimpleRegion> map = this.getModule().getRegions();
                 for (String s : map.keySet()) {
                     sender.sendMessage(Queries.GLOBAL_TEMPLATE_ENGINE.handle("{#gold}%s {#gray}-> {#white}%s".formatted(s, map.get(s).toString())));
                 }
@@ -178,7 +179,7 @@ public final class ProtectionArea extends PackageModule {
                     this.getLanguage().sendMessageTo(sender, "region_add_failed", arg2);
                     return;
                 }
-                this.getModule().getRegions().put(arg2, new Region(Bukkit.getWorld(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]), Integer.parseInt(args[8])));
+                this.getModule().getRegions().put(arg2, new SimpleRegion(Bukkit.getWorld(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]), Integer.parseInt(args[8])));
                 this.getLanguage().sendMessageTo(sender, "region_add", arg2);
                 this.getModule().saveRegions();
                 return;

@@ -1,6 +1,5 @@
 package org.tbstcraft.quark.security;
 
-import io.papermc.paper.event.block.BlockBreakBlockEvent;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,15 +12,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.framework.command.CommandRegistry;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.command.CommandRegistry;
+import org.tbstcraft.quark.command.ModuleCommand;
+import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.config.Queries;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.EventListener;
-import org.tbstcraft.quark.service.data.ModuleDataService;
-import org.tbstcraft.quark.util.Region;
+import org.tbstcraft.quark.internal.data.ModuleDataService;
+import org.tbstcraft.quark.util.region.SimpleRegion;
+import org.tbstcraft.quark.util.region.SimpleRegion;
 
 import java.util.*;
 
@@ -29,7 +29,7 @@ import java.util.*;
 @CommandRegistry(ExplosionDefender.ExplosionWhitelistCommand.class)
 @QuarkModule(version = "1.3.3", recordFormat = {"Time", "World", "X", "Y", "Z", "Type"})
 public final class ExplosionDefender extends PackageModule {
-    private final HashMap<String, Region> whiteListedRegions = new HashMap<>();
+    private final HashMap<String, SimpleRegion> whiteListedRegions = new HashMap<>();
 
     @Override
     public void enable() {
@@ -46,7 +46,7 @@ public final class ExplosionDefender extends PackageModule {
         NBTTagCompound tag = ModuleDataService.getEntry(this.getId());
         this.whiteListedRegions.clear();
         for (String s : tag.getTagMap().keySet()) {
-            this.whiteListedRegions.put(s, new Region(tag.getCompoundTag(s)));
+            this.whiteListedRegions.put(s, new SimpleRegion(tag.getCompoundTag(s)));
         }
     }
 
@@ -58,12 +58,12 @@ public final class ExplosionDefender extends PackageModule {
         ModuleDataService.save(this.getId());
     }
 
-    public HashMap<String, Region> getWhiteListedRegions() {
+    public HashMap<String, SimpleRegion> getWhiteListedRegions() {
         return whiteListedRegions;
     }
 
     public boolean matchRegion(Location loc) {
-        for (Region s : this.whiteListedRegions.values()) {
+        for (SimpleRegion s : this.whiteListedRegions.values()) {
             if (s.inBound(loc)) {
                 return true;
             }
@@ -125,7 +125,7 @@ public final class ExplosionDefender extends PackageModule {
             String operation = args[0];
             if (Objects.equals(operation, "list")) {
                 this.getLanguage().sendMessageTo(sender, "region-list");
-                Map<String, Region> map = this.getModule().getWhiteListedRegions();
+                Map<String, SimpleRegion> map = this.getModule().getWhiteListedRegions();
                 for (String s : map.keySet()) {
                     sender.sendMessage(Queries.GLOBAL_TEMPLATE_ENGINE.handle("{#gold}%s {#gray}-> {#white}%s".formatted(s, map.get(s).toString())));
                 }
@@ -138,7 +138,7 @@ public final class ExplosionDefender extends PackageModule {
                     this.getLanguage().sendMessageTo(sender, "region-add-failed", arg2);
                     return;
                 }
-                this.getModule().getWhiteListedRegions().put(arg2, new Region(Bukkit.getWorld(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]), Integer.parseInt(args[8])));
+                this.getModule().getWhiteListedRegions().put(arg2, new SimpleRegion(Bukkit.getWorld(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]), Integer.parseInt(args[8])));
                 this.getLanguage().sendMessageTo(sender, "region-add", arg2);
                 this.getModule().saveRegions();
                 return;

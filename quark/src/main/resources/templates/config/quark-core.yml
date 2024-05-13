@@ -1,15 +1,26 @@
 config:
-  default-status:
-    module: true
-    package: true
-  http-server:
-    host: 127.0.0.1
-    port: 8125
-    backlog: 10
   task:
     async: true
     threads: 16
-  mail-service:
-    smtp-server: 'smtp.example.com:25'
-    smtp-user-name: 'example@example.com'
-    smtp-password: ''
+  default-status:
+    module: true
+    package: true
+  disabled-service:
+    - http-service
+    - remote-message-service
+  smtp-service:
+    server: smtp.example.com:25
+    username: example@example.com
+    password: example-password
+  http-service:
+    host: 127.0.0.1
+    port: 8125
+    backlog: 10
+    threads: 3
+  remote-message-service:
+    identifier: quark-example-remote-identifier
+    proxy: false
+    host: example.com
+    port: 23584
+    key: 8de92956830ec2f750303e20ac89dc40cb1fd7d170a07a3d5424becf09229b8fb0eb15d772752ff700212265a1b8ab50ce392ed3813fa36fdc6d99cba70799e5
+

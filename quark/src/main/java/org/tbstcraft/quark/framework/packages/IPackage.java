@@ -9,7 +9,8 @@ import org.tbstcraft.quark.framework.config.Configuration;
 import org.tbstcraft.quark.framework.config.Language;
 import org.tbstcraft.quark.framework.module.providing.ModuleRegistry;
 import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.service.framework.ModuleManager;
+import org.tbstcraft.quark.framework.module.ModuleManager;
+import org.tbstcraft.quark.framework.service.providing.ServiceRegistry;
 import org.tbstcraft.quark.util.ExceptionUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -75,7 +76,9 @@ public interface IPackage {
 
     void onDisable();
 
-    ModuleRegistry getRegistry();
+    ModuleRegistry getModuleRegistry();
+
+    ServiceRegistry getServiceRegistry();
 
     FeatureAvailability getAvailability();
 

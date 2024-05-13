@@ -11,7 +11,7 @@ import io.wdsj.asg.libs.packetevents.impl.wrapper.play.server.WrapperPlayServerR
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.module.PackageModule;
 import org.tbstcraft.quark.module.QuarkModule;
-import org.tbstcraft.quark.service.framework.ProductService;
+import org.tbstcraft.quark.framework.service.base.ProductService;
 
 
 @QuarkModule(version = "1.0.0")

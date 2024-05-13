@@ -73,8 +73,13 @@ config:
         output: "minecraft:quartz*4"
         requirements:
           - "minecraft:quartz_block"
-  midi-node-block-player:
+  music-player:
+    ui: "{#white}{msg#playing} {#yellow}: {#aqua}{name} {#yellow}|{#white} {time}{#gray} / {#white}{total}"
+    remote: false
+    cdn-server: lobby
     pitch-offsets:
-      "avicii-Waiting_For_Love.mid": -4
-      "Beyond-海阔天空.mid": 6
       "Kiss_The_Rain.mid": -12
+  realistic-sleep:
+    scale-per-player: 3.5
+    health-interval: 20
+    health-amount: 1

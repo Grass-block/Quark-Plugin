@@ -4,7 +4,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
-import org.tbstcraft.quark.service.CacheService;
+import org.tbstcraft.quark.internal.CacheService;
 import org.tbstcraft.quark.util.api.BukkitUtil;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 

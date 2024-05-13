@@ -1,0 +1,8 @@
+{
+  "id": "quark-clientsupport",
+  "version": "0.12",
+  "package_namespace": "org.tbstcraft.quark.clientsupport",
+  "modules": {
+    "player-protocol-display": ".PlayerProtocolDisplay"
+  }
+}

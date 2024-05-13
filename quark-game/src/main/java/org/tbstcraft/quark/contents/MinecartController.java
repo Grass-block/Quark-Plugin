@@ -13,7 +13,7 @@ import org.tbstcraft.quark.framework.config.Language;
 import org.tbstcraft.quark.framework.module.services.EventListener;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.service.task.TaskService;
+import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.api.BukkitUtil;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 
@@ -89,14 +89,14 @@ public final class MinecartController extends PackageModule {
         }
 
         int thrustLevel = p.getInventory().getHeldItemSlot() - 4;
-        double acceleration = getConfig().getDouble("thrust_" + thrustLevel + "_acceleration");
+        double acceleration = getConfig().getDouble("thrust-" + thrustLevel + "-acceleration");
 
         double speed;
         speed = minecart.getMaxSpeed();
 
         speed += acceleration / 10f;
-        if (speed > getConfig().getDouble("max_speed")) {
-            speed = getConfig().getDouble("max_speed");
+        if (speed > getConfig().getDouble("max-speed")) {
+            speed = getConfig().getDouble("max-speed");
         }
         if (speed < 0) {
             speed = 0;
@@ -122,19 +122,19 @@ public final class MinecartController extends PackageModule {
         String ui = this.getLanguage().buildUI(this.getConfig(), "ui", locale, (s) -> {
                     String s2;
                     if (thrustLevel > 0) {
-                        s2 = this.getLanguage().getMessage(locale, "run_mode_boost");
+                        s2 = this.getLanguage().getMessage(locale, "run-mode-boost");
                     } else if (thrustLevel == 0) {
-                        s2 = this.getLanguage().getMessage(locale, "run_mode_run");
+                        s2 = this.getLanguage().getMessage(locale, "run-mode-run");
                     } else {
                         s2 = this.getLanguage().getMessage(locale, "run_mode_break");
                     }
                     if (speed == 0) {
-                        s2 = this.getLanguage().getMessage(locale, "run_mode_stop");
+                        s2 = this.getLanguage().getMessage(locale, "run-mode-stop");
                     }
-                    if (speed == getConfig().getDouble("max_speed")) {
-                        s2 = this.getLanguage().getMessage(locale, "run_mode_run");
+                    if (speed == getConfig().getDouble("max-speed")) {
+                        s2 = this.getLanguage().getMessage(locale, "run-mode-run");
                     }
-                    return s.replace("{run_mode}", s2);
+                    return s.replace("{run-mode}", s2);
                 }).replace("{speed}", speedColumn)
                 .replace("{acceleration}", accelerationColumn)
                 .replace("{level}", thrustLevelColumn);

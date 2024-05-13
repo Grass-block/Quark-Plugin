@@ -21,7 +21,7 @@ public class ChunkLoader {
     public static final class ChunkLoaderBlock extends CustomBlock {
 
         public ChunkLoaderBlock() {
-            super(displayName);
+            super(null);
         }
 
         @Override

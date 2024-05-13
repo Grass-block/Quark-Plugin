@@ -217,7 +217,8 @@ public interface Language {
                 YamlUtil.loadUTF8(config, new FileInputStream(file));
                 this.sections.put(BukkitUtil.fixLocaleId(id), config);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                this.restore();
+                this.load(id, srcDir, fileDir);
             }
         }
 

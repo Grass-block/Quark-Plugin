@@ -1,20 +1,19 @@
 global-vars:
-  info:
-    name: '{#purple}Quark example server'
+  server:
+    server-name: '{#purple}Quark example server'
     website: 'https://quark.tbstmc.xyz'
   contact:
     qq-invite-link: https://qm.qq.com/cgi-bin/qm/qr?-wv=1027&k=Ac0aa6hRRS-tQg13ejKX0T9ju5bvBYNW&group-code=733345889
     qq-group: 733345889
+  documents:
     wiki: https://wiki.tbstmc.xyz
-  terms:
     tos: https://wiki.tbstmc.xyz/#/server/rule/tems-of-service
     pp: https://wiki.tbstmc.xyz/#/server/rule/privacy-policy
-
-  var: '{#white}%s{#gray}'
-
-  var0: '{#white}{0}{#gray}'
-  var1: '{#white}{1}{#gray}'
-  var2: '{#white}{2}{#gray}'
-  var3: '{#white}{3}{#gray}'
-  var4: '{#white}{4}{#gray}'
-  var5: '{#white}{5}{#gray}'
+  format:
+    var: '{#white}%s{#gray}'
+    var0: '{#white}{0}{#gray}'
+    var1: '{#white}{1}{#gray}'
+    var2: '{#white}{2}{#gray}'
+    var3: '{#white}{3}{#gray}'
+    var4: '{#white}{4}{#gray}'
+    var5: '{#white}{5}{#gray}'

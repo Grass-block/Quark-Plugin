@@ -1,6 +1,6 @@
 #identifier
 name: quark-game
-version: '1.8.2'
+version: '${version}-${core_version}'
 
 #api
 main: org.tbstcraft.quark.QuarkGame

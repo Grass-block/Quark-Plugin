@@ -12,6 +12,7 @@
     "tpa": ".TPA",
     "waypoint": ".Waypoint",
     "elytra-aeronautics": ".ElytraAeronautics",
-    "midi-node-block-player": ".MidiNodeBlockPlayer"
+    "music-player": ".MusicPlayer",
+    "realistic-sleep": ".RealisticSleep"
   }
 }

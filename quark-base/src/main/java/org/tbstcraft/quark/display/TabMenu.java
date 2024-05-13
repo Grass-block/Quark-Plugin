@@ -8,7 +8,7 @@ import org.tbstcraft.quark.framework.config.Language;
 import org.tbstcraft.quark.framework.module.services.EventListener;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.service.task.TaskService;
+import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.api.BukkitUtil;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 

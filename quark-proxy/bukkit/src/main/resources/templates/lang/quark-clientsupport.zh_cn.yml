@@ -1,0 +1,3 @@
+language:
+  player-protocol-display:
+    protocol-init: '{global#sys-success}您当前的客户端已经成功与Quark完成交互协议初始化。'

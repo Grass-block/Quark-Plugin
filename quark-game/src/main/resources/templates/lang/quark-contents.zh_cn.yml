@@ -44,8 +44,17 @@ language:
     chat-postfix: '喵~'
     to: '{global#sys-operation}已将 {#var} 变成猫娘。'
     back: '{global#sys-operation}已将 {#var} 变回人类。'
-  midi-node-block-player:
-    play: "{global#sys-info}正在播放 {#var} (修正值:{#var})"
-    not-found: '{global#sys-error}无法找到指定的midi文件 {#var}。'
-    interrupt: '{global#sys-info}已终止当前播放进程。'
-    interrupt-hint: '{global#sys-error}请等待当前播放结束，或使用 {#gold}/midi stop{#gray} 中断当前播放。'
+  music-player:
+    playing: "正在播放"
+    paused: "暂停"
+    play: "{global#sys-info}玩家{#var}播放了音乐{#var}(修正值:{#var})"
+    pause: "{global#sys-info}玩家{#var}已{#yellow}暂停{#gray}当前播放。"
+    resume: "{global#sys-info}玩家{#var}已{#blue}恢复{#gray}当前播放。"
+    cancel: "{global#sys-info}玩家{#var}已{#red}取消{#gray}当前播放。"
+    not-found: "{global#sys-error}无法找到指定的文件 {#var}。"
+    error-resolving: "{global#sys-error}无法解析指定的文件 {#var}。"
+    unsupported-format: "{global#sys-error}不支持的文件 {#var}。"
+    timeout: "{global#sys-error}无法从内容服务器下载文件 {#var}。"
+  realistic-sleep:
+    sleep-day: '{global#sys-info}你正在非正常睡觉时间睡觉，请使用 {#gold}/leave-bed{#gray} 或者 {click(command,/leave-bed)}{#white}[{#green}点击此处{#white}]{reset}{#gray}来离开床。'
+    leave-bed: '{global#sys-info}你已离开床。你可以随时再次睡觉。'

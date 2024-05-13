@@ -13,7 +13,8 @@ public class QuarkProxy extends MultiPackageProvider {
     public Set<PackageInitializer> createInitializers() {
         return Set.of(
                 new JsonPackageInitializer(FeatureAvailability.PREMIUM,"/packages/quark_proxysupport.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM,"/packages/quark_lobby.json")
+                new JsonPackageInitializer(FeatureAvailability.DEMO_AVAILABLE,"/packages/quark_lobby.json"),
+                new JsonPackageInitializer(FeatureAvailability.PREMIUM,"/packages/quark_clientsupport.json")
         );
     }
 }

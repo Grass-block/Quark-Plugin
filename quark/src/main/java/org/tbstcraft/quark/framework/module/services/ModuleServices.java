@@ -1,13 +1,17 @@
 package org.tbstcraft.quark.framework.module.services;
 
-import org.tbstcraft.quark.framework.command.AbstractCommand;
-import org.tbstcraft.quark.framework.command.CommandManager;
-import org.tbstcraft.quark.framework.command.CommandRegistry;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
+import me.gb2022.apm.client.ClientMessenger;
+import me.gb2022.apm.local.PluginMessenger;
+import me.gb2022.commons.reflect.Annotations;
+import org.tbstcraft.quark.command.AbstractCommand;
+import org.tbstcraft.quark.command.CommandManager;
+import org.tbstcraft.quark.command.CommandRegistry;
+import org.tbstcraft.quark.command.ModuleCommand;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
+import org.tbstcraft.quark.service.network.RemoteMessageService;
 import org.tbstcraft.quark.util.api.APIProfile;
 import org.tbstcraft.quark.util.api.APIProfileTest;
 import org.tbstcraft.quark.util.api.BukkitUtil;
@@ -18,7 +22,22 @@ public interface ModuleServices {
     static void init(AbstractModule module) {
         initCompatContainers(module);
         initCommands(module);
-        initEventListeners(module);
+        if(Annotations.hasAnnotation(module, EventListener.class)){
+            BukkitUtil.registerEventListener(module);
+            for (CompatContainer<?> container : module.getCompatContainers().values()) {
+                BukkitUtil.registerEventListener(container);
+            }
+        }
+
+        if(Annotations.hasAnnotation(module, PluginMessageListener.class)){
+            PluginMessenger.EVENT_BUS.registerEventListener(module);
+        }
+        if(Annotations.hasAnnotation(module, ClientMessageListener.class)){
+            ClientMessenger.EVENT_BUS.registerEventListener(module);
+        }
+        if(Annotations.hasAnnotation(module, RemoteMessageListener.class)){
+            RemoteMessageService.getInstance().addMessageHandler(module);
+        }
     }
 
     static void initCompatContainers(AbstractModule module) {
@@ -78,16 +97,6 @@ public interface ModuleServices {
         }
     }
 
-    static void initEventListeners(AbstractModule module) {
-        if (module.getClass().getDeclaredAnnotation(EventListener.class) == null) {
-            return;
-        }
-        BukkitUtil.registerEventListener(module);
-        for (CompatContainer<?> container : module.getCompatContainers().values()) {
-            BukkitUtil.registerEventListener(container);
-        }
-    }
-
     static void disable(AbstractModule module) {
         if (module.getClass().getDeclaredAnnotation(EventListener.class) != null) {
             BukkitUtil.unregisterEventListener(module);
@@ -99,6 +108,16 @@ public interface ModuleServices {
             for (AbstractCommand cmd : module.getCommands()) {
                 CommandManager.unregisterCommand(cmd);
             }
+        }
+
+        if(Annotations.hasAnnotation(module, PluginMessageListener.class)){
+            PluginMessenger.EVENT_BUS.unregisterEventListener(module);
+        }
+        if(Annotations.hasAnnotation(module, ClientMessageListener.class)){
+            ClientMessenger.EVENT_BUS.unregisterEventListener(module);
+        }
+        if(Annotations.hasAnnotation(module, RemoteMessageListener.class)){
+            RemoteMessageService.getInstance().removeMessageHandler(module);
         }
     }
 }

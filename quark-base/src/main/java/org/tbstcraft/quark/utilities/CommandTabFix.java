@@ -1,15 +1,19 @@
 package org.tbstcraft.quark.utilities;
 
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.TabCompleteEvent;
-import org.tbstcraft.quark.framework.command.CommandManager;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.command.CommandManager;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.service.task.TaskService;
+import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.service.base.task.TaskService;
+import org.tbstcraft.quark.util.FilePath;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @QuarkModule(version = "1.2.0")
 @EventListener
@@ -38,16 +42,35 @@ public final class CommandTabFix extends PackageModule {
             }
             event.setCompletions(match);
         }
-        /*
-        if (!event.getBuffer().startsWith("reload") && !event.getBuffer().startsWith("/reload")) {
-            return;
+
+        //todo: 用不了
+        //System.out.println(event.getBuffer());
+
+        if (event.getBuffer().startsWith("reload") || event.getBuffer().startsWith("/reload")) {
+            if (!event.getCompletions().contains("confirm")) {
+                List<String> list = new ArrayList<>(event.getCompletions());
+                list.add("confirm");
+                event.setCompletions(list);
+            }
         }
-        if (event.getCompletions().contains("confirm")) {
-            return;
+
+        if (event.getBuffer().startsWith("/schem") || event.getBuffer().startsWith("//schem")) {
+            if(Objects.equals(lastArg, "load") || Objects.equals(lastArg, "delete")){
+                List<String> list = new ArrayList<>(event.getCompletions());
+
+                File folder= new File(FilePath.pluginsFolder() + "/WorldEdit/schematics");
+
+                for (File f: Objects.requireNonNull(folder.listFiles())){
+                    list.add(f.getName());
+                }
+
+                event.setCompletions(list);
+            }
         }
-        List<String> list = new ArrayList<>(event.getCompletions());
-        list.add("confirm");
-        event.setCompletions(list);
-         */
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        CommandManager.syncCommands();
     }
 }

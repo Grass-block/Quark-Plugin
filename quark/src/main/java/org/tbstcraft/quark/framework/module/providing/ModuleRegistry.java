@@ -2,7 +2,7 @@ package org.tbstcraft.quark.framework.module.providing;
 
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.packages.IPackage;
-import org.tbstcraft.quark.service.framework.ModuleManager;
+import org.tbstcraft.quark.framework.module.ModuleManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,7 +23,7 @@ public abstract class ModuleRegistry {
         for (AbstractModule module : this.modules) {
             try {
                 if (!module.getAvailability().load()) {
-                    return;
+                    continue;
                 }
                 moduleManager.register(module, this.pkg.getLogger());
             } catch (Exception e) {
@@ -37,7 +37,7 @@ public abstract class ModuleRegistry {
         for (AbstractModule module : this.modules) {
             try {
                 if (!module.getAvailability().load()) {
-                    return;
+                    continue;
                 }
                 moduleManager.unregister(module.getFullId(), this.pkg.getLogger());
             } catch (Exception e) {

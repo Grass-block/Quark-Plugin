@@ -1,5 +1,9 @@
 package org.tbstcraft.quark.contents;
 
+import com.google.gson.JsonArray;
+import me.gb2022.apm.client.ClientMessenger;
+import me.gb2022.apm.client.event.ClientRequestEvent;
+import me.gb2022.apm.client.event.driver.ClientEventHandler;
 import me.gb2022.commons.nbt.NBTBase;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.Bukkit;
@@ -10,15 +14,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.tbstcraft.quark.framework.command.CommandManager;
-import org.tbstcraft.quark.framework.command.CommandRegistry;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.command.CommandManager;
+import org.tbstcraft.quark.command.CommandRegistry;
+import org.tbstcraft.quark.command.ModuleCommand;
+import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ClientMessageListener;
 import org.tbstcraft.quark.framework.module.services.EventListener;
-import org.tbstcraft.quark.service.data.ModuleDataService;
-import org.tbstcraft.quark.service.data.PlayerDataService;
+import org.tbstcraft.quark.internal.data.ModuleDataService;
+import org.tbstcraft.quark.internal.data.PlayerDataService;
 import org.tbstcraft.quark.util.BukkitSound;
 import org.tbstcraft.quark.util.api.APIProfile;
 import org.tbstcraft.quark.util.api.BukkitCodec;
@@ -33,29 +38,63 @@ import java.util.Objects;
 @QuarkModule(version = "2.0.3", compatBlackList = {APIProfile.ARCLIGHT})
 @CommandRegistry({Waypoint.WaypointCommand.class})
 @EventListener
+@ClientMessageListener
 public final class Waypoint extends CommandModule {
     private final Map<String, Location> deathPoints = new HashMap<>();
 
+    @ClientEventHandler("/quark/waypoint/list-private")
+    public void onWaypointFetchPrivate(ClientRequestEvent event) {
+        JsonArray array = new JsonArray();
+
+        NBTTagCompound entry = PlayerDataService.getEntry(event.getPlayer(), this.getId());
+
+        for (String s : entry.getTagMap().keySet()) {
+            array.add(s);
+        }
+        event.makeResponse(array);
+    }
+
+    @ClientEventHandler("/quark/waypoint/list")
+    public void onWaypointFetch(ClientRequestEvent event) {
+        JsonArray array = new JsonArray();
+        NBTTagCompound entry = ModuleDataService.getEntry(this.getId());
+        for (String s : entry.getTagMap().keySet()) {
+            array.add(s);
+        }
+        event.makeResponse(array);
+    }
+
+
     @Override
     public void enable() {
-        if(this.getConfig().getBoolean("home")){
+        if (this.getConfig().getBoolean("home")) {
             CommandManager.registerCommand(new SetHomeCommand(this));
             CommandManager.registerCommand(new WarpHomeCommand(this));
         }
-        if(this.getConfig().getBoolean("back-to-death")){
+        if (this.getConfig().getBoolean("back-to-death")) {
             CommandManager.registerCommand(new BackToDeathCommand(this));
         }
     }
 
     @Override
     public void disable() {
-        if(this.getConfig().getBoolean("home")){
+        if (this.getConfig().getBoolean("home")) {
             CommandManager.unregisterCommand("sethome");
             CommandManager.unregisterCommand("home");
         }
-        if(this.getConfig().getBoolean("back-to-death")){
+        if (this.getConfig().getBoolean("back-to-death")) {
             CommandManager.unregisterCommand("back");
         }
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent event) {
+        this.getLanguage().sendMessageTo(event.getPlayer(), "back-hint");
+    }
+
+    @EventHandler
+    public void onPlayerDie(PlayerDeathEvent event) {
+        this.deathPoints.put(event.getPlayer().getName(), event.getPlayer().getLocation());
     }
 
     @QuarkCommand(name = "waypoint", playerOnly = true, permission = "+quark.waypoint.command")
@@ -247,8 +286,8 @@ public final class Waypoint extends CommandModule {
         }
     }
 
-    @QuarkCommand(name = "back",playerOnly = true,permission = "+quark.waypoint.back")
-    public static final class BackToDeathCommand extends ModuleCommand<Waypoint>{
+    @QuarkCommand(name = "back", playerOnly = true, permission = "+quark.waypoint.back")
+    public static final class BackToDeathCommand extends ModuleCommand<Waypoint> {
         public BackToDeathCommand(Waypoint waypoint) {
             super(waypoint);
         }
@@ -259,19 +298,9 @@ public final class Waypoint extends CommandModule {
                 this.getLanguage().sendMessageTo(sender, "back-not-set");
                 return;
             }
-            PlayerUtil.teleport(((Player) sender),this.getModule().deathPoints.get(sender.getName()));
+            PlayerUtil.teleport(((Player) sender), this.getModule().deathPoints.get(sender.getName()));
             this.getLanguage().sendMessageTo(sender, "back-tp-success");
             BukkitSound.WARP.play(((Player) sender));
         }
-    }
-
-    @EventHandler
-    public void onRespawn(PlayerRespawnEvent event){
-        this.getLanguage().sendMessageTo(event.getPlayer(),"back-hint");
-    }
-
-    @EventHandler
-    public void onPlayerDie(PlayerDeathEvent event) {
-        this.deathPoints.put(event.getPlayer().getName(), event.getPlayer().getLocation());
     }
 }

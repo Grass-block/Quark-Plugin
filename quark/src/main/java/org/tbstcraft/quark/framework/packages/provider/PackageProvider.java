@@ -29,10 +29,14 @@ public interface PackageProvider {
 
     default boolean isCoreExist(){
         Logger logger = this.getLogger();
-        if (!Quark.isCoreUnavailable()) {
+
+        try {
+            Class.forName("org.tbstcraft.quark.Quark");
+        } catch (ClassNotFoundException e) {
             logger.severe("cannot detect running quark core. consider reload your server.");
             return false;
         }
+
         return true;
     }
 

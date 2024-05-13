@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 apply from: "E:/Java/GradleScripts/build-base.gradle"
 
 applyGlobalScript("Publish/MinecraftServerTest.gradle")
@@ -5,22 +7,12 @@ applyGlobalScript("Publish/ProjectOutput.gradle")
 applyGlobalScript("Repo/MinecraftPlugins.gradle")
 applyGlobalScript("Dependencies.gradle")
 
-repositories {
-    maven {
-        name = "dmulloy2-repo"
-        url = "https://repo.dmulloy2.net/repository/public/"
-    }
-}
-
 tasks.named('build').get().dependsOn(':quark:build')
 
 //quark libraries
 dependencies {
     compileOnly 'org.jetbrains:annotations:24.0.0'
     compileOnly 'net.kyori:adventure-api:4.11.0'
-
-    //compileOnly 'com.comphenix.protocol:ProtocolLib:5.1.0'
-    //compileOnly localStorage('io.wdsj.asg')
 }
 
 //api
@@ -31,6 +23,13 @@ dependencies {
 
     compileOnly localStorage("me.gb2022.commons-nbt")
     compileOnly localStorage("me.gb2022.commons-math")
+    compileOnly localStorage("me.gb2022.commons-container")
+
+    compileOnly localStorage('me.gb2022.apm-plugin')
+    compileOnly localStorage('me.gb2022.apm-remote')
+    compileOnly localStorage('me.gb2022.apm-client')
 }
 
 version = ''
+
+apply from: rootDir.getAbsolutePath()+"/info.gradle"

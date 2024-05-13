@@ -6,8 +6,8 @@ import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.util.ExceptionUtil;
 import org.tbstcraft.quark.util.FilePath;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,33 +15,40 @@ import java.lang.reflect.Field;
 import java.net.URLClassLoader;
 import java.util.*;
 
+@SuppressWarnings({"removal"})
 public interface BukkitPluginManager {
     HashMap<String, String> CACHE = new HashMap<>();
+    ObjectContainer<Quark> INSTANCE_CACHE = new ObjectContainer<>();
 
-    static boolean load(String file) {
+    static Plugin load(String file) {
         try {
             File f = new File(System.getProperty("user.dir") + "/plugins/" + file);
             Plugin p;
             try {
                 unload(BukkitUtil.getPluginDescription(f).getName());
-                p = Bukkit.getPluginManager().loadPlugin(f);
+
+                if (APIProfileTest.isArclightBasedServer()) {
+                    p = INSTANCE_CACHE.get().getPluginLoader().loadPlugin(f);
+                } else {
+                    p = Bukkit.getPluginManager().loadPlugin(f);
+                }
+
             } catch (InvalidPluginException | InvalidDescriptionException e) {
                 Quark.LOGGER.severe(e.getMessage());
-                return false;
+                return null;
             }
             if (p == null) {
-                return false;
+                return null;
             }
             if (Bukkit.getPluginManager().isPluginEnabled(p.getName())) {
-                return false;
+                return null;
             }
             p.onLoad();
             Bukkit.getPluginManager().enablePlugin(p);
-
-        }catch (Exception e){
-            e.printStackTrace();
+            return p;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return true;
     }
 
     static boolean unload(String id) {
@@ -114,9 +121,9 @@ public interface BukkitPluginManager {
         }
     }
 
-    static void reload(String id) {
+    static Plugin reload(String id) {
         unload(id);
-        load(Objects.requireNonNull(getPluginJar(id)).getName());
+        return load(Objects.requireNonNull(getPluginJar(id)).getName());
     }
 
     static File getPluginJar(String id) {

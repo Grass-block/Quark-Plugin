@@ -6,10 +6,10 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.service.data.ModuleDataService;
+import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.util.FilePath;
 import org.tbstcraft.quark.util.api.APIProfile;
 
@@ -19,9 +19,10 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
 
-@QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT, APIProfile.SPIGOT})
+@QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT, APIProfile.SPIGOT, APIProfile.ARCLIGHT})
 @QuarkCommand(name = "log-format", permission = "quark.log-format")
 public final class CustomLogFormat extends CommandModule {
     @Override

@@ -8,4 +8,11 @@ public interface Utility {
         return hours + "h " + minutes + "m "
                 + seconds + "s ";
     }
+
+    static String formatDuringShort(long mss) {
+        long minutes = (mss / (1000 * 60));
+        long seconds = (mss % (1000 * 60)) / 1000;
+        return minutes + ":"
+                + seconds;
+    }
 }

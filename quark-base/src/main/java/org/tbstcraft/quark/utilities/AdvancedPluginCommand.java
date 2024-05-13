@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.PluginsCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.config.Language;
 import org.tbstcraft.quark.framework.config.LanguageEntry;
 import org.tbstcraft.quark.framework.module.CommandModule;
@@ -15,7 +15,9 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.util.api.BukkitPluginManager;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 @QuarkCommand(name = "plugins", op = true)
 @QuarkModule(version = "1.1.0")
@@ -66,12 +68,12 @@ public final class AdvancedPluginCommand extends CommandModule {
     }
 
 
-    private void disablePlugin(CommandSender sender,String name){
+    private void disablePlugin(CommandSender sender, String name) {
         Bukkit.getPluginManager().disablePlugin(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin(name)));
         this.getLanguage().sendMessageTo(sender, "disable", name);
     }
 
-    private void enablePlugin(CommandSender sender,String name){
+    private void enablePlugin(CommandSender sender, String name) {
         Bukkit.getPluginManager().enablePlugin(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin(name)));
         this.getLanguage().sendMessageTo(sender, "enable", name);
     }
@@ -86,7 +88,7 @@ public final class AdvancedPluginCommand extends CommandModule {
     }
 
     private void loadPlugin(CommandSender sender, String name) {
-        if (BukkitPluginManager.load(name)) {
+        if (BukkitPluginManager.load(name) == null) {
             this.getLanguage().sendMessageTo(sender, "enable", name);
             return;
         }
@@ -102,7 +104,6 @@ public final class AdvancedPluginCommand extends CommandModule {
         BukkitPluginManager.reload(name);
         this.getLanguage().sendMessageTo(sender, "reload", name);
     }
-
 
 
     @Override

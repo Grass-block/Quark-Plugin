@@ -1,0 +1,8 @@
+config:
+  player-protect:
+    lowest-y: 70
+  server-transfer_message:
+    name-mapping:
+      tbst-legacy: '{color(#6386cd)}原版城建{none}'
+      tbst: '{color(#7bcf83)}原版创造{none}'
+      survival: '{color(#bc84e2)}原版生存{none}'

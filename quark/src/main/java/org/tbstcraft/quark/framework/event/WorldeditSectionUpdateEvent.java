@@ -2,14 +2,14 @@ package org.tbstcraft.quark.framework.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.tbstcraft.quark.util.Region;
+import org.tbstcraft.quark.util.region.SimpleRegion;
 
-@QuarkEvent
+@QuarkEvent(async = false)
 public class WorldeditSectionUpdateEvent extends CustomEvent {
     private final Player player;
-    private final Region region;
+    private final SimpleRegion region;
 
-    public WorldeditSectionUpdateEvent(Player player, Region region) {
+    public WorldeditSectionUpdateEvent(Player player, SimpleRegion region) {
         this.player = player;
         this.region = region;
     }
@@ -19,7 +19,7 @@ public class WorldeditSectionUpdateEvent extends CustomEvent {
         return getHandlerList(WorldeditSectionUpdateEvent.class);
     }
 
-    public Region getRegion() {
+    public SimpleRegion getRegion() {
         return region;
     }
 

@@ -3,8 +3,8 @@ package org.tbstcraft.quark;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.tbstcraft.quark.framework.config.Configuration;
 import org.tbstcraft.quark.framework.config.Language;
-import org.tbstcraft.quark.framework.packages.InternalPackages;
 import org.tbstcraft.quark.util.Timer;
+import org.tbstcraft.quark.util.api.BukkitPluginManager;
 
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -27,6 +27,7 @@ public final class Quark extends JavaPlugin {
     @Override
     public void onEnable() {
         PLUGIN = this;
+        BukkitPluginManager.INSTANCE_CACHE.set(this);
 
         this.instanceId = UUID.randomUUID().toString();
         try {
@@ -50,7 +51,6 @@ public final class Quark extends JavaPlugin {
         Timer.restartTiming();
         coreAvailable = false;
 
-        InternalPackages.unregisterAll();
         Bootstrap.run(Bootstrap.StopOperations.class, this);
 
         LOGGER.info("Stop completed.(%d ms)".formatted(Timer.passedTime()));

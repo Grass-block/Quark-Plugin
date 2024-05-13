@@ -5,8 +5,8 @@ import org.tbstcraft.quark.framework.config.Configuration;
 import org.tbstcraft.quark.framework.config.Language;
 import org.tbstcraft.quark.framework.config.LanguageEntry;
 import org.tbstcraft.quark.framework.module.AbstractModule;
-import org.tbstcraft.quark.service.record.RecordEntry;
-import org.tbstcraft.quark.service.record.RecordService;
+import org.tbstcraft.quark.internal.record.RecordEntry;
+import org.tbstcraft.quark.internal.record.RecordService;
 import org.tbstcraft.quark.util.Identifiers;
 
 import java.util.logging.Logger;

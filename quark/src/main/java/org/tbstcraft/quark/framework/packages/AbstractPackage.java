@@ -3,9 +3,11 @@ package org.tbstcraft.quark.framework.packages;
 import org.tbstcraft.quark.FeatureAvailability;
 import org.tbstcraft.quark.framework.config.Configuration;
 import org.tbstcraft.quark.framework.config.Language;
+import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.framework.module.providing.ModuleRegistry;
 import org.tbstcraft.quark.framework.packages.initializer.PackageInitializer;
-import org.tbstcraft.quark.service.framework.ModuleManager;
+import org.tbstcraft.quark.framework.service.ServiceManager;
+import org.tbstcraft.quark.framework.service.providing.ServiceRegistry;
 
 public abstract class AbstractPackage implements IPackage {
     private final PackageInitializer initializer;
@@ -13,7 +15,8 @@ public abstract class AbstractPackage implements IPackage {
     private Language languageFile;
     private Configuration configFile;
     private FeatureAvailability availability;
-    private ModuleRegistry registry;
+    private ModuleRegistry moduleRegistry;
+    private ServiceRegistry serviceRegistry;
 
     protected AbstractPackage(PackageInitializer initializer) {
         this.initializer = initializer;
@@ -21,12 +24,15 @@ public abstract class AbstractPackage implements IPackage {
 
     @Override
     public void onEnable() {
-        getRegistry().register(ModuleManager.getInstance());
+        if (this.getServiceRegistry() != null) {
+            getServiceRegistry().register(ServiceManager.INSTANCE);
+        }
+        getModuleRegistry().register(ModuleManager.getInstance());
     }
 
     @Override
     public void onDisable() {
-        getRegistry().unregister(ModuleManager.getInstance());
+        getModuleRegistry().unregister(ModuleManager.getInstance());
     }
 
     @Override
@@ -50,8 +56,13 @@ public abstract class AbstractPackage implements IPackage {
     }
 
     @Override
-    public final ModuleRegistry getRegistry() {
-        return registry;
+    public final ModuleRegistry getModuleRegistry() {
+        return moduleRegistry;
+    }
+
+    @Override
+    public ServiceRegistry getServiceRegistry() {
+        return serviceRegistry;
     }
 
     @Override
@@ -66,7 +77,8 @@ public abstract class AbstractPackage implements IPackage {
         this.id = initializer.getId(this);
         this.configFile = initializer.createConfig(this);
         this.languageFile = initializer.createLanguage(this);
-        this.registry = initializer.getRegistry(this);
+        this.moduleRegistry = initializer.getModuleRegistry(this);
+        this.serviceRegistry = initializer.getServiceRegistry(this);
     }
 
     public final PackageInitializer getInitializer() {

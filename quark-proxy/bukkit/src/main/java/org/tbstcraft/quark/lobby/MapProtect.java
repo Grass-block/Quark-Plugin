@@ -7,15 +7,15 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.EventListener;
-import org.tbstcraft.quark.service.PermissionService;
+import org.tbstcraft.quark.service.base.permission.PermissionService;
 
-@QuarkModule(id = "map_protect", version = "1.0.0")
+@QuarkModule(version = "1.0.0")
 @EventListener
 public final class MapProtect extends PackageModule {
     @Override
     public void enable() {
         PermissionService.createPermission("-quark.lobby.break");
-        PermissionService.createPermission("+quark.lobby.interact");
+        PermissionService.createPermission("-quark.lobby.interact");
     }
 
     @EventHandler

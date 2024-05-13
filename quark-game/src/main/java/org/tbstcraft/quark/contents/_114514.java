@@ -9,7 +9,7 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.EventListener;
-import org.tbstcraft.quark.service.task.TaskService;
+import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 
 import java.util.HashMap;

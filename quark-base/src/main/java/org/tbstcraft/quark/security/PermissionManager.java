@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.security;
 
+import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -7,22 +8,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.framework.command.CommandRegistry;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.command.CommandManager;
+import org.tbstcraft.quark.command.CommandRegistry;
+import org.tbstcraft.quark.command.ModuleCommand;
+import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.permission.PermissionEntry;
-import org.tbstcraft.quark.framework.permission.PermissionValue;
-import org.tbstcraft.quark.service.data.PlayerDataService;
-import org.tbstcraft.quark.service.task.TaskService;
-import org.tbstcraft.quark.util.container.CachedInfo;
+import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.service.base.permission.PermissionEntry;
+import org.tbstcraft.quark.service.base.permission.PermissionValue;
+import org.tbstcraft.quark.service.base.task.TaskService;
+import org.tbstcraft.quark.internal.data.PlayerDataService;
 import org.tbstcraft.quark.util.api.PlayerUtil;
-import me.gb2022.commons.nbt.NBTTagCompound;
+import org.tbstcraft.quark.util.container.CachedInfo;
 
 import java.util.*;
 
@@ -91,6 +91,8 @@ public final class PermissionManager extends PackageModule {
             assert group != null;
             ConfigurationSection groupSection = groups.getConfigurationSection(group);
             if (groupSection != null) {
+                entry.clear();
+
                 for (String s1 : Objects.requireNonNull(groupSection.getStringList("allow"))) {
                     entry.setPermission(s1, PermissionValue.TRUE);
                 }
@@ -158,6 +160,7 @@ public final class PermissionManager extends PackageModule {
                         this.getLanguage().sendMessageTo(sender, "cmd-group-set", args[1], args[2]);
                     }
                 }
+                CommandManager.syncCommands();
             });
         }
 
@@ -170,11 +173,7 @@ public final class PermissionManager extends PackageModule {
                 }
                 case 3 -> {
                     switch (buffer[0]) {
-                        case "set" -> {
-                            for (Permission p : Bukkit.getPluginManager().getPermissions()) {
-                                tabList.add(p.getName());
-                            }
-                        }
+                        case "set" -> tabList.addAll(PermissionEntry.getAllPermissions());
                         case "group" -> {
                             ConfigurationSection groups = this.getConfig().getConfigurationSection("groups");
                             if (groups == null) {

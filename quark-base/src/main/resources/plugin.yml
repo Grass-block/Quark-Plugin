@@ -1,6 +1,6 @@
 #identifier
 name: quark-base
-version: '1.0.3'
+version: '${version}-${core_version}'
 
 #api
 main: org.tbstcraft.quark.QuarkBase

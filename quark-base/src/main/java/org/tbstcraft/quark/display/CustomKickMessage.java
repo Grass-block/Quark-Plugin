@@ -1,15 +1,19 @@
 package org.tbstcraft.quark.display;
 
+import me.gb2022.apm.local.MappedQueryEvent;
+import me.gb2022.apm.local.PluginMessageHandler;
+import me.gb2022.apm.local.PluginMessenger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.tbstcraft.quark.framework.event.messenging.MappedQueryEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.PluginMessageListener;
 
 @EventListener
 @QuarkModule(version = "1.0.0")
+@PluginMessageListener
 public class CustomKickMessage extends PackageModule {
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -22,7 +26,7 @@ public class CustomKickMessage extends PackageModule {
         event.setReason(msg.replace("{reason}", event.getReason()));
     }
 
-    @EventHandler
+    @PluginMessageHandler(PluginMessenger.FETCH_KICK_MESSAGE)
     public void onMessageFetch(MappedQueryEvent event) {
         String msg = event.getProperty("message", String.class);
         if (msg.startsWith("\u0002")) {
@@ -30,7 +34,7 @@ public class CustomKickMessage extends PackageModule {
             return;
         }
 
-        msg = this.getLanguage().buildUI(this.getConfig(), "ui", event.getProperty("locale", String.class));
-        event.setProperty("message", msg.replace("{reason}", msg));
+        String ui=this.getLanguage().buildUI(this.getConfig(), "ui", event.getProperty("locale", String.class));
+        event.setProperty("message", ui.replace("{reason}", msg));
     }
 }

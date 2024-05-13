@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.security;
 
-import io.papermc.paper.event.player.AsyncChatEvent;
+import me.gb2022.apm.local.MappedBroadcastEvent;
+import me.gb2022.apm.local.PluginMessageHandler;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -11,19 +12,19 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.*;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.framework.command.CommandRegistry;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.command.CommandRegistry;
+import org.tbstcraft.quark.command.ModuleCommand;
+import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.config.LanguageEntry;
-import org.tbstcraft.quark.framework.event.messenging.MappedBroadcastEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.EventListener;
-import org.tbstcraft.quark.service.data.PlayerDataService;
-import org.tbstcraft.quark.service.web.HTTPService;
-import org.tbstcraft.quark.service.web.HttpHandlerContext;
-import org.tbstcraft.quark.service.web.HttpRequest;
-import org.tbstcraft.quark.service.web.SMTPMailService;
+import org.tbstcraft.quark.framework.module.services.PluginMessageListener;
+import org.tbstcraft.quark.internal.data.PlayerDataService;
+import org.tbstcraft.quark.service.network.HttpService;
+import org.tbstcraft.quark.service.network.http.HttpHandlerContext;
+import org.tbstcraft.quark.service.network.http.HttpRequest;
+import org.tbstcraft.quark.service.network.SMTPService;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 
 import java.io.InputStream;
@@ -34,6 +35,7 @@ import java.util.*;
 @CommandRegistry({AccountActivation.AccountCommand.class})
 @QuarkModule(version = "1.0.2", beta = true)
 @EventListener
+@PluginMessageListener
 public final class AccountActivation extends PackageModule {
     private final Set<String> checkCache = new HashSet<>();
     private final Set<String> disabledPlayers = new HashSet<>();
@@ -42,7 +44,7 @@ public final class AccountActivation extends PackageModule {
 
     @Override
     public void enable() {
-        HTTPService.registerHandler(this);
+        HttpService.registerHandler(this);
         try {
             InputStream stream = this.getResource("/verify.html");
             this.verifyHTML = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
@@ -114,11 +116,6 @@ public final class AccountActivation extends PackageModule {
         this.detectPlayerEvent(event, event.getPlayer(), true);
     }
 
-    @EventHandler
-    public void onPlayerChat(AsyncChatEvent event) {
-        this.detectPlayerEvent(event, event.getPlayer(), true);
-    }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
         if (event.getMessage().startsWith("/account")) {
@@ -186,7 +183,7 @@ public final class AccountActivation extends PackageModule {
             content = content.replace("{link}", code);
             content = content.replace("{safety_code}", String.valueOf(safetyCode));
             String subject = this.getLanguage().getMessage(player.getLocale(), "verify-title");
-            if (SMTPMailService.sendMailTo(mailBox, subject, content)) {
+            if (SMTPService.sendMailTo(mailBox, subject, content)) {
                 this.getLanguage().sendMessageTo(player, "msg-send-complete", mailBox, safetyCode);
                 return;
             }
@@ -194,11 +191,8 @@ public final class AccountActivation extends PackageModule {
         });
     }
 
-    @EventHandler
+    @PluginMessageHandler("ip:change")
     public void onIpFailure(MappedBroadcastEvent event) {
-        if(!event.isRequestedEvent("ip:change")){
-            return;
-        }
         AccountStatus.unverify(event.getProperty("player",String.class));
         Player p = PlayerUtil.strictFindPlayer(event.getProperty("player",String.class));
         if (p == null) {

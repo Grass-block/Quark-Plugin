@@ -13,11 +13,17 @@ applyGlobalScript("/Dependencies.gradle")
 
 version = ""
 
-repositories {
-    maven {
-        name="dmulloy2-repo"
-        url="https://repo.dmulloy2.net/repository/public/"
-    }
+apply from: rootDir.getAbsolutePath()+"/info.gradle"
+
+
+//quark libraries(implemented by platform)
+dependencies {
+    compileOnly 'net.kyori:adventure-api:4.11.0'
+    compileOnly 'net.kyori:adventure-text-serializer-gson:4.11.0'
+    compileOnly 'net.kyori:adventure-text-serializer-legacy:4.11.0'
+    compileOnly 'net.kyori:adventure-text-minimessage:4.11.0'
+    compileOnly 'net.kyori:adventure-platform-bukkit:4.0.0'
+    compileOnly 'net.kyori:adventure-platform-bungeecord:4.0.0'
 }
 
 //quark libraries
@@ -26,19 +32,17 @@ dependencies {
 
     implementation 'org.jetbrains:annotations:24.0.0'
     implementation 'com.sun.mail:javax.mail:1.6.2'
-    implementation 'net.kyori:adventure-api:4.11.0'
-    implementation 'net.kyori:adventure-text-serializer-gson:4.11.0'
-    implementation 'net.kyori:adventure-text-serializer-legacy:4.11.0'
-    implementation 'net.kyori:adventure-text-minimessage:4.11.0'
-    implementation 'net.kyori:adventure-platform-bukkit:4.0.0'
-    implementation 'net.kyori:adventure-platform-bungeecord:4.0.0'
 
     implementation localStorage("me.gb2022.commons-nbt")
     implementation localStorage("me.gb2022.commons-math")
     implementation localStorage('me.gb2022.commons-crypto')
     implementation localStorage('me.gb2022.commons-container')
+    implementation localStorage('me.gb2022.commons-general')
+    implementation localStorage('me.gb2022.commons-event')
 
     implementation localStorage('me.gb2022.apm-plugin')
+    implementation localStorage('me.gb2022.apm-remote')
+    implementation localStorage('me.gb2022.apm-client')
 }
 
 //platform api reference
@@ -46,14 +50,5 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
     compileOnly 'io.netty:netty-buffer:4.1.25.Final'
     compileOnly projectLocal('paper-threadedregions')
-
-    //implementation localStorage('io.wdsj.asg')
 }
 
-processResources {
-    doFirst {
-        filesMatching('**/metadata.properties') {
-            expand 'build_time': new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
-        }
-    }
-}

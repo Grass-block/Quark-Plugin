@@ -4,6 +4,7 @@ import me.gb2022.commons.crypto.AESCipher;
 import me.gb2022.commons.crypto.CodecCipher;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.io.File;

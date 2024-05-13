@@ -1,85 +1,55 @@
 package org.tbstcraft.quark.proxysupport;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
+import me.gb2022.apm.local.PluginMessenger;
+import me.gb2022.apm.remote.event.RemoteEventHandler;
+import me.gb2022.apm.remote.event.remote.RemoteMessageEvent;
+import me.gb2022.apm.remote.protocol.BufferUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.EventListener;
-import org.tbstcraft.quark.service.proxy.ChannelHandler;
-import org.tbstcraft.quark.service.proxy.ProxyChannel;
-import org.tbstcraft.quark.service.proxy.ProxyMessageService;
-import org.tbstcraft.quark.service.proxyconnect.ProxyMessageHandler;
+import org.tbstcraft.quark.framework.module.services.RemoteMessageListener;
+import org.tbstcraft.quark.service.network.RemoteMessageService;
 
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
 
 @EventListener
+@RemoteMessageListener
 @QuarkModule(id = "bungee-connection-protect")
-public class BungeeConnectionProtect extends PackageModule implements ChannelHandler {
-    private final Map<String, String> playerAddressRecords = new HashMap<>();
-
-    private static byte[] readByteArray(ByteBuf buf) {
-        int len = buf.readInt();
-        byte[] data = new byte[len];
-        buf.readBytes(data);
-        return data;
-    }
-
-    @Override
-    public void enable() {
-        ProxyMessageService.addMessageHandler("quark:player-ip-record.add", this);
-        ProxyMessageService.addMessageHandler("quark:player-ip-record.remove", this);
-    }
-
+public class BungeeConnectionProtect extends PackageModule {
+    private final Set<String> sessions = new HashSet<>();
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPreLogin(PlayerJoinEvent event) {
-        String addr = Objects.requireNonNull(event.getPlayer().getAddress()).getHostName();
-        if (Objects.equals(this.playerAddressRecords.get(event.getPlayer().getName()), addr)) {
-            return;
+    public void onPreLogin(AsyncPlayerPreLoginEvent event) {
+        String name = event.getName();
+
+        long start = System.currentTimeMillis();
+        long delay = this.getConfig().getInt("accept-delay");
+
+        while (System.currentTimeMillis() - start < delay) {
+            if (this.sessions.contains(name)) {
+                return;
+            }
+            Thread.yield();
         }
-        event.getPlayer().kickPlayer(getKickInfo(event.getPlayer().getName(), "zh_cn"));
+
+        String cid = Integer.toString(Math.abs((System.currentTimeMillis() + name).hashCode()), 16);
+        String msg = PluginMessenger.queryKickMessage(name,
+                this.getLanguage().getMessage("zh_cn", "kick-message", cid), "zh_cn");
+        event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, msg);
     }
 
-    @Override
-    public void onMessageReceived(String channelId, byte[] data, ProxyChannel channel) {
-        if (Objects.equals(channelId, "quark:player-ip-record.add")) {
-            System.out.println("???");
-            ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();
-            buffer.writeBytes(data);
-
-            String name = new String(readByteArray(buffer), StandardCharsets.UTF_8);
-            String host = new String(readByteArray(buffer), StandardCharsets.UTF_8);
-
-            System.out.println(host);
-
-            this.playerAddressRecords.put(name, host);
-            buffer.release();
-        }
-        if (Objects.equals(channelId, "quark:player-ip-record.remove")) {
-            this.playerAddressRecords.remove(new String(data, StandardCharsets.UTF_8));
-        }
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        this.sessions.remove(event.getPlayer().getName());
     }
 
-    @ProxyMessageHandler("quark:player-join-proxy")
-    public void onJoinProxy(ByteBuf message) {
-        String name = new String(readByteArray(message), StandardCharsets.UTF_8);
-        String host = new String(readByteArray(message), StandardCharsets.UTF_8);
-        this.playerAddressRecords.put(name, host);
-    }
-
-    @ProxyMessageHandler("quark:player-leave-proxy")
-    public void onLeaveProxy(ByteBuf message) {
-        this.playerAddressRecords.remove(new String(readByteArray(message), StandardCharsets.UTF_8));
-    }
-
-    public String getKickInfo(String playerName, String locale) {
-        String cid = Integer.toString(Math.abs((System.currentTimeMillis() + playerName).hashCode()), 16);
-        return this.getLanguage().getMessage(locale, "kick-message", cid);
+    @RemoteEventHandler("/bc-connect/add")
+    public void onRemotePlayerJoin(RemoteMessageEvent event) {
+        this.sessions.add(BufferUtil.readString(event.getData()));
     }
 }

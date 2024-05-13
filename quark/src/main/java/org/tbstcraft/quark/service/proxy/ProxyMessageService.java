@@ -3,7 +3,7 @@ package org.tbstcraft.quark.service.proxy;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.service.CipherService;
-import org.tbstcraft.quark.service.Service;
+import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.util.HashMap;

@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.security;
 
 import com.google.gson.JsonParser;
+import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.BanList;
 import org.bukkit.entity.Player;
@@ -8,12 +9,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.framework.event.messenging.Messenger;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.EventListener;
-import org.tbstcraft.quark.service.data.PlayerDataService;
-import org.tbstcraft.quark.service.task.TaskService;
+import org.tbstcraft.quark.internal.data.PlayerDataService;
+import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.NetworkUtil;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 
@@ -61,7 +61,7 @@ public final class IPDefender extends PackageModule {
 
         this.getLanguage().sendMessageTo(player, "ip_warn", ipLoc, oldIP);
 
-        Messenger.broadcastMapped("ip:change", (map) -> map
+        PluginMessenger.broadcastMapped("ip:change", (map) -> map
                 .put("player", player.getName())
                 .put("old-ip", oldIP)
                 .put("new-ip", ipLoc));

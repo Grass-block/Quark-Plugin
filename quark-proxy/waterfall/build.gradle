@@ -5,30 +5,24 @@ plugins {
 apply from: "E:/Java/GradleScripts/build-base.gradle"
 
 applyGlobalScript("Publish/ProjectOutput.gradle")
+applyGlobalScript("Publish/MinecraftBungeeServerTest.gradle")
 applyGlobalScript("/Dependencies.gradle")
 
 group = 'org.tbstcraft'
 
-repositories {
-    mavenCentral()
-    maven {
-        name = "sonatype"
-        url = "https://oss.sonatype.org/content/groups/public/"
-    }
-    maven {
-        name = "papermc-repo"
-        url = "https://repo.papermc.io/repository/maven-public/"
-    }
-}
-
 dependencies {
-    compileOnly "io.github.waterfallmc:waterfall-api:1.18-R0.1-SNAPSHOT"
-
+    compileOnly local("waterfall-api-1.18")
+    implementation localStorage('me.gb2022.commons-container')
     implementation localStorage('me.gb2022.commons-crypto')
+    implementation localStorage('me.gb2022.apm-remote')
+    implementation localStorage('me.gb2022.commons-event')
+    implementation localStorage("me.gb2022.commons-math")
+
+    compileOnly("io.netty:netty-buffer:4.1.100.Final")
+
+    implementation 'com.moandjiezana.toml:toml4j:0.7.2'
 }
 
 jar{
     archiveBaseName="quark-proxy-waterfall"
 }
-
-task prepareKotlinBuildScriptModel{}
