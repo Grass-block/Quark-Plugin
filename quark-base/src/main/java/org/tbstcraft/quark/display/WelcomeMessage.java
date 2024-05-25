@@ -8,7 +8,8 @@ import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.command.CommandRegistry;
 import org.tbstcraft.quark.command.ModuleCommand;
 import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
@@ -17,7 +18,7 @@ import org.tbstcraft.quark.framework.text.TextSender;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 import me.gb2022.commons.nbt.NBTTagCompound;
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @CommandRegistry({WelcomeMessage.WelcomeMessageCommand.class})
 @QuarkModule(version = "0.1.0")
 public class WelcomeMessage extends PackageModule {

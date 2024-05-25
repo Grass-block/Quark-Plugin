@@ -3,7 +3,8 @@ package org.tbstcraft.quark.utilities;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.*;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.command.CommandRegistry;
@@ -12,7 +13,7 @@ import org.tbstcraft.quark.command.QuarkCommand;
 
 import java.util.List;
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @CommandRegistry({BlockUpdateLocker.BlockUpdateLockerCommand.class})
 @QuarkModule(version = "1.0.0")
 public final class BlockUpdateLocker extends PackageModule {

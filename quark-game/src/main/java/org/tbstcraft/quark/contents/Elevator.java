@@ -26,7 +26,8 @@ import org.tbstcraft.quark.framework.customcontent.item.QuarkItem;
 import org.tbstcraft.quark.framework.language.LanguageKey;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.util.api.BukkitUtil;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 import org.tbstcraft.quark.util.crafting.RecipeBuilder;
@@ -35,7 +36,7 @@ import org.tbstcraft.quark.util.crafting.RecipeManager;
 import java.util.Locale;
 import java.util.Objects;
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @CommandRegistry({Elevator.ElevatorItemCommand.class})
 @QuarkModule(version = "1.0.0")
 @SuppressWarnings("deprecation")

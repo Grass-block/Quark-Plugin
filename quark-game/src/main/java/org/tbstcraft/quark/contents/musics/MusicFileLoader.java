@@ -3,24 +3,26 @@ package org.tbstcraft.quark.contents.musics;
 import me.gb2022.apm.remote.protocol.BufferUtil;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.contents.MusicPlayer;
+import org.tbstcraft.quark.framework.assets.AssetGroup;
 import org.tbstcraft.quark.service.network.RemoteMessageService;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
 public interface MusicFileLoader {
     File load(String name);
 
-    List<String> list();
+    Set<String> list();
 
     class LocalLoader implements MusicFileLoader {
-        private final String folder;
+        private final AssetGroup folder;
 
-        public LocalLoader(String folder) {
+        public LocalLoader(AssetGroup folder) {
             this.folder = folder;
         }
 
@@ -29,33 +31,27 @@ public interface MusicFileLoader {
             if (!list().contains(name)) {
                 return null;
             }
-            return new File(this.folder + "/" + name);
+            return this.folder.getFile(name);
         }
 
         @Override
-        public List<String> list() {
-            List<String> lists = new ArrayList<>();
-
-            for (File f : Objects.requireNonNull(new File(this.folder).listFiles())) {
-                lists.add(f.getName());
-            }
-
-            return lists;
+        public Set<String> list() {
+            return this.folder.list();
         }
     }
 
     class RemoteLoader implements MusicFileLoader {
-        private final String folder;
+        private final AssetGroup folder;
         private final String contentServer;
 
-        public RemoteLoader(String folder, String contentServer) {
+        public RemoteLoader(AssetGroup folder, String contentServer) {
             this.folder = folder;
             this.contentServer = contentServer;
         }
 
         @Override
         public File load(String name) {
-            File f = new File(this.folder + "/" + name);
+            File f = this.folder.getFile(name);
 
             if (!f.exists() || f.length() == 0) {
                 RemoteMessageService.getInstance().sendQuery(this.contentServer, "/music/get", (b) -> BufferUtil.writeString(b, name))
@@ -75,12 +71,12 @@ public interface MusicFileLoader {
                         }).sync();
             }
 
-            return new File(this.folder + "/" + name);
+            return this.folder.getFile(name);
         }
 
         @Override
-        public List<String> list() {
-            List<String> lists = new ArrayList<>();
+        public Set<String> list() {
+            Set<String> lists = new HashSet<>();
 
             RemoteMessageService.getInstance().sendQuery(contentServer, "/music/list", (b -> {
             })).timeout(5000, () -> {

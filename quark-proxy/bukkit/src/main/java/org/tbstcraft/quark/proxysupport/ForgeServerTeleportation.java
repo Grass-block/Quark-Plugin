@@ -35,7 +35,6 @@ public class ForgeServerTeleportation extends CommandModule {
     public void onCommand(CommandSender sender, String[] args) {
         ConfigurationSection section = this.getConfig().getConfigurationSection("servers");
 
-
         String host = args[0];
 
         if (Objects.requireNonNull(section).contains(args[0])) {

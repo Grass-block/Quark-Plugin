@@ -55,6 +55,7 @@ language:
     error-resolving: "{global#sys-error}无法解析指定的文件 {#var}。"
     unsupported-format: "{global#sys-error}不支持的文件 {#var}。"
     timeout: "{global#sys-error}无法从内容服务器下载文件 {#var}。"
+    restore-defaults: "{global#sys-info}成功保存样例音乐文件。"
   realistic-sleep:
     sleep-day: '{global#sys-info}你正在非正常睡觉时间睡觉，请使用 {#gold}/leave-bed{#gray} 或者 {click(command,/leave-bed)}{#white}[{#green}点击此处{#white}]{reset}{#gray}来离开床。'
     leave-bed: '{global#sys-info}你已离开床。你可以随时再次睡觉。'

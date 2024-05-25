@@ -6,7 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.event.WorldeditSectionUpdateEvent;
 import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.service.WESessionTrackService;
 import org.tbstcraft.quark.util.api.PlayerUtil;
@@ -14,7 +15,7 @@ import org.tbstcraft.quark.util.region.Region;
 import org.tbstcraft.quark.util.region.SimpleRegion;
 
 @QuarkModule(version = "1.0.0")
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @QuarkCommand(name = "render_we_selection")
 public class WorldEditSelectionRenderer extends CommandModule {
     @Override

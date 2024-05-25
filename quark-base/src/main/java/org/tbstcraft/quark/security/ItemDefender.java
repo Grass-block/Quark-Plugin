@@ -12,12 +12,13 @@ import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 import java.util.Date;
 import java.util.List;
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.2.2", recordFormat = {"Time", "Level", "Player", "World", "X", "Y", "Z", "Type", "Action"})
 public final class ItemDefender extends PackageModule {
 

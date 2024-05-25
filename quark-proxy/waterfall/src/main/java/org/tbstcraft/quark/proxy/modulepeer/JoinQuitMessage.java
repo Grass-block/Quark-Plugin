@@ -4,9 +4,10 @@ import me.gb2022.apm.remote.event.RemoteEventHandler;
 import me.gb2022.apm.remote.event.remote.RemoteMessageEvent;
 import me.gb2022.apm.remote.protocol.BufferUtil;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.ServerConnectedEvent;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.event.EventHandler;
 import org.tbstcraft.quark.proxy.Config;
+import org.tbstcraft.quark.proxy.QuarkProxy;
 import org.tbstcraft.quark.proxy.RemoteMessage;
 import org.tbstcraft.quark.proxy.module.ProxyModule;
 
@@ -24,10 +25,9 @@ public class JoinQuitMessage extends ProxyModule {
     }
 
     @EventHandler
-    public void onServerConnect(ServerConnectedEvent event) {
+    public void onServerConnect(ServerConnectEvent event) {
         String player = event.getPlayer().getName();
-        String current = event.getServer().getInfo().getName();
-
+        String current = event.getTarget().getName();
 
         if (this.currentLocations.containsKey(player)) {
             this.previousLocations.put(player, this.currentLocations.get(player));
@@ -40,8 +40,12 @@ public class JoinQuitMessage extends ProxyModule {
     public void onServerConnect(RemoteMessageEvent event) {
         String player = BufferUtil.readString(event.getData());
 
+
+        if (this.currentLocations.containsKey(player)) {
+            QuarkProxy.LOGGER.warning("cannot detect player current location. fixed it to lobby");
+        }
         String prev = this.previousLocations.get(player);
-        String current = this.currentLocations.get(player);
+        String current = this.currentLocations.getOrDefault(player,"lobby");
 
         if (!this.previousLocations.containsKey(player)) {
             RemoteMessage.getMessenger().sendMessage(current, "/transfer/join_proxy", buf -> BufferUtil.writeString(buf, player));
@@ -49,12 +53,12 @@ public class JoinQuitMessage extends ProxyModule {
         }
 
         RemoteMessage.getMessenger().sendMessage(current, "/transfer/join", buf -> {
-            String server = Config.getSection("server").getString(prev);
-            String target = Config.getSection("server").getString(current);
+            String server = Config.getSection("server").getString(prev, prev);
+            String target = Config.getSection("server").getString(current, current);
             BufferUtil.writeString(buf, "%s;%s;%s".formatted(player, server, target));
         });
         RemoteMessage.getMessenger().sendMessage(prev, "/transfer/leave", buf -> {
-            String server = Config.getSection("server").getString(current);
+            String server = Config.getSection("server").getString(current, current);
             BufferUtil.writeString(buf, "%s;%s".formatted(player, server));
         });
     }

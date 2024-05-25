@@ -7,7 +7,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.tbstcraft.quark.command.CommandManager;
 import org.tbstcraft.quark.framework.config.Queries;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
@@ -18,7 +19,7 @@ import org.tbstcraft.quark.util.api.APIProfile;
 import org.tbstcraft.quark.util.api.APIProfileTest;
 
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @Compat(ChatComponent.PaperCompat.class)
 @QuarkModule(id = "chat-component", version = "1.2.0")
 public class ChatComponent extends PackageModule {

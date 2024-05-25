@@ -15,4 +15,5 @@ language:
     view-hint: "{global#sys-info}您在离线期间收到了 {#var} 条留言，使用命令{#gold}/mail view{#gray} 或 {click(command,/mail view)}{#white}[{#aqua}点击查看{#white}]"
     view-none: "{global#sys-info}您在离线期间未收到任何留言。"
   chat-report:
-    report-postfix: '{click(command,/report chat %s);hover(text,点击举报)}[!]'
+    not-exist: "{global#sys-error}您要举报的聊天记录条目不存在, 或许它已经被举报过了。"
+    success: "{global#sys-success}您已提交对 {#var} 的聊天举报 ({#var})。"

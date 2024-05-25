@@ -19,6 +19,7 @@ public final class Quark extends JavaPlugin {
     private static boolean coreAvailable = false;
 
     private String instanceId;
+    private boolean fastBoot;
 
     public static boolean isCoreUnavailable() {
         return coreAvailable;
@@ -29,7 +30,12 @@ public final class Quark extends JavaPlugin {
         PLUGIN = this;
         BukkitPluginManager.INSTANCE_CACHE.set(this);
 
+        this.saveDefaultConfig();
+        this.reloadConfig();
+
+        this.fastBoot = getConfig().getBoolean("config.startup.fast-boot");
         this.instanceId = UUID.randomUUID().toString();
+
         try {
             Class.forName("org.tbstcraft.quark.util.Timer");
             Class.forName("org.tbstcraft.quark.Bootstrap");
@@ -58,5 +64,9 @@ public final class Quark extends JavaPlugin {
 
     public String getInstanceId() {
         return this.instanceId;
+    }
+
+    public boolean isFastBoot() {
+        return fastBoot;
     }
 }

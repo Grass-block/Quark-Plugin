@@ -2,6 +2,7 @@ package org.tbstcraft.quark.framework.module;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.FeatureAvailability;
 import org.tbstcraft.quark.command.AbstractCommand;
 import org.tbstcraft.quark.framework.config.LanguageEntry;
@@ -178,5 +179,9 @@ public abstract class AbstractModule implements Listener {
 
     public final URL getResourceURL(String path) {
         return this.getClass().getResource("/assets" + path);
+    }
+
+    protected Plugin getOwnerPlugin() {
+        return this.getParent().getOwner();
     }
 }

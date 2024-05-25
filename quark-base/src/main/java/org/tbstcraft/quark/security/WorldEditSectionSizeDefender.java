@@ -4,7 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.service.WESessionTrackService;
@@ -14,7 +15,7 @@ import org.tbstcraft.quark.util.region.SimpleRegion;
 import java.util.Objects;
 
 @QuarkModule(version = "1.2.5")
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 public class WorldEditSectionSizeDefender extends PackageModule {
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event) {

@@ -5,14 +5,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.framework.config.Language;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.api.BukkitUtil;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "2.0.3")
 public final class TabMenu extends PackageModule {
     public static final String UPDATE_TASK_TID = "quark_display:tab_menu:update";

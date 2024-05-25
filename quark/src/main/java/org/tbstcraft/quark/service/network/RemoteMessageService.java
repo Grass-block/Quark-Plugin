@@ -23,6 +23,10 @@ public interface RemoteMessageService extends Service {
 
     @ServiceProvider
     static RemoteMessageService create(ConfigurationSection config) {
+        if (!config.getBoolean("enable", true)) {
+            return new PHImpl();
+        }
+
         return new Impl(
                 config.getString("identifier"),
                 new InetSocketAddress(Objects.requireNonNull(config.getString("host")), config.getInt("port")),
@@ -55,6 +59,58 @@ public interface RemoteMessageService extends Service {
 
     RemoteMessenger getMessenger();
 
+    final class PHImpl implements RemoteMessageService {
+
+        @Override
+        public Set<String> getServerInGroup() {
+            return Set.of();
+        }
+
+        @Override
+        public void addMessageHandler(Object handler) {
+
+        }
+
+        @Override
+        public void removeMessageHandler(Object handler) {
+
+        }
+
+        @Override
+        public void sendMessage(String target, String channel, ByteBuf msg) {
+
+        }
+
+        @Override
+        public void sendMessage(String target, String channel, Consumer<ByteBuf> writer) {
+
+        }
+
+        @Override
+        public void sendBroadcast(String channel, ByteBuf msg) {
+
+        }
+
+        @Override
+        public void sendBroadcast(String channel, Consumer<ByteBuf> writer) {
+
+        }
+
+        @Override
+        public RemoteConnector.ServerQuery sendQuery(String target, String channel, ByteBuf msg) {
+            return null;
+        }
+
+        @Override
+        public RemoteConnector.ServerQuery sendQuery(String target, String channel, Consumer<ByteBuf> writer) {
+            return null;
+        }
+
+        @Override
+        public RemoteMessenger getMessenger() {
+            return null;
+        }
+    }
 
     final class Impl implements RemoteMessageService {
         private final RemoteMessenger messenger;

@@ -4,11 +4,12 @@ import me.gb2022.apm.client.event.ClientProtocolInitEvent;
 import me.gb2022.apm.client.event.driver.ClientEventHandler;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ClientMessageListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 
-@ClientMessageListener
 @QuarkModule(version = "0.7")
+@ModuleService(ServiceType.CLIENT_MESSAGE)
 public final class PlayerProtocolDisplay extends PackageModule {
 
     @ClientEventHandler

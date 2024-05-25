@@ -20,8 +20,8 @@ import org.tbstcraft.quark.command.ModuleCommand;
 import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ClientMessageListener;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
 import org.tbstcraft.quark.util.BukkitSound;
@@ -37,8 +37,7 @@ import java.util.Objects;
 @QuarkCommand(name = "waypoint")
 @QuarkModule(version = "2.0.3", compatBlackList = {APIProfile.ARCLIGHT})
 @CommandRegistry({Waypoint.WaypointCommand.class})
-@EventListener
-@ClientMessageListener
+@ModuleService({ServiceType.EVENT_LISTEN,ServiceType.CLIENT_MESSAGE})
 public final class Waypoint extends CommandModule {
     private final Map<String, Location> deathPoints = new HashMap<>();
 

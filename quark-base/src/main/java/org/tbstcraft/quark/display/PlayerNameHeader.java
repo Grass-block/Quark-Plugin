@@ -11,7 +11,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.config.Queries;
 import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.framework.text.TextBuilder;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("deprecation")
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @QuarkModule
 @QuarkCommand(name = "header", op = true)
 public final class PlayerNameHeader extends CommandModule {

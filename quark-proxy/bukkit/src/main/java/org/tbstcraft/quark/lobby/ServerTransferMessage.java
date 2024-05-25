@@ -6,12 +6,13 @@ import org.bukkit.entity.Player;
 import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.util.BukkitSound;
 
 import java.util.Objects;
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.0")
 @QuarkCommand(name = "transfer-display", playerOnly = true)
 public class ServerTransferMessage extends CommandModule {

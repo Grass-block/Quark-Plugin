@@ -16,7 +16,8 @@ import org.tbstcraft.quark.command.ModuleCommand;
 import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.base.permission.PermissionEntry;
 import org.tbstcraft.quark.service.base.permission.PermissionValue;
 import org.tbstcraft.quark.service.base.task.TaskService;
@@ -26,7 +27,7 @@ import org.tbstcraft.quark.util.container.CachedInfo;
 
 import java.util.*;
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @CommandRegistry({PermissionManager.PermissionCommand.class})
 @QuarkModule(version = "1.0.3")
 public final class PermissionManager extends PackageModule {

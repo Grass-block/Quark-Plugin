@@ -6,9 +6,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.0.3")
 public final class PlayerProtect extends PackageModule {
     @EventHandler

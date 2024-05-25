@@ -11,7 +11,8 @@ import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
 import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.NetworkUtil;
@@ -22,7 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.3.4", recordFormat = {"Time", "Player", "OldIP", "NewIP"})
 public final class IPDefender extends PackageModule {
 

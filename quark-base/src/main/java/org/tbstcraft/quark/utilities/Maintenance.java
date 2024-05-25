@@ -11,14 +11,15 @@ import org.tbstcraft.quark.command.ModuleCommand;
 import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.base.permission.PermissionService;
 
 import java.util.List;
 
 @SuppressWarnings("deprecation")
 @QuarkModule(version = "1.0.0")
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @CommandRegistry(Maintenance.MaintenanceCommand.class)
 public class Maintenance extends PackageModule {
     boolean isEnabled = false;

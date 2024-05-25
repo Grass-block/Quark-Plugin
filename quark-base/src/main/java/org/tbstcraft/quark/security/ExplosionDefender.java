@@ -18,14 +18,15 @@ import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.config.Queries;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.util.region.SimpleRegion;
 import org.tbstcraft.quark.util.region.SimpleRegion;
 
 import java.util.*;
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @CommandRegistry(ExplosionDefender.ExplosionWhitelistCommand.class)
 @QuarkModule(version = "1.3.3", recordFormat = {"Time", "World", "X", "Y", "Z", "Type"})
 public final class ExplosionDefender extends PackageModule {

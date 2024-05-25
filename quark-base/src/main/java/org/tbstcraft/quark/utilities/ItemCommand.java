@@ -10,7 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.command.CommandRegistry;
 import org.tbstcraft.quark.command.ModuleCommand;
 import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.util.api.BukkitUtil;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 @QuarkModule(version = "0.3")
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @CommandRegistry({ItemCommand.ItemCommandCommand.class})
 public class ItemCommand extends PackageModule {
 

@@ -6,7 +6,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.tbstcraft.quark.command.CommandRegistry;
 import org.tbstcraft.quark.command.ModuleCommand;
 import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
@@ -21,7 +22,7 @@ import java.util.Set;
 @SuppressWarnings("deprecation")
 @QuarkModule(version = "1.0.0")
 @CommandRegistry(Neko.NekoCommand.class)
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 public final class Neko extends PackageModule {
     private final Set<String> players = new HashSet<>();
 

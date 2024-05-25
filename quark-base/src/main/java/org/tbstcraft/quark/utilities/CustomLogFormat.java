@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.assets.Asset;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
@@ -19,15 +20,19 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.List;
 
 @QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT, APIProfile.SPIGOT, APIProfile.ARCLIGHT})
 @QuarkCommand(name = "log-format", permission = "quark.log-format")
 public final class CustomLogFormat extends CommandModule {
+    private Asset logAsset;
+
     @Override
     public void enable() {
         super.enable();
+
+        this.logAsset= new Asset(this.getOwnerPlugin(), "log.xml",false);
+
         this.logger = createLogger();
         NBTTagCompound tag = ModuleDataService.getEntry(this.getId());
         if (!tag.hasKey("enable")) {
@@ -40,15 +45,7 @@ public final class CustomLogFormat extends CommandModule {
     }
 
     public void setFormat() {
-        File f = new File(FilePath.pluginFolder(Quark.PLUGIN_ID) + "/log.xml");
-        if (!f.exists() || f.length() == 0) {
-            this.restoreFormatFile();
-        }
-        try {
-            this.setLoggerFormat(f.toURI().toURL());
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+        this.setLoggerFormat(this.logAsset.asURL());
     }
 
     public boolean setLoggerFormat(URL resource) {
@@ -77,9 +74,8 @@ public final class CustomLogFormat extends CommandModule {
     }
 
     public void restoreFormatFile() {
-        File f = new File(FilePath.pluginFolder(Quark.PLUGIN_ID) + "/log.xml");
+        this.logAsset.save();
         this.logger.info("covered log file.");
-        FilePath.cover(f, this.getResource("/log.xml"));
     }
 
     public void setDataEnable(boolean enable) {

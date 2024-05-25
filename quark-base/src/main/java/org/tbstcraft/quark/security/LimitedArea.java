@@ -17,7 +17,8 @@ import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.command.CommandRegistry;
 import org.tbstcraft.quark.command.ModuleCommand;
 import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
@@ -29,7 +30,7 @@ import org.tbstcraft.quark.util.region.SimpleRegion;
 
 import java.util.*;
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @CommandRegistry({LimitedArea.LimitedAreaCommand.class})
 @QuarkModule(version = "1.3.0",recordFormat = {"Time","Player", "World", "X", "Y", "Z", "Region"})
 public final class LimitedArea extends PackageModule {

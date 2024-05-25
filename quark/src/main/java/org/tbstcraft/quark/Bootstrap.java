@@ -2,6 +2,8 @@ package org.tbstcraft.quark;
 
 import me.gb2022.apm.client.ClientMessenger;
 import me.gb2022.apm.client.backend.MessageBackend;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.tbstcraft.quark.command.internal.InternalCommands;
 import org.tbstcraft.quark.command.internal.core.QuarkPluginCommand;
 import org.tbstcraft.quark.framework.config.Configuration;
@@ -96,10 +98,16 @@ public interface Bootstrap {
 
         @ContextComponent(order = 3, text = "Full JAR loaded")
         static void loadFullJar(Quark instance) {
-            if (!APIProfileTest.isArclightBasedServer()) {
-               // return;
+            if (instance.isFastBoot()) {
+                if (APIProfileTest.isArclightBasedServer()) {
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "检测到Mohist/ArcLight平台，无法启用快速启动(FastBoot)");
+                } else {
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "快速启动(FastBoot)已开启。热重载功能将失效");
+                    return;
+                }
             }
-            //Quark.LOGGER.info("detected mohist/arclight platform, loading full jar...");
+
+            Quark.LOGGER.info("disabled fastboot, loading full jar...");
             try (JarFile jarFile = new JarFile(new File(System.getProperty("user.dir") + "/plugins/quark.jar"))) {
                 Enumeration<JarEntry> entries = jarFile.entries();
 

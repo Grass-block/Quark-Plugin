@@ -10,16 +10,15 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
-import org.tbstcraft.quark.framework.module.services.RemoteMessageListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.network.RemoteMessageService;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 
 import java.util.function.Consumer;
 
-@EventListener
 @QuarkModule(version = "1.1.0")
-@RemoteMessageListener
+@ModuleService({ServiceType.EVENT_LISTEN,ServiceType.REMOTE_MESSAGE})
 public final class JoinQuitMessage extends PackageModule {
 
     private void broadcast(String name, Consumer<Player> handler) {

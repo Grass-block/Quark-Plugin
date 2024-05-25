@@ -10,16 +10,14 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
-import org.tbstcraft.quark.framework.module.services.RemoteMessageListener;
-import org.tbstcraft.quark.service.network.RemoteMessageService;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@EventListener
-@RemoteMessageListener
 @QuarkModule(id = "bungee-connection-protect")
+@ModuleService({ServiceType.EVENT_LISTEN, ServiceType.REMOTE_MESSAGE})
 public class BungeeConnectionProtect extends PackageModule {
     private final Set<String> sessions = new HashSet<>();
 

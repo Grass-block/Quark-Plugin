@@ -18,6 +18,7 @@ config:
     backlog: 10
     threads: 3
   remote-message-service:
+    enable: true
     identifier: quark-example-remote-identifier
     proxy: false
     host: example.com

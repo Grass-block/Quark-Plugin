@@ -10,6 +10,8 @@ config:
     sound: true
   mail:
     template: '{#white}[{#gold}%s{#white}] {#aqua}%s{#white}: %s'
+  chat-report:
+    append: '{click(command,/chat-report %s);color(red)}[!]'
   chat-filter:
     keywords: [
       '操你', '傻逼', '二逼', '智障',

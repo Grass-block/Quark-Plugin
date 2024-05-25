@@ -9,7 +9,8 @@ import org.tbstcraft.quark.command.CommandRegistry;
 import org.tbstcraft.quark.command.ModuleCommand;
 import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.config.Language;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.service.base.task.TaskService;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @QuarkModule(version = "0.3.0")
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @CommandRegistry(ChatAnnounce.HintCommand.class)
 public final class ChatAnnounce extends PackageModule {
     private long index;

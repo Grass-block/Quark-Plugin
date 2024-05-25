@@ -22,14 +22,15 @@ import org.tbstcraft.quark.framework.config.Queries;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.WESessionTrackService;
 import org.tbstcraft.quark.util.region.Region;
 import org.tbstcraft.quark.util.region.SimpleRegion;
 
 import java.util.*;
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @CommandRegistry({ProtectionArea.ProtectionAreaCommand.class})
 @QuarkModule(version = "1.3.4", recordFormat = {"Time", "Player", "World", "X", "Y", "Z", "Region"})
 public final class ProtectionArea extends PackageModule {

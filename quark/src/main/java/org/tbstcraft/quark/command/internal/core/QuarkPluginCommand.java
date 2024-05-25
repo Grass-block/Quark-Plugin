@@ -8,7 +8,6 @@ import org.tbstcraft.quark.command.CoreCommand;
 import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.config.Language;
 import org.tbstcraft.quark.util.api.APIProfileTest;
-import org.tbstcraft.quark.util.api.BukkitPluginManager;
 import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.lang.reflect.InvocationTargetException;
@@ -48,6 +47,16 @@ public final class QuarkPluginCommand extends CoreCommand {
     public static final class ReloadCommand extends CoreCommand {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
+            if (APIProfileTest.isArclightBasedServer()) {
+                this.getLanguage().sendMessageTo(sender, "platform-unsupported");
+                return;
+
+            }
+            if (Quark.PLUGIN.isFastBoot()) {
+                this.getLanguage().sendMessageTo(sender, "fastboot-unsupported");
+                return;
+            }
+
             this.fullyReload(sender);
         }
 
@@ -83,9 +92,6 @@ public final class QuarkPluginCommand extends CoreCommand {
 
             @Override
             public void run() {
-                if(APIProfileTest.isArclightBasedServer()){
-                    throw new UnsupportedOperationException("RELOADING IS UNSUPPORTED ON ARCLIGHT BASED PLATFORM!");
-                }
                 try {
                     PLUGIN_LOADER_CLASS.get().getMethod("reload", String.class).invoke(null, Quark.PLUGIN_ID);
                     PACKAGE_LOADER_CLASS.get().getMethod("loadSubPacks").invoke(null);

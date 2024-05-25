@@ -14,7 +14,8 @@ import org.tbstcraft.quark.command.CommandRegistry;
 import org.tbstcraft.quark.command.ModuleCommand;
 import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.config.Queries;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
@@ -24,7 +25,7 @@ import me.gb2022.commons.nbt.NBTTagCompound;
 
 import java.util.*;
 
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @CommandRegistry(BossbarAnnouncement.BossbarAnnounceCommand.class)
 @QuarkModule(version = "1.1.0")
 public final class BossbarAnnouncement extends PackageModule {

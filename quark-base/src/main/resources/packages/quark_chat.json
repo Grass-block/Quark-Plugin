@@ -8,6 +8,7 @@
     "chat-translator": ".ChatTranslator",
     "chat-component": ".ChatComponent",
     "chat-at": ".ChatAt",
-    "mail": ".Mail"
+    "mail": ".Mail",
+    "chat-report": ".ChatReport"
   }
 }

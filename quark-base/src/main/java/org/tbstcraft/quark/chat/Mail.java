@@ -8,7 +8,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
 import org.tbstcraft.quark.service.base.task.TaskService;
@@ -23,7 +24,7 @@ import java.util.Set;
 
 @QuarkCommand(name = "mail", playerOnly = true)
 @QuarkModule(id = "mail",version = "1.0.0")
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 public final class Mail extends CommandModule {
 
     @EventHandler

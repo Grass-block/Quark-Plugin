@@ -61,6 +61,9 @@ language:
     password-set: "{global#sys-info}你的密码被设为 {#white}{#var}{#gray} ,请注意妥善保存。当然, 你可以用/password来改变它。"
   about:
     version: "{global#sys-info}当前版本: {#var}"
+  reload:
+    platform-unsupported: "{global#sys-error}当前的平台不支持重载，请 {#gold}/reload{#white}"
+    fastboot-unsupported: "{global#sys-error}FastBoot(快速启动)不支持重载，请 {#gold}/reload{#gray} 或关闭FastBoot。"
   folia-compat:
     disabled: "{global#sys-error}该功能因为Folia无相应兼容API以无法使用。"
     reload-warn:  "{global#sys-error}Folia的重载会导致所有插件和命令无法正常加载, 你应该重启服务器!"

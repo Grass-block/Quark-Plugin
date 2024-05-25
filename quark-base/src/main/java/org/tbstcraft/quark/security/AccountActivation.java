@@ -18,13 +18,13 @@ import org.tbstcraft.quark.command.QuarkCommand;
 import org.tbstcraft.quark.framework.config.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.EventListener;
-import org.tbstcraft.quark.framework.module.services.PluginMessageListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
 import org.tbstcraft.quark.service.network.HttpService;
+import org.tbstcraft.quark.service.network.SMTPService;
 import org.tbstcraft.quark.service.network.http.HttpHandlerContext;
 import org.tbstcraft.quark.service.network.http.HttpRequest;
-import org.tbstcraft.quark.service.network.SMTPService;
 import org.tbstcraft.quark.util.api.PlayerUtil;
 
 import java.io.InputStream;
@@ -34,8 +34,7 @@ import java.util.*;
 //todo:二步验证换绑
 @CommandRegistry({AccountActivation.AccountCommand.class})
 @QuarkModule(version = "1.0.2", beta = true)
-@EventListener
-@PluginMessageListener
+@ModuleService({ServiceType.EVENT_LISTEN, ServiceType.PLUGIN_MESSAGE})
 public final class AccountActivation extends PackageModule {
     private final Set<String> checkCache = new HashSet<>();
     private final Set<String> disabledPlayers = new HashSet<>();
@@ -193,8 +192,8 @@ public final class AccountActivation extends PackageModule {
 
     @PluginMessageHandler("ip:change")
     public void onIpFailure(MappedBroadcastEvent event) {
-        AccountStatus.unverify(event.getProperty("player",String.class));
-        Player p = PlayerUtil.strictFindPlayer(event.getProperty("player",String.class));
+        AccountStatus.unverify(event.getProperty("player", String.class));
+        Player p = PlayerUtil.strictFindPlayer(event.getProperty("player", String.class));
         if (p == null) {
             return;
         }
@@ -325,7 +324,7 @@ public final class AccountActivation extends PackageModule {
 
         @Override
         public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-            if(buffer.length==2){
+            if (buffer.length == 2) {
                 tabList.add("example@example.com");
                 tabList.add("@163.com");
                 tabList.add("@126.com");
@@ -336,7 +335,7 @@ public final class AccountActivation extends PackageModule {
     }
 
     @QuarkCommand(name = "verify")
-    public static final class VerifyCommand extends ModuleCommand<AccountActivation>{
+    public static final class VerifyCommand extends ModuleCommand<AccountActivation> {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
             NBTTagCompound tag = PlayerDataService.getEntry(sender.getName(), "account_activation");
@@ -350,7 +349,6 @@ public final class AccountActivation extends PackageModule {
             this.getModule().sendVerifyMail(((Player) sender), mail, code);
         }
     }
-
 
 
     @QuarkCommand(name = "account", subCommands = {VerifyCommand.class, LinkCommand.class})

@@ -19,7 +19,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.command.CommandRegistry;
 import org.tbstcraft.quark.command.ModuleCommand;
@@ -28,59 +27,62 @@ import org.tbstcraft.quark.contents.musics.EnumInstrument;
 import org.tbstcraft.quark.contents.musics.MusicData;
 import org.tbstcraft.quark.contents.musics.MusicFileLoader;
 import org.tbstcraft.quark.contents.musics.MusicSession;
+import org.tbstcraft.quark.framework.assets.AssetGroup;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ClientMessageListener;
-import org.tbstcraft.quark.framework.module.services.EventListener;
-import org.tbstcraft.quark.framework.module.services.RemoteMessageListener;
+import org.tbstcraft.quark.framework.module.services.*;
 import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.service.network.RemoteMessageService;
 import org.tbstcraft.quark.service.network.http.HttpHandlerContext;
 import org.tbstcraft.quark.service.network.http.HttpRequest;
-import org.tbstcraft.quark.util.FilePath;
-import org.tbstcraft.quark.util.api.PlayerUtil;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiSystem;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
-@EventListener
-@RemoteMessageListener
-@ClientMessageListener
 @CommandRegistry(MusicPlayer.MusicCommand.class)
 @QuarkModule(version = "1.0.3")
-public class MusicPlayer extends PackageModule {
+@ModuleService({ServiceType.EVENT_LISTEN,ServiceType.REMOTE_MESSAGE,ServiceType.CLIENT_MESSAGE})
+public final class MusicPlayer extends PackageModule {
     public static final String UNSUPPORTED_FORMAT = "unsupported-format";
     public static final String RESOLVE_ERROR = "error-resolving";
     public static final String NOT_FOUND = "not-found";
     public static final String TIMEOUT = "timeout";
 
     private final MusicSession globalSession = new MusicSession(this);
-
+    private AssetGroup musicGroup;
     private MusicFileLoader loader;
 
     @Override
     public void enable() {
-        getFolder();
+        this.musicGroup = new AssetGroup(this.getOwnerPlugin(), "music", true);
 
-        release("avicii-Waiting_For_Love.mid");
-        release("Beyond-海阔天空.mid");
+        if (!this.musicGroup.existFolder()) {
+            this.saveDefaults();
+        }
 
         this.globalSession.startSession();
         this.globalSession.getPlayers().addAll(Bukkit.getOnlinePlayers());
 
-        String folder = this.getFolder().getAbsolutePath();
         if (this.getConfig().getBoolean("remote")) {
-            this.loader = new MusicFileLoader.RemoteLoader(folder, this.getConfig().getString("cdn-server"));
+            this.loader = new MusicFileLoader.RemoteLoader(this.musicGroup, this.getConfig().getString("cdn-server"));
         } else {
-            this.loader = new MusicFileLoader.LocalLoader(folder);
+            this.loader = new MusicFileLoader.LocalLoader(this.musicGroup);
         }
+    }
+
+    private void saveDefaults() {
+        this.musicGroup.save("Avicii-The_Days.mid");
+        this.musicGroup.save("Avicii-The_Nights.mid");
+        this.musicGroup.save("Avicii-Waiting_For_Love.mid");
+        this.musicGroup.save("Kiss_The_Rain.mid");
+        this.musicGroup.save("Beyond-海阔天空.mid");
     }
 
     @Override
@@ -92,22 +94,6 @@ public class MusicPlayer extends PackageModule {
         }
         this.globalSession.stopSession();
     }
-
-
-    private void release(String name) {
-        FilePath.tryReleaseAndGetFile("/assets/%s".formatted(name), getFolder().getAbsolutePath() + "/%s".formatted(name));
-    }
-
-    private File getFolder() {
-        File file = new File(FilePath.pluginFolder(Quark.PLUGIN_ID) + "/midi/");
-        if (!file.exists()) {
-            if (file.mkdirs()) {
-                this.getLogger().info("created midi folder.");
-            }
-        }
-        return file;
-    }
-
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -138,26 +124,22 @@ public class MusicPlayer extends PackageModule {
     public void onMusicFetch(RemoteQueryEvent event) {
         String fileName = BufferUtil.readString(event.getData());
 
-        File f = new File(this.getFolder().getAbsolutePath() + "/" + fileName);
-
-        if (!f.exists()) {
-            return;
-        }
-
-        try (InputStream is = new FileInputStream(f)) {
-            BufferUtil.writeArray(event.getResult(), is.readAllBytes());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        this.musicGroup.asInputStream(fileName, (stream -> {
+            try {
+                BufferUtil.writeArray(event.getResult(), stream.readAllBytes());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }));
     }
 
     @RemoteEventHandler("/music/list")
     public void onMusicList(RemoteQueryEvent event) {
         StringBuilder sb = new StringBuilder();
 
-        File[] objects = Objects.requireNonNull(this.getFolder().listFiles());
+        String[] objects = this.musicGroup.list().toArray(new String[0]);
         for (int i = 0; i < objects.length; ++i) {
-            sb.append(objects[i].getName());
+            sb.append(objects[i]);
             if (i != objects.length - 1) {
                 sb.append(';');
             }
@@ -210,9 +192,9 @@ public class MusicPlayer extends PackageModule {
 
 
     public String getRandomMusicName() {
-        List<String> music = this.loader.list();
+        Set<String> music = this.loader.list();
         int index = SharedObjects.RANDOM.nextInt(music.size());
-        return music.get(index);
+        return music.toArray(new String[0])[index];
     }
 
     public void playNode(Player player, int node, int off, EnumInstrument targetInstrument) {
@@ -278,6 +260,10 @@ public class MusicPlayer extends PackageModule {
             String operator = sender.getName();
 
             switch (args[0]) {
+                case "save-defaults" -> {
+                    this.getModule().saveDefaults();
+                    this.getLanguage().sendMessageTo(sender, "restore-defaults");
+                }
                 case "cancel" -> {
                     this.getModule().cancelMusic(operator);
                     service.sendBroadcast("/music/control", msg -> BufferUtil.writeString(msg, "cancel;" + operator));
@@ -336,6 +322,7 @@ public class MusicPlayer extends PackageModule {
                 tabList.add("cancel");
                 tabList.add("pause");
                 tabList.add("resume");
+                tabList.add("save-defaults");
             }
             if (buffer.length == 2 && Objects.equals(buffer[0], "play")) {
                 tabList.addAll(this.getModule().loader.list());

@@ -1,0 +1,11 @@
+{
+  "type": "shaped",
+  "result": {
+    "type": "minecraft:stick",
+    "count": 16
+  },
+  "shape": "#;#",
+  "map": {
+    "#": "#minecraft:logs"
+  }
+}

@@ -11,7 +11,8 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.tbstcraft.quark.framework.config.Queries;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.service.base.task.TaskService;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "0.1",compatBlackList = {APIProfile.FOLIA})
 public class CustomScoreboard extends PackageModule {
     private final Map<Player, Scoreboard> scoreboards = new HashMap<>();

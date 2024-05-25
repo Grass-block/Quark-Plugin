@@ -1,6 +1,7 @@
 language:
   custom-motd:
     motd-command: '{global#sys-info}Quark生成的服务器MOTD信息: '
+    icon-refresh: '{global#sys-info}成功刷新MOTD图片缓存。'
   join-quit-message:
     join: '{global#sys-info}{#gray}玩家 {#white}{#var}{#gray} 加入了服务器，欢迎。'
     leave: '{global#sys-info}玩家 {#white}{#var}{#gray} 离开了服务器。'

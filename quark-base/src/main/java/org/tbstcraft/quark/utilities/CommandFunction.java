@@ -5,14 +5,15 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.tbstcraft.quark.command.AbstractCommand;
 import org.tbstcraft.quark.command.CommandManager;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 
 import java.util.List;
 
 @QuarkModule(version = "1.0.0")
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 public class CommandFunction extends PackageModule {
 
     @Override

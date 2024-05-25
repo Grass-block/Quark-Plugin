@@ -11,7 +11,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.tbstcraft.quark.command.CommandRegistry;
 import org.tbstcraft.quark.command.ModuleCommand;
 import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.services.EventListener;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 @CommandRegistry(ChatMute.MuteCommand.class)
-@EventListener
+@ModuleService(ServiceType.EVENT_LISTEN)
 @QuarkModule(id="chat-mute",version = "1.0.2")
 public final class ChatMute extends PackageModule implements Listener {
 

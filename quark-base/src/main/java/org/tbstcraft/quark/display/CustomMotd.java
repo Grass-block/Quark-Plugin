@@ -11,39 +11,51 @@ import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.command.CommandRegistry;
 import org.tbstcraft.quark.command.ModuleCommand;
 import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.assets.Asset;
 import org.tbstcraft.quark.framework.config.Language;
 import org.tbstcraft.quark.framework.config.Queries;
-import org.tbstcraft.quark.framework.module.services.EventListener;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
+import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.text.ComponentBlock;
 import org.tbstcraft.quark.framework.text.TextBuilder;
 import org.tbstcraft.quark.util.api.APIProfile;
 import org.tbstcraft.quark.util.api.APIProfileTest;
 
 import java.io.File;
+import java.util.List;
 
-@SuppressWarnings("deprecation")
-@EventListener
 @QuarkModule(version = "1.0.2")
 @CommandRegistry({CustomMotd.MotdCommand.class})
 @Compat(CustomMotd.PaperCompat.class)
+@ModuleService(ServiceType.EVENT_LISTEN)
 public final class CustomMotd extends PackageModule {
     private CachedServerIcon cachedServerIcon;
 
+    private Asset motdIcon;
+
     @Override
     public void enable() {
+        this.motdIcon = new Asset(this.getOwnerPlugin(), "motd.png", false);
+        this.motdIcon.getFile();
+
         File iconFile = new File(Quark.PLUGIN.getDataFolder().getAbsolutePath() + "/motd.png");
         if (!iconFile.exists()) {
             return;
         }
+
+        this.refreshIcon();
+    }
+
+    public void refreshIcon() {
         try {
-            this.cachedServerIcon = Bukkit.loadServerIcon(iconFile);
+            this.cachedServerIcon = Bukkit.loadServerIcon(this.motdIcon.getFile());
         } catch (Exception e) {
-            this.getLogger().severe("failed to load server icon. please consider reload this module when fixed.");
+            this.getLogger().severe("failed to load server icon. please consider refresh icon when fixed.");
         }
     }
 
@@ -68,13 +80,30 @@ public final class CustomMotd extends PackageModule {
         return TextBuilder.build(raw);
     }
 
-    @QuarkCommand(name = "motd")
+    @QuarkCommand(name = "motd",permission = "-quark.motd.command")
     public static final class MotdCommand extends ModuleCommand<CustomMotd> {
 
         @Override
         public void onCommand(CommandSender sender, String[] args) {
-            this.getLanguage().sendMessageTo(sender, "motd-command");
-            getModule().generateMotdMessage().send(sender);
+            switch (args[0]) {
+                case "refresh-icon" -> {
+                    this.getModule().refreshIcon();
+                    this.getLanguage().sendMessageTo(sender, "icon-refresh");
+                }
+                case "text" -> {
+                    this.getLanguage().sendMessageTo(sender, "motd-command");
+                    getModule().generateMotdMessage().send(sender);
+                }
+                default -> this.sendExceptionMessage(sender);
+            }
+        }
+
+        @Override
+        public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
+            if (buffer.length == 1) {
+                tabList.add("refresh-icon");
+                tabList.add("text");
+            }
         }
     }
 
