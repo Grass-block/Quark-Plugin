@@ -59,3 +59,8 @@ language:
   realistic-sleep:
     sleep-day: '{global#sys-info}你正在非正常睡觉时间睡觉，请使用 {#gold}/leave-bed{#gray} 或者 {click(command,/leave-bed)}{#white}[{#green}点击此处{#white}]{reset}{#gray}来离开床。'
     leave-bed: '{global#sys-info}你已离开床。你可以随时再次睡觉。'
+  custom-recipe:
+    reload: "{global#sys-info}成功重载配方组。"
+    restore: "{global#sys-info}成功保存样例配方组。"
+  item-counter:
+

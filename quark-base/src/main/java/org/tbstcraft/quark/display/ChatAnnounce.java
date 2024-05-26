@@ -5,10 +5,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.framework.config.Language;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.data.config.Language;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -20,7 +20,7 @@ import java.util.function.Function;
 
 @QuarkModule(version = "0.3.0")
 @ModuleService(ServiceType.EVENT_LISTEN)
-@CommandRegistry(ChatAnnounce.HintCommand.class)
+@CommandProvider(ChatAnnounce.HintCommand.class)
 public final class ChatAnnounce extends PackageModule {
     private long index;
     private boolean freeze;

@@ -4,19 +4,20 @@ import me.gb2022.apm.client.ClientMessenger;
 import me.gb2022.apm.client.backend.MessageBackend;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.tbstcraft.quark.command.internal.InternalCommands;
-import org.tbstcraft.quark.command.internal.core.QuarkPluginCommand;
-import org.tbstcraft.quark.framework.config.Configuration;
-import org.tbstcraft.quark.framework.config.Language;
-import org.tbstcraft.quark.framework.config.Queries;
+import org.tbstcraft.quark.internal.command.InternalCommands;
+import org.tbstcraft.quark.internal.command.QuarkPluginCommand;
+import org.tbstcraft.quark.framework.data.config.Configuration;
+import org.tbstcraft.quark.framework.data.config.Language;
+import org.tbstcraft.quark.framework.data.config.Queries;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceManager;
-import org.tbstcraft.quark.framework.text.TextBuilder;
-import org.tbstcraft.quark.framework.text.TextSender;
+import org.tbstcraft.quark.util.text.TextBuilder;
+import org.tbstcraft.quark.util.text.TextSender;
+import org.tbstcraft.quark.internal.QuarkInternalPackage;
 import org.tbstcraft.quark.util.DeferredLogger;
 import org.tbstcraft.quark.util.Timer;
-import org.tbstcraft.quark.util.api.APIProfileTest;
+import org.tbstcraft.quark.util.platform.APIProfileTest;
 
 import java.io.File;
 import java.lang.annotation.ElementType;
@@ -54,9 +55,9 @@ public interface Bootstrap {
     interface BootOperations {
         @ContextComponent(order = 0)
         static void guiding(Quark instance) throws Exception {
-            Class.forName("org.tbstcraft.quark.util.api.APIProfile");
-            Class.forName("org.tbstcraft.quark.framework.text.TextSender");
-            Class.forName("org.tbstcraft.quark.framework.text.TextBuilder");
+            Class.forName("org.tbstcraft.quark.util.platform.APIProfile");
+            Class.forName("org.tbstcraft.quark.util.text.TextSender");
+            Class.forName("org.tbstcraft.quark.util.text.TextBuilder");
         }
 
         @ContextComponent(order = 1, text = "Bootstrap initialization completed")

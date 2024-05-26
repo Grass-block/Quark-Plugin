@@ -2,7 +2,7 @@ package org.tbstcraft.quark.service.ui;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.tbstcraft.quark.util.api.BukkitUtil;
+import org.tbstcraft.quark.util.platform.BukkitUtil;
 
 public abstract class UIInstance implements Listener {
     private final Player player;

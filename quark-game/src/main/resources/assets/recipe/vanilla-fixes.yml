@@ -1,0 +1,27 @@
+recipes:
+  stick-batch:
+    type: "shaped"
+    output:
+      type: "minecraft:stick"
+      amount: 16
+    shape: "#;#"
+    map:
+      "#": "#minecraft:logs"
+  planks-slab-combine:
+    type: "shaped"
+    repeat:
+      - "oak"
+      - "spruce"
+      - "acacia"
+      - "dark_oak"
+      - "birch"
+      - "jungle"
+    shape: "#;#"
+    output: "minecraft:{#type}_planks*1"
+    map:
+      "#": "minecraft:{#type}_slab"
+  quartz-split:
+    type: "shapeless"
+    output: "minecraft:quartz*4"
+    requirements:
+      - "minecraft:quartz_block"

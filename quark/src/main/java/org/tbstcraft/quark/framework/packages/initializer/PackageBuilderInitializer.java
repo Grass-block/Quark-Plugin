@@ -2,13 +2,12 @@ package org.tbstcraft.quark.framework.packages.initializer;
 
 import org.tbstcraft.quark.FeatureAvailability;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.framework.config.Configuration;
-import org.tbstcraft.quark.framework.config.Language;
+import org.tbstcraft.quark.framework.data.config.Configuration;
+import org.tbstcraft.quark.framework.data.config.Language;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.providing.DirectModuleRegistry;
 import org.tbstcraft.quark.framework.module.providing.ModuleRegistry;
 import org.tbstcraft.quark.framework.packages.AbstractPackage;
-import org.tbstcraft.quark.framework.packages.QuarkPackage;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.providing.DirectServiceRegistry;
 import org.tbstcraft.quark.framework.service.providing.ServiceRegistry;

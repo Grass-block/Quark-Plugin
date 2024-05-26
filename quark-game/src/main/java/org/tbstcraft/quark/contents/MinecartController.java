@@ -9,14 +9,14 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.util.Vector;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.framework.config.Language;
+import org.tbstcraft.quark.framework.data.config.Language;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.service.base.task.TaskService;
-import org.tbstcraft.quark.util.api.BukkitUtil;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.BukkitUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.text.DecimalFormat;
 import java.util.HashSet;

@@ -13,7 +13,7 @@ import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
-import org.tbstcraft.quark.util.api.BukkitUtil;
+import org.tbstcraft.quark.util.platform.BukkitUtil;
 
 @QuarkService(id = "command-event", impl = CommandEventService.CommandEventAdapter.class)
 public interface CommandEventService extends Service {

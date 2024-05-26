@@ -6,9 +6,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
@@ -20,7 +20,7 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 @QuarkModule(version = "1.0.0")
 @ModuleService(ServiceType.EVENT_LISTEN)
-@CommandRegistry(Maintenance.MaintenanceCommand.class)
+@CommandProvider(Maintenance.MaintenanceCommand.class)
 public class Maintenance extends PackageModule {
     boolean isEnabled = false;
 

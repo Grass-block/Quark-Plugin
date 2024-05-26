@@ -15,6 +15,7 @@ import org.tbstcraft.quark.service.ui.UIManager;
 import org.tbstcraft.quark.service.network.HttpService;
 import org.tbstcraft.quark.service.network.SMTPService;
 import org.tbstcraft.quark.service.network.http.TokenStorage;
+import org.tbstcraft.quark.util.DataFix;
 import org.tbstcraft.quark.util.ExceptionUtil;
 import org.tbstcraft.quark.util.container.ObjectContainer;
 
@@ -113,6 +114,7 @@ public interface Service {
     }
 
     default void onEnable() {
+
     }
 
     default void onDisable() {

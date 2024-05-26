@@ -11,7 +11,7 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.base.task.TaskService;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.util.HashMap;
 

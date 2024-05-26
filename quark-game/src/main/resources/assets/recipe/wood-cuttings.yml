@@ -1,0 +1,34 @@
+recipes:
+  planks-cutting:
+    type: "stone_cutter"
+    repeat:
+      - "oak"
+      - "spruce"
+      - "acacia"
+      - "dark_oak"
+      - "birch"
+      - "jungle"
+    input: "minecraft:{#type}_log"
+    output: "minecraft:{#type}_planks*8"
+  planks-slab-cutting:
+    type: "stone_cutter"
+    repeat:
+      - "oak"
+      - "spruce"
+      - "acacia"
+      - "dark_oak"
+      - "birch"
+      - "jungle"
+    input: "minecraft:{#type}_planks"
+    output: "minecraft:{#type}_slab*2"
+  planks-stairs-cutting:
+    type: "stone_cutter"
+    repeat:
+      - "oak"
+      - "spruce"
+      - "acacia"
+      - "dark_oak"
+      - "birch"
+      - "jungle"
+    input: "minecraft:{#type}_planks"
+    output: "minecraft:{#type}_stairs*2"

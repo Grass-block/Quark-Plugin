@@ -6,12 +6,9 @@ import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
-import org.tbstcraft.quark.util.ExceptionUtil;
-import org.tbstcraft.quark.util.FilePath;
-import org.tbstcraft.quark.util.ObjectOperationResult;
-import org.tbstcraft.quark.util.ObjectStatus;
-import org.tbstcraft.quark.util.api.APIProfile;
-import org.tbstcraft.quark.util.api.APIProfileTest;
+import org.tbstcraft.quark.util.*;
+import org.tbstcraft.quark.util.platform.APIProfile;
+import org.tbstcraft.quark.util.platform.APIProfileTest;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,7 +19,7 @@ import java.util.logging.Logger;
 
 @QuarkService(id = "module")
 public interface ModuleManager extends Service {
-    String DATA_FILE = "%s/config/modules.properties";
+    String DATA_FILE = "%s/data/modules.properties";
 
     ServiceHolder<ModuleManager> INSTANCE = new ServiceHolder<>();
 
@@ -189,6 +186,7 @@ public interface ModuleManager extends Service {
         @Override
         public void onEnable() {
             try {
+                DataFix.moveFile("/config/modules.properties","/data/modules.properties");
                 this.statusMap.load(new FileInputStream(this.getStatusFile()));
             } catch (IOException e) {
                 throw new RuntimeException(e);

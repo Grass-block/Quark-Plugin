@@ -6,7 +6,7 @@ import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 @QuarkModule(version = "0.7")
 @ModuleService(ServiceType.CLIENT_MESSAGE)

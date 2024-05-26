@@ -14,9 +14,9 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -26,12 +26,11 @@ import org.tbstcraft.quark.service.WESessionTrackService;
 import org.tbstcraft.quark.util.region.Region;
 import org.tbstcraft.quark.util.region.SimpleRegion;
 import me.gb2022.commons.nbt.NBTTagCompound;
-import org.tbstcraft.quark.util.region.SimpleRegion;
 
 import java.util.*;
 
 @ModuleService(ServiceType.EVENT_LISTEN)
-@CommandRegistry({LimitedArea.LimitedAreaCommand.class})
+@CommandProvider({LimitedArea.LimitedAreaCommand.class})
 @QuarkModule(version = "1.3.0",recordFormat = {"Time","Player", "World", "X", "Y", "Z", "Region"})
 public final class LimitedArea extends PackageModule {
     private final HashMap<String, SimpleRegion> regions = new HashMap<>();

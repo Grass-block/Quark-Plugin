@@ -2,8 +2,7 @@ package org.tbstcraft.quark.util.crafting;
 
 import org.bukkit.*;
 import org.bukkit.inventory.*;
-import org.tbstcraft.quark.util.api.APIProfile;
-import org.tbstcraft.quark.util.api.APIProfileTest;
+import org.tbstcraft.quark.util.platform.APIProfileTest;
 
 public interface RecipeManager {
     static void register(Recipe... recipes) {

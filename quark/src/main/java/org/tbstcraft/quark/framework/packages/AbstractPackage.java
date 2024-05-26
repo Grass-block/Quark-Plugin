@@ -1,8 +1,8 @@
 package org.tbstcraft.quark.framework.packages;
 
 import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.framework.config.Configuration;
-import org.tbstcraft.quark.framework.config.Language;
+import org.tbstcraft.quark.framework.data.config.Configuration;
+import org.tbstcraft.quark.framework.data.config.Language;
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.framework.module.providing.ModuleRegistry;
 import org.tbstcraft.quark.framework.packages.initializer.PackageInitializer;

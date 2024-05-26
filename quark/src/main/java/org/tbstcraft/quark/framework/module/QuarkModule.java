@@ -2,7 +2,7 @@ package org.tbstcraft.quark.framework.module;
 
 import org.tbstcraft.quark.FeatureAvailability;
 import org.tbstcraft.quark.framework.module.standalone.StandaloneModuleProvider;
-import org.tbstcraft.quark.util.api.APIProfile;
+import org.tbstcraft.quark.util.platform.APIProfile;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

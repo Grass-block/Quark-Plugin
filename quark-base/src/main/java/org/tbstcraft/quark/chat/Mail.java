@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -15,7 +15,7 @@ import org.tbstcraft.quark.internal.data.PlayerDataService;
 import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.BukkitSound;
 import org.tbstcraft.quark.util.container.CachedInfo;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.util.HashSet;
 import java.util.List;
@@ -80,6 +80,7 @@ public final class Mail extends CommandModule {
             getLanguage().sendMessageTo(recipientPlayer, "receive-direct", sender.getName(), content);
             getLanguage().sendMessageTo(sender, "send-success", recipient, content);
             BukkitSound.ANNOUNCE.play(recipientPlayer);
+            return;
         }
 
         NBTTagCompound entry = PlayerDataService.getEntry(recipient, this.getFullId());

@@ -8,12 +8,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.util.CachedServerIcon;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.framework.assets.Asset;
-import org.tbstcraft.quark.framework.config.Language;
-import org.tbstcraft.quark.framework.config.Queries;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.data.assets.Asset;
+import org.tbstcraft.quark.framework.data.config.Language;
+import org.tbstcraft.quark.framework.data.config.Queries;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
@@ -21,16 +21,16 @@ import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.framework.text.ComponentBlock;
-import org.tbstcraft.quark.framework.text.TextBuilder;
-import org.tbstcraft.quark.util.api.APIProfile;
-import org.tbstcraft.quark.util.api.APIProfileTest;
+import org.tbstcraft.quark.util.text.ComponentBlock;
+import org.tbstcraft.quark.util.text.TextBuilder;
+import org.tbstcraft.quark.util.platform.APIProfile;
+import org.tbstcraft.quark.util.platform.APIProfileTest;
 
 import java.io.File;
 import java.util.List;
 
 @QuarkModule(version = "1.0.2")
-@CommandRegistry({CustomMotd.MotdCommand.class})
+@CommandProvider({CustomMotd.MotdCommand.class})
 @Compat(CustomMotd.PaperCompat.class)
 @ModuleService(ServiceType.EVENT_LISTEN)
 public final class CustomMotd extends PackageModule {

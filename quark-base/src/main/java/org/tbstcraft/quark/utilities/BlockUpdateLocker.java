@@ -7,14 +7,14 @@ import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
 
 import java.util.List;
 
 @ModuleService(ServiceType.EVENT_LISTEN)
-@CommandRegistry({BlockUpdateLocker.BlockUpdateLockerCommand.class})
+@CommandProvider({BlockUpdateLocker.BlockUpdateLockerCommand.class})
 @QuarkModule(version = "1.0.0")
 public final class BlockUpdateLocker extends PackageModule {
     private boolean locked = false;

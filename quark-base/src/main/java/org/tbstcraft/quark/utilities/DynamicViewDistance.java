@@ -5,23 +5,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.base.permission.PermissionService;
-import org.tbstcraft.quark.util.api.APIProfile;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.APIProfile;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 import org.tbstcraft.quark.util.container.CachedInfo;
 
 import java.util.List;
 import java.util.Objects;
 
 @ModuleService(ServiceType.EVENT_LISTEN)
-@CommandRegistry(DynamicViewDistance.ViewDistanceCommand.class)
+@CommandProvider(DynamicViewDistance.ViewDistanceCommand.class)
 @QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT, APIProfile.ARCLIGHT, APIProfile.SPIGOT})
 public class DynamicViewDistance extends PackageModule {
 

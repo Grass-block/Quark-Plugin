@@ -18,7 +18,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.util.api.BukkitUtil;
+import org.tbstcraft.quark.util.platform.BukkitUtil;
 
 import java.util.*;
 

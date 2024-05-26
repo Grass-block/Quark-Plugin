@@ -12,22 +12,21 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.framework.config.Queries;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.data.config.Queries;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.util.region.SimpleRegion;
-import org.tbstcraft.quark.util.region.SimpleRegion;
 
 import java.util.*;
 
 @ModuleService(ServiceType.EVENT_LISTEN)
-@CommandRegistry(ExplosionDefender.ExplosionWhitelistCommand.class)
+@CommandProvider(ExplosionDefender.ExplosionWhitelistCommand.class)
 @QuarkModule(version = "1.3.3", recordFormat = {"Time", "World", "X", "Y", "Z", "Type"})
 public final class ExplosionDefender extends PackageModule {
     private final HashMap<String, SimpleRegion> whiteListedRegions = new HashMap<>();

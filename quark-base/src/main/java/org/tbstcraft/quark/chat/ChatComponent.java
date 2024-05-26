@@ -5,8 +5,8 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.tbstcraft.quark.command.CommandManager;
-import org.tbstcraft.quark.framework.config.Queries;
+import org.tbstcraft.quark.framework.command.CommandManager;
+import org.tbstcraft.quark.framework.data.config.Queries;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -14,9 +14,9 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
-import org.tbstcraft.quark.framework.text.TextBuilder;
-import org.tbstcraft.quark.util.api.APIProfile;
-import org.tbstcraft.quark.util.api.APIProfileTest;
+import org.tbstcraft.quark.util.text.TextBuilder;
+import org.tbstcraft.quark.util.platform.APIProfile;
+import org.tbstcraft.quark.util.platform.APIProfileTest;
 
 
 @ModuleService(ServiceType.EVENT_LISTEN)

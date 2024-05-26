@@ -2,7 +2,7 @@ package org.tbstcraft.quark.framework.service;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.framework.config.Configuration;
+import org.tbstcraft.quark.framework.data.config.Configuration;
 import org.tbstcraft.quark.util.ExceptionUtil;
 
 import java.lang.reflect.Field;

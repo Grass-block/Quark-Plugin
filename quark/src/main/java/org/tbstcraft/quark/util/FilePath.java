@@ -1,7 +1,5 @@
 package org.tbstcraft.quark.util;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.tbstcraft.quark.Quark;
 
 import java.io.*;
@@ -18,24 +16,6 @@ public interface FilePath {
         }
         coverFile(src, dest);
         return f;
-    }
-
-    static JsonObject packageDescriptor(String id) {
-        try {
-            JsonObject obj;
-            InputStream stream = getPluginResource("/packages/%s.json".formatted(id));
-            if (stream == null) {
-                Quark.LOGGER.warning("failed to load package descriptor.");
-                return null;
-            }
-            obj = ((JsonObject) new JsonParser().parse(new InputStreamReader(stream)));
-            stream.close();
-            return obj;
-        } catch (IOException e) {
-            Quark.LOGGER.warning("failed to load package descriptor of %s: %s".formatted(id, e.getMessage()));
-            Quark.LOGGER.severe(e.getMessage());
-        }
-        return null;
     }
 
     static void coverFile(String srcDir, String fileDir) {
@@ -59,11 +39,9 @@ public interface FilePath {
         }
     }
 
-
     static String server() {
         return System.getProperty("user.dir");
     }
-
 
     static String pluginsFolder() {
         return server() + "/plugins";
@@ -73,22 +51,6 @@ public interface FilePath {
         plugin = Objects.equals(plugin, "quark") ? "Quark" : plugin;
         return server() + "/plugins/" + plugin;
     }
-
-    static String recordFolder(String plugin) {
-        plugin = Objects.equals(plugin, "quark") ? "Quark" : plugin;
-        return pluginFolder(plugin) + "/record";
-    }
-
-    static String moduleData(String plugin) {
-        plugin = Objects.equals(plugin, "quark") ? "Quark" : plugin;
-        return pluginFolder(plugin) + "/module_data";
-    }
-
-    static String playerData(String plugin) {
-        plugin = Objects.equals(plugin, "quark") ? "Quark" : plugin;
-        return pluginFolder(plugin) + "/player_data";
-    }
-
 
     static InputStream getPluginResource(String path) {
         String fixedPath = path.replaceFirst("/", "");
@@ -113,26 +75,5 @@ public interface FilePath {
             }
         }
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
-    }
-
-    static void cover(File target, InputStream stream) {
-        if (stream == null) {
-            Quark.LOGGER.severe("null source!");
-            return;
-        }
-        try {
-            if (target.getParentFile().mkdirs()) {
-                Quark.LOGGER.info("created folder of file: " + target.getName());
-            }
-            if (target.createNewFile()) {
-                Quark.LOGGER.info("created file:" + target.getName());
-            }
-            FileOutputStream out = new FileOutputStream(target);
-            out.write(stream.readAllBytes());
-            stream.close();
-            out.close();
-        } catch (IOException e) {
-            Quark.LOGGER.severe("failed to save resource(dest: %s): %s".formatted(target.getName(), e.getMessage()));
-        }
     }
 }

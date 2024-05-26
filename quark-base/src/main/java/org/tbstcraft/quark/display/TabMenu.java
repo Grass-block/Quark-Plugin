@@ -4,14 +4,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.tbstcraft.quark.framework.config.Language;
+import org.tbstcraft.quark.framework.data.config.Language;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.service.base.task.TaskService;
-import org.tbstcraft.quark.util.api.BukkitUtil;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.BukkitUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 @ModuleService(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "2.0.3")

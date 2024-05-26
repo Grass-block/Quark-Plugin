@@ -2,8 +2,8 @@ package org.tbstcraft.quark;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.tbstcraft.quark.framework.text.TextBuilder;
-import org.tbstcraft.quark.framework.text.TextSender;
+import org.tbstcraft.quark.util.text.TextBuilder;
+import org.tbstcraft.quark.util.text.TextSender;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.service.base.ProductService;
 
@@ -100,7 +100,8 @@ public interface ProductInfo {
                   - 框架版本: {#aqua}{#quark_framework_version}{#white}
                   - 构建时间: {#aqua}{#build_time}{#white}
                    
-                 {#white}Copyright @ATCraft Network(TBSTMC) 2024. All Rights Reserved.
+                 {#white}Copyright @ATCraft Network(TBSTMC)(China) Org. All Right Reserved.
+                 
                    
                 {#yellow}==========[{#purple}Quark{#white}-{#aqua}关于{#yellow}]==========
                 """.formatted(f);

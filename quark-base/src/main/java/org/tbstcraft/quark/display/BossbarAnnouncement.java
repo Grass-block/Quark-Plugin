@@ -10,23 +10,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.framework.config.Queries;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.data.config.Queries;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.service.base.task.TaskService;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 import me.gb2022.commons.nbt.NBTTagCompound;
 
 import java.util.*;
 
 @ModuleService(ServiceType.EVENT_LISTEN)
-@CommandRegistry(BossbarAnnouncement.BossbarAnnounceCommand.class)
+@CommandProvider(BossbarAnnouncement.BossbarAnnounceCommand.class)
 @QuarkModule(version = "1.1.0")
 public final class BossbarAnnouncement extends PackageModule {
     public static final String TASK_UPDATE_TID = "quark-display:custom_bossbar:update";

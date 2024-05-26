@@ -6,9 +6,11 @@ import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
+import org.tbstcraft.quark.util.DataFix;
 import org.tbstcraft.quark.util.FilePath;
 
 import java.io.File;
+import java.util.Objects;
 
 @QuarkService(id = "module-data")
 public interface ModuleDataService extends Service {
@@ -16,7 +18,7 @@ public interface ModuleDataService extends Service {
 
     @ServiceInject
     static void start() {
-        INSTANCE.set(create(FilePath.moduleData(Quark.PLUGIN_ID)));
+        INSTANCE.set(create(FilePath.pluginFolder("Quark") + "/data/module"));
         INSTANCE.get().onEnable();
     }
 
@@ -59,6 +61,7 @@ public interface ModuleDataService extends Service {
 
         @Override
         public void onEnable() {
+            DataFix.moveFolder("/module_data","/data/module");
             this.backend.open();
         }
 

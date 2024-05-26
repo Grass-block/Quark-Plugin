@@ -4,14 +4,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.command.AbstractCommand;
-import org.tbstcraft.quark.framework.config.LanguageEntry;
+import org.tbstcraft.quark.framework.command.AbstractCommand;
+import org.tbstcraft.quark.framework.data.config.LanguageEntry;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.services.ModuleServices;
 import org.tbstcraft.quark.framework.packages.IPackage;
 import org.tbstcraft.quark.internal.record.EmptyRecordEntry;
 import org.tbstcraft.quark.internal.record.RecordEntry;
-import org.tbstcraft.quark.util.api.APIProfile;
+import org.tbstcraft.quark.util.platform.APIProfile;
 
 import java.io.InputStream;
 import java.net.URL;

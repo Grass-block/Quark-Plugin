@@ -1,16 +1,10 @@
 package org.tbstcraft.quark.framework.packages;
 
 import com.google.gson.JsonObject;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.framework.config.Configuration;
-import org.tbstcraft.quark.framework.config.Language;
-import org.tbstcraft.quark.util.Timer;
-
-import java.util.Objects;
-import java.util.logging.Logger;
+import org.tbstcraft.quark.framework.data.config.Configuration;
+import org.tbstcraft.quark.framework.data.config.Language;
 
 @Deprecated
 public abstract class ExtensionPluginPackage extends JavaPlugin implements IPackage{

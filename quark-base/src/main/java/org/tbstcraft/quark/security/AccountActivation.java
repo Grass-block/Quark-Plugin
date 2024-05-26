@@ -12,10 +12,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.*;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.framework.config.LanguageEntry;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.data.config.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
@@ -25,14 +25,14 @@ import org.tbstcraft.quark.service.network.HttpService;
 import org.tbstcraft.quark.service.network.SMTPService;
 import org.tbstcraft.quark.service.network.http.HttpHandlerContext;
 import org.tbstcraft.quark.service.network.http.HttpRequest;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 //todo:二步验证换绑
-@CommandRegistry({AccountActivation.AccountCommand.class})
+@CommandProvider({AccountActivation.AccountCommand.class})
 @QuarkModule(version = "1.0.2", beta = true)
 @ModuleService({ServiceType.EVENT_LISTEN, ServiceType.PLUGIN_MESSAGE})
 public final class AccountActivation extends PackageModule {

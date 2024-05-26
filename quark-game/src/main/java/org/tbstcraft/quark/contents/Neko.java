@@ -3,16 +3,16 @@ package org.tbstcraft.quark.contents;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.util.container.CachedInfo;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 import me.gb2022.commons.nbt.NBTTagCompound;
 
 import java.util.HashSet;
@@ -21,7 +21,7 @@ import java.util.Set;
 
 @SuppressWarnings("deprecation")
 @QuarkModule(version = "1.0.0")
-@CommandRegistry(Neko.NekoCommand.class)
+@CommandProvider(Neko.NekoCommand.class)
 @ModuleService(ServiceType.EVENT_LISTEN)
 public final class Neko extends PackageModule {
     private final Set<String> players = new HashSet<>();

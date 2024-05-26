@@ -3,7 +3,7 @@ package org.tbstcraft.quark.utilities;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.TabCompleteEvent;
-import org.tbstcraft.quark.command.CommandManager;
+import org.tbstcraft.quark.framework.command.CommandManager;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ModuleService;

@@ -10,7 +10,7 @@ import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.util.container.ObjectContainer;
-import org.tbstcraft.quark.util.api.APIProfileTest;
+import org.tbstcraft.quark.util.platform.APIProfileTest;
 
 import java.util.Collection;
 import java.util.function.Predicate;

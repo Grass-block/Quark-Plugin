@@ -4,19 +4,19 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.text.TextBuilder;
-import org.tbstcraft.quark.framework.text.TextSender;
+import org.tbstcraft.quark.util.text.TextBuilder;
+import org.tbstcraft.quark.util.text.TextSender;
 
 import java.util.List;
 import java.util.Objects;
 
 @QuarkModule(version = "1.0.0", internal = true, available = FeatureAvailability.DEMO_ONLY)
-@CommandRegistry(Advertisements.ShowAdCommand.class)
+@CommandProvider(Advertisements.ShowAdCommand.class)
 public final class Advertisements extends PackageModule {
 
     private interface Texts {

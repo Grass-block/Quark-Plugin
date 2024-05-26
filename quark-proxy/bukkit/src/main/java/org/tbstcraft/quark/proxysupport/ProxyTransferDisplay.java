@@ -3,19 +3,19 @@ package org.tbstcraft.quark.proxysupport;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.service.proxy.ChannelHandler;
 import org.tbstcraft.quark.service.proxy.ProxyChannel;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-@CommandRegistry(ProxyTransferDisplay.STPDisplayCommand.class)
+@CommandProvider(ProxyTransferDisplay.STPDisplayCommand.class)
 @QuarkModule(id = "proxy-transfer-display")
 public class ProxyTransferDisplay extends PackageModule implements ChannelHandler {
 

@@ -1,7 +1,6 @@
 package org.tbstcraft.quark.contents;
 
 import com.google.gson.JsonArray;
-import me.gb2022.apm.client.ClientMessenger;
 import me.gb2022.apm.client.event.ClientRequestEvent;
 import me.gb2022.apm.client.event.driver.ClientEventHandler;
 import me.gb2022.commons.nbt.NBTBase;
@@ -14,10 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.tbstcraft.quark.command.CommandManager;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.CommandManager;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
@@ -25,9 +24,9 @@ import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
 import org.tbstcraft.quark.util.BukkitSound;
-import org.tbstcraft.quark.util.api.APIProfile;
-import org.tbstcraft.quark.util.api.BukkitCodec;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.APIProfile;
+import org.tbstcraft.quark.util.platform.BukkitCodec;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +35,7 @@ import java.util.Objects;
 
 @QuarkCommand(name = "waypoint")
 @QuarkModule(version = "2.0.3", compatBlackList = {APIProfile.ARCLIGHT})
-@CommandRegistry({Waypoint.WaypointCommand.class})
+@CommandProvider({Waypoint.WaypointCommand.class})
 @ModuleService({ServiceType.EVENT_LISTEN,ServiceType.CLIENT_MESSAGE})
 public final class Waypoint extends CommandModule {
     private final Map<String, Location> deathPoints = new HashMap<>();

@@ -4,8 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.framework.config.Configuration;
-import org.tbstcraft.quark.framework.config.Language;
 import org.tbstcraft.quark.framework.module.providing.JsonModuleRegistry;
 import org.tbstcraft.quark.framework.module.providing.ModuleRegistry;
 import org.tbstcraft.quark.framework.packages.AbstractPackage;

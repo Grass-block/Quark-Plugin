@@ -10,8 +10,9 @@ import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
+import org.tbstcraft.quark.util.DataFix;
 import org.tbstcraft.quark.util.FilePath;
-import org.tbstcraft.quark.util.api.BukkitUtil;
+import org.tbstcraft.quark.util.platform.BukkitUtil;
 
 import java.io.File;
 
@@ -23,7 +24,7 @@ public interface PlayerDataService extends Service {
 
     @ServiceInject
     static void start() {
-        INSTANCE.set(create(FilePath.playerData(Quark.PLUGIN_ID)));
+        INSTANCE.set(create(FilePath.pluginFolder("Quark") + "/data/player"));
         INSTANCE.get().onEnable();
     }
 
@@ -67,6 +68,7 @@ public interface PlayerDataService extends Service {
 
         @Override
         public void onEnable() {
+            DataFix.moveFolder("/player_data", "/data/player");
             BukkitUtil.registerEventListener(this);
             this.backend.open();
         }

@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.util.api.FoliaUtil;
+import org.tbstcraft.quark.util.platform.FoliaUtil;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;

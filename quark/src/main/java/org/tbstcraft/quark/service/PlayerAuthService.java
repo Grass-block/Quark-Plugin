@@ -9,8 +9,8 @@ import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
 import org.tbstcraft.quark.util.container.ObjectContainer;
-import org.tbstcraft.quark.util.api.BukkitUtil;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.BukkitUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.util.Base64;
 import java.util.Objects;

@@ -1,8 +1,8 @@
 package org.tbstcraft.quark.framework.module.standalone;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.tbstcraft.quark.framework.config.Configuration;
-import org.tbstcraft.quark.framework.config.Language;
+import org.tbstcraft.quark.framework.data.config.Configuration;
+import org.tbstcraft.quark.framework.data.config.Language;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.packages.IPackage;
 import org.tbstcraft.quark.framework.packages.QuarkPackage;

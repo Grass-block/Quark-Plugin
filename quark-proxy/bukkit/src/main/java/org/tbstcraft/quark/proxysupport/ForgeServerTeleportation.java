@@ -2,18 +2,18 @@ package org.tbstcraft.quark.proxysupport;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.service.base.permission.PermissionService;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.util.List;
 import java.util.Objects;
 
-@CommandRegistry(ForgeServerTeleportation.HubCommand.class)
+@CommandProvider(ForgeServerTeleportation.HubCommand.class)
 @QuarkCommand(name = "teleport-server", permission = "+quark.stp")
 @QuarkModule(version = "1.0.0")
 public class ForgeServerTeleportation extends CommandModule {

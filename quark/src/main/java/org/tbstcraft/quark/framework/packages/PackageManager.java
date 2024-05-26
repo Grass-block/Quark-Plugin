@@ -10,8 +10,8 @@ import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
 import org.tbstcraft.quark.util.*;
-import org.tbstcraft.quark.util.api.BukkitPluginManager;
-import org.tbstcraft.quark.util.api.BukkitUtil;
+import org.tbstcraft.quark.util.platform.BukkitPluginManager;
+import org.tbstcraft.quark.util.platform.BukkitUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -247,7 +247,7 @@ public interface PackageManager extends Service {
         }
 
         private File getStatusFile() {
-            String path = FilePath.pluginFolder("quark") + "/config/packages.properties";
+            String path = FilePath.pluginFolder("quark") + "/data/packages.properties";
             File file = new File(path);
             if (!file.exists() || file.length() == 0) {
                 if (file.getParentFile().mkdirs()) {
@@ -337,6 +337,7 @@ public interface PackageManager extends Service {
 
         @Override
         public void onEnable() {
+            DataFix.moveFile("/config/packages.properties","/data/packages.properties");
             try {
                 this.statusMap.load(new FileInputStream(this.getStatusFile()));
             } catch (IOException e) {

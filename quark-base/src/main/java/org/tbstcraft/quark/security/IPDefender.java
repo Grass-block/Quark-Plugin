@@ -16,7 +16,7 @@ import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
 import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.NetworkUtil;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.io.IOException;
 import java.util.Calendar;

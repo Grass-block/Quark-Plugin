@@ -37,8 +37,8 @@ language:
     lock: "{global#sys-info}已锁定方块更新。"
     unlock: "{global#sys-info}已解锁方块更新。"
   item-command:
-    bind: "{global#sys-info}已将物品 %s 绑定到命令行 %s。"
-    unbind: "{global#sys-info}已将清除物品 %s 的命令行绑定。"
+    bind: "{global#sys-info}已将物品 {#var} 绑定到命令行 {#var}。"
+    unbind: "{global#sys-info}已将清除物品 {#var} 的命令行绑定。"
     bind-fail: "{global#sys-error}无法将命令行绑定到空手。"
   custom-log-format:
     enable: "{global#sys-operation}{#gray}自定义服务端日志格式已启用。"

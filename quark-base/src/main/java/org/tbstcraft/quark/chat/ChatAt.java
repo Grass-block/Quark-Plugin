@@ -6,14 +6,15 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.tbstcraft.quark.framework.config.Queries;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.framework.data.config.Queries;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.text.TextBuilder;
-import org.tbstcraft.quark.framework.text.TextSender;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.text.TextBuilder;
+import org.tbstcraft.quark.util.text.TextSender;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -22,6 +23,7 @@ import java.util.Set;
 @ModuleService(ServiceType.EVENT_LISTEN)
 @QuarkModule(id = "chat-at",version = "1.0.2")
 public final class ChatAt extends PackageModule {
+
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         ConfigurationSection cfg = this.getConfig();

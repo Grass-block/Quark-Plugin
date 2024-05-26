@@ -7,8 +7,8 @@ import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.framework.text.TextBuilder;
-import org.tbstcraft.quark.framework.text.TextSender;
+import org.tbstcraft.quark.util.text.TextBuilder;
+import org.tbstcraft.quark.util.text.TextSender;
 
 @QuarkModule(id = "demo_warning", internal = true, available = FeatureAvailability.DEMO_ONLY)
 @ModuleService(ServiceType.EVENT_LISTEN)

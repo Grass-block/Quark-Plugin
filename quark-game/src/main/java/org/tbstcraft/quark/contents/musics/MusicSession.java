@@ -2,9 +2,9 @@ package org.tbstcraft.quark.contents.musics;
 
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.contents.MusicPlayer;
-import org.tbstcraft.quark.framework.config.Language;
+import org.tbstcraft.quark.framework.data.config.Language;
 import org.tbstcraft.quark.service.base.task.TaskService;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.text.DecimalFormat;
 import java.util.HashSet;

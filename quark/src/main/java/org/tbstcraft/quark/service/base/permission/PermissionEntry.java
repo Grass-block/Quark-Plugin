@@ -5,7 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
-import org.tbstcraft.quark.command.CommandManager;
+import org.tbstcraft.quark.framework.command.CommandManager;
 
 import java.util.HashMap;
 import java.util.HashSet;

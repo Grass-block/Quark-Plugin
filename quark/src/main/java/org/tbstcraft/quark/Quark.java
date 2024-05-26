@@ -1,10 +1,10 @@
 package org.tbstcraft.quark;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.tbstcraft.quark.framework.config.Configuration;
-import org.tbstcraft.quark.framework.config.Language;
+import org.tbstcraft.quark.framework.data.config.Configuration;
+import org.tbstcraft.quark.framework.data.config.Language;
 import org.tbstcraft.quark.util.Timer;
-import org.tbstcraft.quark.util.api.BukkitPluginManager;
+import org.tbstcraft.quark.util.platform.BukkitPluginManager;
 
 import java.util.UUID;
 import java.util.logging.Logger;

@@ -1,9 +1,9 @@
 package org.tbstcraft.quark.framework.module.standalone;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.tbstcraft.quark.framework.config.Configuration;
-import org.tbstcraft.quark.framework.config.Language;
-import org.tbstcraft.quark.framework.config.LanguageEntry;
+import org.tbstcraft.quark.framework.data.config.Configuration;
+import org.tbstcraft.quark.framework.data.config.Language;
+import org.tbstcraft.quark.framework.data.config.LanguageEntry;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.internal.record.RecordEntry;
 import org.tbstcraft.quark.internal.record.RecordService;

@@ -5,18 +5,18 @@ import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.reflect.Annotations;
 import org.bukkit.event.Listener;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.command.AbstractCommand;
-import org.tbstcraft.quark.command.CommandManager;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.AbstractCommand;
+import org.tbstcraft.quark.framework.command.CommandManager;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
 import org.tbstcraft.quark.service.network.RemoteMessageService;
-import org.tbstcraft.quark.util.api.APIProfile;
-import org.tbstcraft.quark.util.api.APIProfileTest;
-import org.tbstcraft.quark.util.api.BukkitUtil;
+import org.tbstcraft.quark.util.platform.APIProfile;
+import org.tbstcraft.quark.util.platform.APIProfileTest;
+import org.tbstcraft.quark.util.platform.BukkitUtil;
 
 import java.lang.reflect.Constructor;
 
@@ -93,7 +93,7 @@ public interface ModuleServices {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     static void initCommands(AbstractModule module) {
-        CommandRegistry annotation = module.getClass().getAnnotation(CommandRegistry.class);
+        CommandProvider annotation = module.getClass().getAnnotation(CommandProvider.class);
         if (annotation == null) {
             return;
         }
@@ -124,7 +124,7 @@ public interface ModuleServices {
             }
         });
 
-        if (module.getClass().getDeclaredAnnotation(CommandRegistry.class) != null) {
+        if (module.getClass().getDeclaredAnnotation(CommandProvider.class) != null) {
             for (AbstractCommand cmd : module.getCommands()) {
                 CommandManager.unregisterCommand(cmd);
             }

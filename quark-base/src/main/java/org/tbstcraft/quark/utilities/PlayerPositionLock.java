@@ -5,22 +5,22 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.util.container.CachedInfo;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.util.HashSet;
 import java.util.List;
 
 @ModuleService(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.0.0")
-@CommandRegistry(PlayerPositionLock.LockPositionCommand.class)
+@CommandProvider(PlayerPositionLock.LockPositionCommand.class)
 public class PlayerPositionLock extends PackageModule {
     private final HashSet<String> lockedPlayers = new HashSet<>();
 

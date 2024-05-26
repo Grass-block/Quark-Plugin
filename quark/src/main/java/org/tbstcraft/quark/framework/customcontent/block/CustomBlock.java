@@ -11,8 +11,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.framework.language.LanguageKey;
-import org.tbstcraft.quark.util.api.BukkitUtil;
+import org.tbstcraft.quark.framework.customcontent.CustomMeta;
+import org.tbstcraft.quark.framework.data.language.LanguageKey;
 
 public abstract class CustomBlock {
     private final String id;
@@ -32,7 +32,7 @@ public abstract class CustomBlock {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (!BukkitUtil.checkUsage(event.getItemInHand(), this.id)) {
+        if (!CustomMeta.matchItemIdentifier(event.getItemInHand(), this.id)) {
             return;
         }
         setBlockId(((TileState) event.getBlockPlaced().getState()), this.id);
@@ -50,7 +50,7 @@ public abstract class CustomBlock {
     @EventHandler
     public void onPlayerHarvestBlock(PlayerHarvestBlockEvent event){
         for (ItemStack stack:event.getItemsHarvested()){
-            if (!BukkitUtil.checkUsage(stack, this.id)) {
+            if (!CustomMeta.matchItemIdentifier(stack, this.id)) {
                 continue;
             }
         }

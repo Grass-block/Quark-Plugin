@@ -20,14 +20,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.contents.musics.EnumInstrument;
 import org.tbstcraft.quark.contents.musics.MusicData;
 import org.tbstcraft.quark.contents.musics.MusicFileLoader;
 import org.tbstcraft.quark.contents.musics.MusicSession;
-import org.tbstcraft.quark.framework.assets.AssetGroup;
+import org.tbstcraft.quark.framework.data.assets.AssetGroup;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.*;
@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-@CommandRegistry(MusicPlayer.MusicCommand.class)
+@CommandProvider(MusicPlayer.MusicCommand.class)
 @QuarkModule(version = "1.0.3")
 @ModuleService({ServiceType.EVENT_LISTEN,ServiceType.REMOTE_MESSAGE,ServiceType.CLIENT_MESSAGE})
 public final class MusicPlayer extends PackageModule {

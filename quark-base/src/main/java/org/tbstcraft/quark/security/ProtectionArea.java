@@ -15,10 +15,10 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.framework.config.Queries;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.data.config.Queries;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -31,7 +31,7 @@ import org.tbstcraft.quark.util.region.SimpleRegion;
 import java.util.*;
 
 @ModuleService(ServiceType.EVENT_LISTEN)
-@CommandRegistry({ProtectionArea.ProtectionAreaCommand.class})
+@CommandProvider({ProtectionArea.ProtectionAreaCommand.class})
 @QuarkModule(version = "1.3.4", recordFormat = {"Time", "Player", "World", "X", "Y", "Z", "Region"})
 public final class ProtectionArea extends PackageModule {
     private final HashMap<String, SimpleRegion> regions = new HashMap<>();

@@ -3,16 +3,16 @@ package org.tbstcraft.quark.contents;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
+import org.tbstcraft.quark.framework.customcontent.CustomMeta;
 import org.tbstcraft.quark.framework.customcontent.block.CustomBlock;
 import org.tbstcraft.quark.framework.customcontent.block.QuarkBlock;
-import org.tbstcraft.quark.util.api.BukkitUtil;
 
 public class ChunkLoader {
 
 
     public static ItemStack createChunkLoaderItem(int amount) {
         ItemStack stack = new ItemStack(Material.BEACON, amount);
-        BukkitUtil.setItemUsage(stack, "quark::chunk_loader");
+        CustomMeta.setItemIdentifier(stack, "chunk_loader");
         return stack;
     }
 

@@ -18,18 +18,19 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.customcontent.CustomMeta;
 import org.tbstcraft.quark.framework.customcontent.item.CustomItem;
 import org.tbstcraft.quark.framework.customcontent.item.QuarkItem;
-import org.tbstcraft.quark.framework.language.LanguageKey;
+import org.tbstcraft.quark.framework.data.language.LanguageKey;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.api.BukkitUtil;
-import org.tbstcraft.quark.util.api.PlayerUtil;
+import org.tbstcraft.quark.util.platform.BukkitUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 import org.tbstcraft.quark.util.crafting.RecipeBuilder;
 import org.tbstcraft.quark.util.crafting.RecipeManager;
 
@@ -37,7 +38,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 @ModuleService(ServiceType.EVENT_LISTEN)
-@CommandRegistry({Elevator.ElevatorItemCommand.class})
+@CommandProvider({Elevator.ElevatorItemCommand.class})
 @QuarkModule(version = "1.0.0")
 @SuppressWarnings("deprecation")
 public final class Elevator extends PackageModule {
@@ -57,7 +58,7 @@ public final class Elevator extends PackageModule {
         meta.addEnchant(Enchantment.DURABILITY, 6, true);
         meta.setDisplayName("电梯");
         stack.setItemMeta(meta);
-        BukkitUtil.setItemUsage(stack, "elevator");
+        CustomMeta.setItemIdentifier(stack, "elevator");
         return stack;
     }
 
@@ -87,7 +88,7 @@ public final class Elevator extends PackageModule {
         if (b == null) {
             return;
         }
-        if (!isElevatorBlock(b)) {
+        if (!isValidElevator(b)) {
             return;
         }
 
@@ -98,7 +99,7 @@ public final class Elevator extends PackageModule {
         double yo = player.getLocation().getY();
 
         while (y < world.getMaxHeight()) {
-            if (isElevatorBlock(world.getBlockAt(x, y, z))) {
+            if (isValidElevator(world.getBlockAt(x, y, z))) {
                 PlayerUtil.teleport(player, player.getLocation().add(0, y + 1 - yo, 0));
                 player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 1, 0);
                 return;
@@ -119,7 +120,7 @@ public final class Elevator extends PackageModule {
         if (b == null) {
             return;
         }
-        if (!isElevatorBlock(b)) {
+        if (!isValidElevator(b)) {
             return;
         }
 
@@ -130,7 +131,7 @@ public final class Elevator extends PackageModule {
         double yo = player.getLocation().getY();
 
         while (y > -65) {
-            if (isElevatorBlock(world.getBlockAt(x, y, z))) {
+            if (isValidElevator(world.getBlockAt(x, y, z))) {
                 PlayerUtil.teleport(player, player.getLocation().add(0, y + 1 - yo, 0));
                 player.playSound(player.getLocation(), Sound.BLOCK_PISTON_CONTRACT, 1, 0);
                 return;
@@ -139,14 +140,14 @@ public final class Elevator extends PackageModule {
         }
     }
 
-    public boolean isElevatorBlock(Block b) {
+    public boolean isValidElevator(Block b) {
         if (b.getType() != Material.FURNACE) {
             return false;
         }
 
         Furnace furnace = (Furnace) b.getState();
 
-        if (!BukkitUtil.getBlockUsage(furnace).equals("elevator")) {
+        if(!CustomMeta.matchPDHIdentifier(furnace,"elevator")){
             return false;
         }
 
@@ -160,19 +161,19 @@ public final class Elevator extends PackageModule {
         if (event.getItemInHand().getType() != Material.FURNACE) {
             return;
         }
-        if (!BukkitUtil.checkUsage(event.getItemInHand(), "elevator")) {
+        if (!CustomMeta.matchItemIdentifier(event.getItemInHand(), "elevator")) {
             return;
         }
 
         Furnace furnace = (Furnace) event.getBlock().getState();
-        BukkitUtil.setBlockUsage(furnace);
+        CustomMeta.setPDHIdentifier(furnace,"elevator");
         furnace.update();
     }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (!isElevatorBlock(event.getBlock())) {
+        if (!isValidElevator(event.getBlock())) {
             return;
         }
         event.setDropItems(false);

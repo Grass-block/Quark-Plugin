@@ -9,10 +9,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.command.CommandRegistry;
-import org.tbstcraft.quark.command.ModuleCommand;
-import org.tbstcraft.quark.command.QuarkCommand;
-import org.tbstcraft.quark.framework.config.LanguageEntry;
+import org.tbstcraft.quark.framework.command.CommandProvider;
+import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.data.config.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.service.base.task.TaskService;
@@ -21,7 +21,7 @@ import java.util.*;
 
 //todo:config countdown
 @QuarkModule(version = "1.0.0")
-@CommandRegistry({GarbageCleaner.CleanCommand.class})
+@CommandProvider({GarbageCleaner.CleanCommand.class})
 @SuppressWarnings("ClassCanBeRecord")
 public final class GarbageCleaner extends PackageModule implements Runnable {
     private static final int[] REMAIN = new int[]{120, 60, 30, 20, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};

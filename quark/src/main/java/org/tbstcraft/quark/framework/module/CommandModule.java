@@ -2,7 +2,7 @@ package org.tbstcraft.quark.framework.module;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.command.*;
+import org.tbstcraft.quark.framework.command.*;
 
 import java.util.List;
 
