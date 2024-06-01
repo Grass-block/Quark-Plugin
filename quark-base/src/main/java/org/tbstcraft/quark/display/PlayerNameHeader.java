@@ -50,7 +50,6 @@ public final class PlayerNameHeader extends CommandModule {
         Player p = PlayerUtil.strictFindPlayer(args[1]);
         NBTTagCompound entry = ModuleDataService.getEntry(this.getId());
         if (Objects.equals(args[0], "set")) {
-            args[2] = args[2] + "{}";
             entry.setString(args[1], args[2]);
             this.getLanguage().sendMessageTo(sender, "set-header", args[1], args[2]);
         }
@@ -129,7 +128,7 @@ public final class PlayerNameHeader extends CommandModule {
         }
         return TextBuilder.buildComponent(
                 Queries.GLOBAL_TEMPLATE_ENGINE.handle(
-                        template.replace("{player}", player.getName()).replace("{header}", header + "{}")));
+                        template.replace("{player}", player.getName()).replace("{header}", header + TextBuilder.EMPTY_COMPONENT)));
 
     }
 }

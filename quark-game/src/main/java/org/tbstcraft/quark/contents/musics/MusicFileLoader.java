@@ -79,7 +79,6 @@ public interface MusicFileLoader {
 
             RemoteMessageService.getInstance().sendQuery(contentServer, "/music/list", (b -> {
             })).timeout(5000, () -> {
-                System.out.println("?????");
             }).result((b) -> lists.addAll(List.of(BufferUtil.readString(b).split(";")))).sync();
             return lists;
         }

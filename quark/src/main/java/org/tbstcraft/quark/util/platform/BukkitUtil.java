@@ -38,7 +38,6 @@ import java.util.jar.JarFile;
 public interface BukkitUtil {
     String NAMESPACE = ChatColor.DARK_GRAY + "quark::";
 
-
     static double getTPS() {
         try {
             Object o = Bukkit.class.getDeclaredMethod("getTPS").invoke(null);

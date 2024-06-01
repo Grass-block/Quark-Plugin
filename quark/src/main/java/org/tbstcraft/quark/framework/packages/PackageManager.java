@@ -210,7 +210,7 @@ public interface PackageManager extends Service {
                 pkg.initializePackage();
                 this.packages.put(pkg.getId(), pkg);
                 if (getStatus(pkg.getId()) == ObjectStatus.UNREGISTERED) {
-                    this.statusMap.put(pkg.getId(), Quark.CONFIG.getConfig("default-status").getBoolean("package") ? "enabled" : "disabled");
+                    this.statusMap.put(pkg.getId(), Quark.PLUGIN.getConfig().getBoolean("config.default-status.package") ? "enabled" : "disabled");
                     this.saveStatus();
                 }
                 if (Identifiers.external(pkg.getId()).equals(CORE_PKG_ID)){

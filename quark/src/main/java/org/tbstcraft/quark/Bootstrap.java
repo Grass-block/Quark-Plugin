@@ -154,20 +154,10 @@ public interface Bootstrap {
             ClientMessenger.setBackend(MessageBackend.bukkit(Quark.PLUGIN));
             ClientMessenger.getBackend().start();
         }
-
-        @ContextComponent(order = 6, text = "Internal content registered")
-        static void internalContent(Quark instance) {
-            InternalCommands.register();
-        }
     }
 
     interface StopOperations {
-        @ContextComponent(order = 0, text = "Internal contents unregistered.")
-        static void unregisterAllPackages(Quark instance) {
-            InternalCommands.unregister();
-        }
-
-        @ContextComponent(order = 1, text = "Service stopped.")
+        @ContextComponent(order = 0, text = "Service stopped.")
         static void stopService(Quark instance) {
             ServiceManager.unregisterAll();
 
@@ -177,7 +167,7 @@ public interface Bootstrap {
             ClientMessenger.getBackend().stop();
         }
 
-        @ContextComponent(order = 2, text = "Context destroyed")
+        @ContextComponent(order = 1, text = "Context destroyed")
         static void destroyContext(Quark instance) {
             Quark.PLUGIN = null;
         }

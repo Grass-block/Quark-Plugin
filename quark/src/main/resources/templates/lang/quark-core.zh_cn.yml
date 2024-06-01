@@ -1,13 +1,13 @@
 language:
   global-vars:
-    sys-info: "[{#aqua}系统{#white}]{#gray}"
-    sys-warning: "[{#yellow}系统{#white}]{#gray}"
-    sys-error: "[{#red}系统{#white}]{#gray}"
-    sys-success: "[{#green}系统{#white}]{#gray}"
-    sys-operation: "[{#light-purple}系统{#white}]{#gray}"
-    hint: "[{#aqua}提示{#white}]{#gray}"
-    warning: "[{#yellow}警告{#white}]{#gray}"
-    error: "[{#error}错误{#white}]{#gray}"
+    sys-info: "{#aqua}系统{#dark_aqua} > {#gray}"
+    sys-warning: "{#yellow}系统{#dark_aqua} > {#gray}"
+    sys-error: "{#red}系统{#dark_aqua} > {#gray}"
+    sys-success: "{#green}系统{#dark_aqua} > {#gray}"
+    sys-operation: "{#light-purple}系统{#dark_aqua} > {#gray}"
+    hint: "{#gray}[{#green}!{#gray}]{#gray}"
+    warning: "{#gray}[{#yellow}!{#gray}]{#gray}"
+    error: "{#gray}[{#red}!{#gray}]{#gray}"
   command:
     exception: "{global#sys-error}语法有误，或执行该命令时出现了内部错误。"
     lack-permission: "{global#sys-error}很抱歉，你没有执行该命令的权限。"
@@ -67,3 +67,6 @@ language:
   folia-compat:
     disabled: "{global#sys-error}该功能因为Folia无相应兼容API以无法使用。"
     reload-warn:  "{global#sys-error}Folia的重载会导致所有插件和命令无法正常加载, 你应该重启服务器!"
+  version-log-viewer:
+    view: "{global#sys-info}以下是 Quark 版本 {#var} 的更新日志:"
+    not-found: "{global#sys-error}未找到 Quark 版本 {#var} 的更新日志。"

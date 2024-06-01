@@ -47,11 +47,7 @@ public interface PlayerUtil {
 
     static int getPing(Player p) {
         try {
-            Object craftPlayer = BukkitUtil.toCraftEntity(p);
-            if (craftPlayer == null) {
-                return 0;
-            }
-            return (int) craftPlayer.getClass().getMethod("getPing").invoke(craftPlayer);
+            return (int)p.getClass().getMethod("getPing").invoke(p);
         } catch (Exception e) {
             Quark.LOGGER.severe(e.getMessage());
             return 0;

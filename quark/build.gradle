@@ -1,8 +1,8 @@
-import java.text.SimpleDateFormat
-
 plugins{
     id 'java'
 }
+
+project.setProperty("version","3.62.15")
 
 apply from: "E:/Java/GradleScripts/build-base.gradle"
 
@@ -10,8 +10,6 @@ applyGlobalScript("Publish/MinecraftServerTest.gradle")
 applyGlobalScript("Publish/ProjectOutput.gradle")
 applyGlobalScript("Repo/MinecraftPlugins.gradle")
 applyGlobalScript("/Dependencies.gradle")
-
-version = ""
 
 apply from: rootDir.getAbsolutePath()+"/info.gradle"
 
@@ -30,8 +28,7 @@ dependencies {
 dependencies {
     compileOnly 'org.iq80.leveldb:leveldb:0.12'
 
-    implementation 'org.jetbrains:annotations:24.0.0'
-    implementation 'com.sun.mail:javax.mail:1.6.2'
+    implementation projectLocal('javax.mail-1.6.2')
 
     implementation localStorage("me.gb2022.commons-nbt")
     implementation localStorage("me.gb2022.commons-math")
@@ -52,3 +49,8 @@ dependencies {
     compileOnly projectLocal('paper-threadedregions')
 }
 
+jar {
+    from sourceSets.main.output.filter { File file ->
+        (file.name != 'LICENSE.txt')
+    }
+}

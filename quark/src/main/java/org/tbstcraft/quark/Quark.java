@@ -1,11 +1,17 @@
 package org.tbstcraft.quark;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.tbstcraft.quark.framework.data.config.Configuration;
 import org.tbstcraft.quark.framework.data.config.Language;
+import org.tbstcraft.quark.framework.data.config.Queries;
+import org.tbstcraft.quark.framework.data.config.YamlUtil;
 import org.tbstcraft.quark.util.Timer;
 import org.tbstcraft.quark.util.platform.BukkitPluginManager;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -41,11 +47,21 @@ public final class Quark extends JavaPlugin {
             Class.forName("org.tbstcraft.quark.Bootstrap");
             Class.forName("org.tbstcraft.quark.Bootstrap$BootOperations");
             Class.forName("org.tbstcraft.quark.Bootstrap$ContextComponent");
+            Class.forName("org.tbstcraft.quark.framework.data.config.Queries");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
 
         Timer.restartTiming();
+
+        InputStream templateResource = Objects.requireNonNull(this.getClass().getResourceAsStream("/config.yml"));
+        YamlConfiguration template = YamlConfiguration.loadConfiguration(new InputStreamReader(templateResource));
+
+        YamlUtil.update(getConfig(), template, false, 3);
+
+        this.saveConfig();
+        Queries.setEnvironmentVars(Objects.requireNonNull(getConfig().getConfigurationSection("config.environment")));
+
         Bootstrap.run(Bootstrap.BootOperations.class, this);
         coreAvailable = true;
 

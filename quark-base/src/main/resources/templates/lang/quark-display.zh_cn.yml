@@ -43,20 +43,9 @@ language:
     op-header: '{#dark-purple}管理'
     player-header: '{#dark-aqua}玩家'
   welcome-message:
-    welcome-title: '  {#white}欢迎来到{#aqua}{#server-name}{#reset}服务器!'
-    welcome-message:
-      - '    {#gray}欢迎来到{#server-name}, 一个充满激情与创造力的MC服务器。'
-      - '    {#gray}我们致力于各种新的技术和玩法, 为玩家提供新鲜刺激的游戏体验。'
-      - '    {#gray}无论你是喜欢探险还是热衷于创造, 我们都有适合你的游戏内容。'
-    info-title: ' {#gray}在开始游玩之前，请确保您已经了解以下内容:'
-    website: '{#gray}我们的官方网站: {color(aqua);underline;click(link,{#server-website})}{#server-website}{none}'
-    qq-group: '{#gray}我们的QQ群: {color(green);click(copy,{#qq-group})}{#qq-group}{none}
-      {click(link,{#qq-invite-link})}{#white}[{#green}一键加群{#white}]'
-    wiki: '{#gray}我们的官方百科: {color(aqua);underline;click(link,{#wiki})}{#wiki}{none}'
-    policy: '{#gray}请阅读并同意我们的 {color(purple);click(link,{#terms-of-service})}用户协议{color(gray)}
-      和 {color(purple);click(link,{#privacy-policy})}隐私政策{none}'
-    post-title: '  {#gray}去探索吧, 这个世界的故事将由你们书写。'
-    callback: '     {#gray}(本消息可用{#gold}/welcome-message{#gray}再次呼出)'
+    title: '{#gold}>> 欢迎!'
+    content: '{#white}欢迎来到{#server-name}{#white}服务器,祝你玩得开心!'
+    callback: '{#gray}(本消息可用{#gold}/welcome-message{#gray}再次呼出)'
   custom-scoreboard:
     title: '{#aqua}{#server-name}{#reset}'
     date: '{#gray}日期: {#white}{#date}'

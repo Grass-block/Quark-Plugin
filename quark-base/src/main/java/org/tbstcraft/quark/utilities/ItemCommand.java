@@ -34,10 +34,10 @@ public class ItemCommand extends PackageModule {
             return;
         }
 
-        if (!CustomMeta.hasItemProperty(hand, "cmd_bind")) {
+        if (!CustomMeta.hasItemPDCProperty(hand, "cmd_bind")) {
             return;
         }
-        Bukkit.getServer().dispatchCommand(p, Objects.requireNonNull(CustomMeta.getItemProperty(hand, "cmd_bind")));
+        Bukkit.getServer().dispatchCommand(p, Objects.requireNonNull(CustomMeta.getItemPDCProperty(hand, "cmd_bind")));
         event.setCancelled(true);
     }
 
@@ -53,7 +53,7 @@ public class ItemCommand extends PackageModule {
             }
             String id = stack.getType().getKey().getKey();
             if (args[0].equals("none")) {
-                CustomMeta.removeItemProperty(stack, "cmd_bind");
+                CustomMeta.removeItemPDCProperty(stack, "cmd_bind");
                 this.getLanguage().sendMessageTo(sender, "unbind", id);
             } else {
                 StringBuilder sb = new StringBuilder();
@@ -62,7 +62,7 @@ public class ItemCommand extends PackageModule {
                 }
                 String cmdLine = sb.toString();
 
-                CustomMeta.setItemProperty(stack, "cmd_bind", cmdLine);
+                CustomMeta.setItemPDCProperty(stack, "cmd_bind", cmdLine);
                 this.getLanguage().sendMessageTo(sender, "bind", id, cmdLine);
             }
         }

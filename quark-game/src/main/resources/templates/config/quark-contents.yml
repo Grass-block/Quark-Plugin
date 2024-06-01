@@ -16,7 +16,7 @@ config:
     back-to-death: true
   music-player:
     ui: "{#white}{msg#playing} {#yellow}: {#aqua}{name} {#yellow}|{#white} {time}{#gray} / {#white}{total}"
-    remote: false
+    remote: {$proxy}
     cdn-server: lobby
     pitch-offsets:
       "Kiss_The_Rain.mid": -12

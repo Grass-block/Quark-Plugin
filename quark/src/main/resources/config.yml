@@ -1,3 +1,14 @@
 config:
   startup:
     fast-boot: false
+    update-check: false
+  default-status:
+    module: true
+    package: true
+  environment:
+    proxy: false
+    proxy-id: example-server
+    proxy-exchange-mode: false
+    proxy-exchange-host: example.com
+    proxy-exchange-port: 25843
+    proxy-exchange-key: "(enter your custom key)"

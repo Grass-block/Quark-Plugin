@@ -123,5 +123,9 @@ public interface CommandManager {
             throw new RuntimeException(e);
         }
     }
+
+    static AbstractCommand getQuarkCommand(String name) {
+        return (AbstractCommand) getCommandEntries().get(name);
+    }
 }
 

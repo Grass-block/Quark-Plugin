@@ -1,12 +1,13 @@
 package org.tbstcraft.quark.internal.command;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.util.ObjectOperationResult;
-import org.tbstcraft.quark.util.ObjectStatus;
 import org.tbstcraft.quark.framework.command.CoreCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.packages.PackageManager;
+import org.tbstcraft.quark.util.ObjectOperationResult;
+import org.tbstcraft.quark.util.ObjectStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,7 +85,13 @@ public final class PackageCommand extends CoreCommand {
 
         for (String namespace : map.keySet()) {
             List<String> list = map.get(namespace);
-            sb.append(ChatColor.GOLD).append(namespace).append("(").append(list.size()).append("):\n");
+            sb.append(ChatColor.GOLD)
+                    .append(namespace)
+                    .append("@")
+                    .append(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin(namespace)).getDescription().getVersion())
+                    .append("(")
+                    .append(list.size())
+                    .append("):\n");
             for (String id : list) {
                 sb.append(ChatColor.RESET).append(" - ");
                 if (PackageManager.getPackageStatus(id) == ObjectStatus.ENABLED) {

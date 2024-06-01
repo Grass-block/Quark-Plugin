@@ -31,6 +31,7 @@ public interface YamlUtil {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -67,7 +68,7 @@ public interface YamlUtil {
 
     static void injectNew(ConfigurationSection target, ConfigurationSection template) {
         for (String key : template.getKeys(false)) {
-            if (target.contains(key)) {
+            if (target.getKeys(false).contains(key)) {
                 continue;
             }
             target.set(key, template.get(key));
@@ -99,6 +100,7 @@ public interface YamlUtil {
     static void loadUTF8(YamlConfiguration cfg, InputStream stream) {
         try {
             String str = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+            str = Queries.applyEnvironmentVars(str);
             cfg.loadFromString(str);
             stream.close();
         } catch (IOException | InvalidConfigurationException e) {

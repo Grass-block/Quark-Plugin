@@ -7,15 +7,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class TemplateEngine {
-    public static final String EXTRACT_PATTERN = "\\{#(.*?)\\}";
+    public static final Pattern EXTRACT_PATTERN = Pattern.compile("\\{#(.*?)\\}");
     public static final String REPLACE_PATTERN = "{#%s}";
 
     private final QueryHandler queryHandler = new QueryHandler();
 
     public static List<String> extract(String input) {
         List<String> result = new ArrayList<>();
-        Pattern pattern = Pattern.compile(EXTRACT_PATTERN);
-        Matcher matcher = pattern.matcher(input);
+        Matcher matcher = EXTRACT_PATTERN.matcher(input);
         while (matcher.find()) {
             result.add(matcher.group());
         }

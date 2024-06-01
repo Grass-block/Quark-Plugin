@@ -40,8 +40,7 @@ public final class CustomRecipe extends PackageModule {
                 if (recipe.contains("repeat")) {
                     this.recipes.addAll(RecipeDeserializer.deserializeRepeatable(id, recipe));
                 } else {
-                    Recipe r=RecipeDeserializer.deserialize(id, recipe);
-                    System.out.println(r.getClass().getName());
+                    Recipe r = RecipeDeserializer.deserialize(id, recipe);
                     this.recipes.add(r);
                 }
             }

@@ -43,6 +43,7 @@ public final class JoinQuitMessage extends PackageModule {
         }
         String player = event.getPlayer().getName();
         this.broadcast(player, (p) -> this.getLanguage().sendMessageTo(p, "join", player));
+        this.getLanguage().sendMessageTo(PlayerUtil.strictFindPlayer(player), "welcome-message", player);
     }
 
     @EventHandler

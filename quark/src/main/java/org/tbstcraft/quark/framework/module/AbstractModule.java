@@ -174,6 +174,9 @@ public abstract class AbstractModule implements Listener {
     public abstract IPackage getParent();
 
     public final InputStream getResource(String path) {
+        if (!path.startsWith("/")) {
+            path = path + "/";
+        }
         return this.getClass().getResourceAsStream("/assets" + path);
     }
 

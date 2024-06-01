@@ -15,29 +15,50 @@ import java.util.regex.Pattern;
 public interface CustomMeta {
     Pattern CUSTOM_ITEM_META_LORE = Pattern.compile(ChatColor.DARK_GRAY + "[a-z]+::[a-z]+");
 
-    //PDH
-    static void setPDHIdentifier(PersistentDataHolder holder, String data) {
-        NamespacedKey key = new NamespacedKey(Quark.PLUGIN, "block_usage");
+    String ID_PROPERTY_NAME = "block_usage";
+
+    //PDC
+    static void setPDCIdentifier(PersistentDataHolder holder, String data) {
+        setPDCProperty(holder, ID_PROPERTY_NAME, data);
+    }
+
+    static String getPDCIdentifier(PersistentDataHolder holder) {
+        return getPDCProperty(holder, ID_PROPERTY_NAME);
+    }
+
+    static boolean matchPDCIdentifier(PersistentDataHolder holder, String data) {
+        return Objects.equals(getPDCIdentifier(holder), data);
+    }
+
+    static boolean hasPDCIdentifier(PersistentDataHolder holder) {
+        return getPDCIdentifier(holder) != null;
+    }
+
+    static void removePDCIdentifier(PersistentDataHolder holder) {
+        removePDCProperty(holder, ID_PROPERTY_NAME);
+    }
+
+    static void setPDCProperty(PersistentDataHolder holder, String id, String data) {
+        NamespacedKey key = new NamespacedKey(Quark.PLUGIN, id);
         holder.getPersistentDataContainer().set(key, PersistentDataType.STRING, data);
-        System.out.println(getPDHIdentifier(holder));
     }
 
-    static String getPDHIdentifier(PersistentDataHolder holder) {
-        NamespacedKey key = new NamespacedKey(Quark.PLUGIN, "block_usage");
-        String s = null;
+    static String getPDCProperty(PersistentDataHolder holder, String id) {
+        NamespacedKey key = new NamespacedKey(Quark.PLUGIN, id);
         try {
-            s = holder.getPersistentDataContainer().get(key, PersistentDataType.STRING);
+            return holder.getPersistentDataContainer().get(key, PersistentDataType.STRING);
         } catch (Exception ignored) {
+            return null;
         }
-        return s;
     }
 
-    static boolean matchPDHIdentifier(PersistentDataHolder holder, String data) {
-        return Objects.equals(getPDHIdentifier(holder), data);
+    static void removePDCProperty(PersistentDataHolder holder, String id) {
+        NamespacedKey key = new NamespacedKey(Quark.PLUGIN, id);
+        holder.getPersistentDataContainer().remove(key);
     }
 
-    static boolean hasPDHIdentifier(PersistentDataHolder holder) {
-        return getPDHIdentifier(holder) != null;
+    static boolean hasPDCProperty(PersistentDataHolder holder, String id) {
+        return getPDCProperty(holder, id) != null;
     }
 
 
@@ -84,7 +105,7 @@ public interface CustomMeta {
         Pattern p = Pattern.compile(ChatColor.DARK_GRAY + "[a-z]+::[a-z]+");
 
         ItemMeta meta = stack.getItemMeta();
-        if (meta.getLore()==null) {
+        if (meta.getLore() == null) {
             return;
         }
 
@@ -103,8 +124,6 @@ public interface CustomMeta {
         return Objects.equals(getItemIdentifier(stack), value);
     }
 
-
-    //property
     static void setItemProperty(ItemStack stack, String key, String value) {
         String tag = ChatColor.DARK_GRAY + "cim::%s=%s".formatted(key, value);
 
@@ -162,5 +181,43 @@ public interface CustomMeta {
         }
 
         return null;
+    }
+
+    //PDC item
+    static void setItemPDCProperty(ItemStack stack, String id, String data) {
+        ItemMeta meta = stack.getItemMeta();
+        setPDCProperty(meta, id, data);
+        stack.setItemMeta(meta);
+    }
+
+    static String getItemPDCProperty(ItemStack stack, String prop) {
+        return getPDCProperty(stack.getItemMeta(), prop);
+    }
+
+    static boolean hasItemPDCProperty(ItemStack stack, String prop) {
+        return hasPDCProperty(stack.getItemMeta(), prop);
+    }
+
+    static void removeItemPDCProperty(ItemStack stack, String prop) {
+        ItemMeta meta = stack.getItemMeta();
+        removePDCProperty(meta, prop);
+        stack.setItemMeta(meta);
+    }
+
+
+    static void setItemPDCIdentifier(ItemStack stack, String data) {
+        setItemPDCProperty(stack, ID_PROPERTY_NAME, data);
+    }
+
+    static String getItemPDCIdentifier(ItemStack stack) {
+        return getPDCProperty(stack.getItemMeta(), ID_PROPERTY_NAME);
+    }
+
+    static boolean hasItemPDCIdentifier(ItemStack stack) {
+        return hasPDCProperty(stack.getItemMeta(), ID_PROPERTY_NAME);
+    }
+
+    static void removeItemPDCIdentifier(ItemStack stack) {
+        removeItemPDCProperty(stack, ID_PROPERTY_NAME);
     }
 }

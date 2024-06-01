@@ -186,7 +186,7 @@ public interface ModuleManager extends Service {
         @Override
         public void onEnable() {
             try {
-                DataFix.moveFile("/config/modules.properties","/data/modules.properties");
+                DataFix.moveFile("/config/modules.properties", "/data/modules.properties");
                 this.statusMap.load(new FileInputStream(this.getStatusFile()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -314,7 +314,7 @@ public interface ModuleManager extends Service {
 
             this.moduleMap.put(m.getFullId(), m);
             if (getModuleStatus(m.getFullId()) == ObjectStatus.UNREGISTERED) {
-                this.statusMap.put(m.getFullId(), Quark.CONFIG.getConfig("default-status").getBoolean("module") ? "enabled" : "disabled");
+                this.statusMap.put(m.getFullId(), Quark.PLUGIN.getConfig().getBoolean("config.default-status.module") ? "enabled" : "disabled");
                 this.saveStatus();
             }
             if (m.getDescriptor().internal()) {

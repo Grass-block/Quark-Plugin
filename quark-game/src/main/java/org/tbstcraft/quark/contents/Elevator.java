@@ -147,7 +147,7 @@ public final class Elevator extends PackageModule {
 
         Furnace furnace = (Furnace) b.getState();
 
-        if(!CustomMeta.matchPDHIdentifier(furnace,"elevator")){
+        if(!CustomMeta.matchPDCIdentifier(furnace,"elevator")){
             return false;
         }
 
@@ -166,7 +166,7 @@ public final class Elevator extends PackageModule {
         }
 
         Furnace furnace = (Furnace) event.getBlock().getState();
-        CustomMeta.setPDHIdentifier(furnace,"elevator");
+        CustomMeta.setPDCIdentifier(furnace,"elevator");
         furnace.update();
     }
 

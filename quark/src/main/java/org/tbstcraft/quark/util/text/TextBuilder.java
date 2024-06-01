@@ -9,9 +9,10 @@ import java.util.List;
 
 public interface TextBuilder {
     ThreadLocalStorage<ComponentBlockBuilder> THREAD_LOCAL_STORAGE = new ThreadLocalStorage<>(ComponentBlockBuilder::new);
+    String EMPTY_COMPONENT = "{;}";
 
     static ComponentBlock build(String s, Component... format) {
-        return THREAD_LOCAL_STORAGE.get().build("{}" + s, format);
+        return THREAD_LOCAL_STORAGE.get().build(EMPTY_COMPONENT + s, format);
     }
 
     static Component buildComponent(String s, Component... format) {

@@ -30,6 +30,4 @@ dependencies {
     compileOnly localStorage('me.gb2022.apm-client')
 }
 
-version = ''
-
 apply from: rootDir.getAbsolutePath()+"/info.gradle"

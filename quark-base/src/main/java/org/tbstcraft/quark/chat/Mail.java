@@ -16,6 +16,7 @@ import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.BukkitSound;
 import org.tbstcraft.quark.util.container.CachedInfo;
 import org.tbstcraft.quark.util.platform.PlayerUtil;
+import org.tbstcraft.quark.util.text.TextBuilder;
 
 import java.util.HashSet;
 import java.util.List;
@@ -73,7 +74,7 @@ public final class Mail extends CommandModule {
         for (int i = 1; i < args.length; i++) {
             sb.append(args[i]).append(" ");
         }
-        String content = "{}" + sb + "{}";
+        String content = TextBuilder.EMPTY_COMPONENT + sb + TextBuilder.EMPTY_COMPONENT;
         String recipient = args[0];
         Player recipientPlayer = PlayerUtil.strictFindPlayer(recipient);
         if (recipientPlayer != null) {

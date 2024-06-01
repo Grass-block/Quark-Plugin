@@ -5,7 +5,7 @@ config:
       - '{#blue}#贵州消防栓事件'
       - '{#blue}#Minecraft2024'
       - '{#blue}#MakeMCGreatAgain'
-    motd-title: '{#server-name} {#white}> {cfg#play} {#red}[{#white}BE /JE 1.12-1.20{#red}]'
+    motd-title: '{#server-name} {#white}> {cfg#play} {#red}[{#white}1.12-1.20{#red}]'
     motd-subtitle: '{cfg#tag}{#gold}  |  {#gray}{cfg#splash}'
     splash:
       - '玩Minecraft？你作业写完了？'
@@ -54,17 +54,10 @@ config:
   welcome-message:
     ui:
       - '{color(yellow)} ───────────────────────────────── '
-      - '{msg#welcome-title}'
-      - '{msg#welcome-message}'
+      - '  {msg#title}'
+      - '  {msg#content}'
       - ' '
-      - '{msg#info-title}'
-      - '   {color(white)}- {msg#website}{#reset}'
-      - '   {color(white)}- {msg#qq-group}{#reset}'
-      - '   {color(white)}- {msg#wiki}{#reset}'
-      - '   {color(white)}- {msg#policy}{#reset}'
-      - ' '
-      - '{msg#post-title}'
-      - '{msg#callback}'
+      - '  {msg#callback}'
       - '{color(yellow)} ─────────────────────────────────  '
   custom-scoreboard:
     ui:
@@ -91,4 +84,4 @@ config:
       - "   %s"
       - "{color(yellow)} ─────────────────────────────────"
   join-quit-message:
-    proxy: false
+    proxy: {$proxy}

@@ -3,28 +3,59 @@ package org.tbstcraft.quark.framework.data.config;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.ProductInfo;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.util.ObjectStatus;
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
+import org.tbstcraft.quark.util.ObjectStatus;
 import org.tbstcraft.quark.util.Utility;
 import org.tbstcraft.quark.util.platform.BukkitUtil;
 import org.tbstcraft.quark.util.platform.PlayerUtil;
 import org.tbstcraft.quark.util.query.*;
 
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("deprecation")
 public interface Queries {
     TemplateEngine GLOBAL_TEMPLATE_ENGINE = new TemplateEngine();
     ObjectiveTemplateEngine<Player> PLAYER_TEMPLATE_ENGINE = new ObjectiveTemplateEngine<>();
     GlobalVars EXTERNAL_VARS = new GlobalVars(GLOBAL_TEMPLATE_ENGINE);
+
+    Map<String, String> ENVIRONMENT_VARS = new HashMap<>();
+    Pattern ENV_PATTERN = Pattern.compile("\\{\\$(.*?)\\}");
+
+    static void setEnvironmentVars(ConfigurationSection section) {
+        ENVIRONMENT_VARS.clear();
+        for (String s : section.getKeys(false)) {
+            ENVIRONMENT_VARS.put(s, section.getString(s));
+        }
+    }
+
+    static String applyEnvironmentVars(String input) {
+        List<String> result = new ArrayList<>();
+        Matcher matcher = ENV_PATTERN.matcher(input);
+        while (matcher.find()) {
+            result.add(matcher.group());
+        }
+
+        for (String s : result) {
+            String s2 = s.substring(2, s.length() - 1);
+            String replacement = ENVIRONMENT_VARS.get(s2);
+            if (replacement == null) {
+                continue;
+            }
+            input = input.replace(s, replacement);
+        }
+        return input;
+    }
+
 
     static void reloadExternal() {
         globalVars();
@@ -79,20 +110,21 @@ public interface Queries {
         handler.register("player_data_count", PlayerDataService::getEntryCount);
         handler.register("module_data_count", ModuleDataService::getEntryCount);
         handler.register("quark_version", ProductInfo::version);
-        handler.register("quark_framework_version",new ValueSupplier(ProductInfo.apiVersion()));
-        handler.register("build_time",new ValueSupplier(ProductInfo.METADATA.getProperty("build-time")));
+        handler.register("quark_framework_version", new ValueSupplier(ProductInfo.apiVersion()));
+        handler.register("build_time", new ValueSupplier(ProductInfo.METADATA.getProperty("build-time")));
     }
 
     static void playerQueries(ObjectiveQueryHandler<Player> handler) {
         handler.register("name", Player::getName);
-        handler.register("display_name", Player::getDisplayName);
-        handler.register("custom_name", Player::getCustomName);
+        handler.register("display-name", Player::getDisplayName);
+        handler.register("custom-name", Player::getCustomName);
         handler.register("address", (p) -> Objects.requireNonNull(p.getAddress()).getAddress().getHostAddress());
         handler.register("locale", Player::getLocale);
         handler.register("ping", (p) -> BukkitUtil.formatPing(PlayerUtil.getPing(p)));
-        handler.register("play_time", (p) -> Utility.formatDuring(PlayerUtil.getPlayTime(p)));
-        handler.register("world_time", (p) -> {
+        handler.register("play-time", (p) -> Utility.formatDuring(PlayerUtil.getPlayTime(p)));
+        handler.register("world-time", (p) -> {
             int time = (int) p.getWorld().getTime() - 18000;
+
             if (time < 0) {
                 time = 24000 + time;
             }
@@ -110,7 +142,6 @@ public interface Queries {
         handler.register("tps", () -> BukkitUtil.formatTPS(BukkitUtil.getTPS()));
         handler.register("mspt", () -> BukkitUtil.formatMSPT(BukkitUtil.getMSPT()));
     }
-
 
 
     interface ServerAdapter extends Supplier<Object> {
