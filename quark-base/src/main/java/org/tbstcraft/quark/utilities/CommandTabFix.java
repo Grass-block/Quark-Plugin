@@ -6,7 +6,7 @@ import org.bukkit.event.server.TabCompleteEvent;
 import org.tbstcraft.quark.framework.command.CommandManager;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.FilePath;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @QuarkModule(version = "1.2.0")
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 public final class CommandTabFix extends PackageModule {
     @Override
     public void enable() {
@@ -43,9 +43,6 @@ public final class CommandTabFix extends PackageModule {
             }
             event.setCompletions(match);
         }
-
-        //todo: 用不了
-        //System.out.println(event.getBuffer());
 
         if (event.getBuffer().startsWith("reload") || event.getBuffer().startsWith("/reload")) {
             if (!event.getCompletions().contains("confirm")) {

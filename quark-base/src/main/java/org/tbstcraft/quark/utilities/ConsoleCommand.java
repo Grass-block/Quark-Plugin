@@ -17,7 +17,7 @@ public final class ConsoleCommand extends CommandModule {
         for (String s : args) {
             sb.append(s).append(" ");
         }
-        this.getLanguage().sendMessageTo(sender, "execute", sb.toString());
+        this.getLanguage().sendMessage(sender, "execute", sb.toString());
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), sb.toString());
     }
 

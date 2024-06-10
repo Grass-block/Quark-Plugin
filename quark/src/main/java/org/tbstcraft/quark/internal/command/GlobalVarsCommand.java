@@ -15,15 +15,15 @@ public final class GlobalVarsCommand extends CoreCommand {
         switch (args[0]) {
             case "reload" -> {
                 Queries.EXTERNAL_VARS.load();
-                Quark.LANGUAGE.sendMessageTo(sender, "global-var", "reload");
+                Quark.LANGUAGE.sendMessage(sender, "global-var", "reload");
             }
             case "restore" -> {
                 Queries.EXTERNAL_VARS.restore();
-                Quark.LANGUAGE.sendMessageTo(sender, "global-var", "restore");
+                Quark.LANGUAGE.sendMessage(sender, "global-var", "restore");
             }
             case "sync" -> {
                 Queries.EXTERNAL_VARS.sync();
-                Quark.LANGUAGE.sendMessageTo(sender, "global-var", "sync");
+                Quark.LANGUAGE.sendMessage(sender, "global-var", "sync");
             }
         }
     }

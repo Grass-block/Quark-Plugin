@@ -6,6 +6,6 @@
     "map-protect": ".MapProtect",
     "player-protect": ".PlayerProtect",
     "back-to-spawn": ".BackToSpawn",
-    "server-transfer-message": ".ServerTransferMessage"
+    "npc-chat": ".NPCChat"
   }
 }

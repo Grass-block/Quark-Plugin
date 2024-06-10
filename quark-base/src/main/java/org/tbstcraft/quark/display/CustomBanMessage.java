@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.display;
 
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.BanEntry;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -8,24 +9,26 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.framework.event.BanMessageFetchEvent;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+import java.util.Locale;
+
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.0.2")
-public class CustomBanMessage extends PackageModule {
+public final class CustomBanMessage extends PackageModule {
 
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGH)
     public void onConnect(AsyncPlayerPreLoginEvent event) {
-        String locale = "zh_cn";
+        Locale locale = Locale.CHINA;
         String player = event.getName();
         OfflinePlayer p = Bukkit.getOfflinePlayer(player);
         if (p.getPlayer() != null) {
-            locale = p.getPlayer().getLocale();
+            locale = Language.locale(p.getPlayer());
         }
 
         String ui;
@@ -49,14 +52,14 @@ public class CustomBanMessage extends PackageModule {
         event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ui);
     }
 
-    public String buildBanUI(BanEntry entry, BanList.Type type, String locale) {
+    public String buildBanUI(BanEntry entry, BanList.Type type, Locale locale) {
         String msg;
         if (type == BanList.Type.NAME) {
-            msg = this.getLanguage().buildUI(this.getConfig(), "ui", locale,
-                    (s) -> s.replace("@type", "name"));
+            msg = this.getLanguage().buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui",
+                    (s) -> s.replace("@type", "name")));
         } else {
-            msg = this.getLanguage().buildUI(this.getConfig(), "ui", locale,
-                    (s) -> s.replace("@type", "ip"));
+            msg = this.getLanguage().buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui",
+                    (s) -> s.replace("@type", "ip")));
         }
 
         if (entry.getExpiration() == null) {
@@ -77,7 +80,7 @@ public class CustomBanMessage extends PackageModule {
     }
 
     @EventHandler
-    public void onBanMessageFetch(BanMessageFetchEvent event){
-        event.setMessage(buildBanUI(event.getEntry(),event.getType(),event.getLocale()));
+    public void onBanMessageFetch(BanMessageFetchEvent event) {
+        event.setMessage(buildBanUI(event.getEntry(), event.getType(), Language.locale(event.getLocale())));
     }
 }

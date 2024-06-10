@@ -12,13 +12,13 @@ import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 import java.util.Date;
 import java.util.List;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.2.2", recordFormat = {"Time", "Level", "Player", "World", "X", "Y", "Z", "Type", "Action"})
 public final class ItemDefender extends PackageModule {
 
@@ -70,9 +70,9 @@ public final class ItemDefender extends PackageModule {
 
         if (say) {
             if (b1) {
-                this.getLanguage().sendMessageTo(p, "illegal-item", m.getKey().toString());
+                this.getLanguage().sendMessage(p, "illegal-item", m.getKey().toString());
             } else {
-                this.getLanguage().sendMessageTo(p, "warning-item", m.getKey().toString());
+                this.getLanguage().sendMessage(p, "warning-item", m.getKey().toString());
             }
         }
 
@@ -97,9 +97,9 @@ public final class ItemDefender extends PackageModule {
 
         if (this.getConfig().getBoolean("broadcast")) {
             if (b1) {
-                this.getLanguage().broadcastMessage(true, "illegal-item-broadcast", p.getName(), m.getKey().toString());
+                this.getLanguage().broadcastMessage(true,false, "illegal-item-broadcast", p.getName(), m.getKey().toString());
             } else {
-                this.getLanguage().broadcastMessage(true, "warning-item-broadcast", p.getName(), m.getKey().toString());
+                this.getLanguage().broadcastMessage(true,false, "warning-item-broadcast", p.getName(), m.getKey().toString());
             }
         }
     }

@@ -6,7 +6,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.util.FilePath;
 import org.tbstcraft.quark.util.query.TemplateEngine;
-import org.tbstcraft.quark.util.query.ValueSupplier;
 
 import java.io.*;
 import java.util.HashSet;
@@ -38,7 +37,7 @@ public final class GlobalVars {
             YamlConfiguration external = new YamlConfiguration();
             try {
                 external.load(f);
-            }catch (IOException | InvalidConfigurationException e){
+            } catch (IOException | InvalidConfigurationException e) {
                 restore();
                 external.load(f);
             }
@@ -59,7 +58,7 @@ public final class GlobalVars {
                     if (this.keys.contains(s)) {
                         continue;
                     }
-                    this.target.register(s, new ValueSupplier(root.get(s)));
+                    this.target.register(s, () -> root.get(s));
                     this.keys.add(s);
                     continue;
                 }
@@ -72,11 +71,11 @@ public final class GlobalVars {
                     String id = s + ":" + key2;
 
                     if (!this.keys.contains(key2)) {
-                        this.target.register(key2, new ValueSupplier(section.get(key2)));
+                        this.target.register(key2, () -> section.get(key2));
                         this.keys.add(key2);
                     }
                     if (!this.keys.contains(id)) {
-                        this.target.register(id, new ValueSupplier(section.get(key2)));
+                        this.target.register(id, () -> section.get(key2));
                         this.keys.add(id);
                     }
                 }

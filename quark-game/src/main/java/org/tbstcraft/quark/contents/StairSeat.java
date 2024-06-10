@@ -19,7 +19,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.util.Vector;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -28,7 +28,7 @@ import org.tbstcraft.quark.util.platform.PlayerUtil;
 import java.util.HashMap;
 import java.util.Objects;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "2.0.1")
 public final class StairSeat extends PackageModule {
     public static final String CHAIR_ENTITY_ID = "quark_chair_entity";

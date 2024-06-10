@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.tbstcraft.quark.ProductInfo;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
@@ -15,7 +16,10 @@ import org.tbstcraft.quark.util.ObjectStatus;
 import org.tbstcraft.quark.util.Utility;
 import org.tbstcraft.quark.util.platform.BukkitUtil;
 import org.tbstcraft.quark.util.platform.PlayerUtil;
-import org.tbstcraft.quark.util.query.*;
+import org.tbstcraft.quark.util.query.ObjectiveQueryHandler;
+import org.tbstcraft.quark.util.query.ObjectiveTemplateEngine;
+import org.tbstcraft.quark.util.query.QueryHandler;
+import org.tbstcraft.quark.util.query.TemplateEngine;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -29,7 +33,7 @@ public interface Queries {
     GlobalVars EXTERNAL_VARS = new GlobalVars(GLOBAL_TEMPLATE_ENGINE);
 
     Map<String, String> ENVIRONMENT_VARS = new HashMap<>();
-    Pattern ENV_PATTERN = Pattern.compile("\\{\\$(.*?)\\}");
+    Pattern ENV_PATTERN = Pattern.compile("\\{\\$(.*?)}");
 
     static void setEnvironmentVars(ConfigurationSection section) {
         ENVIRONMENT_VARS.clear();
@@ -70,32 +74,32 @@ public interface Queries {
     }
 
     static void chatComponents(QueryHandler handler) {
-        handler.register("black", new ValueSupplier(ChatColor.BLACK));
-        handler.register("dark-blue", new ValueSupplier(ChatColor.DARK_BLUE));
-        handler.register("dark-green", new ValueSupplier(ChatColor.DARK_GREEN));
-        handler.register("dark-aqua", new ValueSupplier(ChatColor.DARK_AQUA));
-        handler.register("dark-red", new ValueSupplier(ChatColor.DARK_RED));
-        handler.register("dark-purple", new ValueSupplier(ChatColor.DARK_PURPLE));
-        handler.register("gold", new ValueSupplier(ChatColor.GOLD));
-        handler.register("gray", new ValueSupplier(ChatColor.GRAY));
-        handler.register("dark-gray", new ValueSupplier(ChatColor.DARK_GRAY));
-        handler.register("blue", new ValueSupplier(ChatColor.BLUE));
-        handler.register("green", new ValueSupplier(ChatColor.GREEN));
-        handler.register("aqua", new ValueSupplier(ChatColor.AQUA));
-        handler.register("red", new ValueSupplier(ChatColor.RED));
-        handler.register("purple", new ValueSupplier(ChatColor.LIGHT_PURPLE));
-        handler.register("light-purple", new ValueSupplier(ChatColor.LIGHT_PURPLE));
-        handler.register("yellow", new ValueSupplier(ChatColor.YELLOW));
-        handler.register("white", new ValueSupplier(ChatColor.WHITE));
+        handler.register("black", () -> ChatColor.BLACK);
+        handler.register("dark-blue", () -> ChatColor.DARK_BLUE);
+        handler.register("dark-green", () -> ChatColor.DARK_GREEN);
+        handler.register("dark-aqua", () -> ChatColor.DARK_AQUA);
+        handler.register("dark-red", () -> ChatColor.DARK_RED);
+        handler.register("dark-purple", () -> ChatColor.DARK_PURPLE);
+        handler.register("gold", () -> ChatColor.GOLD);
+        handler.register("gray", () -> ChatColor.GRAY);
+        handler.register("dark-gray", () -> ChatColor.DARK_GRAY);
+        handler.register("blue", () -> ChatColor.BLUE);
+        handler.register("green", () -> ChatColor.GREEN);
+        handler.register("aqua", () -> ChatColor.AQUA);
+        handler.register("red", () -> ChatColor.RED);
+        handler.register("purple", () -> ChatColor.LIGHT_PURPLE);
+        handler.register("light-purple", () -> ChatColor.LIGHT_PURPLE);
+        handler.register("yellow", () -> ChatColor.YELLOW);
+        handler.register("white", () -> ChatColor.WHITE);
 
-        handler.register("magic", new ValueSupplier(ChatColor.MAGIC));
-        handler.register("bold", new ValueSupplier(ChatColor.BOLD));
-        handler.register("delete", new ValueSupplier(ChatColor.STRIKETHROUGH));
-        handler.register("underline", new ValueSupplier(ChatColor.UNDERLINE));
-        handler.register("italic", new ValueSupplier(ChatColor.ITALIC));
-        handler.register("reset", new ValueSupplier(ChatColor.RESET));
+        handler.register("magic", () -> ChatColor.MAGIC);
+        handler.register("bold", () -> ChatColor.BOLD);
+        handler.register("delete", () -> ChatColor.STRIKETHROUGH);
+        handler.register("underline", () -> ChatColor.UNDERLINE);
+        handler.register("italic", () -> ChatColor.ITALIC);
+        handler.register("reset", () -> ChatColor.RESET);
 
-        handler.register("return", new ValueSupplier("\n"));
+        handler.register("return", () -> "\n");
         handler.register("date", () -> SharedObjects.DATE_FORMAT.format(new Date()));
     }
 
@@ -110,16 +114,16 @@ public interface Queries {
         handler.register("player_data_count", PlayerDataService::getEntryCount);
         handler.register("module_data_count", ModuleDataService::getEntryCount);
         handler.register("quark_version", ProductInfo::version);
-        handler.register("quark_framework_version", new ValueSupplier(ProductInfo.apiVersion()));
-        handler.register("build_time", new ValueSupplier(ProductInfo.METADATA.getProperty("build-time")));
+        handler.register("quark_framework_version", ProductInfo::apiVersion);
+        handler.register("build_time", () -> ProductInfo.METADATA.getProperty("build-time"));
     }
 
     static void playerQueries(ObjectiveQueryHandler<Player> handler) {
         handler.register("name", Player::getName);
         handler.register("display-name", Player::getDisplayName);
-        handler.register("custom-name", Player::getCustomName);
+        handler.register("custom-name", Player::getName);
         handler.register("address", (p) -> Objects.requireNonNull(p.getAddress()).getAddress().getHostAddress());
-        handler.register("locale", Player::getLocale);
+        handler.register("locale", (p) -> Language.locale(Language.locale(p)));
         handler.register("ping", (p) -> BukkitUtil.formatPing(PlayerUtil.getPing(p)));
         handler.register("play-time", (p) -> Utility.formatDuring(PlayerUtil.getPlayTime(p)));
         handler.register("world-time", (p) -> {

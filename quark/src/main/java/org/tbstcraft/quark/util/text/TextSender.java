@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.framework.data.config.Language;
 import org.tbstcraft.quark.util.container.ObjectContainer;
 import org.tbstcraft.quark.util.platform.APIProfileTest;
 
@@ -85,7 +84,7 @@ public interface TextSender {
             if (!p.isOp() && opOnly) {
                 continue;
             }
-            send(p, component.apply(Language.locale(p)));
+            send(p, component.apply(org.tbstcraft.quark.framework.data.language.Language.locale(p)));
         }
         if (!toConsole) {
             return;
@@ -98,7 +97,7 @@ public interface TextSender {
             if (!p.isOp() && opOnly) {
                 continue;
             }
-            for (Component c : component.apply(Language.locale(p))) {
+            for (Component c : component.apply(org.tbstcraft.quark.framework.data.language.Language.locale(p))) {
                 send(p, c);
             }
 
@@ -150,7 +149,7 @@ public interface TextSender {
                 if (!p.isOp() && opOnly) {
                     continue;
                 }
-                p.sendMessage(ComponentParser.asBungee(component.apply(Language.locale(p))));
+                p.sendMessage(ComponentParser.asBungee(component.apply(org.tbstcraft.quark.framework.data.language.Language.locale(p))));
             }
             if (!toConsole) {
                 return;

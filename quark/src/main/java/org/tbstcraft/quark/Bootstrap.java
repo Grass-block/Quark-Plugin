@@ -73,15 +73,12 @@ public interface Bootstrap {
         static void startupDisplay(Quark instance) {
             Quark.LOGGER.info("detected server platform: " + APIProfileTest.getAPIProfile().toString());
 
-            TextSender.sendToConsole(TextBuilder.build("""
-                    %s {color(yellow)}------------------------------------------------------------
-                      {color(gray)}Artifact by {color(white)}GrassBlock2022, {color(gray)}Copyright {color(white)}[C]TBSTMC 2024.
-                    """.formatted(ProductInfo.logo())));
+            TextSender.sendToConsole(TextBuilder.build(ProductInfo.logo()));
             if (APIProfileTest.isFoliaServer()) {
                 TextSender.sendToConsole(TextBuilder.build("""
                         {color(red)}Quark核心检测到您正在使用Folia服务端!{color(white)}
                           Folia兼容已自动启用。我们不保证任何功能的可用!
-                           
+                        
                         {color(red)}Quark core detected you are using Folia Server!{color(white)}
                           Folia compat are automatically enabled.We do NOT ensure any feature's availability!
                         """));

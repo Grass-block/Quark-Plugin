@@ -28,7 +28,7 @@ public class PlayerPingCommand extends CommandModule {
         sb.append(ping);
         sb.append("{#reset}");
 
-        this.getLanguage().sendMessageTo(sender, "ping-msg", sb.toString());
+        this.getLanguage().sendMessage(sender, "ping-msg", sb.toString());
     }
 
     @Override

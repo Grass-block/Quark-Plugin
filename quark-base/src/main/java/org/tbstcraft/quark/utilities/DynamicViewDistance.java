@@ -10,7 +10,7 @@ import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.base.permission.PermissionService;
 import org.tbstcraft.quark.util.platform.APIProfile;
@@ -20,7 +20,7 @@ import org.tbstcraft.quark.util.container.CachedInfo;
 import java.util.List;
 import java.util.Objects;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(DynamicViewDistance.ViewDistanceCommand.class)
 @QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT, APIProfile.ARCLIGHT, APIProfile.SPIGOT})
 public class DynamicViewDistance extends PackageModule {
@@ -48,7 +48,7 @@ public class DynamicViewDistance extends PackageModule {
         dist = Math.max(2, Math.min(dist, this.getConfig().getInt("max")));
         PlayerUtil.setViewDistance(player, dist);
         PlayerUtil.setSendViewDistance(player, dist);
-        this.getLanguage().sendMessageTo(player, "set-target", dist);
+        this.getLanguage().sendMessage(player, "set-target", dist);
         return dist;
     }
 
@@ -56,7 +56,7 @@ public class DynamicViewDistance extends PackageModule {
         int dist = player.getWorld().getViewDistance();
         PlayerUtil.setViewDistance(player, dist);
         PlayerUtil.setSendViewDistance(player, player.getWorld().getSendViewDistance());
-        this.getLanguage().sendMessageTo(player, "set-target", dist);
+        this.getLanguage().sendMessage(player, "set-target", dist);
         return dist;
     }
 
@@ -66,12 +66,12 @@ public class DynamicViewDistance extends PackageModule {
         public void onCommand(CommandSender sender, String[] args) {
             Player player = PlayerUtil.strictFindPlayer(args[0]);
             if (player == null) {
-                getLanguage().sendMessageTo(sender, "player-not-exist");
+                getLanguage().sendMessage(sender, "player-not-exist");
                 return;
             }
             if (Objects.equals(args[1], "unset")) {
                 int val = this.getModule().resetCustomViewDistance(player);
-                getLanguage().sendMessageTo(sender, "unset", args[0], val);
+                getLanguage().sendMessage(sender, "unset", args[0], val);
                 return;
             }
             if (sender.hasPermission("quark.view-distance.set-other") && !Objects.equals(args[0], sender.getName())) {
@@ -80,7 +80,7 @@ public class DynamicViewDistance extends PackageModule {
             }
 
             int val = this.getModule().setCustomViewDistance(player, Integer.parseInt(args[1]));
-            getLanguage().sendMessageTo(sender, "set", args[0], val);
+            getLanguage().sendMessage(sender, "set", args[0], val);
         }
 
         @Override

@@ -4,9 +4,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.framework.command.CoreCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.data.language.Language;
+import org.tbstcraft.quark.framework.module.AbstractModule;
+import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.util.ObjectOperationResult;
 import org.tbstcraft.quark.util.ObjectStatus;
-import org.tbstcraft.quark.framework.module.ModuleManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,8 +27,9 @@ public final class ModuleCommand extends CoreCommand {
         };
     }
 
-    private void sendMessage(CommandSender sender, String id, Object... fmt) {
-        this.getLanguage().sendMessageTo(sender, id, fmt);
+    private void sendMessage(CommandSender sender, String id, String mid) {
+        AbstractModule module = ModuleManager.getModule(mid);
+        this.getLanguage().sendMessage(sender, id, module.getDisplayName(Language.locale(sender)));
     }
 
     @Override
@@ -35,15 +38,15 @@ public final class ModuleCommand extends CoreCommand {
             case "list" -> this.listModules(sender);
             case "enable-all" -> {
                 ModuleManager.enableAllModules();
-                this.getLanguage().sendMessageTo(sender, "enable-all");
+                this.getLanguage().sendMessage(sender, "enable-all");
             }
             case "disable-all" -> {
                 ModuleManager.disableAllModules();
-                this.getLanguage().sendMessageTo(sender, "disable-all");
+                this.getLanguage().sendMessage(sender, "disable-all");
             }
             case "reload-all" -> {
                 ModuleManager.reloadAllModules();
-                this.getLanguage().sendMessageTo(sender, "reload-all");
+                this.getLanguage().sendMessage(sender, "reload-all");
             }
             case "enable" -> sendMessage(sender, messageId(ModuleManager.enableModule(args[1]), "enable"), args[1]);
             case "disable" -> sendMessage(sender, messageId(ModuleManager.disableModule(args[1]), "disable"), args[1]);
@@ -99,12 +102,13 @@ public final class ModuleCommand extends CoreCommand {
                 } else {
                     sb.append(ChatColor.GRAY);
                 }
-                sb.append("   ").append(id).append(ChatColor.WHITE).append(" -> ");
-                sb.append(ModuleManager.getModule(namespace + ":" + id).getVersion());
+                AbstractModule module = ModuleManager.getModule(namespace + ":" + id);
+                sb.append("   ").append(module.getDisplayName(Language.locale(sender))).append(ChatColor.WHITE).append(" -> ");
+                sb.append(module.getVersion());
                 sb.append('\n');
             }
         }
-        this.getLanguage().sendMessageTo(sender, "list", sb.toString());
+        this.getLanguage().sendMessage(sender, "list", sb.toString());
     }
 
 

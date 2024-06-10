@@ -31,11 +31,15 @@ public interface PermissionService extends Service {
         INSTANCE.get().create(fmt);
     }
 
+    static Permission createPermissionObject(String fmt) {
+        return INSTANCE.get().create(fmt);
+    }
+
     static void deletePermission(String fmt) {
         INSTANCE.get().delete(fmt);
     }
 
-    void create(String fmt);
+    Permission create(String fmt);
 
     void delete(String fmt);
 
@@ -50,7 +54,7 @@ public interface PermissionService extends Service {
         }
 
         @Override
-        public void create(String perm) {
+        public Permission create(String perm) {
             Permission permission = createObject(perm);
             Permission replacement = Bukkit.getPluginManager().getPermission(perm.substring(1));
             if (replacement != null) {
@@ -59,6 +63,7 @@ public interface PermissionService extends Service {
                 Bukkit.getPluginManager().addPermission(permission);
             }
             this.map.put(permission.getName(), permission);
+            return permission;
         }
 
         @Override

@@ -9,6 +9,7 @@
     "we-size-defender": ".WorldEditSectionSizeDefender",
     "item-defender": ".ItemDefender",
     "protection-area": ".ProtectionArea",
-    "account-activation": ".AccountActivation"
+    "account-activation": ".AccountActivation",
+    "advanced-permission-control": ".AdvancedPermissionControl"
   }
 }

@@ -15,31 +15,13 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Objects;
 
-public class ConfigurationSync extends PackageModule implements ChannelHandler {
+public class ConfigurationSync extends PackageModule{
     public static final String SYNC_CACHE_FOLDER = FilePath.pluginFolder(Quark.PLUGIN_ID) + "/sync-cache";
 
     @Override
     public void enable() {
-        ProxyMessageService.addMessageHandler("quark:sync.vars", this);
     }
 
-    @Override
-    public void onMessageReceived(String channelId, byte[] data, ProxyChannel channel) {
-        if (Objects.equals(channelId, "quark:sync.vars")) {
-            try {
-                NBTTagCompound tag = (NBTTagCompound) NBT.readZipped(new ByteArrayInputStream(data));
-            } catch (Exception e) {
-                return;
-            }
-
-            File f=new File(SYNC_CACHE_FOLDER+"/global-vars.dat");
-
-            if(f.getParentFile().mkdirs()){
-                getLogger().info("created sync folder");
-            }
-
-        }
-    }
 
     @QuarkCommand(name="sync-data",subCommands = {GlobalVariablesSyncCommand.class})
     public static final class SyncDataCommand extends ModuleCommand<ConfigurationSync>{

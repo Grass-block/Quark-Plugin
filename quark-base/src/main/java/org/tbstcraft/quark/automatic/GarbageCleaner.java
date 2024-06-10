@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.tbstcraft.quark.framework.command.CommandProvider;
 import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.data.config.LanguageEntry;
+import org.tbstcraft.quark.framework.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.service.base.task.TaskService;
@@ -71,7 +71,7 @@ public final class GarbageCleaner extends PackageModule implements Runnable {
 
     private Runnable cleanTask() {
         return () -> {
-            this.getLanguage().broadcastMessage(false, "restart");
+            this.getLanguage().broadcastMessage(false,false, "restart");
             for (World world : Bukkit.getWorlds()) {
                 if (this.whitelistedWorlds.contains(world.getName())) {
                     continue;
@@ -81,7 +81,7 @@ public final class GarbageCleaner extends PackageModule implements Runnable {
                     cleaner.clean(world);
                 }
             }
-            this.getLanguage().broadcastMessage(false, "complete");
+            this.getLanguage().broadcastMessage(false,false, "complete");
         };
     }
 
@@ -175,7 +175,7 @@ public final class GarbageCleaner extends PackageModule implements Runnable {
 
         @Override
         public void run() {
-            this.entry.broadcastMessage(false, "remain", this.remain);
+            this.entry.broadcastMessage(false,false, "remain", this.remain);
         }
     }
 

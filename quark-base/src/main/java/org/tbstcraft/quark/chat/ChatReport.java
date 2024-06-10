@@ -11,7 +11,7 @@ import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.util.text.TextBuilder;
 import org.tbstcraft.quark.util.platform.APIProfile;
@@ -24,8 +24,8 @@ import java.util.*;
         recordFormat = {"Time", "OperationID", "Reporter", "SendTime", "Sender", "Content"}
 )
 @CommandProvider(ChatReport.ChatReportCommand.class)
-@ModuleService(ServiceType.EVENT_LISTEN)
-public class ChatReport extends PackageModule {
+@AutoRegister(ServiceType.EVENT_LISTEN)
+public final class ChatReport extends PackageModule {
     private final Map<String, String> records = new HashMap<>();
 
     @EventHandler
@@ -44,18 +44,16 @@ public class ChatReport extends PackageModule {
 
     @QuarkCommand(name = "chat-report")
     public static final class ChatReportCommand extends ModuleCommand<ChatReport> {
-        //todo:用chat-renderer
-
         @Override
         public void onCommand(CommandSender sender, String[] args) {
             if (!this.getModule().records.containsKey(args[0])) {
-                this.getLanguage().sendMessageTo(sender, "not-exist");
+                this.getLanguage().sendMessage(sender, "not-exist");
                 return;
             }
 
             String[] rec = this.getModule().records.get(args[0]).split(";");
             this.getModule().records.remove(args[0]);
-            this.getLanguage().sendMessageTo(sender, "success", rec[1], args[0]);
+            this.getLanguage().sendMessage(sender, "success", rec[1], args[0]);
             this.getModule().getRecord().addLine(
                     SharedObjects.DATE_FORMAT.format(new Date()),
                     args[0],

@@ -5,14 +5,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.FeatureAvailability;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.util.text.TextBuilder;
 import org.tbstcraft.quark.util.text.TextSender;
 
 @QuarkModule(id = "demo_warning", internal = true, available = FeatureAvailability.DEMO_ONLY)
-@ModuleService(ServiceType.EVENT_LISTEN)
-public class DemoWarning extends PackageModule {
+@AutoRegister(ServiceType.EVENT_LISTEN)
+public final class DemoWarning extends PackageModule {
     private static final String WARN_OP = """
             {#red} 您（管理）的服务器正在使用未授权的 {#purple}Quark{#red} 实例。请注意盗版软件可能的风险。
             """;

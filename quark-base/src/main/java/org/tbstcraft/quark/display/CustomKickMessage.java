@@ -3,17 +3,20 @@ package org.tbstcraft.quark.display;
 import me.gb2022.apm.local.MappedQueryEvent;
 import me.gb2022.apm.local.PluginMessageHandler;
 import me.gb2022.apm.local.PluginMessenger;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerKickEvent;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
-@ModuleService({ServiceType.EVENT_LISTEN,ServiceType.PLUGIN_MESSAGE})
+import java.util.Locale;
+
+@AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.PLUGIN_MESSAGE})
 @QuarkModule(version = "1.0.0")
-public class CustomKickMessage extends PackageModule {
+public final class CustomKickMessage extends PackageModule {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onKick(PlayerKickEvent event) {
@@ -21,7 +24,7 @@ public class CustomKickMessage extends PackageModule {
             event.setReason(event.getReason().replaceFirst("\u0002", ""));
             return;
         }
-        String msg = this.getLanguage().buildUI(this.getConfig(), "ui", event.getPlayer().getLocale());
+        String msg = this.getLanguage().buildTemplate(Language.locale(event.getPlayer()), Language.generateTemplate(this.getConfig(), "ui"));
         event.setReason(msg.replace("{reason}", event.getReason()));
     }
 
@@ -33,7 +36,8 @@ public class CustomKickMessage extends PackageModule {
             return;
         }
 
-        String ui=this.getLanguage().buildUI(this.getConfig(), "ui", event.getProperty("locale", String.class));
+        Locale locale = Language.locale(event.getProperty("locale", String.class));
+        String ui = this.getLanguage().buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui"));
         event.setProperty("message", ui.replace("{reason}", msg));
     }
 }

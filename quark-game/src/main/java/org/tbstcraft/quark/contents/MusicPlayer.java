@@ -9,6 +9,8 @@ import me.gb2022.apm.remote.event.RemoteEventHandler;
 import me.gb2022.apm.remote.event.remote.RemoteMessageEvent;
 import me.gb2022.apm.remote.event.remote.RemoteQueryEvent;
 import me.gb2022.apm.remote.protocol.BufferUtil;
+import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
@@ -48,7 +50,7 @@ import java.util.Set;
 
 @CommandProvider(MusicPlayer.MusicCommand.class)
 @QuarkModule(version = "1.0.3")
-@ModuleService({ServiceType.EVENT_LISTEN,ServiceType.REMOTE_MESSAGE,ServiceType.CLIENT_MESSAGE})
+@AutoRegister({ServiceType.EVENT_LISTEN,ServiceType.REMOTE_MESSAGE,ServiceType.CLIENT_MESSAGE})
 public final class MusicPlayer extends PackageModule {
     public static final String UNSUPPORTED_FORMAT = "unsupported-format";
     public static final String RESOLVE_ERROR = "error-resolving";
@@ -56,13 +58,13 @@ public final class MusicPlayer extends PackageModule {
     public static final String TIMEOUT = "timeout";
 
     private final MusicSession globalSession = new MusicSession(this);
-    private AssetGroup musicGroup;
     private MusicFileLoader loader;
+
+    @Inject("music")
+    private AssetGroup musicGroup;
 
     @Override
     public void enable() {
-        this.musicGroup = new AssetGroup(this.getOwnerPlugin(), "music", true);
-
         if (!this.musicGroup.existFolder()) {
             this.saveDefaults();
         }
@@ -171,23 +173,23 @@ public final class MusicPlayer extends PackageModule {
 
 
     public void pauseMusic(String player) {
-        this.getLanguage().broadcastMessage(false, "pause", player);
+        this.getLanguage().broadcastMessage(false,false, "pause", player);
         this.globalSession.pause();
     }
 
     public void resumeMusic(String player) {
-        this.getLanguage().broadcastMessage(false, "resume", player);
+        this.getLanguage().broadcastMessage(false,false, "resume", player);
         this.globalSession.resume();
     }
 
     public void cancelMusic(String player) {
-        this.getLanguage().broadcastMessage(false, "cancel", player);
+        this.getLanguage().broadcastMessage(false,false, "cancel", player);
         this.globalSession.cancel();
     }
 
     public void playMusic(String player, String music, int pitch) {
         this.globalSession.play(select(music, pitch));
-        this.getLanguage().broadcastMessage(false, "play", player, music, pitch);
+        this.getLanguage().broadcastMessage(false,false, "play", player, music, pitch);
     }
 
 
@@ -262,7 +264,7 @@ public final class MusicPlayer extends PackageModule {
             switch (args[0]) {
                 case "save-defaults" -> {
                     this.getModule().saveDefaults();
-                    this.getLanguage().sendMessageTo(sender, "restore-defaults");
+                    this.getLanguage().sendMessage(sender, "restore-defaults");
                 }
                 case "cancel" -> {
                     this.getModule().cancelMusic(operator);
@@ -297,7 +299,7 @@ public final class MusicPlayer extends PackageModule {
                     }
 
                     if (!this.getModule().loader.list().contains(music)) {
-                        this.getLanguage().sendMessageTo(sender, "not-found");
+                        this.getLanguage().sendMessage(sender, "not-found");
                         return;
                     }
 

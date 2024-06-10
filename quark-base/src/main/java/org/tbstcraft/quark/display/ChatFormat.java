@@ -12,12 +12,12 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.util.text.TextBuilder;
 import org.tbstcraft.quark.util.platform.APIProfile;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.2.0")
 @Compat(ChatFormat.PaperCompat.class)
 public final class ChatFormat extends PackageModule {
@@ -34,6 +34,7 @@ public final class ChatFormat extends PackageModule {
     }
 
     @CompatDelegate(APIProfile.PAPER)
+    @AutoRegister(ServiceType.EVENT_LISTEN)
     public static final class PaperCompat extends CompatContainer<ChatFormat> {
         public PaperCompat(ChatFormat parent) {
             super(parent);

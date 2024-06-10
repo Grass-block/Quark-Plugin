@@ -1,4 +1,14 @@
 language:
+  -module-name:
+    chat-mute: 聊天禁言
+    chat-format: 聊天格式化
+    mail: 留言
+    chat-report: 聊天举报
+    daily-sentence: 一言
+    npc-chat: NPC聊天
+    chat-at: At玩家
+    chat-component: 聊天组件
+    chat-filter: 聊天过滤器
   chat-mute:
     message-banned: '[{#yellow}系统{#white}]{#gray}你被禁言了.'
     add: '[{#light-purple}系统{#white}]{#gray}成功将玩家 {#var} 加入列表。'
@@ -17,3 +27,28 @@ language:
   chat-report:
     not-exist: "{global#sys-error}您要举报的聊天记录条目不存在, 或许它已经被举报过了。"
     success: "{global#sys-success}您已提交对 {#var} 的聊天举报 ({#var})。"
+  chat-filter:
+    reload: "{global#sys-success}成功重载规则文件。"
+    save: "{global#sys-success}成功保存默认规则文件。"
+  daily-sentence:
+    sentence: "{hover(text,文字来自 {#red}[{#white}一言{#red}]{#gray}(https://hitokoto.cn/))}{#red}[{#white}每日一言{#red}] {#white}%s {#gray}——%s({#var})"
+  npc-chat:
+    name-tbs: "[{#gold}腐竹{#white}]土拨鼠"
+    name-ykm: "[{#gold}腐竹{#white}]BizonUserYakamo"
+    name-gb: "[{color(#3366cc)}管理{#white}]GrassBlock2022"
+    conv-tbs:
+      - '我是 {#server-name} 的腐竹，负责创造服部分的策划工作。'
+      - 你tbs什么都不会，只会摆烂
+      - 早起早睡身体好，晚期晚睡心情好
+      - 你再点我我给你踹了
+      - 官网图片的加载速度真是一言难尽，我才不想传图床
+      - 失败是成功之母，v我50就是成功支付
+      - 我说我是NPC你信吗？不信你还问……
+    conv-gb:
+      - '你好，我是 {#server-name} 的开发者，当然 quark插件也是我一手策划的。'
+      - '写代码真的是个让人肝疼的东西，不是吗?'
+      - '不说了，我的gradle又要炸了，他妈的!'
+      - '你怎么知道我平均反应时间324ms, 而且能马一梭子AK？'
+      - '反馈错误的时候记得带上日志~'
+    conv-ykm:
+      - '我是 {#server-name} 的腐竹，负责生存服部分的策划工作。'

@@ -5,3 +5,13 @@ config:
     hub: false
     servers:
       hub: mc.atforever.world
+  mcsm-dynamic-instance:
+    instance: true
+    daemon: 127.0.0.1:23333
+    api-key: 114514 #fill your api key here
+    daemon-id: c56b9a6048c943e2b2f046b4f1392a5a
+    shutdown-delay: 6000
+    servers:
+      tbst-legacy: 1e170e739fac4dcfa0ca8fa00b9e35bb
+      artistic-craft: 38834ed6a92e446cafc56e01bc20bfb1
+      tbst-mod: 4a1b4530667d4ac6830d0c1994fb8530

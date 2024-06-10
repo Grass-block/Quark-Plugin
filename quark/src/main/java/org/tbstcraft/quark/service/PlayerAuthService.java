@@ -103,7 +103,7 @@ public interface PlayerAuthService extends Service {
             }
             String pwd = generateRandom();
             set(event.getPlayer().getName(), pwd);
-            Quark.LANGUAGE.sendMessageTo(event.getPlayer(), "auth", "password_set", pwd);
+            Quark.LANGUAGE.sendMessage(event.getPlayer(), "auth", "password_set", pwd);
         }
     }
 }

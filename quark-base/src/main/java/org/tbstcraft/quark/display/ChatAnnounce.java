@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.display;
 
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -8,8 +9,9 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.tbstcraft.quark.framework.command.CommandProvider;
 import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.data.config.Language;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
+import org.tbstcraft.quark.framework.data.language.LanguageEntry;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -19,11 +21,14 @@ import java.util.List;
 import java.util.function.Function;
 
 @QuarkModule(version = "0.3.0")
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(ChatAnnounce.HintCommand.class)
 public final class ChatAnnounce extends PackageModule {
     private long index;
     private boolean freeze;
+
+    @Inject
+    private LanguageEntry language;
 
     @Override
     public void enable() {
@@ -56,13 +61,16 @@ public final class ChatAnnounce extends PackageModule {
     }
 
     private List<String> getContents(CommandSender sender) {
-        return this.getLanguage().getMessageList(Language.getLocale(sender), "content");
+        return this.language.getMessageList(Language.locale(sender), "content");
     }
 
     private void sendMessage(CommandSender sender) {
         Function<String, String> processor = (s) ->
                 s.formatted(this.getContents(sender).get((int) (this.index % this.getContents(sender).size())));
-        this.getLanguage().sendUI(sender, this.getConfig(), "ui", processor);
+
+
+
+        this.language.sendTemplate(sender,Language.generateTemplate(this.getConfig(), "ui", processor));
     }
 
     @QuarkCommand(name = "chat-hint")

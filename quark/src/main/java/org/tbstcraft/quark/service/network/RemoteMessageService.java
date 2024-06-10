@@ -39,6 +39,15 @@ public interface RemoteMessageService extends Service {
         return INSTANCE.get();
     }
 
+
+    static void addHandler(Object handler) {
+        getInstance().addMessageHandler(handler);
+    }
+
+    static void removeHandler(Object handler) {
+        getInstance().removeMessageHandler(handler);
+    }
+
     Set<String> getServerInGroup();
 
     void addMessageHandler(Object handler);

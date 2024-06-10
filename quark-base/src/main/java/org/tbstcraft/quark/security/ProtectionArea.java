@@ -22,7 +22,7 @@ import org.tbstcraft.quark.framework.data.config.Queries;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.WESessionTrackService;
 import org.tbstcraft.quark.util.region.Region;
@@ -30,7 +30,7 @@ import org.tbstcraft.quark.util.region.SimpleRegion;
 
 import java.util.*;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({ProtectionArea.ProtectionAreaCommand.class})
 @QuarkModule(version = "1.3.4", recordFormat = {"Time", "Player", "World", "X", "Y", "Z", "Region"})
 public final class ProtectionArea extends PackageModule {
@@ -104,7 +104,7 @@ public final class ProtectionArea extends PackageModule {
             for (Region s : this.regions.values()) {
                 if (s.asAABB().intersects(r.asAABB())) {
                     event.setCancelled(true);
-                    this.getLanguage().sendMessageTo(player, "interact_blocked_we");
+                    this.getLanguage().sendMessage(player, "interact_blocked_we");
 
                     if (!this.getConfig().getBoolean("record")) {
                         return;
@@ -136,7 +136,7 @@ public final class ProtectionArea extends PackageModule {
                     continue;
                 }
                 event.setCancelled(true);
-                this.getLanguage().sendMessageTo(player, "interact_blocked");
+                this.getLanguage().sendMessage(player, "interact_blocked");
 
                 if (!this.getConfig().getBoolean("record")) {
                     return;
@@ -166,7 +166,7 @@ public final class ProtectionArea extends PackageModule {
         public void onCommand(CommandSender sender, String[] args) {
             String operation = args[0];
             if (Objects.equals(operation, "list")) {
-                this.getLanguage().sendMessageTo(sender, "region_list");
+                this.getLanguage().sendMessage(sender, "region_list");
                 Map<String, SimpleRegion> map = this.getModule().getRegions();
                 for (String s : map.keySet()) {
                     sender.sendMessage(Queries.GLOBAL_TEMPLATE_ENGINE.handle("{#gold}%s {#gray}-> {#white}%s".formatted(s, map.get(s).toString())));
@@ -177,22 +177,22 @@ public final class ProtectionArea extends PackageModule {
             if (Objects.equals(operation, "add")) {
                 this.checkException(args.length == 9);
                 if (this.getModule().getRegions().containsKey(arg2)) {
-                    this.getLanguage().sendMessageTo(sender, "region_add_failed", arg2);
+                    this.getLanguage().sendMessage(sender, "region_add_failed", arg2);
                     return;
                 }
                 this.getModule().getRegions().put(arg2, new SimpleRegion(Bukkit.getWorld(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]), Integer.parseInt(args[8])));
-                this.getLanguage().sendMessageTo(sender, "region_add", arg2);
+                this.getLanguage().sendMessage(sender, "region_add", arg2);
                 this.getModule().saveRegions();
                 return;
             }
             if (Objects.equals(operation, "remove")) {
                 this.checkException(args.length == 2);
                 if (!this.getModule().getRegions().containsKey(arg2)) {
-                    this.getLanguage().sendMessageTo(sender, "region_remove_failed", arg2);
+                    this.getLanguage().sendMessage(sender, "region_remove_failed", arg2);
                     throw new RuntimeException("???");
                 }
                 this.getModule().getRegions().remove(arg2);
-                this.getLanguage().sendMessageTo(sender, "region_remove", arg2);
+                this.getLanguage().sendMessage(sender, "region_remove", arg2);
             }
         }
 

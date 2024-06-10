@@ -17,7 +17,7 @@ import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.framework.command.CommandProvider;
 import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -29,7 +29,7 @@ import me.gb2022.commons.nbt.NBTTagCompound;
 
 import java.util.*;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({LimitedArea.LimitedAreaCommand.class})
 @QuarkModule(version = "1.3.0",recordFormat = {"Time","Player", "World", "X", "Y", "Z", "Region"})
 public final class LimitedArea extends PackageModule {
@@ -106,7 +106,7 @@ public final class LimitedArea extends PackageModule {
                 }
             }
             event.setCancelled(true);
-            this.getLanguage().sendMessageTo(p, "interact_blocked_we");
+            this.getLanguage().sendMessage(p, "interact_blocked_we");
 
             if (!this.getConfig().getBoolean("record")) {
                 return;
@@ -133,7 +133,7 @@ public final class LimitedArea extends PackageModule {
             }
         }
         event.setCancelled(true);
-        this.getLanguage().sendMessageTo(p, "interact_blocked");
+        this.getLanguage().sendMessage(p, "interact_blocked");
         if (!this.getConfig().getBoolean("record")) {
             return;
         }
@@ -162,7 +162,7 @@ public final class LimitedArea extends PackageModule {
                 case "add" -> {
                     this.checkException(args.length == 9);
                     if (this.getModule().getRegions().containsKey(arg2)) {
-                        this.getLanguage().sendMessageTo(sender, "region_add_failed", arg2);
+                        this.getLanguage().sendMessage(sender, "region_add_failed", arg2);
                         return;
                     }
                     this.getModule().getRegions().put(arg2, new SimpleRegion(
@@ -174,17 +174,17 @@ public final class LimitedArea extends PackageModule {
                             Integer.parseInt(args[7]),
                             Integer.parseInt(args[8])
                     ));
-                    this.getLanguage().sendMessageTo(sender, "region_add", arg2);
+                    this.getLanguage().sendMessage(sender, "region_add", arg2);
                     this.getModule().saveRegions();
                 }
                 case "remove" -> {
                     this.checkException(args.length == 2);
                     if (!this.getModule().getRegions().containsKey(arg2)) {
-                        this.getLanguage().sendMessageTo(sender, "region_remove_failed", arg2);
+                        this.getLanguage().sendMessage(sender, "region_remove_failed", arg2);
                         throw new RuntimeException("???");
                     }
                     this.getModule().getRegions().remove(arg2);
-                    this.getLanguage().sendMessageTo(sender, "region_remove", arg2);
+                    this.getLanguage().sendMessage(sender, "region_remove", arg2);
                 }
             }
         }

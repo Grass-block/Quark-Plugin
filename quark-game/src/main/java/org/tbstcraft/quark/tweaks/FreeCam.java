@@ -9,7 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.util.platform.PlayerUtil;
@@ -17,7 +17,7 @@ import org.tbstcraft.quark.util.platform.PlayerUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.0.0")
 @QuarkCommand(name = "freecam", playerOnly = true)
 public final class FreeCam extends CommandModule {
@@ -41,7 +41,7 @@ public final class FreeCam extends CommandModule {
         PlayerUtil.teleport(player, this.locations.get(id));
         this.gameModes.remove(id);
         this.locations.remove(id);
-        this.getLanguage().sendMessageTo(player, "reset");
+        this.getLanguage().sendMessage(player, "reset");
     }
 
     public void start(Player player) {
@@ -52,7 +52,7 @@ public final class FreeCam extends CommandModule {
         this.locations.put(id, player.getLocation());
         this.gameModes.put(id, player.getGameMode());
         player.setGameMode(GameMode.SPECTATOR);
-        this.getLanguage().sendMessageTo(player, "start");
+        this.getLanguage().sendMessage(player, "start");
     }
 
     public void toggle(Player p) {

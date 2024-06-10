@@ -2,12 +2,12 @@ package org.tbstcraft.quark.util.region;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.Location;
-import org.tbstcraft.quark.internal.data.ModuleDataService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 
 public final class RegionManager<I extends Region> {
     private final HashMap<String, I> regions = new HashMap<>();
@@ -57,9 +57,9 @@ public final class RegionManager<I extends Region> {
         this.regions.remove(id);
     }
 
-    public List<Region> getIntersected(Location location) {
-        List<Region> lists = new ArrayList<>();
-        for (Region r : this.regions.values()) {
+    public List<I> getIntersected(Location location) {
+        List<I> lists = new ArrayList<>();
+        for (I r : this.regions.values()) {
             if (r.contains(location)) {
                 lists.add(r);
             }
@@ -73,11 +73,21 @@ public final class RegionManager<I extends Region> {
         return lists;
     }
 
-    public Region getMinIntersected(Location location) {
-        List<Region> lists = getIntersected(location);
+    public I getMinIntersected(Location location) {
+        List<I> lists = getIntersected(location);
         if (lists.isEmpty()) {
             return null;
         }
         return lists.get(0);
+    }
+
+    public List<I> filter(Function<I, Boolean> filter) {
+        List<I> lists = new ArrayList<>();
+        for (I r : this.regions.values()) {
+            if (filter.apply(r)) {
+                lists.add(r);
+            }
+        }
+        return lists;
     }
 }

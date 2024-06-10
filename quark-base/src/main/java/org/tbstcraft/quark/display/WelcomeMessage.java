@@ -1,27 +1,27 @@
 package org.tbstcraft.quark.display;
 
+import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.framework.command.CommandProvider;
 import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
+import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.text.TextBuilder;
 import org.tbstcraft.quark.util.text.TextSender;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
-import me.gb2022.commons.nbt.NBTTagCompound;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({WelcomeMessage.WelcomeMessageCommand.class})
 @QuarkModule(version = "0.1.0")
-public class WelcomeMessage extends PackageModule {
+public final class WelcomeMessage extends PackageModule {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         String id = event.getPlayer().getName();
@@ -35,9 +35,9 @@ public class WelcomeMessage extends PackageModule {
     }
 
     private void sendWelcomeMessage(Player player) {
-        String msg = this.getLanguage().buildUI(this.getConfig(), "ui", PlayerUtil.getLocale(player));
+        String msg = this.getLanguage().buildTemplate(Language.locale(player), Language.generateTemplate(this.getConfig(), "ui"));
         msg = msg.replace("{player}", player.getName());
-        TextSender.sendLine(player,TextBuilder.buildComponent(msg));
+        TextSender.sendLine(player, TextBuilder.buildComponent(msg));
     }
 
     @QuarkCommand(name = "welcome-message")

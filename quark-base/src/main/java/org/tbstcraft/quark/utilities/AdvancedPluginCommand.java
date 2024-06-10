@@ -8,8 +8,8 @@ import org.bukkit.command.defaults.PluginsCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.data.config.Language;
-import org.tbstcraft.quark.framework.data.config.LanguageEntry;
+import org.tbstcraft.quark.framework.data.language.LanguageEntry;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.util.platform.BukkitPluginManager;
@@ -17,6 +17,7 @@ import org.tbstcraft.quark.util.platform.BukkitPluginManager;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 @QuarkCommand(name = "plugins", op = true)
@@ -37,7 +38,7 @@ public final class AdvancedPluginCommand extends CommandModule {
                     .append(p.getDescription().getVersion())
                     .append("\n");
         }
-        this.getLanguage().sendMessageTo(sender, "list", sb.toString());
+        this.getLanguage().sendMessage(sender, "list", sb.toString());
     }
 
     private void sendPluginInfo(CommandSender sender, String name) {
@@ -51,7 +52,7 @@ public final class AdvancedPluginCommand extends CommandModule {
         StringBuilder builder = new StringBuilder(512);
 
         LanguageEntry language = this.getLanguage();
-        String locale = Language.getLocale(sender);
+        Locale locale = Language.locale(sender);
         builder.append("  ").append(language.getMessage(locale, "info-name", desc.getName(), desc.getPrefix())).append("\n");
         builder.append("  ").append(language.getMessage(locale, "info-version", desc.getVersion())).append("\n");
         builder.append("  ").append(language.getMessage(locale, "info-author", Arrays.toString(desc.getAuthors().toArray()))).append("\n");
@@ -64,24 +65,24 @@ public final class AdvancedPluginCommand extends CommandModule {
         for (String s : desc.getLibraries()) {
             builder.append(ChatColor.GOLD).append("     - ").append(ChatColor.WHITE).append(s).append("\n");
         }
-        this.getLanguage().sendMessageTo(sender, "info", name, builder.toString());
+        this.getLanguage().sendMessage(sender, "info", name, builder.toString());
     }
 
 
     private void disablePlugin(CommandSender sender, String name) {
         Bukkit.getPluginManager().disablePlugin(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin(name)));
-        this.getLanguage().sendMessageTo(sender, "disable", name);
+        this.getLanguage().sendMessage(sender, "disable", name);
     }
 
     private void enablePlugin(CommandSender sender, String name) {
         Bukkit.getPluginManager().enablePlugin(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin(name)));
-        this.getLanguage().sendMessageTo(sender, "enable", name);
+        this.getLanguage().sendMessage(sender, "enable", name);
     }
 
 
     private void unloadPlugin(CommandSender sender, String name) {
         if (BukkitPluginManager.unload(name)) {
-            this.getLanguage().sendMessageTo(sender, "unload", name);
+            this.getLanguage().sendMessage(sender, "unload", name);
             return;
         }
         this.sendExceptionMessage(sender);
@@ -89,7 +90,7 @@ public final class AdvancedPluginCommand extends CommandModule {
 
     private void loadPlugin(CommandSender sender, String name) {
         if (BukkitPluginManager.load(name) == null) {
-            this.getLanguage().sendMessageTo(sender, "enable", name);
+            this.getLanguage().sendMessage(sender, "enable", name);
             return;
         }
         this.sendExceptionMessage(sender);
@@ -102,7 +103,7 @@ public final class AdvancedPluginCommand extends CommandModule {
             return;
         }
         BukkitPluginManager.reload(name);
-        this.getLanguage().sendMessageTo(sender, "reload", name);
+        this.getLanguage().sendMessage(sender, "reload", name);
     }
 
 

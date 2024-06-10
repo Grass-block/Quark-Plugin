@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class ComponentBlockBuilder {
-    public static final Pattern TAG_FILTER = Pattern.compile("\\{(color|click|underline|magic|none|[0-9]|;)[^}]*\\}");
+    public static final Pattern TAG_FILTER = Pattern.compile("\\{(color|click|underline|magic|reset|hover|none|[0-9]|;)[^}]*\\}");
 
     private final StringBuilder buffer = new StringBuilder(32);
     private TextComponent.Builder builder = Component.text();

@@ -3,6 +3,7 @@ package org.tbstcraft.quark.security;
 import me.gb2022.apm.local.MappedBroadcastEvent;
 import me.gb2022.apm.local.PluginMessageHandler;
 import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
@@ -15,10 +16,10 @@ import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.framework.command.CommandProvider;
 import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.data.config.LanguageEntry;
+import org.tbstcraft.quark.framework.data.language.LanguageEntry;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
 import org.tbstcraft.quark.service.network.HttpService;
@@ -34,7 +35,7 @@ import java.util.*;
 //todo:二步验证换绑
 @CommandProvider({AccountActivation.AccountCommand.class})
 @QuarkModule(version = "1.0.2", beta = true)
-@ModuleService({ServiceType.EVENT_LISTEN, ServiceType.PLUGIN_MESSAGE})
+@AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.PLUGIN_MESSAGE})
 public final class AccountActivation extends PackageModule {
     private final Set<String> checkCache = new HashSet<>();
     private final Set<String> disabledPlayers = new HashSet<>();
@@ -95,9 +96,9 @@ public final class AccountActivation extends PackageModule {
     private void freeze(Player player, AccountStatus status) {
         player.setGameMode(GameMode.SPECTATOR);
         if (status == AccountStatus.UNLINKED) {
-            getLanguage().sendMessageTo(player, "link-hint");
+            getLanguage().sendMessage(player, "link-hint");
         } else {
-            getLanguage().sendMessageTo(player, "verify-hint");
+            getLanguage().sendMessage(player, "verify-hint");
         }
         this.checkCache.add(player.getName());
         this.disabledPlayers.add(player.getName());
@@ -146,7 +147,7 @@ public final class AccountActivation extends PackageModule {
         if (!sendMessage) {
             return;
         }
-        this.getLanguage().sendMessageTo(p, "interaction-block");
+        this.getLanguage().sendMessage(p, "interaction-block");
     }
 
 
@@ -156,14 +157,14 @@ public final class AccountActivation extends PackageModule {
         try {
             boolean b = ActivateService.verify(context.getParam("code"));
 
-            String content = this.getLanguage().buildUI(this.verifyResultHTML, "zh_cn");
+            String content = this.getLanguage().buildTemplate(Locale.CHINA, this.verifyResultHTML);
 
             if (b) {
-                content = content.replace("{title}", this.getLanguage().getMessage("zh_cn", "result-html-success-title"));
-                content = content.replace("{content}", this.getLanguage().getMessage("zh_cn", "result-html-success-content"));
+                content = content.replace("{title}", this.getLanguage().getMessage(Locale.SIMPLIFIED_CHINESE, "result-html-success-title"));
+                content = content.replace("{content}", this.getLanguage().getMessage(Locale.SIMPLIFIED_CHINESE, "result-html-success-content"));
             } else {
-                content = content.replace("{title}", this.getLanguage().getMessage("zh_cn", "result-html_failed-title"));
-                content = content.replace("{content}", this.getLanguage().getMessage("zh_cn", "result-html-failed-content"));
+                content = content.replace("{title}", this.getLanguage().getMessage(Locale.SIMPLIFIED_CHINESE, "result-html_failed-title"));
+                content = content.replace("{content}", this.getLanguage().getMessage(Locale.SIMPLIFIED_CHINESE, "result-html-failed-content"));
             }
 
             content = content.replace("{code}", context.getParam("code"));
@@ -176,17 +177,17 @@ public final class AccountActivation extends PackageModule {
 
     public void sendVerifyMail(Player player, String mailBox, String code) {
         SharedObjects.SHARED_THREAD_POOL.submit(() -> {
-            String content = this.getLanguage().buildUI(this.verifyHTML, player.getLocale());
+            String content = this.getLanguage().buildTemplate(Language.locale(player),this.verifyHTML);
             int safetyCode = new Random().nextInt(10000, 99999);
             content = content.replace("{player}", player.getName());
             content = content.replace("{link}", code);
             content = content.replace("{safety_code}", String.valueOf(safetyCode));
-            String subject = this.getLanguage().getMessage(player.getLocale(), "verify-title");
+            String subject = this.getLanguage().getMessage(Language.locale(player), "verify-title");
             if (SMTPService.sendMailTo(mailBox, subject, content)) {
-                this.getLanguage().sendMessageTo(player, "msg-send-complete", mailBox, safetyCode);
+                this.getLanguage().sendMessage(player, "msg-send-complete", mailBox, safetyCode);
                 return;
             }
-            this.getLanguage().sendMessageTo(player, "msg-send-failed", mailBox);
+            this.getLanguage().sendMessage(player, "msg-send-failed", mailBox);
         });
     }
 
@@ -197,7 +198,7 @@ public final class AccountActivation extends PackageModule {
         if (p == null) {
             return;
         }
-        p.kickPlayer(this.getLanguage().getMessage(p.getLocale(), "kick_info"));
+        p.kickPlayer(this.getLanguage().getMessage(Language.locale(p), "kick_info"));
     }
 
     //integrated classes
@@ -298,14 +299,14 @@ public final class AccountActivation extends PackageModule {
         static String linkAccount(String prefix, Player player, LanguageEntry entry, String mail) {
             return generateActivationLink(prefix, () -> {
                 AccountStatus.link(player.getName(), mail);
-                entry.sendMessageTo(player, "verified");
+                entry.sendMessage(player, "verified");
             });
         }
 
         static String verifyAccount(String prefix, Player player, LanguageEntry entry) {
             return generateActivationLink(prefix, () -> {
                 AccountStatus.verify(player.getName());
-                entry.sendMessageTo(player, "verified");
+                entry.sendMessage(player, "verified");
             });
         }
     }
@@ -316,7 +317,7 @@ public final class AccountActivation extends PackageModule {
         public void onCommand(CommandSender sender, String[] args) {
             String prefix = this.getConfig().getString("verify_link_delegation");
             if (AccountStatus.isLinked(sender.getName())) {
-                this.getLanguage().sendMessageTo(sender, "link_failed");
+                this.getLanguage().sendMessage(sender, "link_failed");
             }
             String code = ActivateService.linkAccount(prefix, ((Player) sender), this.getLanguage(), args[1]);
             this.getModule().sendVerifyMail(((Player) sender), args[1], code);
@@ -341,7 +342,7 @@ public final class AccountActivation extends PackageModule {
             NBTTagCompound tag = PlayerDataService.getEntry(sender.getName(), "account_activation");
             String mail = tag.getString("mail");
             if (!AccountStatus.isLinked(sender.getName())) {
-                this.getLanguage().sendMessageTo(sender, "verify_failed", mail);
+                this.getLanguage().sendMessage(sender, "verify_failed", mail);
             }
             String prefix = this.getConfig().getString("verify_link_delegation");
             String code = ActivateService.verifyAccount(prefix, ((Player) sender), this.getLanguage());
@@ -357,7 +358,7 @@ public final class AccountActivation extends PackageModule {
         public void onCommand(CommandSender sender, String[] args) {
             if (args[0].equals("unverify")) {
                 AccountStatus.unverify(sender.getName());
-                this.getLanguage().sendMessageTo(sender, "unverify_success");
+                this.getLanguage().sendMessage(sender, "unverify_success");
             }
         }
 

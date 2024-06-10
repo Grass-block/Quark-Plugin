@@ -52,7 +52,7 @@ public final class AdvancedBan extends CommandModule {
 
         PlayerUtil.banPlayer(player, BanList.Type.NAME,reason,calender.getTime(),sender.getName());
 
-        this.getLanguage().sendMessageTo(sender, "msg-ban-complete",
+        this.getLanguage().sendMessage(sender, "msg-ban-complete",
                 player,
                 SharedObjects.DATE_FORMAT.format(calender.getTime()),
                 reason

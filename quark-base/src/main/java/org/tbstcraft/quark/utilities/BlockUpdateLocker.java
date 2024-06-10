@@ -3,7 +3,7 @@ package org.tbstcraft.quark.utilities;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.*;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -13,7 +13,7 @@ import org.tbstcraft.quark.framework.command.QuarkCommand;
 
 import java.util.List;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({BlockUpdateLocker.BlockUpdateLockerCommand.class})
 @QuarkModule(version = "1.0.0")
 public final class BlockUpdateLocker extends PackageModule {
@@ -62,10 +62,10 @@ public final class BlockUpdateLocker extends PackageModule {
             switch (args[0]) {
                 case "lock" -> {
                     this.getModule().locked = true;
-                    this.getLanguage().sendMessageTo(sender,"lock");
+                    this.getLanguage().sendMessage(sender,"lock");
                 }
                 case "unlock" -> {
-                    this.getLanguage().sendMessageTo(sender,"unlock");
+                    this.getLanguage().sendMessage(sender,"unlock");
                     this.getModule().locked = false;
                 }
             }

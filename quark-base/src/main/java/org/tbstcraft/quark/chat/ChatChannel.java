@@ -4,7 +4,7 @@ import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 
 // TODO: 2024/3/10 Implement it
-@QuarkModule(id = "chat-channel",version = "_dev",beta = true)
+@QuarkModule(id = "chat-channel", version = "0.0.1", beta = true)
 public class ChatChannel extends PackageModule {
 
 }

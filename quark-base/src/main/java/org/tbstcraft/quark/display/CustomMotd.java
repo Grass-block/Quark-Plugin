@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.display;
 
-import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
+import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,31 +17,24 @@ import org.tbstcraft.quark.framework.data.config.Language;
 import org.tbstcraft.quark.framework.data.config.Queries;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.compat.Compat;
-import org.tbstcraft.quark.framework.module.compat.CompatContainer;
-import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.util.text.ComponentBlock;
 import org.tbstcraft.quark.util.text.TextBuilder;
-import org.tbstcraft.quark.util.platform.APIProfile;
-import org.tbstcraft.quark.util.platform.APIProfileTest;
 
 import java.io.File;
 import java.util.List;
 
 @QuarkModule(version = "1.0.2")
 @CommandProvider({CustomMotd.MotdCommand.class})
-@Compat(CustomMotd.PaperCompat.class)
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 public final class CustomMotd extends PackageModule {
     private CachedServerIcon cachedServerIcon;
 
+    @Inject("motd.png;false")
     private Asset motdIcon;
 
     @Override
     public void enable() {
-        this.motdIcon = new Asset(this.getOwnerPlugin(), "motd.png", false);
         this.motdIcon.getFile();
 
         File iconFile = new File(Quark.PLUGIN.getDataFolder().getAbsolutePath() + "/motd.png");
@@ -61,9 +55,6 @@ public final class CustomMotd extends PackageModule {
 
     @EventHandler
     public void onPing(ServerListPingEvent e) {
-        if (APIProfileTest.isPaperCompat()) {
-            return;
-        }
         e.setMotd(generateMotdMessage().toString());
 
         if (this.cachedServerIcon == null) {
@@ -80,7 +71,7 @@ public final class CustomMotd extends PackageModule {
         return TextBuilder.build(raw);
     }
 
-    @QuarkCommand(name = "motd",permission = "-quark.motd.command")
+    @QuarkCommand(name = "motd", permission = "-quark.motd.command")
     public static final class MotdCommand extends ModuleCommand<CustomMotd> {
 
         @Override
@@ -88,10 +79,10 @@ public final class CustomMotd extends PackageModule {
             switch (args[0]) {
                 case "refresh-icon" -> {
                     this.getModule().refreshIcon();
-                    this.getLanguage().sendMessageTo(sender, "icon-refresh");
+                    this.getLanguage().sendMessage(sender, "icon-refresh");
                 }
                 case "text" -> {
-                    this.getLanguage().sendMessageTo(sender, "motd-command");
+                    this.getLanguage().sendMessage(sender, "motd-command");
                     getModule().generateMotdMessage().send(sender);
                 }
                 default -> this.sendExceptionMessage(sender);
@@ -104,22 +95,6 @@ public final class CustomMotd extends PackageModule {
                 tabList.add("refresh-icon");
                 tabList.add("text");
             }
-        }
-    }
-
-    @CompatDelegate(APIProfile.PAPER)
-    public static final class PaperCompat extends CompatContainer<CustomMotd> {
-        public PaperCompat(CustomMotd parent) {
-            super(parent);
-        }
-
-        @EventHandler
-        public void onPing(PaperServerListPingEvent e) {
-            e.motd(this.getParent().generateMotdMessage().toSingleLine());
-            if (this.getParent().cachedServerIcon == null) {
-                return;
-            }
-            e.setServerIcon(this.getParent().cachedServerIcon);
         }
     }
 }

@@ -6,16 +6,17 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.util.HashMap;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.0.0", beta = true)
 public final class _114514 extends PackageModule {
     private final HashMap<String, Integer> maps = new HashMap<>();
@@ -33,7 +34,7 @@ public final class _114514 extends PackageModule {
                 if (!shouldChat(p)) {
                     continue;
                 }
-                p.chat(this.getLanguage().getRandomMessage(PlayerUtil.getLocale(p), "message"));
+                p.chat(this.getLanguage().getRandomMessage(Language.locale(p), "message"));
             }
         });
     }

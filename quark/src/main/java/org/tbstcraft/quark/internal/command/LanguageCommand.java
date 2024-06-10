@@ -6,6 +6,7 @@ import org.tbstcraft.quark.framework.command.CoreCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.data.config.ConfigDelegation;
 import org.tbstcraft.quark.framework.data.config.Language;
+import org.tbstcraft.quark.framework.data.language.LanguageEntry;
 
 import java.util.List;
 
@@ -13,14 +14,16 @@ import java.util.List;
 public final class LanguageCommand extends CoreCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
+        LanguageEntry entry = Quark.LANGUAGE.entry("language");
+
         switch (args[0]) {
             case "reload-all" -> {
                 ConfigDelegation.reloadLanguages();
-                Quark.LANGUAGE.sendMessageTo(sender, "language", "reload-all");
+                entry.sendMessage(sender, "reload-all");
             }
             case "restore-all" -> {
                 ConfigDelegation.restoreLanguages();
-                Quark.LANGUAGE.sendMessageTo(sender, "language", "restore-all");
+                entry.sendMessage(sender, "restore-all");
             }
             case "restore" -> {
                 Language file = ConfigDelegation.getLanguage(args[1]);
@@ -29,7 +32,7 @@ public final class LanguageCommand extends CoreCommand {
                     return;
                 }
                 file.restore();
-                Quark.LANGUAGE.sendMessageTo(sender, "language", "restore", args[1]);
+                entry.sendMessage(sender, "restore", args[1]);
             }
             case "reload" -> {
                 Language file = ConfigDelegation.getLanguage(args[1]);
@@ -38,7 +41,7 @@ public final class LanguageCommand extends CoreCommand {
                     return;
                 }
                 file.reload();
-                Quark.LANGUAGE.sendMessageTo(sender, "language", "reload", args[1]);
+                entry.sendMessage(sender, "reload", args[1]);
             }
             case "sync" -> {
                 Language file = ConfigDelegation.getLanguage(args[1]);
@@ -47,11 +50,11 @@ public final class LanguageCommand extends CoreCommand {
                     return;
                 }
                 file.sync(true);
-                Quark.LANGUAGE.sendMessageTo(sender, "language", "sync", args[1]);
+                entry.sendMessage(sender, "sync", args[1]);
             }
             case "sync-all" -> {
                 ConfigDelegation.syncLanguages(true);
-                Quark.LANGUAGE.sendMessageTo(sender, "language", "sync-all");
+                entry.sendMessage(sender, "sync-all");
             }
         }
     }

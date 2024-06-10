@@ -1,6 +1,18 @@
 language:
+  -module-name:
+    crop-click-harvest: 作物采集
+    dispenser-block-placer: 发射器方块放置
+    double-door-sync: 双开门同步
+    entity-leash: 拴住生物
+    fly-speed-modifier: 飞行速度调节
+    freecam: 自由视角
+    vein-miner: 连锁采集
+    realistic-sleep: 真实睡眠
   fly-speed-modifier:
     cmd-speed-set: "{global#sys-info}你的飞行速度已被设为 {#var} 。"
   freecam:
     start: "{global#sys-info}自由视角已打开。"
     reset: "{global#sys-info}自由视角已关闭。"
+  realistic-sleep:
+    sleep-day: '{global#sys-info}你正在非正常睡觉时间睡觉，请使用 {#gold}/leave-bed{#gray} 或者 {click(command,/leave-bed)}{#white}[{#green}点击此处{#white}]{reset}{#gray}来离开床。'
+    leave-bed: '{global#sys-info}你已离开床。你可以随时再次睡觉。'

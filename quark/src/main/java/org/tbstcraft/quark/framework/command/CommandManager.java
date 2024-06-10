@@ -91,7 +91,7 @@ public interface CommandManager {
             Server server = Bukkit.getServer();
             server.getClass().getDeclaredMethod("syncCommands").invoke(server);
         } catch (Exception e) {
-            ExceptionUtil.log(e);
+            Quark.LOGGER.warning("cannot sync commands." + e.getMessage());
         }
     }
 

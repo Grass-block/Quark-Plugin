@@ -13,7 +13,7 @@ import java.util.Stack;
  */
 @QuarkModule(version = "1.0.0")
 @QuarkCommand(name = "calc")
-public class Calculator extends CommandModule {
+public final class Calculator extends CommandModule {
     public static double calculate(String expression) {
         char[] tokens = expression.toCharArray();
         Stack<Double> values = new Stack<>();
@@ -84,7 +84,7 @@ public class Calculator extends CommandModule {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        this.getLanguage().sendMessageTo(sender, "calc", args[0], calculate(args[0]));
+        this.getLanguage().sendMessage(sender, "calc", args[0], calculate(args[0]));
     }
 
     @Override

@@ -2,7 +2,7 @@ package org.tbstcraft.quark.contents.musics;
 
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.contents.MusicPlayer;
-import org.tbstcraft.quark.framework.data.config.Language;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.platform.PlayerUtil;
 
@@ -67,15 +67,17 @@ public final class MusicSession implements Runnable {
         String tid = "quark:midi:title@%s".formatted(System.currentTimeMillis() + current.getName());
         TaskService.timerTask(tid, 0, 5, () -> {
             for (Player p : this.players) {
-                String ui = this.module.getLanguage().buildUI(this.module.getConfig(), "ui", Language.getLocale(p), (s) -> {
-                            if (this.pause) {
-                                s = s.replace("{msg#playing}", "{msg#paused}");
-                            }
-                            return s;
-                        })
-                        .replace("{name}", current.getName().replace("_", " "))
+                String template = Language.generateTemplate(this.module.getConfig(), "ui", (s) -> {
+                    if (this.pause) {
+                        s = s.replace("{msg#playing}", "{msg#paused}");
+                    }
+                    return s;
+                });
+                template = template.replace("{name}", current.getName().replace("_", " "))
                         .replace("{time}", formatTime(current.getMillsLength() * currentTick.get() / current.getTickLength() / 1000))
                         .replace("{total}", formatTime(current.getMillsLength() / 1000));
+
+                String ui = this.module.getLanguage().buildTemplate(Language.locale(p), template);
                 PlayerUtil.sendActionBarTitle(p, ui);
             }
         });

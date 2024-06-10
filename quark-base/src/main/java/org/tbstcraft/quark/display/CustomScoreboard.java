@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.display;
 
+import me.gb2022.commons.reflect.AutoRegister;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -11,24 +12,24 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.tbstcraft.quark.framework.data.config.Queries;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.base.task.TaskService;
-import org.tbstcraft.quark.util.text.TextBuilder;
 import org.tbstcraft.quark.util.platform.APIProfile;
 import org.tbstcraft.quark.util.platform.APIProfileTest;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
+import org.tbstcraft.quark.util.text.TextBuilder;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @SuppressWarnings("deprecation")
-@ModuleService(ServiceType.EVENT_LISTEN)
-@QuarkModule(version = "0.1",compatBlackList = {APIProfile.FOLIA})
-public class CustomScoreboard extends PackageModule {
+@AutoRegister(ServiceType.EVENT_LISTEN)
+@QuarkModule(version = "0.1", compatBlackList = {APIProfile.FOLIA})
+public final class CustomScoreboard extends PackageModule {
     private final Map<Player, Scoreboard> scoreboards = new HashMap<>();
 
     static Objective saveGetObjective(String id, Scoreboard scoreboard) {
@@ -81,7 +82,7 @@ public class CustomScoreboard extends PackageModule {
             this.build(player, buffer1);
             buffer1.setDisplaySlot(DisplaySlot.SIDEBAR);
             buffer2.setDisplaySlot(null);
-        }else{
+        } else {
             buffer2.unregister();
             buffer2 = board.registerNewObjective("buffer2", "-quark-display");
             this.build(player, buffer2);
@@ -92,7 +93,7 @@ public class CustomScoreboard extends PackageModule {
     }
 
     private void build(Player player, Objective builder) {
-        String locale = PlayerUtil.getLocale(player);
+        Locale locale = Language.locale(player);
 
         Component component = TextBuilder.buildComponent(this.getLanguage().getMessage(locale, "title"));
         if (APIProfileTest.isPaperCompat()) {
@@ -101,7 +102,9 @@ public class CustomScoreboard extends PackageModule {
             builder.setDisplayName(LegacyComponentSerializer.legacySection().serialize(component));
         }
 
-        String ui = this.getLanguage().buildUI(this.getConfig(), "ui", locale).replace("{player}", player.getName());
+        String template = Language.generateTemplate(this.getConfig(), "ui");
+
+        String ui = this.getLanguage().buildTemplate(locale, template).replace("{player}", player.getName());
         ui = Queries.PLAYER_TEMPLATE_ENGINE.handle(player, ui);
         List<String> uiBlock = TextBuilder.buildStringBlocks(ui);
 
@@ -111,7 +114,7 @@ public class CustomScoreboard extends PackageModule {
             if (existing.containsKey(column)) {
                 int fix = existing.get(column);
                 existing.put(column, fix + 1);
-                column = column + " ".repeat(fix+1);
+                column = column + " ".repeat(fix + 1);
             } else {
                 existing.put(column, 0);
             }

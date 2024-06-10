@@ -1,0 +1,15 @@
+schedule:
+  schedules:
+    6-10: "stand-schedule" #在6月10日使用开启策略（旺季）
+    9-1: "dynamic-schedule" #在9月1日使用动态策略（淡季）
+    1-15: "stand-schedule"
+    3-5: "dynamic-schedule"
+  events:
+    stand:
+      - "-dynamic" #关闭动态调度模式
+      - "05:00=start:*"#开启服务器，*为选中，指定服务器名用;分割多个 -> 5:00开启所有服务器
+      - "23:30=stop:*"# -> 23:30关闭所有服务器
+    dynamic:
+      - "+dynamic"
+      - ">dynamic-stop-delay=6000"#“>”声明设置变量，设置动态实例关闭事件=6000ticks
+    # 可以设置更多调度策略

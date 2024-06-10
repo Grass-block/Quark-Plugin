@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.security;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -18,16 +19,20 @@ import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.data.config.Queries;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import org.tbstcraft.quark.framework.module.compat.Compat;
+import org.tbstcraft.quark.framework.module.compat.CompatContainer;
+import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
+import org.tbstcraft.quark.util.platform.APIProfile;
 import org.tbstcraft.quark.util.region.SimpleRegion;
 
 import java.util.*;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(ExplosionDefender.ExplosionWhitelistCommand.class)
 @QuarkModule(version = "1.3.3", recordFormat = {"Time", "World", "X", "Y", "Z", "Type"})
+@Compat(ExplosionDefender.LegacyCompat.class)
 public final class ExplosionDefender extends PackageModule {
     private final HashMap<String, SimpleRegion> whiteListedRegions = new HashMap<>();
 
@@ -72,17 +77,6 @@ public final class ExplosionDefender extends PackageModule {
     }
 
     @EventHandler
-    public void onBlockExplode(BlockExplodeEvent event) {
-        Block b = event.getBlock();
-
-        if (matchRegion(b.getLocation())) {
-            return;
-        }
-        event.setCancelled(true);
-        this.handle(b.getLocation(), "[?]");
-    }
-
-    @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
         Entity e = event.getEntity();
         if (matchRegion(e.getLocation())) {
@@ -97,7 +91,7 @@ public final class ExplosionDefender extends PackageModule {
             Objects.requireNonNull(loc.getWorld()).createExplosion(loc, 4f, false, false);
         }
         if (this.getConfig().getBoolean("broadcast")) {
-            this.getLanguage().broadcastMessage(true, "exploded",
+            this.getLanguage().broadcastMessage(true, false, "exploded",
                     Objects.requireNonNull(loc.getWorld()).getName(),
                     loc.getBlockX(),
                     loc.getBlockY(),
@@ -124,7 +118,7 @@ public final class ExplosionDefender extends PackageModule {
         public void onCommand(CommandSender sender, String[] args) {
             String operation = args[0];
             if (Objects.equals(operation, "list")) {
-                this.getLanguage().sendMessageTo(sender, "region-list");
+                this.getLanguage().sendMessage(sender, "region-list");
                 Map<String, SimpleRegion> map = this.getModule().getWhiteListedRegions();
                 for (String s : map.keySet()) {
                     sender.sendMessage(Queries.GLOBAL_TEMPLATE_ENGINE.handle("{#gold}%s {#gray}-> {#white}%s".formatted(s, map.get(s).toString())));
@@ -135,22 +129,22 @@ public final class ExplosionDefender extends PackageModule {
             if (Objects.equals(operation, "add")) {
                 this.checkException(args.length == 9);
                 if (this.getModule().getWhiteListedRegions().containsKey(arg2)) {
-                    this.getLanguage().sendMessageTo(sender, "region-add-failed", arg2);
+                    this.getLanguage().sendMessage(sender, "region-add-failed", arg2);
                     return;
                 }
                 this.getModule().getWhiteListedRegions().put(arg2, new SimpleRegion(Bukkit.getWorld(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]), Integer.parseInt(args[8])));
-                this.getLanguage().sendMessageTo(sender, "region-add", arg2);
+                this.getLanguage().sendMessage(sender, "region-add", arg2);
                 this.getModule().saveRegions();
                 return;
             }
             if (Objects.equals(operation, "remove")) {
                 this.checkException(args.length == 2);
                 if (!this.getModule().getWhiteListedRegions().containsKey(arg2)) {
-                    this.getLanguage().sendMessageTo(sender, "region-remove-failed", arg2);
+                    this.getLanguage().sendMessage(sender, "region-remove-failed", arg2);
                     throw new RuntimeException("???");
                 }
                 this.getModule().getWhiteListedRegions().remove(arg2);
-                this.getLanguage().sendMessageTo(sender, "region-remove", arg2);
+                this.getLanguage().sendMessage(sender, "region-remove", arg2);
             }
         }
 
@@ -193,6 +187,24 @@ public final class ExplosionDefender extends PackageModule {
                     tabList.add("false");
                 }
             }
+        }
+    }
+
+    @CompatDelegate(APIProfile.BUKKIT)
+    public static final class LegacyCompat extends CompatContainer<ExplosionDefender> {
+        public LegacyCompat(ExplosionDefender parent) {
+            super(parent);
+        }
+
+        @EventHandler
+        public void onBlockExplode(BlockExplodeEvent event) {
+            Block b = event.getBlock();
+
+            if (getParent().matchRegion(b.getLocation())) {
+                return;
+            }
+            event.setCancelled(true);
+            this.getParent().handle(b.getLocation(), "[?]");
         }
     }
 }

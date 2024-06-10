@@ -26,24 +26,24 @@ public final class VMGarbageCleaner extends PackageModule {
 
     public void gc() {
         if (this.getConfig().getBoolean("broadcast")) {
-            this.getLanguage().broadcastMessage(true, "gc-start");
+            this.getLanguage().broadcastMessage(true,false, "gc-start");
         }
         long prev = Runtime.getRuntime().freeMemory();
         System.gc();
         long now = Runtime.getRuntime().freeMemory();
         long collect = (now - prev) / 1048576;
         if (this.getConfig().getBoolean("broadcast")) {
-            this.getLanguage().broadcastMessage(true, "gc-end", collect);
+            this.getLanguage().broadcastMessage(true,false, "gc-end", collect);
         }
     }
 
     public void manualGC(CommandSender sender) {
-        this.getLanguage().sendMessageTo(sender, "gc-start");
+        this.getLanguage().sendMessage(sender, "gc-start");
         long prev = Runtime.getRuntime().freeMemory();
         System.gc();
         long now = Runtime.getRuntime().freeMemory();
         long collect = (now - prev) / 1048576;
-        this.getLanguage().sendMessageTo(sender, "gc-end", collect);
+        this.getLanguage().sendMessage(sender, "gc-end", collect);
     }
 
 

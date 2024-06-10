@@ -9,6 +9,7 @@
     "chat-component": ".ChatComponent",
     "chat-at": ".ChatAt",
     "mail": ".Mail",
-    "chat-report": ".ChatReport"
+    "chat-report": ".ChatReport",
+    "daily-sentence": ".DailySentence"
   }
 }

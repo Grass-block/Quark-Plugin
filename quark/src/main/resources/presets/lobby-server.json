@@ -1,0 +1,8 @@
+{
+  "packages": [
+    "-quark-content"
+  ],
+  "modules": [
+    "+quark-"
+  ]
+}

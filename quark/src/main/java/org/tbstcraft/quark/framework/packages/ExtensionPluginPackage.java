@@ -54,7 +54,7 @@ public abstract class ExtensionPluginPackage extends JavaPlugin implements IPack
         this.descriptor = FilePath.packageDescriptor(this.id);
         this.languageFile = Language.create(this.id);
         if (!this.descriptor.has("config") || this.descriptor.get("config").getAsBoolean()) {
-            this.configFile = new Configuration(this.getId());
+            this.configFile = new Configuration(this.locale());
         }
         //IPackage.registerAll(this, this.getClass().getClassLoader());
 

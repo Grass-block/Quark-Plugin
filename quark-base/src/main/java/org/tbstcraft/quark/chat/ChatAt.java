@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.chat;
 
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
@@ -7,22 +8,37 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.framework.data.config.Queries;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 import org.tbstcraft.quark.util.text.TextBuilder;
 import org.tbstcraft.quark.util.text.TextSender;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
-@QuarkModule(id = "chat-at",version = "1.0.2")
+@AutoRegister(ServiceType.EVENT_LISTEN)
+@QuarkModule(id = "chat-at", version = "1.2")
 public final class ChatAt extends PackageModule {
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            PlayerUtil.addChatTabOption(player, "@" + event.getPlayer().getName());
+            PlayerUtil.addChatTabOption(event.getPlayer(), "@" + player.getName());
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            PlayerUtil.removeChatTabOption(player, "@" + event.getPlayer().getName());
+        }
+    }
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {

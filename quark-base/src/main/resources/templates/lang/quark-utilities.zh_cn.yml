@@ -58,3 +58,6 @@ language:
     unlock: '{global#sys-info}您的位置已被解锁。'
     lock-player: '{global#sys-operation}您已锁定 {#var} 的位置。'
     unlock-player: '{global#sys-operation}您已解锁 {#var} 的位置。'
+  camera-movement:
+    cam-start: '{global#sys-info}镜头路径开始({#var} ticks)'
+    cam-end: '{global#sys-info}镜头路径结束。'

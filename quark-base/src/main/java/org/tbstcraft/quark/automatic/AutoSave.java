@@ -61,7 +61,7 @@ public final class AutoSave extends PackageModule implements Runnable {
             if (this.getConfig().getBoolean("broadcast-op-only") && !p.isOp()) {
                 continue;
             }
-            this.getLanguage().sendMessageTo(p, msgId, world.getName());
+            this.getLanguage().sendMessage(p, msgId, world.getName());
         }
     }
 
@@ -84,14 +84,14 @@ public final class AutoSave extends PackageModule implements Runnable {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
             if (Objects.equals(args[0], "all")) {
-                this.getLanguage().sendMessageTo(sender, "command");
+                this.getLanguage().sendMessage(sender, "command");
                 for (World w : Bukkit.getWorlds()) {
                     this.getModule().saveWorld(w);
                 }
                 return;
             }
             this.getModule().saveWorld(Bukkit.getWorld(args[0]));
-            this.getLanguage().sendMessageTo(sender, "command");
+            this.getLanguage().sendMessage(sender, "command");
         }
 
         @Override

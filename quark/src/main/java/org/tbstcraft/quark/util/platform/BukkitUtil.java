@@ -60,21 +60,24 @@ public interface BukkitUtil {
     }
 
     static void unregisterEventListener(Listener listener) {
-        for (Method m : listener.getClass().getMethods()) {
-            EventHandler handler = m.getDeclaredAnnotation(EventHandler.class);
-            if (handler == null) {
-                continue;
-            }
-            HandlerList list;
-            try {
-                Class<?> clazz = m.getParameters()[0].getType();
+        try {
+            for (Method m : listener.getClass().getMethods()) {
+                EventHandler handler = m.getDeclaredAnnotation(EventHandler.class);
+                if (handler == null) {
+                    continue;
+                }
+                HandlerList list;
+                try {
+                    Class<?> clazz = m.getParameters()[0].getType();
 
-                list = (HandlerList) clazz.getMethod("getHandlerList").invoke(null);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                Quark.LOGGER.warning("failed to unregister listener %s: %s".formatted(m.getName(), e.getMessage()));
-                continue;
+                    list = (HandlerList) clazz.getMethod("getHandlerList").invoke(null);
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    Quark.LOGGER.warning("failed to unregister listener %s: %s".formatted(m.getName(), e.getMessage()));
+                    continue;
+                }
+                list.unregister(listener);
             }
-            list.unregister(listener);
+        } catch (NoClassDefFoundError ignored) {
         }
     }
 

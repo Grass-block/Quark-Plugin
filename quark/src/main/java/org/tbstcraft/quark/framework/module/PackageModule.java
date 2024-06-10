@@ -1,7 +1,7 @@
 package org.tbstcraft.quark.framework.module;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.tbstcraft.quark.framework.data.config.LanguageEntry;
+import org.tbstcraft.quark.framework.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.packages.IPackage;
 import org.tbstcraft.quark.internal.record.RecordEntry;
 import org.tbstcraft.quark.internal.record.RecordService;
@@ -22,7 +22,7 @@ public abstract class PackageModule extends AbstractModule {
     //lifecycle
     @Override
     public final LanguageEntry createLanguage() {
-        return this.parent.getLanguageFile().createEntry(this.getId());
+        return this.parent.getLanguageFile().entry(this.getId());
     }
 
     @Override

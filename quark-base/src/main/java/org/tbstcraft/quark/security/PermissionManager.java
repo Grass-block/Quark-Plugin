@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.security;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,18 +17,16 @@ import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.internal.data.PlayerDataService;
 import org.tbstcraft.quark.service.base.permission.PermissionEntry;
 import org.tbstcraft.quark.service.base.permission.PermissionValue;
-import org.tbstcraft.quark.service.base.task.TaskService;
-import org.tbstcraft.quark.internal.data.PlayerDataService;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
 import org.tbstcraft.quark.util.container.CachedInfo;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.util.*;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({PermissionManager.PermissionCommand.class})
 @QuarkModule(version = "1.0.3")
 public final class PermissionManager extends PackageModule {
@@ -145,24 +144,22 @@ public final class PermissionManager extends PackageModule {
 
         @Override
         public void onCommand(CommandSender sender, String[] args) {
-            TaskService.asyncTask(() -> {
-                switch (args[0]) {
-                    case "set" -> {
-                        this.getModule().addOverridePermissionValue(args[1], args[2], args[3]);
-                        this.getLanguage().sendMessageTo(sender, "cmd-perm-set", args[1], args[2], args[3]);
-                    }
-                    case "group" -> {
-                        this.getModule().setPermissionGroup(args[1], args[2]);
-                        Player target = PlayerUtil.strictFindPlayer(args[1]);
-                        if (target == null) {
-                            return;
-                        }
-                        this.getModule().sync(target);
-                        this.getLanguage().sendMessageTo(sender, "cmd-group-set", args[1], args[2]);
-                    }
+            switch (args[0]) {
+                case "set" -> {
+                    this.getModule().addOverridePermissionValue(args[1], args[2], args[3]);
+                    this.getLanguage().sendMessage(sender, "cmd-perm-set", args[1], args[2], args[3]);
                 }
-                CommandManager.syncCommands();
-            });
+                case "group" -> {
+                    this.getModule().setPermissionGroup(args[1], args[2]);
+                    Player target = PlayerUtil.strictFindPlayer(args[1]);
+                    if (target == null) {
+                        return;
+                    }
+                    this.getModule().sync(target);
+                    this.getLanguage().sendMessage(sender, "cmd-group-set", args[1], args[2]);
+                }
+            }
+            CommandManager.syncCommands();
         }
 
         @Override

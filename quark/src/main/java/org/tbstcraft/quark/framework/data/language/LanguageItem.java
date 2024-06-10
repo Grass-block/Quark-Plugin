@@ -6,12 +6,12 @@ import org.tbstcraft.quark.util.text.ComponentBlock;
 import java.util.List;
 import java.util.Locale;
 
-public class LanguageKey {
-    private final LanguageAccess parent;
+public final class LanguageItem {
+    private final ILanguageAccess parent;
     private final String namespace;
     private final String id;
 
-    public LanguageKey(LanguageAccess parent, String namespace, String id) {
+    public LanguageItem(ILanguageAccess parent, String namespace, String id) {
         this.parent = parent;
         this.namespace = namespace;
         this.id = id;
@@ -53,8 +53,8 @@ public class LanguageKey {
         return this.parent.getRandomMessage(locale, this.namespace, this.id, format);
     }
 
-    public List<String> getMessageList(Locale locale, Object... format) {
-        return this.parent.getMessageList(locale, this.namespace, this.id, format);
+    public List<String> getMessageList(Locale locale) {
+        return this.parent.getMessageList(locale, this.namespace, this.id);
     }
 
     //component

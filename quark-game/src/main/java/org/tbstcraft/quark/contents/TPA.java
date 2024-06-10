@@ -30,7 +30,7 @@ public final class TPA extends CommandModule {
             for (String s : getRequestList(sender.getName())) {
                 sb.append(s).append("\n");
             }
-            getLanguage().sendMessageTo(sender, "list", sb);
+            getLanguage().sendMessage(sender, "list", sb);
         }
 
         String request = sender.getName();
@@ -41,35 +41,35 @@ public final class TPA extends CommandModule {
 
         if (targetPlayer == null || !Bukkit.getOnlinePlayers().contains(targetPlayer)) {
             getRequestList(request).remove(target);
-            getLanguage().sendMessageTo(sender, "player_not_found");
+            getLanguage().sendMessage(sender, "player_not_found");
         }
 
         switch (args[0]) {
             case "request" -> {
                 getRequestList(target).add(request);
 
-                getLanguage().sendMessageTo(requestPlayer, "send", target);
-                getLanguage().sendMessageTo(targetPlayer, "send_announce", request, request, request);
+                getLanguage().sendMessage(requestPlayer, "send", target);
+                getLanguage().sendMessage(targetPlayer, "send_announce", request, request, request);
                 BukkitSound.ANNOUNCE.play(targetPlayer);
             }
             case "accept" -> {
                 if (!getRequestList(sender.getName()).contains(target)) {
-                    getLanguage().sendMessageTo(sender, "player_not_found");
+                    getLanguage().sendMessage(sender, "player_not_found");
                 }
                 getRequestList(sender.getName()).remove(target);
                 PlayerUtil.teleport(targetPlayer, requestPlayer.getLocation());
-                getLanguage().sendMessageTo(requestPlayer, "accept", target);
-                getLanguage().sendMessageTo(targetPlayer, "accepted", request);
+                getLanguage().sendMessage(requestPlayer, "accept", target);
+                getLanguage().sendMessage(targetPlayer, "accepted", request);
                 BukkitSound.WARP.play(targetPlayer);
             }
             case "deny" -> {
                 if (!getRequestList(sender.getName()).contains(target)) {
-                    getLanguage().sendMessageTo(sender, "player_not_found");
+                    getLanguage().sendMessage(sender, "player_not_found");
                 }
                 getRequestList(request).remove(target);
 
-                getLanguage().sendMessageTo(requestPlayer, "deny", target);
-                getLanguage().sendMessageTo(targetPlayer, "denied", request);
+                getLanguage().sendMessage(requestPlayer, "deny", target);
+                getLanguage().sendMessage(targetPlayer, "denied", request);
                 BukkitSound.DENY.play(targetPlayer);
             }
         }

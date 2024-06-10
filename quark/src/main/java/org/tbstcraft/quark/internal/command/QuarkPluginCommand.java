@@ -6,12 +6,13 @@ import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.framework.command.CommandManager;
 import org.tbstcraft.quark.framework.command.CoreCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.data.config.Language;
-import org.tbstcraft.quark.util.platform.APIProfileTest;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.util.container.ObjectContainer;
+import org.tbstcraft.quark.util.platform.APIProfileTest;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Locale;
 
 @QuarkCommand(name = "quark", permission = "+quark.command", subCommands = {
         ConfigCommand.class,
@@ -20,16 +21,16 @@ import java.util.List;
         GlobalVarsCommand.class,
         PackageCommand.class,
         QuarkPluginCommand.ReloadCommand.class
-        //DataUpdateCommand.class
 })
 public final class QuarkPluginCommand extends CoreCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         switch (args[0]) {
             case "info" -> ProductInfo.sendInfoDisplay(sender);
+            case "stats" -> ProductInfo.sendStatsDisplay(sender);
             case "sync-commands" -> {
                 CommandManager.syncCommands();
-                Quark.LANGUAGE.sendMessageTo(sender, "command", "sync-commands");
+                Quark.LANGUAGE.sendMessage(sender, "command", "sync-commands");
             }
         }
     }
@@ -48,12 +49,12 @@ public final class QuarkPluginCommand extends CoreCommand {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
             if (APIProfileTest.isArclightBasedServer()) {
-                this.getLanguage().sendMessageTo(sender, "platform-unsupported");
+                this.getLanguage().sendMessage(sender, "platform-unsupported");
                 return;
 
             }
             if (Quark.PLUGIN.isFastBoot()) {
-                this.getLanguage().sendMessageTo(sender, "fastboot-unsupported");
+                this.getLanguage().sendMessage(sender, "fastboot-unsupported");
                 return;
             }
 
@@ -73,7 +74,7 @@ public final class QuarkPluginCommand extends CoreCommand {
 
             private ReloadTask(CommandSender sender) {
                 this.sender = sender;
-                String locale = Language.getLocale(sender);
+                Locale locale = Language.locale(sender);
                 this.message = Quark.LANGUAGE.getMessage(locale, "packages", "load");
             }
 
@@ -84,10 +85,6 @@ public final class QuarkPluginCommand extends CoreCommand {
                 } catch (ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
-            }
-
-            private static void reload(CommandSender sender) {
-                new ReloadTask(sender).run();
             }
 
             @Override

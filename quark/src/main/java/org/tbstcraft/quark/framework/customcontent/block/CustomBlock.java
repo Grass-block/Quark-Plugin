@@ -12,7 +12,7 @@ import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.framework.customcontent.CustomMeta;
-import org.tbstcraft.quark.framework.data.language.LanguageKey;
+import org.tbstcraft.quark.framework.data.language.LanguageItem;
 
 public abstract class CustomBlock {
     private final String id;
@@ -20,9 +20,9 @@ public abstract class CustomBlock {
     private final boolean glow;
     private final DropChance chance;
 
-    private final LanguageKey displayName;
+    private final LanguageItem displayName;
 
-    public CustomBlock(LanguageKey displayName) {
+    public CustomBlock(LanguageItem displayName) {
         this.displayName = displayName;
         this.id = this.getIdentifier().id();
         this.icon = this.getIdentifier().icon();

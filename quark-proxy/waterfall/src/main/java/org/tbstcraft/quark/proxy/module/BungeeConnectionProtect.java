@@ -11,7 +11,7 @@ import org.tbstcraft.quark.proxy.ServerMessageService;
 
 import java.nio.charset.StandardCharsets;
 
-public class BungeeConnectionProtect extends ProxyModule {
+public final class BungeeConnectionProtect extends ProxyModule {
 
     private static void writeBytes(ByteBuf buf, byte[] arr) {
         buf.writeInt(arr.length);
@@ -48,6 +48,6 @@ public class BungeeConnectionProtect extends ProxyModule {
         String name = event.getPlayer().getName();
         byte[] data = name.getBytes(StandardCharsets.UTF_8);
 
-        ServerMessageService.send(event.getTarget(), "quark:bc.player-add", data);
+        //ServerMessageService.send(event.getTarget(), "quark:bc.player-add", data);
     }
 }

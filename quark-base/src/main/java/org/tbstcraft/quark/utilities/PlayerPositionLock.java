@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.tbstcraft.quark.framework.command.CommandProvider;
 import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -18,7 +18,7 @@ import org.tbstcraft.quark.util.platform.PlayerUtil;
 import java.util.HashSet;
 import java.util.List;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.0.0")
 @CommandProvider(PlayerPositionLock.LockPositionCommand.class)
 public class PlayerPositionLock extends PackageModule {
@@ -43,10 +43,10 @@ public class PlayerPositionLock extends PackageModule {
         }
         if (this.isLocked(name)) {
             this.lockedPlayers.remove(name);
-            this.getLanguage().sendMessageTo(p, "unlock");
+            this.getLanguage().sendMessage(p, "unlock");
         } else {
             this.lockedPlayers.add(name);
-            this.getLanguage().sendMessageTo(p, "lock");
+            this.getLanguage().sendMessage(p, "lock");
         }
     }
 
@@ -63,9 +63,9 @@ public class PlayerPositionLock extends PackageModule {
 
                 this.getModule().toggle(args[0]);
                 if (this.getModule().isLocked(args[0])) {
-                    this.getLanguage().sendMessageTo(sender, "lock-player", args[0]);
+                    this.getLanguage().sendMessage(sender, "lock-player", args[0]);
                 } else {
-                    this.getLanguage().sendMessageTo(sender, "unlock-player", args[0]);
+                    this.getLanguage().sendMessage(sender, "unlock-player", args[0]);
                 }
                 return;
             }

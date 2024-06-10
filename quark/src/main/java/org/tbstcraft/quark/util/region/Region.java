@@ -18,6 +18,12 @@ public abstract class Region {
         this.point1 = new Location(world, x1, y1, z1);
     }
 
+    public Region(World world) {
+        this.world = world;
+        this.point0 = null;
+        this.point1 = null;
+    }
+
     public Region(NBTTagCompound tag) {
         this(
                 Bukkit.getWorld(tag.getString("world")),

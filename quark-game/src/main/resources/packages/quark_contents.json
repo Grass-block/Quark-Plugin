@@ -12,7 +12,6 @@
     "tpa": ".TPA",
     "waypoint": ".Waypoint",
     "elytra-aeronautics": ".ElytraAeronautics",
-    "music-player": ".MusicPlayer",
-    "realistic-sleep": ".RealisticSleep"
+    "music-player": ".MusicPlayer"
   }
 }

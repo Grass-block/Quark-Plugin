@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.contents;
+package org.tbstcraft.quark.tweaks;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -14,14 +14,14 @@ import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.platform.APIProfile;
 
 import java.util.*;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.0", compatBlackList = {APIProfile.ARCLIGHT, APIProfile.BUKKIT, APIProfile.BUKKIT})
 @CommandProvider(RealisticSleep.LeaveBedCommand.class)
 public final class RealisticSleep extends PackageModule {
@@ -82,7 +82,7 @@ public final class RealisticSleep extends PackageModule {
         this.whateverSleepingPlayers.add(event.getPlayer());
         if (event.getPlayer().getWorld().isDayTime()) {
             this.daySleepingPlayers.add(event.getPlayer());
-            this.getLanguage().sendMessageTo(event.getPlayer(), "sleep-day");
+            this.getLanguage().sendMessage(event.getPlayer(), "sleep-day");
             return;
         }
         this.getPlayerList(event.getPlayer()).add(event.getPlayer());
@@ -108,7 +108,7 @@ public final class RealisticSleep extends PackageModule {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
             this.getModule().daySleepingPlayers.remove(((Player) sender));
-            this.getLanguage().sendMessageTo(sender, "leave-bed");
+            this.getLanguage().sendMessage(sender, "leave-bed");
         }
     }
 }

@@ -19,10 +19,6 @@ config:
     remote: {$proxy}
     cdn-server: lobby
     pitch-offsets:
-      "Kiss_The_Rain.mid": -12
-  realistic-sleep:
-    scale-per-player: 3.5
-    health-interval: 20
-    health-amount: 1
+      "Kiss_The_Rain.mid": -1
   item-counter:
     postfix: "{#red} | {#white}StatTrak™"

@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class AssetGroup {
+public final class AssetGroup {
     private static final String FOLDER_PATH = "/assets/%s";
 
     private final Map<String, FileLoader> loaders = new HashMap<>();

@@ -10,14 +10,15 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 @QuarkModule(id = "bungee-connection-protect")
-@ModuleService({ServiceType.EVENT_LISTEN, ServiceType.REMOTE_MESSAGE})
+@AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.REMOTE_MESSAGE})
 public class BungeeConnectionProtect extends PackageModule {
     private final Set<String> sessions = new HashSet<>();
 
@@ -37,7 +38,7 @@ public class BungeeConnectionProtect extends PackageModule {
 
         String cid = Integer.toString(Math.abs((System.currentTimeMillis() + name).hashCode()), 16);
         String msg = PluginMessenger.queryKickMessage(name,
-                this.getLanguage().getMessage("zh_cn", "kick-message", cid), "zh_cn");
+                this.getLanguage().getMessage(Locale.SIMPLIFIED_CHINESE, "kick-message", cid), "zh_cn");
         event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, msg);
     }
 

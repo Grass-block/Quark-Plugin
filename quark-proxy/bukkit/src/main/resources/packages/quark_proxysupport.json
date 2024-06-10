@@ -5,6 +5,8 @@
   "modules": {
     "bungee-connection-protect": ".BungeeConnectionProtect",
     "proxy-transfer-display": ".ProxyTransferDisplay",
-    "forge-server-teleportation": ".ForgeServerTeleportation"
+    "forge-server-teleportation": ".ForgeServerTeleportation",
+    "mcsm-dynamic-instance": ".MCSMDynamicInstance",
+    "server-statement-observer": ".ServerStatementObserver"
   }
 }

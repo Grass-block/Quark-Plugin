@@ -1,10 +1,7 @@
 package org.tbstcraft.quark.proxy;
 
 import net.md_5.bungee.api.plugin.Plugin;
-import org.tbstcraft.quark.proxy.module.BungeeConnectionProtect;
-import org.tbstcraft.quark.proxy.module.KickSync;
-import org.tbstcraft.quark.proxy.module.PingSync;
-import org.tbstcraft.quark.proxy.module.ProxyModule;
+import org.tbstcraft.quark.proxy.module.*;
 import org.tbstcraft.quark.proxy.modulepeer.JoinQuitMessage;
 
 import java.util.logging.Logger;
@@ -15,6 +12,7 @@ public final class QuarkProxy extends Plugin {
             new KickSync(),
             new BungeeConnectionProtect(),
             new JoinQuitMessage(),
+            new ServerStatementObserver()
     };
 
 

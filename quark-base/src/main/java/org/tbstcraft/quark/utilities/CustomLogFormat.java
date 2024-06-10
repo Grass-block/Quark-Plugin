@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.utilities;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.reflect.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.bukkit.Bukkit;
@@ -21,13 +22,12 @@ import java.util.List;
 @QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT, APIProfile.SPIGOT, APIProfile.ARCLIGHT})
 @QuarkCommand(name = "log-format", permission = "quark.log-format")
 public final class CustomLogFormat extends CommandModule {
+    @Inject("log.xml;false")
     private Asset logAsset;
 
     @Override
     public void enable() {
         super.enable();
-
-        this.logAsset= new Asset(this.getOwnerPlugin(), "log.xml",false);
 
         this.logger = createLogger();
         NBTTagCompound tag = ModuleDataService.getEntry(this.getId());
@@ -87,24 +87,24 @@ public final class CustomLogFormat extends CommandModule {
         switch (args[0]) {
             case "reload" -> {
                 this.setFormat();
-                this.getLanguage().sendMessageTo(sender, "reload");
+                this.getLanguage().sendMessage(sender, "reload");
             }
             case "restore" -> {
                 this.restoreFormatFile();
                 this.setFormat();
-                this.getLanguage().sendMessageTo(sender, "restore");
+                this.getLanguage().sendMessage(sender, "restore");
             }
             case "on" -> {
                 this.setDataEnable(true);
                 this.setFormat();
-                this.getLanguage().sendMessageTo(sender, "enable");
+                this.getLanguage().sendMessage(sender, "enable");
             }
             case "off" -> {
                 this.setDataEnable(false);
                 if (!this.setLoggerFormat(Bukkit.class.getResource("/log4j2.xml"))) {
                     this.logger.severe("failed to inject log format, consider checking resource.");
                 }
-                this.getLanguage().sendMessageTo(sender, "disable");
+                this.getLanguage().sendMessage(sender, "disable");
             }
         }
     }

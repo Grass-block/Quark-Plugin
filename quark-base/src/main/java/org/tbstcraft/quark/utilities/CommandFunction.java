@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.tbstcraft.quark.framework.command.AbstractCommand;
 import org.tbstcraft.quark.framework.command.CommandManager;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -13,8 +13,8 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import java.util.List;
 
 @QuarkModule(version = "1.0.0")
-@ModuleService(ServiceType.EVENT_LISTEN)
-public class CommandFunction extends PackageModule {
+@AutoRegister(ServiceType.EVENT_LISTEN)
+public final class CommandFunction extends PackageModule {
 
     @Override
     public void enable() {

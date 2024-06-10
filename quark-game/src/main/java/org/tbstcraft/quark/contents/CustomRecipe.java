@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.contents;
 
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -22,6 +23,8 @@ import java.util.Set;
 @CommandProvider(CustomRecipe.RecipeCommand.class)
 public final class CustomRecipe extends PackageModule {
     private final Set<Recipe> recipes = new HashSet<>();
+
+    @Inject("recipe;false")
     private AssetGroup recipeFiles;
 
     public void load() {
@@ -60,7 +63,6 @@ public final class CustomRecipe extends PackageModule {
 
     @Override
     public void enable() {
-        this.recipeFiles = new AssetGroup(this.getOwnerPlugin(), "recipe", false);
         if (!this.recipeFiles.existFolder()) {
             this.restoreDefault();
         }
@@ -79,11 +81,11 @@ public final class CustomRecipe extends PackageModule {
             switch (args[0]) {
                 case "reload" -> {
                     this.getModule().load();
-                    getLanguage().sendMessageTo(sender, "reload");
+                    getLanguage().sendMessage(sender, "reload");
                 }
                 case "restore" -> {
                     this.getModule().restoreDefault();
-                    getLanguage().sendMessageTo(sender, "restore");
+                    getLanguage().sendMessage(sender, "restore");
                 }
             }
         }

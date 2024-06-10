@@ -3,7 +3,7 @@ package org.tbstcraft.quark.framework.module.standalone;
 import org.bukkit.configuration.ConfigurationSection;
 import org.tbstcraft.quark.framework.data.config.Configuration;
 import org.tbstcraft.quark.framework.data.config.Language;
-import org.tbstcraft.quark.framework.data.config.LanguageEntry;
+import org.tbstcraft.quark.framework.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.internal.record.RecordEntry;
 import org.tbstcraft.quark.internal.record.RecordService;
@@ -22,7 +22,7 @@ public abstract class StandaloneModule extends AbstractModule {
 
     @Override
     public LanguageEntry createLanguage() {
-        return Language.create(this.provider, this.getId()).createEntry(this.getId());
+        return Language.create(this.provider, this.getId()).entry(this.getId());
     }
 
     @Override

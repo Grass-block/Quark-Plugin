@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.tbstcraft.quark.framework.command.CommandProvider;
 import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 @CommandProvider(ChatMute.MuteCommand.class)
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(id="chat-mute",version = "1.0.2")
 public final class ChatMute extends PackageModule implements Listener {
 
@@ -46,7 +46,7 @@ public final class ChatMute extends PackageModule implements Listener {
             return;
         }
         event.setCancelled(true);
-        this.getLanguage().sendMessageTo(Objects.requireNonNull(p.getPlayer()), "message-banned");
+        this.getLanguage().sendMessage(Objects.requireNonNull(p.getPlayer()), "message-banned");
     }
 
     @QuarkCommand(name = "mute", op = true)
@@ -69,7 +69,7 @@ public final class ChatMute extends PackageModule implements Listener {
             String target = args[1];
             if (operation.equals("add")) {
                 ModuleDataService.getEntry(this.getModuleId()).hasKey(target);
-                this.getLanguage().sendMessageTo(sender, "add", target);
+                this.getLanguage().sendMessage(sender, "add", target);
                 Player player = PlayerUtil.strictFindPlayer(target);
                 NBTTagCompound tag = ModuleDataService.getEntry(this.getModuleId());
                 if (!tag.hasKey(target)) {
@@ -77,7 +77,7 @@ public final class ChatMute extends PackageModule implements Listener {
                 }
                 ModuleDataService.save(this.getModuleId());
                 if (player != null) {
-                    this.getLanguage().sendMessageTo(player, "add-target", sender.getName());
+                    this.getLanguage().sendMessage(player, "add-target", sender.getName());
                 }
             }
             if (operation.equals("remove")) {
@@ -86,10 +86,10 @@ public final class ChatMute extends PackageModule implements Listener {
                     tag.remove(target);
                 }
                 ModuleDataService.save(this.getModuleId());
-                this.getLanguage().sendMessageTo(sender, "remove", target);
+                this.getLanguage().sendMessage(sender, "remove", target);
                 Player player = PlayerUtil.strictFindPlayer(target);
                 if (player != null) {
-                    this.getLanguage().sendMessageTo(player, "remove-target", sender.getName());
+                    this.getLanguage().sendMessage(player, "remove-target", sender.getName());
                 }
             }
         }

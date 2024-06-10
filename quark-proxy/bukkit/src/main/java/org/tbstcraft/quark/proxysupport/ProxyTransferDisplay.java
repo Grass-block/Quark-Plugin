@@ -41,7 +41,7 @@ public class ProxyTransferDisplay extends PackageModule implements ChannelHandle
         if (player == null) {
             return;
         }
-        this.getLanguage().sendMessageTo(player, "tp_completed_user", currentServer);
+        this.getLanguage().sendMessage(player, "tp_completed_user", currentServer);
         player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1, 1);
     }
 

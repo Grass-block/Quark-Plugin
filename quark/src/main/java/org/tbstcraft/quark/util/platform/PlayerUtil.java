@@ -5,7 +5,6 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.framework.data.config.Queries;
 import org.tbstcraft.quark.framework.event.BanMessageFetchEvent;
 import org.tbstcraft.quark.framework.module.ModuleManager;
@@ -47,15 +46,15 @@ public interface PlayerUtil {
 
     static int getPing(Player p) {
         try {
-            return (int)p.getClass().getMethod("getPing").invoke(p);
+            return (int) p.getClass().getMethod("getPing").invoke(p);
         } catch (Exception e) {
-            Quark.LOGGER.severe(e.getMessage());
+            //Quark.LOGGER.severe(e.getMessage());
             return 0;
         }
     }
 
     static void banPlayer(String target, BanList.Type type, String reason, Date expire, String source) {
-        BanEntry entry = Bukkit.getBanList(type).addBan(target, reason, expire, source);
+        BanEntry<?> entry = Bukkit.getBanList(type).addBan(target, reason, expire, source);
         if (type == BanList.Type.NAME) {
             Player p = PlayerUtil.strictFindPlayer(target);
             if (p == null) {
@@ -118,25 +117,19 @@ public interface PlayerUtil {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
     }
 
-    static String getLocale(Player p) {
-        if (APIProfileTest.isPaperServer()) {
-            return p.locale().toString().toLowerCase().replace("-", "_");
-        } else {
-            return p.getLocale();
-        }
-    }
-
     static void setPlayerTab(Player player, String header, String footer) {
-        header = Queries.PLAYER_TEMPLATE_ENGINE.handle(player, header);
-        footer = Queries.PLAYER_TEMPLATE_ENGINE.handle(player, footer);
+        try {
+            header = Queries.PLAYER_TEMPLATE_ENGINE.handle(player, header);
+            footer = Queries.PLAYER_TEMPLATE_ENGINE.handle(player, footer);
 
-        if (APIProfileTest.isPaperCompat()) {
-            player.sendPlayerListHeader(TextBuilder.buildComponent(header));
-            player.sendPlayerListFooter(TextBuilder.buildComponent(footer));
-            return;
-        }
-        player.setPlayerListHeader(header);
-        player.setPlayerListFooter(footer);
+            if (APIProfileTest.isPaperCompat()) {
+                player.sendPlayerListHeader(TextBuilder.buildComponent(header));
+                player.sendPlayerListFooter(TextBuilder.buildComponent(footer));
+                return;
+            }
+            player.setPlayerListHeader(header);
+            player.setPlayerListFooter(footer);
+        }catch (NoSuchMethodError ignored){}
     }
 
     static long getPlayTime(Player player) {
@@ -185,5 +178,19 @@ public interface PlayerUtil {
             return null;
         }
         return p;
+    }
+
+    static void addChatTabOption(Player player, String... opt) {
+        try {
+            player.addCustomChatCompletions(Set.of(opt));
+        } catch (NoSuchMethodError ignored) {
+        }
+    }
+
+    static void removeChatTabOption(Player player, String... opt) {
+        try {
+            player.removeCustomChatCompletions(Set.of(opt));
+        } catch (NoSuchMethodError ignored) {
+        }
     }
 }

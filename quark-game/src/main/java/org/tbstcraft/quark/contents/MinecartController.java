@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.contents;
 
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,19 +10,19 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.util.Vector;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.framework.data.config.Language;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.base.task.TaskService;
 import org.tbstcraft.quark.util.platform.BukkitUtil;
 import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.text.DecimalFormat;
 import java.util.HashSet;
+import java.util.Locale;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule
 public final class MinecartController extends PackageModule {
     private final HashSet<Player> speeds = new HashSet<>();
@@ -119,26 +120,32 @@ public final class MinecartController extends PackageModule {
         String accelerationColumn = String.valueOf(fmt.format(acceleration * 20));
         String speedColumn = "%sm/s(%skm/h)".formatted(fmt.format(speed * 20), fmt.format(speed * 72));
         String thrustLevelColumn = String.valueOf(thrustLevel);
-        String locale = Language.getLocale(p);
-        String ui = this.getLanguage().buildUI(this.getConfig(), "ui", locale, (s) -> {
-                    String s2;
-                    if (thrustLevel > 0) {
-                        s2 = this.getLanguage().getMessage(locale, "run-mode-boost");
-                    } else if (thrustLevel == 0) {
-                        s2 = this.getLanguage().getMessage(locale, "run-mode-run");
-                    } else {
-                        s2 = this.getLanguage().getMessage(locale, "run_mode_break");
-                    }
-                    if (speed == 0) {
-                        s2 = this.getLanguage().getMessage(locale, "run-mode-stop");
-                    }
-                    if (speed == getConfig().getDouble("max-speed")) {
-                        s2 = this.getLanguage().getMessage(locale, "run-mode-run");
-                    }
-                    return s.replace("{run-mode}", s2);
-                }).replace("{speed}", speedColumn)
+
+        Locale locale = Language.locale(p);
+
+        String template = Language.generateTemplate(this.getConfig(), "ui", (s) -> {
+            String s2;
+            if (thrustLevel > 0) {
+                s2 = this.getLanguage().getMessage(locale, "run-mode-boost");
+            } else if (thrustLevel == 0) {
+                s2 = this.getLanguage().getMessage(locale, "run-mode-run");
+            } else {
+                s2 = this.getLanguage().getMessage(locale, "run_mode_break");
+            }
+            if (speed == 0) {
+                s2 = this.getLanguage().getMessage(locale, "run-mode-stop");
+            }
+            if (speed == getConfig().getDouble("max-speed")) {
+                s2 = this.getLanguage().getMessage(locale, "run-mode-run");
+            }
+            return s.replace("{run-mode}", s2);
+        });
+
+        template = template.replace("{speed}", speedColumn)
                 .replace("{acceleration}", accelerationColumn)
                 .replace("{level}", thrustLevelColumn);
+
+        String ui = this.getLanguage().buildTemplate(locale, template);
         PlayerUtil.sendActionBarTitle(p, ui);
     }
 

@@ -6,11 +6,11 @@ import org.tbstcraft.quark.util.text.ComponentBlock;
 import java.util.List;
 import java.util.Locale;
 
-public final class LanguageEntry {
-    private final LanguageAccess parent;
+public final class LanguageEntry{
+    private final ILanguageAccess parent;
     private final String namespace;
 
-    public LanguageEntry(LanguageAccess parent, String namespace) {
+    public LanguageEntry(ILanguageAccess parent, String namespace) {
         this.parent = parent;
         this.namespace = namespace;
     }
@@ -51,9 +51,10 @@ public final class LanguageEntry {
         return this.parent.getRandomMessage(locale, this.namespace, id, format);
     }
 
-    public List<String> getMessageList(Locale locale, String id, Object... format) {
-        return this.parent.getMessageList(locale, this.namespace, id, format);
+    public List<String> getMessageList(Locale locale, String id) {
+        return this.parent.getMessageList(locale, this.namespace, id);
     }
+
 
     //component
     public ComponentBlock getMessageComponent(Locale locale, String id, Object... format) {
@@ -79,5 +80,14 @@ public final class LanguageEntry {
 
     public void broadcastRandomMessage(boolean op, boolean console, String id, Object... format) {
         this.parent.broadcastRandomMessage(op, console, this.namespace, id, format);
+    }
+
+    //template
+    public String buildTemplate(Locale locale, String template) {
+        return this.parent.buildTemplate(locale, this.namespace, template);
+    }
+
+    public void sendTemplate(CommandSender sender, String template) {
+        this.parent.sendTemplate(sender, this.namespace, template);
     }
 }

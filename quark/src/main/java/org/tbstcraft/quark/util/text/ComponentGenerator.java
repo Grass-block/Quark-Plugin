@@ -148,7 +148,6 @@ public interface ComponentGenerator {
         };
     }
 
-    // TODO: 2024/3/9 Add more hover options
     static HoverEvent<?> hoverEvent(Set<String> args) {
         String[] arguments = getFunction("hover", args);
 

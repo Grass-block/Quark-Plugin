@@ -5,7 +5,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.FeatureAvailability;
 import org.tbstcraft.quark.framework.command.AbstractCommand;
-import org.tbstcraft.quark.framework.data.config.LanguageEntry;
+import org.tbstcraft.quark.framework.data.language.ILanguageAccess;
+import org.tbstcraft.quark.framework.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.services.ModuleServices;
 import org.tbstcraft.quark.framework.packages.IPackage;
@@ -31,12 +32,17 @@ public abstract class AbstractModule implements Listener {
     }
 
 
-    //lifecycle
+    //api
     public void enable() {
     }
 
     public void disable() {
     }
+
+    @SuppressWarnings("RedundantThrows")
+    public void checkCompatibility() throws Throwable {
+    }
+
 
     public final void enableModule() {
         this.record = this.useRecord() ? createRecord() : new EmptyRecordEntry();
@@ -118,7 +124,6 @@ public abstract class AbstractModule implements Listener {
         return this.getDescriptor().beta();
     }
 
-
     public final boolean useRecord() {
         return this.getDescriptor().recordFormat().length != 0;
     }
@@ -184,7 +189,18 @@ public abstract class AbstractModule implements Listener {
         return this.getClass().getResource("/assets" + path);
     }
 
-    protected Plugin getOwnerPlugin() {
+    public Plugin getOwnerPlugin() {
         return this.getParent().getOwner();
+    }
+
+    public String getDisplayName(Locale locale) {
+        ILanguageAccess lang = this.getParent().getLanguageFile();
+
+        if (!lang.hasKey("_module-name", this.getId())) {
+            return this.getId();
+        }
+
+        String displayName = lang.getMessage(locale, "_module-name", this.getId());
+        return "%s{#gray}({#white}%s{#gray})".formatted(getId(), displayName);
     }
 }

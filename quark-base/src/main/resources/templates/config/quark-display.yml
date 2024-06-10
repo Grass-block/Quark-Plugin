@@ -50,7 +50,8 @@ config:
     template: '{0} {color(gold)}> {color(gray)}{1}'
   player-name-header:
     template: "[{#white}{header}{#white}] {player}"
-    test: "test"
+    op-header: '{#dark-purple}管理'
+    player-header: '{#dark-aqua}玩家'
   welcome-message:
     ui:
       - '{color(yellow)} ───────────────────────────────── '
@@ -84,4 +85,4 @@ config:
       - "   %s"
       - "{color(yellow)} ─────────────────────────────────"
   join-quit-message:
-    proxy: {$proxy}
+    proxy: { $proxy }

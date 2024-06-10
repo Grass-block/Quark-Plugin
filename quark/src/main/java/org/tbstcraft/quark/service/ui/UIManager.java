@@ -21,12 +21,15 @@ public interface UIManager extends Service {
 
     static void init() {
         CommandManager.registerCommand(new UICommand());
+        /*
         registerUI("quark:debug", new InventoryUIBuilder(27)
                 .title((p) -> "Debug")
                 .listener(7, 2, ((p, ui, x, y) -> p.sendMessage("raw event (7,2) clicked!")))
                 .close(8, 2)
                 .command(0, 0, new InventoryIcon((p) -> "Click to reload quark", Material.COMMAND_BLOCK), "quark reload")
                 .initializer((p) -> p.sendMessage("debug menu opened")));
+
+         */
     }
 
     static void stop() {

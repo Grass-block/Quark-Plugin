@@ -19,7 +19,7 @@ public final class FlySpeedModifier extends CommandModule {
         if (sender instanceof Player p) {
             if (Objects.equals(args[0], "reset")) {
                 p.setFlySpeed(0.125f);
-                this.getLanguage().sendMessageTo(sender, "cmd-speed-set", "0.125");
+                this.getLanguage().sendMessage(sender, "cmd-speed-set", "0.125");
                 return;
             }
             float speed = Float.parseFloat(args[0]);
@@ -28,7 +28,7 @@ public final class FlySpeedModifier extends CommandModule {
                 return;
             }
             p.setFlySpeed(speed);
-            this.getLanguage().sendMessageTo(sender, "cmd-speed-set", Float.toString(speed));
+            this.getLanguage().sendMessage(sender, "cmd-speed-set", Float.toString(speed));
         }
     }
 

@@ -5,14 +5,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 
+import java.util.Locale;
 import java.util.function.Function;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.0.0")
 public final class KickOnReload extends PackageModule {
 
@@ -38,17 +40,17 @@ public final class KickOnReload extends PackageModule {
         }
         if (command.equalsIgnoreCase("stop")) {
             for (Player p : Bukkit.getOnlinePlayers()) {
-                p.kickPlayer(this.getLanguage().getMessage(p.getLocale(), "stop-hint"));
+                p.kickPlayer(this.getLanguage().getMessage(Language.locale(p), "stop-hint"));
             }
         }
     }
 
-    public void kick(Function<String, String> builder) {
+    public void kick(Function<Locale, String> builder) {
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (this.getConfig().getBoolean("op-ignore") && p.isOp()) {
                 continue;
             }
-            p.kickPlayer(builder.apply(p.getLocale()));
+            p.kickPlayer(builder.apply(Language.locale(p)));
         }
     }
 }

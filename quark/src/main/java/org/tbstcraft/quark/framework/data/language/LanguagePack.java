@@ -4,7 +4,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-import org.tbstcraft.quark.framework.data.config.Language;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.framework.data.config.YamlUtil;
 import org.tbstcraft.quark.util.FilePath;
 
@@ -35,7 +35,7 @@ public final class LanguagePack {
     static boolean existType(Plugin owner, String id, Locale locale) {
         File f = new File(FILE_DIR.formatted(
                 FilePath.pluginFolder(owner.getName()),
-                Language.toId(locale),
+                Language.locale(locale),
                 id
         ));
         if (f.exists() && f.length() > 0) {
@@ -163,7 +163,7 @@ public final class LanguagePack {
     private String fileDir() {
         return FILE_DIR.formatted(
                 FilePath.pluginFolder(this.owner.getName()),
-                Language.toId(this.locale),
+                Language.locale(this.locale),
                 this.id
         );
     }

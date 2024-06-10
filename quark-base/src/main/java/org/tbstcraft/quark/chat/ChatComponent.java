@@ -1,28 +1,30 @@
 package org.tbstcraft.quark.chat;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
+import me.gb2022.commons.reflect.AutoRegister;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.tbstcraft.quark.framework.command.CommandManager;
 import org.tbstcraft.quark.framework.data.config.Queries;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
-import org.tbstcraft.quark.util.text.TextBuilder;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.util.platform.APIProfile;
 import org.tbstcraft.quark.util.platform.APIProfileTest;
+import org.tbstcraft.quark.util.text.TextBuilder;
 
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @Compat(ChatComponent.PaperCompat.class)
-@QuarkModule(id = "chat-component", version = "1.2.0")
-public class ChatComponent extends PackageModule {
+@QuarkModule(id = "chat-component", version = "1.3.0")
+public final class ChatComponent extends PackageModule {
 
     @EventHandler
     public void onChatting(AsyncPlayerChatEvent event) {
@@ -37,7 +39,7 @@ public class ChatComponent extends PackageModule {
 
     @EventHandler
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        if (CommandManager.isQuarkCommand(event.getMessage().split(" ")[0].replace("/", ""))){
+        if (CommandManager.isQuarkCommand(event.getMessage().split(" ")[0].replace("/", ""))) {
             return;
         }
         String msg = event.getMessage();
@@ -92,6 +94,7 @@ public class ChatComponent extends PackageModule {
 
 
     @CompatDelegate(APIProfile.PAPER)
+    @AutoRegister(ServiceType.EVENT_LISTEN)
     public static final class PaperCompat extends CompatContainer<ChatComponent> {
         public PaperCompat(ChatComponent parent) {
             super(parent);
@@ -103,6 +106,17 @@ public class ChatComponent extends PackageModule {
             msg = Queries.GLOBAL_TEMPLATE_ENGINE.handle(msg);
             msg = this.getParent().processChar(msg);
             event.message(TextBuilder.buildComponent(msg));
+        }
+
+        @EventHandler
+        public void onSignEdit(SignChangeEvent event) {
+            for (int i = 0; i < event.lines().size(); i++) {
+                Component origin = event.line(i);
+                if (origin == null) {
+                    continue;
+                }
+                event.line(i, TextBuilder.buildComponent(LegacyComponentSerializer.legacySection().serialize(origin)));
+            }
         }
     }
 }

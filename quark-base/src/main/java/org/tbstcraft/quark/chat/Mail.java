@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
@@ -25,7 +25,7 @@ import java.util.Set;
 
 @QuarkCommand(name = "mail", playerOnly = true)
 @QuarkModule(id = "mail",version = "1.0.0")
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 public final class Mail extends CommandModule {
 
     @EventHandler
@@ -37,7 +37,7 @@ public final class Mail extends CommandModule {
             if (size == 0) {
                 return;
             }
-            this.getLanguage().sendMessageTo(sender, "view-hint", size);
+            this.getLanguage().sendMessage(sender, "view-hint", size);
         });
     }
 
@@ -49,7 +49,7 @@ public final class Mail extends CommandModule {
                 StringBuilder sb = new StringBuilder();
                 Set<String> keys = new HashSet<>(entry.getTagMap().keySet());
                 if (keys.isEmpty()) {
-                    this.getLanguage().sendMessageTo(sender, "view-none", sb.toString());
+                    this.getLanguage().sendMessage(sender, "view-none", sb.toString());
                     return;
                 }
                 for (String s : keys) {
@@ -64,7 +64,7 @@ public final class Mail extends CommandModule {
                     entry.remove(s);
                 }
                 PlayerDataService.save(sender.getName());
-                this.getLanguage().sendMessageTo(sender, "view", sb.toString());
+                this.getLanguage().sendMessage(sender, "view", sb.toString());
             });
         }
 
@@ -78,8 +78,8 @@ public final class Mail extends CommandModule {
         String recipient = args[0];
         Player recipientPlayer = PlayerUtil.strictFindPlayer(recipient);
         if (recipientPlayer != null) {
-            getLanguage().sendMessageTo(recipientPlayer, "receive-direct", sender.getName(), content);
-            getLanguage().sendMessageTo(sender, "send-success", recipient, content);
+            getLanguage().sendMessage(recipientPlayer, "receive-direct", sender.getName(), content);
+            getLanguage().sendMessage(sender, "send-success", recipient, content);
             BukkitSound.ANNOUNCE.play(recipientPlayer);
             return;
         }
@@ -87,7 +87,7 @@ public final class Mail extends CommandModule {
         NBTTagCompound entry = PlayerDataService.getEntry(recipient, this.getFullId());
         String key = sender.getName() + "@" + System.currentTimeMillis();
         entry.setString(key, content);
-        getLanguage().sendMessageTo(sender, "send-success", recipient, content);
+        getLanguage().sendMessage(sender, "send-success", recipient, content);
     }
 
     @Override

@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@QuarkModule
-public class VersionLogViewer extends PackageModule {
+@QuarkModule(id = "version-log-viewer")
+public final class VersionLogViewer extends PackageModule {
     @Override
     public void enable() {
         CommandManager.getQuarkCommand("quark").registerSubCommand(new VersionLogCommand(this));
@@ -57,11 +57,11 @@ public class VersionLogViewer extends PackageModule {
             List<String> info = this.versions.get(version);
 
             if (info == null) {
-                this.module.getLanguage().sendMessageTo(sender, "not-found", version);
+                this.module.getLanguage().sendMessage(sender, "not-found", version);
                 return;
             }
 
-            this.module.getLanguage().sendMessageTo(sender, "view", version);
+            this.module.getLanguage().sendMessage(sender, "view", version);
             for (String s : info) {
                 sender.sendMessage(s);
             }

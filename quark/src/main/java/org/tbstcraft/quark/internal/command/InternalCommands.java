@@ -54,7 +54,7 @@ public interface InternalCommands {
         @EventHandler
         public void onCommand(ServerCommandEvent event) {
             if (event.getCommand().startsWith("reload")) {
-                Quark.LANGUAGE.sendMessageTo(event.getSender(), "folia_compat", "reload_warn");
+                Quark.LANGUAGE.sendMessage(event.getSender(), "folia_compat", "reload_warn");
                 event.setCancelled(true);
             }
         }
@@ -62,7 +62,7 @@ public interface InternalCommands {
         @EventHandler
         public void onCommand(PlayerCommandPreprocessEvent event) {
             if (event.getMessage().startsWith("/reload")) {
-                Quark.LANGUAGE.sendMessageTo(event.getPlayer(), "folia_compat", "reload_warn");
+                Quark.LANGUAGE.sendMessage(event.getPlayer(), "folia_compat", "reload_warn");
                 event.setCancelled(true);
             }
         }

@@ -5,7 +5,7 @@ import org.tbstcraft.quark.framework.command.CoreCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.data.config.ConfigDelegation;
 import org.tbstcraft.quark.framework.data.config.Configuration;
-import org.tbstcraft.quark.framework.data.config.LanguageEntry;
+import org.tbstcraft.quark.framework.data.language.LanguageEntry;
 
 import java.util.List;
 
@@ -17,11 +17,11 @@ public final class ConfigCommand extends CoreCommand {
         switch (args[0]) {
             case "reload-all" -> {
                 ConfigDelegation.reloadConfigs();
-                language.sendMessageTo(sender, "reload-all");
+                language.sendMessage(sender, "reload-all");
             }
             case "restore-all" -> {
                 ConfigDelegation.restoreConfigs();
-                language.sendMessageTo(sender, "restore-all");
+                language.sendMessage(sender, "restore-all");
             }
             case "restore" -> {
                 Configuration file = ConfigDelegation.CONFIG_REGISTRY.get(args[1]);
@@ -30,7 +30,7 @@ public final class ConfigCommand extends CoreCommand {
                     return;
                 }
                 file.restore();
-                language.sendMessageTo(sender, "restore", args[1]);
+                language.sendMessage(sender, "restore", args[1]);
             }
             case "reload" -> {
                 Configuration file = ConfigDelegation.CONFIG_REGISTRY.get(args[1]);
@@ -39,7 +39,7 @@ public final class ConfigCommand extends CoreCommand {
                     return;
                 }
                 file.load();
-                language.sendMessageTo(sender, "reload", args[1]);
+                language.sendMessage(sender, "reload", args[1]);
             }
             case "sync" -> {
                 Configuration file = ConfigDelegation.getConfig(args[1]);
@@ -48,11 +48,11 @@ public final class ConfigCommand extends CoreCommand {
                     return;
                 }
                 file.sync(true);
-                language.sendMessageTo(sender, "sync", args[1]);
+                language.sendMessage(sender, "sync", args[1]);
             }
             case "sync-all" -> {
                 ConfigDelegation.syncConfigs(true);
-                language.sendMessageTo(sender, "sync-all");
+                language.sendMessage(sender, "sync-all");
             }
         }
     }

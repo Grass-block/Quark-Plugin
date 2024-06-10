@@ -24,10 +24,10 @@ import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.customcontent.CustomMeta;
 import org.tbstcraft.quark.framework.customcontent.item.CustomItem;
 import org.tbstcraft.quark.framework.customcontent.item.QuarkItem;
-import org.tbstcraft.quark.framework.data.language.LanguageKey;
+import org.tbstcraft.quark.framework.data.language.LanguageItem;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.util.platform.BukkitUtil;
 import org.tbstcraft.quark.util.platform.PlayerUtil;
@@ -37,7 +37,7 @@ import org.tbstcraft.quark.util.crafting.RecipeManager;
 import java.util.Locale;
 import java.util.Objects;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({Elevator.ElevatorItemCommand.class})
 @QuarkModule(version = "1.0.0")
 @SuppressWarnings("deprecation")
@@ -198,8 +198,8 @@ public final class Elevator extends PackageModule {
         }
 
         @Override
-        public LanguageKey getLanguageKey() {
-            return new LanguageKey(null, "elevator", "item-name");
+        public LanguageItem getLanguageKey() {
+            return new LanguageItem(null, "elevator", "item-name");
         }
     }
 }

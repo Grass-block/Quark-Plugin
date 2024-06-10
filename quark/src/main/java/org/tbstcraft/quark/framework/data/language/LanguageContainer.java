@@ -56,7 +56,7 @@ public final class LanguageContainer {
     public String getMessage(Locale locale, String namespace, String id) {
         LanguagePack pack = getPack(locale);
         if (pack == null) {
-            return error(locale, namespace, id);
+            return error(locale, Identifiers.external(namespace), Identifiers.external(id));
         }
 
         return pack.getMessage(Identifiers.external(namespace), Identifiers.external(id));
@@ -65,7 +65,7 @@ public final class LanguageContainer {
     public List<String> getMessageList(Locale locale, String namespace, String id) {
         LanguagePack pack = getPack(locale);
         if (pack == null) {
-            return Collections.singletonList(error(locale, namespace, id));
+            return Collections.singletonList(error(locale, Identifiers.external(namespace), Identifiers.external(id)));
         }
 
         return pack.getMessageList(Identifiers.external(namespace), Identifiers.external(id));
@@ -86,4 +86,7 @@ public final class LanguageContainer {
     public LanguageAccess getEntry() {
         return entry;
     }
+
+
+
 }

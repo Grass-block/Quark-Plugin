@@ -1,5 +1,8 @@
 package org.tbstcraft.quark.display;
 
+import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -14,24 +17,26 @@ import org.tbstcraft.quark.framework.command.CommandProvider;
 import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.data.config.Queries;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.framework.data.language.Language;
+import org.tbstcraft.quark.framework.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.service.base.task.TaskService;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
-import me.gb2022.commons.nbt.NBTTagCompound;
 
 import java.util.*;
 
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(BossbarAnnouncement.BossbarAnnounceCommand.class)
 @QuarkModule(version = "1.1.0")
 public final class BossbarAnnouncement extends PackageModule {
     public static final String TASK_UPDATE_TID = "quark-display:custom_bossbar:update";
-    private final HashMap<String, BossBar> bars = new HashMap<>();
+    private final HashMap<Locale, BossBar> bars = new HashMap<>();
     private String content = null;
+
+    @Inject
+    private LanguageEntry language;
 
     @Override
     public void enable() {
@@ -72,18 +77,18 @@ public final class BossbarAnnouncement extends PackageModule {
     }
 
     public void addBar(Player p) {
-        String locale = PlayerUtil.getLocale(p);
-        final String _locale = locale;
+        Locale locale = Language.locale(p);
+        final Locale _locale = locale;
         BossBar b = this.bars.computeIfAbsent(locale, s -> generateBossbar(_locale));
         b.addPlayer(p);
     }
 
     public void removeBar(Player p) {
-        String locale = PlayerUtil.getLocale(p);
+        Locale locale = Language.locale(p);
         for (BossBar bar : new ArrayList<>(this.bars.values())) {
             bar.removePlayer(p);
         }
-        BossBar bar = this.bars.get(PlayerUtil.getLocale(p));
+        BossBar bar = this.bars.get(Language.locale(p));
         if (bar == null) {
             return;
         }
@@ -94,8 +99,8 @@ public final class BossbarAnnouncement extends PackageModule {
         }
     }
 
-    public BossBar generateBossbar(String locale) {
-        String msg = this.getLanguage().buildUI(this.getConfig(), "ui", locale);
+    public BossBar generateBossbar(Locale locale) {
+        String msg = this.language.buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui"));
 
         BarColor color = BarColor.valueOf(Objects.requireNonNull(this.getConfig().getString("bar-color")).toUpperCase());
 
@@ -106,9 +111,9 @@ public final class BossbarAnnouncement extends PackageModule {
 
 
     public void updateBossbar() {
-        Set<String> _keySet = this.bars.keySet();
-        for (String locale : _keySet) {
-            String msg = this.getLanguage().buildUI(this.getConfig(), "ui", locale);
+        Set<Locale> _keySet = this.bars.keySet();
+        for (Locale locale : _keySet) {
+            String msg = this.getLanguage().buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui"));
             BossBar bar = this.bars.get(locale);
             if (this.content != null) {
                 bar.setTitle(this.content);
@@ -127,7 +132,7 @@ public final class BossbarAnnouncement extends PackageModule {
             NBTTagCompound tag = ModuleDataService.getEntry(this.getModuleId());
             if (Objects.equals(args[0], "none")) {
                 tag.remove("custom");
-                this.getLanguage().sendMessageTo(sender, "custom-clear");
+                this.getLanguage().sendMessage(sender, "custom-clear");
                 this.getModule().setContent(null);
             } else {
                 StringBuilder sb = new StringBuilder();
@@ -136,7 +141,7 @@ public final class BossbarAnnouncement extends PackageModule {
                 }
                 String content = Queries.GLOBAL_TEMPLATE_ENGINE.handle(sb.toString());
                 tag.setString("custom", content);
-                this.getLanguage().sendMessageTo(sender, "custom-set", content);
+                this.getLanguage().sendMessage(sender, "custom-set", content);
                 this.getModule().setContent(content);
             }
             this.getModule().updateBossbar();

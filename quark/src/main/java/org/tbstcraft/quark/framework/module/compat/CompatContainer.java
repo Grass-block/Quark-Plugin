@@ -2,7 +2,7 @@ package org.tbstcraft.quark.framework.module.compat;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.Listener;
-import org.tbstcraft.quark.framework.data.config.LanguageEntry;
+import org.tbstcraft.quark.framework.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 
 public abstract class CompatContainer<V extends AbstractModule> implements Listener {

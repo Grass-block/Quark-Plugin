@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.utilities;
 
 import me.gb2022.apm.local.PluginMessenger;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -9,9 +10,9 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.tbstcraft.quark.framework.command.CommandProvider;
 import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.framework.data.language.Language;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.service.base.permission.PermissionService;
 
@@ -19,9 +20,9 @@ import java.util.List;
 
 @SuppressWarnings("deprecation")
 @QuarkModule(version = "1.0.0")
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(Maintenance.MaintenanceCommand.class)
-public class Maintenance extends PackageModule {
+public final class Maintenance extends PackageModule {
     boolean isEnabled = false;
 
     @Override
@@ -43,8 +44,7 @@ public class Maintenance extends PackageModule {
                 return;
             }
         }
-        String message = this.getLanguage().getMessage(locale, "kick-message");
-        System.out.println(message);
+        String message = this.getLanguage().getMessage(Language.locale(p), "kick-message");
         String name = event.getPlayerProfile().getName();
 
         event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, PluginMessenger.queryKickMessage(name, message, locale));
@@ -56,8 +56,7 @@ public class Maintenance extends PackageModule {
                 continue;
             }
 
-            String locale = player.getLocale();
-            String msg = this.getLanguage().getMessage(locale, "kick-message");
+            String msg = this.getLanguage().getMessage(Language.locale(player), "kick-message");
             player.kickPlayer(msg);
         }
     }
@@ -70,12 +69,12 @@ public class Maintenance extends PackageModule {
             this.checkException(args.length == 1);
             switch (args[0]) {
                 case "enable" -> {
-                    this.getLanguage().sendMessageTo(sender, "start");
+                    this.getLanguage().sendMessage(sender, "start");
                     this.getModule().isEnabled = true;
                     this.getModule().kickAll();
                 }
                 case "disable" -> {
-                    this.getLanguage().sendMessageTo(sender, "end");
+                    this.getLanguage().sendMessage(sender, "end");
                     this.getModule().isEnabled = false;
                 }
                 default -> this.sendExceptionMessage(sender);

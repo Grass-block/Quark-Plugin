@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.utilities;
 
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -13,17 +14,20 @@ import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.customcontent.CustomMeta;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.platform.BukkitUtil;
 
 import java.util.List;
 import java.util.Objects;
 
 @QuarkModule(version = "0.3")
-@ModuleService(ServiceType.EVENT_LISTEN)
+@AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({ItemCommand.ItemCommandCommand.class})
-public class ItemCommand extends PackageModule {
+public final class ItemCommand extends PackageModule {
+
+    @Override
+    public void checkCompatibility() throws Throwable {
+        Class.forName("org.bukkit.persistence.PersistentDataHolder");
+    }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
@@ -48,13 +52,13 @@ public class ItemCommand extends PackageModule {
         public void onCommand(CommandSender sender, String[] args) {
             ItemStack stack = ((Player) sender).getInventory().getItemInMainHand();
             if (stack.getType() == Material.AIR) {
-                this.getLanguage().sendMessageTo(sender, "bind-failed");
+                this.getLanguage().sendMessage(sender, "bind-failed");
                 return;
             }
             String id = stack.getType().getKey().getKey();
             if (args[0].equals("none")) {
                 CustomMeta.removeItemPDCProperty(stack, "cmd_bind");
-                this.getLanguage().sendMessageTo(sender, "unbind", id);
+                this.getLanguage().sendMessage(sender, "unbind", id);
             } else {
                 StringBuilder sb = new StringBuilder();
                 for (String s : args) {
@@ -63,7 +67,7 @@ public class ItemCommand extends PackageModule {
                 String cmdLine = sb.toString();
 
                 CustomMeta.setItemPDCProperty(stack, "cmd_bind", cmdLine);
-                this.getLanguage().sendMessageTo(sender, "bind", id, cmdLine);
+                this.getLanguage().sendMessage(sender, "bind", id, cmdLine);
             }
         }
 

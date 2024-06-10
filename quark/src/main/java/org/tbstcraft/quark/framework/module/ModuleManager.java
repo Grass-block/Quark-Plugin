@@ -312,6 +312,13 @@ public interface ModuleManager extends Service {
                 }
             }
 
+            try {
+                m.checkCompatibility();
+            } catch (Throwable e) {
+                this.registerFailed.add(m.getFullId());
+                return;
+            }
+
             this.moduleMap.put(m.getFullId(), m);
             if (getModuleStatus(m.getFullId()) == ObjectStatus.UNREGISTERED) {
                 this.statusMap.put(m.getFullId(), Quark.PLUGIN.getConfig().getBoolean("config.default-status.module") ? "enabled" : "disabled");
@@ -327,7 +334,7 @@ public interface ModuleManager extends Service {
                     ExceptionUtil.log(ex);
                 }
             }
-            //callback.info("registered module %s.".formatted(m.getId()));
+            //callback.info("registered module %s.".formatted(m.locale()));
         }
 
         @Override

@@ -5,7 +5,7 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.tbstcraft.quark.framework.data.language.LanguageKey;
+import org.tbstcraft.quark.framework.data.language.LanguageItem;
 import org.tbstcraft.quark.util.platform.APIProfileTest;
 
 import java.util.Locale;
@@ -14,7 +14,7 @@ public abstract class CustomItem {
     private final String id;
     private final Material icon;
     private final boolean glow;
-    private final LanguageKey key;
+    private final LanguageItem key;
 
     public CustomItem() {
         this.id = this.getIdentifier().id();
@@ -55,5 +55,5 @@ public abstract class CustomItem {
 
     public abstract ComponentLike renderDisplayName(ItemStack stack, Locale locale);
 
-    public abstract LanguageKey getLanguageKey();
+    public abstract LanguageItem getLanguageKey();
 }

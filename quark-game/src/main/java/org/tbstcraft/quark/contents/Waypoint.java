@@ -19,7 +19,7 @@ import org.tbstcraft.quark.framework.command.ModuleCommand;
 import org.tbstcraft.quark.framework.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ModuleService;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.data.ModuleDataService;
 import org.tbstcraft.quark.internal.data.PlayerDataService;
@@ -36,7 +36,7 @@ import java.util.Objects;
 @QuarkCommand(name = "waypoint")
 @QuarkModule(version = "2.0.3", compatBlackList = {APIProfile.ARCLIGHT})
 @CommandProvider({Waypoint.WaypointCommand.class})
-@ModuleService({ServiceType.EVENT_LISTEN,ServiceType.CLIENT_MESSAGE})
+@AutoRegister({ServiceType.EVENT_LISTEN,ServiceType.CLIENT_MESSAGE})
 public final class Waypoint extends CommandModule {
     private final Map<String, Location> deathPoints = new HashMap<>();
 
@@ -87,7 +87,7 @@ public final class Waypoint extends CommandModule {
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
-        this.getLanguage().sendMessageTo(event.getPlayer(), "back-hint");
+        this.getLanguage().sendMessage(event.getPlayer(), "back-hint");
     }
 
     @EventHandler
@@ -118,19 +118,19 @@ public final class Waypoint extends CommandModule {
                             .append(ChatColor.WHITE)
                             .append(BukkitCodec.toString(BukkitCodec.fromNBT(entry.getCompoundTag(name))))
                             .append("\n"));
-                    this.getLanguage().sendMessageTo(sender, "list", sb);
+                    this.getLanguage().sendMessage(sender, "list", sb);
                     return;
                 }
                 case "tp", "tp-private" -> {
                     NBTTagCompound tag = entry.getCompoundTag(id);
                     if (tag == null) {
-                        this.getLanguage().sendMessageTo(sender, "not-exist", id);
+                        this.getLanguage().sendMessage(sender, "not-exist", id);
                         break;
                     }
                     if (sender instanceof Player p) {
                         PlayerUtil.teleport(p, BukkitCodec.fromNBT(tag));
                         BukkitSound.WARP.play(p);
-                        this.getLanguage().sendMessageTo(sender, "tp-success", id);
+                        this.getLanguage().sendMessage(sender, "tp-success", id);
                     }
                     return;
                 }
@@ -146,7 +146,7 @@ public final class Waypoint extends CommandModule {
             switch (args[0]) {
                 case "add", "add-private" -> {
                     if (tag.hasKey("world")) {
-                        this.getLanguage().sendMessageTo(sender, "exist", id);
+                        this.getLanguage().sendMessage(sender, "exist", id);
                         return;
                     }
                     if (args[2].equals("@self")) {
@@ -172,15 +172,15 @@ public final class Waypoint extends CommandModule {
                         tag = BukkitCodec.toNBT(loc);
                     }
                     entry.setCompoundTag(id, tag);
-                    this.getLanguage().sendMessageTo(sender, "add-success", id);
+                    this.getLanguage().sendMessage(sender, "add-success", id);
                 }
                 case "remove", "remove-private" -> {
                     if (!tag.hasKey("world")) {
-                        this.getLanguage().sendMessageTo(sender, "not-exist", id);
+                        this.getLanguage().sendMessage(sender, "not-exist", id);
                         return;
                     }
                     entry.remove(id);
-                    this.getLanguage().sendMessageTo(sender, "remove-success", id);
+                    this.getLanguage().sendMessage(sender, "remove-success", id);
                 }
             }
 
@@ -256,11 +256,11 @@ public final class Waypoint extends CommandModule {
         public void onCommand(CommandSender sender, String[] args) {
             NBTTagCompound entry = PlayerDataService.getEntry(sender.getName(), this.getModuleId());
             if (entry.hasKey("home") && (args.length < 1 || !Objects.equals(args[0], "-f"))) {
-                this.getLanguage().sendMessageTo(sender, "home-exist-warn");
+                this.getLanguage().sendMessage(sender, "home-exist-warn");
                 return;
             }
             entry.setCompoundTag("home", BukkitCodec.toNBT(((Player) sender).getLocation()));
-            this.getLanguage().sendMessageTo(sender, "home-set-success");
+            this.getLanguage().sendMessage(sender, "home-set-success");
         }
     }
 
@@ -274,12 +274,12 @@ public final class Waypoint extends CommandModule {
         public void onCommand(CommandSender sender, String[] args) {
             NBTTagCompound entry = PlayerDataService.getEntry(sender.getName(), this.getModuleId());
             if (!entry.hasKey("home")) {
-                this.getLanguage().sendMessageTo(sender, "home-not-set");
+                this.getLanguage().sendMessage(sender, "home-not-set");
                 return;
             }
             Location loc = BukkitCodec.fromNBT(entry.getCompoundTag("home"));
             PlayerUtil.teleport(((Player) sender), loc);
-            this.getLanguage().sendMessageTo(sender, "home-tp-success");
+            this.getLanguage().sendMessage(sender, "home-tp-success");
             BukkitSound.WARP.play((Player) sender);
         }
     }
@@ -293,11 +293,11 @@ public final class Waypoint extends CommandModule {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
             if (!this.getModule().deathPoints.containsKey(sender.getName())) {
-                this.getLanguage().sendMessageTo(sender, "back-not-set");
+                this.getLanguage().sendMessage(sender, "back-not-set");
                 return;
             }
             PlayerUtil.teleport(((Player) sender), this.getModule().deathPoints.get(sender.getName()));
-            this.getLanguage().sendMessageTo(sender, "back-tp-success");
+            this.getLanguage().sendMessage(sender, "back-tp-success");
             BukkitSound.WARP.play(((Player) sender));
         }
     }

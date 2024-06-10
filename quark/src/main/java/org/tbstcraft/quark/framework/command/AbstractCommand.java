@@ -6,8 +6,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.framework.data.language.LanguageEntry;
 import org.tbstcraft.quark.service.base.permission.PermissionService;
 import org.tbstcraft.quark.util.ExceptionUtil;
+import org.tbstcraft.quark.util.platform.PlayerUtil;
 
 import java.util.*;
 import java.util.function.Function;
@@ -16,13 +18,14 @@ import java.util.function.Function;
 public abstract class AbstractCommand extends Command implements CommandExecuter {
     private final Map<String, AbstractCommand> subCommands = new HashMap<>();
     private Command covered;
+    private LanguageEntry commandMessages = Quark.LANGUAGE.entry("command");
 
     protected AbstractCommand() {
         super("");
     }
 
     protected void init() {
-        this.setName(this.getName());
+        //this.setName(this.getName());
         for (Class<? extends AbstractCommand> clazz : this.getDescriptor().subCommands()) {
             try {
                 this.registerSubCommand(clazz.getDeclaredConstructor().newInstance());
@@ -76,10 +79,10 @@ public abstract class AbstractCommand extends Command implements CommandExecuter
     @Override
     public final @NotNull String getPermission() {
         return optionalDescriptorInfo((d) ->
-                d.permission()
-                        .replaceFirst("\\+", "")
-                        .replaceFirst("-", "")
-                        .replace("!", "")
+                        d.permission()
+                                .replaceFirst("\\+", "")
+                                .replaceFirst("-", "")
+                                .replace("!", "")
                 , QuarkCommand.NO_INFO);
     }
 
@@ -101,15 +104,15 @@ public abstract class AbstractCommand extends Command implements CommandExecuter
 
     //error message
     public final void sendExceptionMessage(CommandSender sender) {
-        Quark.LANGUAGE.sendMessageTo(sender, "command", "exception");
+        this.commandMessages.sendMessage(sender, "exception");
     }
 
     public final void sendPermissionMessage(CommandSender sender) {
-        Quark.LANGUAGE.sendMessageTo(sender, "command", "lack_permission");
+        this.commandMessages.sendMessage(sender, "lack_permission");
     }
 
     public final void sendPlayerOnlyMessage(CommandSender sender) {
-        Quark.LANGUAGE.sendMessageTo(sender, "command", "player_only");
+        this.commandMessages.sendMessage(sender, "player_only");
     }
 
 
@@ -256,4 +259,25 @@ public abstract class AbstractCommand extends Command implements CommandExecuter
     public final boolean testPermissionSilent(@NotNull CommandSender target) {
         return true;
     }
+
+
+    public void assertArguments(String[] args, CommandArgumentType... types) {
+        if (args.length != types.length) {
+            throw new CommandSyntaxException(this, args, types);
+        }
+
+        try {
+            for (int i = 0; i < args.length; i++) {
+                switch (types[i]) {
+                    case INT -> Integer.parseInt(args[i]);
+                    case FLOAT -> Float.parseFloat(args[i]);
+                    case PLAYER -> PlayerUtil.strictFindPlayer(args[i]);
+                }
+            }
+
+        } catch (Throwable e) {
+            throw new CommandSyntaxException(this, args, types);
+        }
+    }
+
 }

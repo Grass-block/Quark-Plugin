@@ -5,8 +5,12 @@
   "modules": {
     "time-scale": ".TimeScale",
     "vein-miner": ".VeinMiner",
-    "vanilla-tweaks": ".VanillaTweaks",
     "fly-speed-modifier": ".FlySpeedModifier",
-    "freecam": ".FreeCam"
+    "freecam": ".FreeCam",
+    "crop-click-harvest": ".CropClickHarvest",
+    "double-door-sync": ".DoubleDoorSync",
+    "entity-leash": ".EntityLeash",
+    "dispenser-block-placer": ".DispenserBlockPlacer",
+    "realistic-sleep": ".RealisticSleep"
   }
 }

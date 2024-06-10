@@ -27,7 +27,7 @@ public final class PackageCommand extends CoreCommand {
     }
 
     private void sendMessage(CommandSender sender, String id, Object... fmt) {
-        this.getLanguage().sendMessageTo(sender, id, fmt);
+        this.getLanguage().sendMessage(sender, id, fmt);
     }
 
     @Override
@@ -36,11 +36,11 @@ public final class PackageCommand extends CoreCommand {
             case "list" -> this.listPackages(sender);
             case "enable-all" -> {
                 PackageManager.enableAllPackages();
-                this.getLanguage().sendMessageTo(sender, "enable-all");
+                this.getLanguage().sendMessage(sender, "enable-all");
             }
             case "disable-all" -> {
                 PackageManager.disableAllPackages();
-                this.getLanguage().sendMessageTo(sender, "disable-all");
+                this.getLanguage().sendMessage(sender, "disable-all");
             }
             case "enable" -> sendMessage(sender, messageId(PackageManager.enablePackage(args[1]), "enable"), args[1]);
             case "disable" ->
@@ -104,7 +104,7 @@ public final class PackageCommand extends CoreCommand {
             }
         }
 
-        this.getLanguage().sendMessageTo(sender, "list", sb.toString());
+        this.getLanguage().sendMessage(sender, "list", sb.toString());
     }
 
 

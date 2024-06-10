@@ -2,17 +2,22 @@ package org.tbstcraft.quark.framework.module.services;
 
 import me.gb2022.apm.client.ClientMessenger;
 import me.gb2022.apm.local.PluginMessenger;
-import me.gb2022.commons.reflect.Annotations;
+import me.gb2022.commons.reflect.AutoRegisterManager;
+import me.gb2022.commons.reflect.DependencyInjector;
 import org.bukkit.event.Listener;
-import org.tbstcraft.quark.Quark;
+import org.bukkit.permissions.Permission;
 import org.tbstcraft.quark.framework.command.AbstractCommand;
 import org.tbstcraft.quark.framework.command.CommandManager;
 import org.tbstcraft.quark.framework.command.CommandProvider;
 import org.tbstcraft.quark.framework.command.ModuleCommand;
+import org.tbstcraft.quark.framework.data.assets.Asset;
+import org.tbstcraft.quark.framework.data.assets.AssetGroup;
+import org.tbstcraft.quark.framework.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
+import org.tbstcraft.quark.service.base.permission.PermissionService;
 import org.tbstcraft.quark.service.network.RemoteMessageService;
 import org.tbstcraft.quark.util.platform.APIProfile;
 import org.tbstcraft.quark.util.platform.APIProfileTest;
@@ -21,40 +26,21 @@ import org.tbstcraft.quark.util.platform.BukkitUtil;
 import java.lang.reflect.Constructor;
 
 public interface ModuleServices {
-    static void set(Listener module, String service) {
-        switch (service) {
-            case ServiceType.EVENT_LISTEN -> BukkitUtil.registerEventListener(module);
-            case ServiceType.PLUGIN_MESSAGE -> PluginMessenger.EVENT_BUS.registerEventListener(module);
-            case ServiceType.REMOTE_MESSAGE -> RemoteMessageService.getInstance().addMessageHandler(module);
-            case ServiceType.CLIENT_MESSAGE -> ClientMessenger.EVENT_BUS.registerEventListener(module);
-            default -> Quark.LOGGER.warning("no module service named " + service);
-        }
-    }
-
-    static void unset(Listener module, String service) {
-        switch (service) {
-            case ServiceType.EVENT_LISTEN -> BukkitUtil.unregisterEventListener(module);
-            case ServiceType.PLUGIN_MESSAGE -> PluginMessenger.EVENT_BUS.unregisterEventListener(module);
-            case ServiceType.REMOTE_MESSAGE -> RemoteMessageService.getInstance().removeMessageHandler(module);
-            case ServiceType.CLIENT_MESSAGE -> ClientMessenger.EVENT_BUS.unregisterEventListener(module);
-            default -> Quark.LOGGER.warning("no module service named " + service);
-        }
-    }
-
+    ModuleAutoRegManager AUTO_REG = new ModuleAutoRegManager();
+    DependencyInjector<AbstractModule> MODULE_DEPENDENCY_INJECTOR = DependencyInjector.<AbstractModule>builder()
+            .injector(Asset.class, (p, m) -> new Asset(m.getOwnerPlugin(), p[0], p.length == 1 || Boolean.parseBoolean(p[1])))//true as default
+            .injector(AssetGroup.class, (p, m) -> new AssetGroup(m.getOwnerPlugin(), p[0], p.length == 1 || Boolean.parseBoolean(p[1])))
+            .injector(Permission.class, (p, m) -> PermissionService.createPermissionObject(p[0]))
+            .injector(LanguageEntry.class, (p, m) -> ((LanguageEntry) m.getLanguage()))
+            .build();
 
     static void init(AbstractModule module) {
+        MODULE_DEPENDENCY_INJECTOR.inject(module);
+
         initCompatContainers(module);
         initCommands(module);
 
-        Annotations.matchAnnotation(module, ModuleService.class, (a) -> {
-            for (String service : a.value()) {
-                set(module, service);
-
-                for (CompatContainer<?> container : module.getCompatContainers().values()) {
-                    set(container, service);
-                }
-            }
-        });
+        AUTO_REG.attach(module);
     }
 
     static void initCompatContainers(AbstractModule module) {
@@ -115,19 +101,45 @@ public interface ModuleServices {
     }
 
     static void disable(AbstractModule module) {
-        Annotations.matchAnnotation(module, ModuleService.class, (a) -> {
-            for (String service : a.value()) {
-                unset(module, service);
-                for (CompatContainer<?> container : module.getCompatContainers().values()) {
-                    unset(container, service);
-                }
-            }
-        });
+        AUTO_REG.detach(module);
 
         if (module.getClass().getDeclaredAnnotation(CommandProvider.class) != null) {
             for (AbstractCommand cmd : module.getCommands()) {
                 CommandManager.unregisterCommand(cmd);
             }
+        }
+    }
+
+    class ModuleAutoRegManager extends AutoRegisterManager<Listener> {
+        public ModuleAutoRegManager() {
+            this.registerHandler(ServiceType.EVENT_LISTEN, BukkitUtil::registerEventListener, BukkitUtil::unregisterEventListener);
+            this.registerHandler(ServiceType.CLIENT_MESSAGE, ClientMessenger.EVENT_BUS::registerEventListener, ClientMessenger.EVENT_BUS::unregisterEventListener);
+            this.registerHandler(ServiceType.PLUGIN_MESSAGE, PluginMessenger.EVENT_BUS::registerEventListener, PluginMessenger.EVENT_BUS::unregisterEventListener);
+            this.registerHandler(ServiceType.REMOTE_MESSAGE, RemoteMessageService::addHandler, RemoteMessageService::removeHandler);
+        }
+
+        public void attach(AbstractModule object) {
+            this.attach(((Listener) object));
+            for (CompatContainer<?> container : object.getCompatContainers().values()) {
+                this.attach(container);
+            }
+        }
+
+        public void detach(AbstractModule object) {
+            this.detach(((Listener) object));
+            for (CompatContainer<?> container : object.getCompatContainers().values()) {
+                this.detach(container);
+            }
+        }
+
+        @Override
+        public void handleAttachFailed(Listener object, String type) {
+            System.out.println("no module service named " + type);
+        }
+
+        @Override
+        public void handleDetachFailed(Listener object, String type) {
+            System.out.println("no module service named " + type);
         }
     }
 }
