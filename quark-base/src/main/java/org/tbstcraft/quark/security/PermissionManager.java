@@ -11,18 +11,18 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.PermissionAttachment;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.framework.command.CommandManager;
-import org.tbstcraft.quark.framework.command.CommandProvider;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.CommandManager;
+import org.tbstcraft.quark.foundation.command.CommandProvider;
+import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.data.PlayerDataService;
-import org.tbstcraft.quark.service.base.permission.PermissionEntry;
-import org.tbstcraft.quark.service.base.permission.PermissionValue;
+import org.tbstcraft.quark.data.PlayerDataService;
+import org.tbstcraft.quark.internal.permission.PermissionEntry;
+import org.tbstcraft.quark.internal.permission.PermissionValue;
 import org.tbstcraft.quark.util.container.CachedInfo;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.util.*;
 
@@ -159,7 +159,7 @@ public final class PermissionManager extends PackageModule {
                     this.getLanguage().sendMessage(sender, "cmd-group-set", args[1], args[2]);
                 }
             }
-            CommandManager.syncCommands();
+            CommandManager.sync();
         }
 
         @Override

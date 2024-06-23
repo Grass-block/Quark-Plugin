@@ -1,8 +1,0 @@
-[server]
-ip = "127.0.0.1"
-port = 11451
-backlog = 514
-
-[proxy]
-map = "http://127.0.0.1:8123"
-api = "http://127.0.0.1:8125"

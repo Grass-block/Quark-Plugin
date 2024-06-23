@@ -13,19 +13,19 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.framework.command.CommandProvider;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.data.config.Queries;
+import org.tbstcraft.quark.foundation.command.CommandProvider;
+import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.data.ModuleDataService;
-import org.tbstcraft.quark.util.platform.APIProfile;
-import org.tbstcraft.quark.util.region.SimpleRegion;
+import org.tbstcraft.quark.data.ModuleDataService;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.foundation.region.SimpleRegion;
 
 import java.util.*;
 

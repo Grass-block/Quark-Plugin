@@ -1,4 +1,13 @@
 language:
+  -module-name:
+    advanced-permission-control: 高级权限控制
+    explosion-defender: 爆炸保护
+    item-defender: 物品保护
+    ip-defender: IP属地检测
+    we-size-defender: WE选区检测
+    protection-area: 保护区域
+    permission-manager: 权限管理器
+    account-activation: 账户验证
   advanced-permission-control:
     no-perm: '{global#error}你没有权限这样做!(缺失权限节点{#var})'
   explosion-defender:
@@ -32,30 +41,32 @@ language:
     cmd-perm-set: "{global#sys-operation}已将玩家 {#var} 的权限节点 {#var} 的值改为 {#var}。"
     cmd-player-not-found: "{global#sys-operation}你说的这人是谁？我不到啊？"
   account-activation:
-    verify-title: '{#server-name}|账户验证'
-    request-html-hint:
-      - '<p>如果您确认了安全代码一致，请访问如下的验证链接。</p>'
-      - '<strong>验证链接: </strong>'
-    request-html-prefix:
-      - '<p> 您好 {player},我们已收到您在{#server-name}内的账户验证请求。</p>'
-      - '<p> 如果您错误的收到了该邮件，还请直接忽略。</p>'
-      - '<p> 在进行验证操作之前，请先确认本邮件中的安全代码和服务器中的一致，以避免不必要的麻烦。</p>'
-      - '<strong>安全代码: </strong>'
-    request-html-postfix:
-      - '<p>请在浏览器中打开以完成您的验证流程。</p>'
-      - '<p>祝您使用愉快！</p>'
-    request-html-link-btn: '验证账户'
+    mail-title: '{#server-name-plain} | 账户验证'
+    mail-greeting: "您好，{player}:"
+    mail-content: '您好 ,我们已收到您在{#server-name-plain}内的账户操作请求。请点击下面按钮验证您的 E-mail：'
+    mail-link: 如果您单击「验证 E-mail」按钮时遇到问题，请复制下方链接到浏览器中访问。
+    mail-verify: 本信件的安全代码是 {safety_code} ,请确认其与Minecraft中提示一致。如果您未注册帐号，请忽略此邮件。
+
     result-html-success-title: '验证成功'
     result-html-failed-title: '验证失败'
-    result-html-success-content: '您的账户已经成功通过验证。您现在可以安全的关闭这个页面并回到Minecraft了。'
+    result-html-success-content: '您的账户已经成功完成操作。您现在可以安全的关闭这个页面并回到Minecraft了。'
     result-html-failed-content: '抱歉，您的账户并未通过验证，可能是随机码不一致。请回到Minecraft并重新发送一封邮件。'
+
     msg-send-complete: '{global#sys-success}一封邮件已被发送至您填写的邮箱({#var}), 邮件的安全代码是 {#var}, 请注意查收。'
     msg-send-failed: '{global#sys-error}我们未能成功发送邮件到您的邮箱({#var}), 请检查是否填写错误，或联系管理员。'
 
-    link-hint: '{global#sys-warning}检测到您未绑定邮箱。使用 {#gold}/account link{#gray} [mail]接受链接来激活账户。'
-    link-failed: '{global#sys-error}您的账户已经连接过一个可用的邮箱。若要换绑请联系管理员。'
+    link-title: "{#gold}链接账户"
+    link-guide: "{#gray}使用 {#gold}/account link [mail] {#gray} 来链接账户。"
+    link-hint: '{global#sys-warning}检测到您未绑定邮箱。{msg#link-guide}'
+
+    verify-title: "{#gold}验证账户"
+    verify-guide: "{#gray}使用 {#gold}/account verify {#gray} 来验证账户。"
+    verify-hint: '{global#sys-warning}检测到您未验证邮箱。{msg#verify-guide}'
+
+    link-failed: '{global#sys-error}您的账户已经连接过一个可用的邮箱。若要换绑请使用/account unlink。'
+    unlink-failed: '{global#sys-error}您的账户还没有连接到可用的邮箱, 因此您不能解绑。'
+    unlinked: '{global#sys-success}您的账户已经成功从 {#var} 解除绑定。'
     verify-failed: '{global#sys-error}您的账户还未链接邮箱。'
-    verify-hint: '{global#sys-warning}检测到您未验证邮箱。使用 {#gold}/account verify{#gray} 接受链接来验证账户。'
     verified: '{global#sys-info}恭喜，您的账户已经完成激活, 请重新进入服务器。'
     interaction-block: '{global#sys-warning}在完成账户验证之前，您还不能聊天和交互。'
     unverify-success: '{global#sys-info}您的账户已经取消激活状态, 请重新进入服务器。'

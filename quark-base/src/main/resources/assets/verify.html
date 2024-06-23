@@ -1,58 +1,149 @@
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="zh" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8"/>
     <title>Account Activation</title>
 </head>
 
-<body style="margin: 0">
-
-<div style="max-width: 600px;text-align: center;line-height: 32px; margin: 40px">
-    <div class="center">
-        <h1> {msg#verify_title} </h1>
-    </div>
-    <div style="text-align: left;">
-        {msg#request_html_prefix}
-        <div style="background-color: #f3f5f4;" class="element">
-            {safety_code}
-        </div>
-        {msg#request_html_hint}
-        <div style="background-color: #f3f5f4;" class="element">
-            {link}
-        </div>
-
-        <div class="center">
-            <a href="verify_result.html">
-                <button style="max-width: 300px;width: 100%;" class="element">
-                    {msg#request_html_link_btn}
-                </button>
-            </a>
-        </div>
-        {msg#request_html_postfix}
-    </div>
-    <div style="text-align: right;">
-        <p>{#server-name}</p>
-    </div>
-</div>
-</body>
 <style>
-    button {
-        background-color: #3366cc !important;
-        color: #ffffff !important;
+    .box {
+        -premailer-cellpadding: 0;
+        -premailer-cellspacing: 0;
+        -premailer-width: 100%;
     }
 
-    button:hover {
-        background-color: #6699ff !important;
-    }
-
-    .element {
-        border-radius: 15px;
-        border-style: none;
-        margin: 10px;
-        padding: 15px;
-    }
-
-    .center {
-        text-align: center;
+    .quark-mail * {
+        box-sizing: border-box;
+        position: relative;
     }
 </style>
-</html>
+
+<table class="wrapper box" width="100%" cellpadding="0" cellspacing="0" role="presentation"
+       style="background-color: #edf2f7; margin: 0; padding: 0; width: 100%;">
+    <tbody>
+    <tr>
+        <td align="center"
+            style="">
+            <table class="content box" width="100%" cellpadding="0" cellspacing="0" role="presentation"
+                   style="margin: 0; padding: 0; width: 100%;">
+                <tbody>
+                <tr>
+                    <td class="header" style="padding: 25px 0; text-align: center;">
+                        <a href="{#server-website}"
+                           style="color: #3d4852; font-size: 19px; font-weight: bold; text-decoration: none; display: inline-block;"
+                           rel="noopener" target="_blank">
+                            {msg#mail-title}
+                        </a>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td class="body box" width="100%" cellpadding="0" cellspacing="0"
+                        style="background-color: #edf2f7; border-bottom: 1px solid #edf2f7; border-top: 1px solid #edf2f7; margin: 0; padding: 0; width: 100%; border: hidden !important;">
+                        <table class="inner-body" align="center" width="570" cellpadding="0" cellspacing="0"
+                               style="-premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 570px; background-color: #ffffff; border-color: #e8e5ef; border-radius: 2px; border-width: 1px; box-shadow: 0 2px 0 rgba(0, 0, 150, 0.025), 2px 4px 0 rgba(0, 0, 150, 0.015); margin: 0 auto; padding: 0; width: 570px;">
+
+                            <tbody>
+                            <tr>
+                                <td class="content-cell"
+                                    style="max-width: 100vw; padding: 32px;">
+                                    <h1 style="color: #3d4852; font-size: 18px; font-weight: bold; margin-top: 0; text-align: left;">
+                                        {msg#mail-greeting}</h1>
+                                    <p style="font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                        {msg#mail-content}
+                                    </p>
+                                    <table class="action" align="center" width="100%" cellpadding="0" cellspacing="0"
+                                           role="presentation"
+                                           style="-premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 100%; margin: 30px auto; padding: 0; text-align: center; width: 100%;">
+                                        <tbody>
+                                        <tr>
+                                            <td align="center"
+                                                style="box-sizing: border-box; position: relative;">
+                                                <table width="100%" border="0" cellpadding="0" cellspacing="0"
+                                                       role="presentation"
+                                                       style="box-sizing: border-box; position: relative;">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td align="center"
+                                                            style="box-sizing: border-box; position: relative;">
+                                                            <table border="0" cellpadding="0" cellspacing="0"
+                                                                   role="presentation"
+                                                                   style="box-sizing: border-box; position: relative;">
+                                                                <tbody>
+                                                                <tr>
+                                                                    <td style="box-sizing: border-box; position: relative;">
+                                                                        <a href="{link}"
+                                                                           class="button button-primary" target="_blank"
+                                                                           rel="noopener"
+                                                                           style="-webkit-text-size-adjust: none; border-radius: 4px; color: #fff; display: inline-block; overflow: hidden; text-decoration: none; background-color: #2d3748; border-bottom: 8px solid #2d3748; border-left: 18px solid #2d3748; border-right: 18px solid #2d3748; border-top: 8px solid #2d3748;"
+                                                                        >
+                                                                            验证 E-mail</a>
+                                                                    </td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <p style="font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                        {msg#mail-verify}</p>
+                                    <p style="font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                        {msg#mail-link}</p>
+                                    <p style="font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                        致敬,<br>{#server-name-plain}</p>
+
+
+                                    <table class="subcopy" width="100%" cellpadding="0" cellspacing="0"
+                                           role="presentation"
+                                           style="border-top: 1px solid #e8e5ef; margin-top: 25px; padding-top: 25px;">
+                                        <tbody>
+                                        <tr>
+                                            <td style="box-sizing: border-box; position: relative;">
+                                                <p style="line-height: 1.5em; margin-top: 0; text-align: left; font-size: 14px;">
+
+                                                    <span class="break-all"
+                                                          style="word-break: break-all;">
+                                                        <a href="{link}"
+                                                           style="color: #3869d4;"
+                                                           rel="noopener" target="_blank">{link}</a>
+                                                    </span>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="box-sizing: border-box; position: relative;">
+                        <table class="footer" align="center" width="570" cellpadding="0" cellspacing="0"
+                               role="presentation"
+                               style="-premailer-cellpadding: 0; -premailer-cellspacing: 0; -premailer-width: 570px; margin: 0 auto; padding: 0; text-align: center; width: 570px;">
+                            <tbody>
+                            <tr>
+                                <td class="content-cell" align="center"
+                                    style="max-width: 100vw; padding: 32px;">
+                                    <p style="line-height: 1.5em; margin-top: 0; color: #b0adc5; font-size: 12px; text-align: center;">
+                                        © 2024 {#server-name-plain}</p>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>

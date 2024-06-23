@@ -3,12 +3,12 @@ package org.tbstcraft.quark.utilities;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.TabCompleteEvent;
-import org.tbstcraft.quark.framework.command.CommandManager;
+import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.service.base.task.TaskService;
+import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.FilePath;
 
 import java.io.File;
@@ -21,7 +21,7 @@ import java.util.Objects;
 public final class CommandTabFix extends PackageModule {
     @Override
     public void enable() {
-        TaskService.laterTask(1000, CommandManager::syncCommands);
+        TaskService.laterTask(1000, CommandManager::sync);
     }
 
     @EventHandler
@@ -69,6 +69,6 @@ public final class CommandTabFix extends PackageModule {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        CommandManager.syncCommands();
+        CommandManager.sync();
     }
 }

@@ -8,14 +8,14 @@ import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.service.network.RemoteMessageService;
+import org.tbstcraft.quark.internal.RemoteMessageService;
 
 @QuarkModule
 @AutoRegister(ServiceType.REMOTE_MESSAGE)
 public final class ServerStatementObserver extends PackageModule {
     @Override
     public void enable() {
-        RemoteMessageService.getInstance().sendBroadcast("/quark/observe/online", (b) -> {
+        RemoteMessageService.broadcast("/quark/observe/online", (b) -> {
             String id = RemoteMessageService.getInstance().getMessenger().getConnector().getIdentifier();
             BufferUtil.writeString(b, id);
         });
@@ -23,7 +23,7 @@ public final class ServerStatementObserver extends PackageModule {
 
     @Override
     public void disable() {
-        RemoteMessageService.getInstance().sendBroadcast("/quark/observe/offline", (b) -> {
+        RemoteMessageService.broadcast("/quark/observe/offline", (b) -> {
             String id = RemoteMessageService.getInstance().getMessenger().getConnector().getIdentifier();
             BufferUtil.writeString(b, id);
         });

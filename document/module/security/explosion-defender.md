@@ -1,5 +1,4 @@
-# ExplosionDefender | 爆炸保护
-
+# 爆炸保护
 文:GrassBlock2022
 
 -----

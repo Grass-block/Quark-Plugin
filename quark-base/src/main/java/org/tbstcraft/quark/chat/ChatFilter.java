@@ -7,8 +7,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.data.assets.AssetGroup;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.data.assets.AssetGroup;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -24,6 +25,9 @@ import java.util.regex.Pattern;
 @QuarkCommand(name = "chat-filter", permission = "-quark.config.chat-filter")
 public final class ChatFilter extends CommandModule {
     private final Set<Pattern> patterns = new HashSet<>();
+
+    @Inject
+    private LanguageEntry language;
 
     @Inject("chat-filter;false")
     private AssetGroup rules;
@@ -90,12 +94,13 @@ public final class ChatFilter extends CommandModule {
         switch (args[0]) {
             case "reload" -> {
                 this.load();
-                this.getLanguage().sendMessage(sender, "reload");
+                this.language.sendMessage(sender, "reload");
             }
             case "save" -> {
                 this.rules.save("default-rule.txt");
                 this.rules.save("default-rule.split.txt");
-                this.getLanguage().sendMessage(sender, "save");
+
+                this.language.sendMessage(sender, "save");
             }
         }
     }

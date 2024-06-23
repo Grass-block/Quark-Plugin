@@ -1,12 +1,12 @@
 package org.tbstcraft.quark.framework.module.standalone;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.tbstcraft.quark.framework.data.config.Configuration;
-import org.tbstcraft.quark.framework.data.config.Language;
-import org.tbstcraft.quark.framework.data.language.LanguageEntry;
+import org.tbstcraft.quark.data.config.Configuration;
+import org.tbstcraft.quark.data.config.Language;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.AbstractModule;
-import org.tbstcraft.quark.internal.record.RecordEntry;
-import org.tbstcraft.quark.internal.record.RecordService;
+import org.tbstcraft.quark.framework.record.RecordEntry;
+import org.tbstcraft.quark.framework.record.RecordService;
 import org.tbstcraft.quark.util.Identifiers;
 
 import java.util.logging.Logger;

@@ -13,7 +13,7 @@ import org.tbstcraft.quark.framework.service.providing.ServiceRegistry;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class JsonPackageInitializer implements PackageInitializer {
+public final class JsonPackageInitializer implements PackageInitializer {
     private final FeatureAvailability availability;
     private final String location;
     private JsonObject obj;

@@ -1,14 +1,13 @@
 rootProject.name = 'Quark'
-include('quark')
 
-include('quark-base')
-include('quark-game')
-
-include('quark-proxy')
-include('quark-proxy:waterfall')
-
+include 'quark'
+include 'quark-base'
+include 'quark-game'
+include 'quark-web'
+include 'quark-platform'
+include 'quark-proxy'
 include 'quark-proxy:bukkit'
-findProject(':quark-proxy:bukkit')?.name = 'bukkit'
-
-include('quark-platform')
+include 'quark-proxy:waterfall'
+include 'quark-minigame'
+include 'quark-atcraft'
 

@@ -9,13 +9,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.framework.data.config.Queries;
+import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
-import org.tbstcraft.quark.util.text.TextBuilder;
-import org.tbstcraft.quark.util.text.TextSender;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.foundation.text.TextSender;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -84,7 +84,7 @@ public final class ChatAt extends PackageModule {
             if (p == null) {
                 continue;
             }
-            TextSender.sendToTitle(p, TextBuilder.buildComponent(this.generateTitleMessage(titleBuilder.toString(), event.getPlayer())),
+            TextSender.subtitle(p, TextBuilder.buildComponent(this.generateTitleMessage(titleBuilder.toString(), event.getPlayer())),
                     cfg.getInt("title-fadein"),
                     cfg.getInt("title-stay"),
                     cfg.getInt("title-fadeout"));

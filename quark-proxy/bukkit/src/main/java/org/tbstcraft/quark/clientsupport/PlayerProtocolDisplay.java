@@ -6,7 +6,7 @@ import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 @QuarkModule(version = "0.7")
 @AutoRegister(ServiceType.CLIENT_MESSAGE)

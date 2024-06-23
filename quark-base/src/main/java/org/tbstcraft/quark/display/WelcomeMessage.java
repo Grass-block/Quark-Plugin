@@ -6,17 +6,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.tbstcraft.quark.framework.command.CommandProvider;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.data.language.Language;
+import org.tbstcraft.quark.foundation.command.CommandProvider;
+import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.data.PlayerDataService;
-import org.tbstcraft.quark.service.base.task.TaskService;
-import org.tbstcraft.quark.util.text.TextBuilder;
-import org.tbstcraft.quark.util.text.TextSender;
+import org.tbstcraft.quark.data.PlayerDataService;
+import org.tbstcraft.quark.internal.task.TaskService;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.foundation.text.TextSender;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({WelcomeMessage.WelcomeMessageCommand.class})

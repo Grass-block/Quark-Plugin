@@ -1,6 +1,6 @@
 {
   "id": "quark-security",
-  "version": "1.0.32",
+  "version": "1.0.44",
   "package_namespace": "org.tbstcraft.quark.security",
   "modules": {
     "explosion-defender": ".ExplosionDefender",
@@ -9,7 +9,10 @@
     "we-size-defender": ".WorldEditSectionSizeDefender",
     "item-defender": ".ItemDefender",
     "protection-area": ".ProtectionArea",
-    "account-activation": ".AccountActivation",
+    "account-activation": ".account.AccountActivation",
     "advanced-permission-control": ".AdvancedPermissionControl"
-  }
+  },
+  "services": [
+    ".WESessionTrackService"
+  ]
 }

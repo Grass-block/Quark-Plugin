@@ -1,0 +1,8 @@
+{
+  "id": "atc-activities",
+  "version": "0.10",
+  "package_namespace": "org.atcraftmc.quark.atc.activities",
+  "modules": {
+    "potato-war": ".PotatoWar"
+  }
+}

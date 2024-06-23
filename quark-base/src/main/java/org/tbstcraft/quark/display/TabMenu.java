@@ -5,13 +5,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.tbstcraft.quark.framework.data.language.Language;
+import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.service.base.task.TaskService;
-import org.tbstcraft.quark.util.platform.BukkitUtil;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
+import org.tbstcraft.quark.internal.task.TaskService;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.util.Locale;
 

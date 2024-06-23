@@ -1,12 +1,11 @@
 package org.tbstcraft.quark.lobby;
 
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @QuarkCommand(name = "npc-chat")

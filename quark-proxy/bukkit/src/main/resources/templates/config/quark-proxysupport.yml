@@ -1,6 +1,8 @@
 config:
   bungee-connection-protect:
     accept-delay: 350
+  chat-sync:
+    format: "%s {#gold}> %s"
   forge-server-teleportation:
     hub: false
     servers:

@@ -3,7 +3,7 @@ package org.tbstcraft.quark.chat;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.util.NetworkUtil;

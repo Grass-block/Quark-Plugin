@@ -14,8 +14,8 @@ import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.text.TextBuilder;
-import org.tbstcraft.quark.util.platform.APIProfile;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.2.0")

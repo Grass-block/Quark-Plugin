@@ -2,13 +2,13 @@ package org.tbstcraft.quark.proxysupport;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.tbstcraft.quark.framework.command.CommandProvider;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.CommandProvider;
+import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.service.base.permission.PermissionService;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
+import org.tbstcraft.quark.internal.permission.PermissionService;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.util.List;
 import java.util.Objects;

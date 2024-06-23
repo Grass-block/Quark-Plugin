@@ -2,9 +2,9 @@ package org.tbstcraft.quark.internal.command;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.framework.command.CoreCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.data.language.Language;
+import org.tbstcraft.quark.foundation.command.CoreCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.util.ObjectOperationResult;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-@QuarkCommand(name = "module", permission = "-quark.configure.module")
+@QuarkCommand(name = "module", permission = "-quark.module")
 public final class ModuleCommand extends CoreCommand {
     static String messageId(ObjectOperationResult result, String success) {
         return switch (result) {

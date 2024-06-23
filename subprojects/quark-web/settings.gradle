@@ -1,6 +1,0 @@
-rootProject.name = 'Quark'
-
-include(':backend')
-include(':frontend')
-
-

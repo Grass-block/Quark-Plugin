@@ -2,7 +2,7 @@ package org.tbstcraft.quark.framework.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.tbstcraft.quark.util.region.SimpleRegion;
+import org.tbstcraft.quark.foundation.region.SimpleRegion;
 
 @QuarkEvent(async = false)
 public class WorldeditSectionUpdateEvent extends CustomEvent {

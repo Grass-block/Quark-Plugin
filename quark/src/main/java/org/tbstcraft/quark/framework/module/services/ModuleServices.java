@@ -6,22 +6,23 @@ import me.gb2022.commons.reflect.AutoRegisterManager;
 import me.gb2022.commons.reflect.DependencyInjector;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
-import org.tbstcraft.quark.framework.command.AbstractCommand;
-import org.tbstcraft.quark.framework.command.CommandManager;
-import org.tbstcraft.quark.framework.command.CommandProvider;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.data.assets.Asset;
-import org.tbstcraft.quark.framework.data.assets.AssetGroup;
-import org.tbstcraft.quark.framework.data.language.LanguageEntry;
+import org.tbstcraft.quark.foundation.command.AbstractCommand;
+import org.tbstcraft.quark.foundation.command.CommandManager;
+import org.tbstcraft.quark.foundation.command.CommandProvider;
+import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.foundation.platform.APIProfileTest;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
+import org.tbstcraft.quark.data.assets.Asset;
+import org.tbstcraft.quark.data.assets.AssetGroup;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
-import org.tbstcraft.quark.service.base.permission.PermissionService;
-import org.tbstcraft.quark.service.network.RemoteMessageService;
-import org.tbstcraft.quark.util.platform.APIProfile;
-import org.tbstcraft.quark.util.platform.APIProfileTest;
-import org.tbstcraft.quark.util.platform.BukkitUtil;
+import org.tbstcraft.quark.internal.permission.PermissionService;
+import org.tbstcraft.quark.internal.HttpService;
+import org.tbstcraft.quark.internal.RemoteMessageService;
 
 import java.lang.reflect.Constructor;
 
@@ -116,6 +117,8 @@ public interface ModuleServices {
             this.registerHandler(ServiceType.CLIENT_MESSAGE, ClientMessenger.EVENT_BUS::registerEventListener, ClientMessenger.EVENT_BUS::unregisterEventListener);
             this.registerHandler(ServiceType.PLUGIN_MESSAGE, PluginMessenger.EVENT_BUS::registerEventListener, PluginMessenger.EVENT_BUS::unregisterEventListener);
             this.registerHandler(ServiceType.REMOTE_MESSAGE, RemoteMessageService::addHandler, RemoteMessageService::removeHandler);
+            this.registerHandler(ServiceType.HTTP_SERVER, HttpService::registerHandler, (l) -> {
+            });
         }
 
         public void attach(AbstractModule object) {

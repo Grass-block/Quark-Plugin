@@ -1,1 +1,0 @@
-org.tbstcraft.quark.platform.Main-Class: org.tbstcraft.quarkservice.org.tbstcraft.quark.platform.Main

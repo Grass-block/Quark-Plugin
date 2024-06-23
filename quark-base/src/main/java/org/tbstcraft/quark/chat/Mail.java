@@ -1,22 +1,24 @@
 package org.tbstcraft.quark.chat;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.internal.data.PlayerDataService;
-import org.tbstcraft.quark.service.base.task.TaskService;
+import org.tbstcraft.quark.data.PlayerDataService;
+import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.BukkitSound;
 import org.tbstcraft.quark.util.container.CachedInfo;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
-import org.tbstcraft.quark.util.text.TextBuilder;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +30,9 @@ import java.util.Set;
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class Mail extends CommandModule {
 
+    @Inject
+    private LanguageEntry language;
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         TaskService.asyncTask(() -> {
@@ -37,7 +42,7 @@ public final class Mail extends CommandModule {
             if (size == 0) {
                 return;
             }
-            this.getLanguage().sendMessage(sender, "view-hint", size);
+            this.language.sendMessage(sender, "view-hint", size);
         });
     }
 
@@ -49,7 +54,7 @@ public final class Mail extends CommandModule {
                 StringBuilder sb = new StringBuilder();
                 Set<String> keys = new HashSet<>(entry.getTagMap().keySet());
                 if (keys.isEmpty()) {
-                    this.getLanguage().sendMessage(sender, "view-none", sb.toString());
+                    this.language.sendMessage(sender, "view-none", sb.toString());
                     return;
                 }
                 for (String s : keys) {
@@ -64,7 +69,7 @@ public final class Mail extends CommandModule {
                     entry.remove(s);
                 }
                 PlayerDataService.save(sender.getName());
-                this.getLanguage().sendMessage(sender, "view", sb.toString());
+                this.language.sendMessage(sender, "view", sb.toString());
             });
         }
 
@@ -78,8 +83,9 @@ public final class Mail extends CommandModule {
         String recipient = args[0];
         Player recipientPlayer = PlayerUtil.strictFindPlayer(recipient);
         if (recipientPlayer != null) {
-            getLanguage().sendMessage(recipientPlayer, "receive-direct", sender.getName(), content);
-            getLanguage().sendMessage(sender, "send-success", recipient, content);
+            this.language.sendMessage(recipientPlayer, "receive-direct", sender.getName(), content);
+            this.language.sendMessage(sender, "send-success", recipient, content);
+
             BukkitSound.ANNOUNCE.play(recipientPlayer);
             return;
         }
@@ -87,7 +93,7 @@ public final class Mail extends CommandModule {
         NBTTagCompound entry = PlayerDataService.getEntry(recipient, this.getFullId());
         String key = sender.getName() + "@" + System.currentTimeMillis();
         entry.setString(key, content);
-        getLanguage().sendMessage(sender, "send-success", recipient, content);
+        this.language.sendMessage(sender, "send-success", recipient, content);
     }
 
     @Override

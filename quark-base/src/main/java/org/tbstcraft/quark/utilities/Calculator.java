@@ -1,7 +1,7 @@
 package org.tbstcraft.quark.utilities;
 
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 

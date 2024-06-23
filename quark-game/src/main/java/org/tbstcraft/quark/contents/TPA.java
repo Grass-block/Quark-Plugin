@@ -1,14 +1,16 @@
 package org.tbstcraft.quark.contents;
 
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.util.BukkitSound;
 import org.tbstcraft.quark.util.container.CachedInfo;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.util.*;
 
@@ -17,6 +19,9 @@ import java.util.*;
 public final class TPA extends CommandModule {
     private final HashMap<String, Set<String>> requests = new HashMap<>();
 
+    @Inject
+    private LanguageEntry language;
+    
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         Set<String> list = requests.get(sender.getName());
@@ -30,7 +35,7 @@ public final class TPA extends CommandModule {
             for (String s : getRequestList(sender.getName())) {
                 sb.append(s).append("\n");
             }
-            getLanguage().sendMessage(sender, "list", sb);
+            this.language.sendMessage(sender, "list", sb);
         }
 
         String request = sender.getName();
@@ -41,35 +46,35 @@ public final class TPA extends CommandModule {
 
         if (targetPlayer == null || !Bukkit.getOnlinePlayers().contains(targetPlayer)) {
             getRequestList(request).remove(target);
-            getLanguage().sendMessage(sender, "player_not_found");
+            this.language.sendMessage(sender, "player_not_found");
         }
 
         switch (args[0]) {
             case "request" -> {
                 getRequestList(target).add(request);
 
-                getLanguage().sendMessage(requestPlayer, "send", target);
-                getLanguage().sendMessage(targetPlayer, "send_announce", request, request, request);
+                this.language.sendMessage(requestPlayer, "send", target);
+                this.language.sendMessage(targetPlayer, "send_announce", request, request, request);
                 BukkitSound.ANNOUNCE.play(targetPlayer);
             }
             case "accept" -> {
                 if (!getRequestList(sender.getName()).contains(target)) {
-                    getLanguage().sendMessage(sender, "player_not_found");
+                    this.language.sendMessage(sender, "player_not_found");
                 }
                 getRequestList(sender.getName()).remove(target);
                 PlayerUtil.teleport(targetPlayer, requestPlayer.getLocation());
-                getLanguage().sendMessage(requestPlayer, "accept", target);
-                getLanguage().sendMessage(targetPlayer, "accepted", request);
+                this.language.sendMessage(requestPlayer, "accept", target);
+                this.language.sendMessage(targetPlayer, "accepted", request);
                 BukkitSound.WARP.play(targetPlayer);
             }
             case "deny" -> {
                 if (!getRequestList(sender.getName()).contains(target)) {
-                    getLanguage().sendMessage(sender, "player_not_found");
+                    this.language.sendMessage(sender, "player_not_found");
                 }
                 getRequestList(request).remove(target);
 
-                getLanguage().sendMessage(requestPlayer, "deny", target);
-                getLanguage().sendMessage(targetPlayer, "denied", request);
+                this.language.sendMessage(requestPlayer, "deny", target);
+                this.language.sendMessage(targetPlayer, "denied", request);
                 BukkitSound.DENY.play(targetPlayer);
             }
         }

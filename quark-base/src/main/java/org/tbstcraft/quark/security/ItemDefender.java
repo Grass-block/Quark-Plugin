@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.security;
 
 import me.gb2022.apm.local.PluginMessenger;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,6 +11,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import me.gb2022.commons.reflect.AutoRegister;
@@ -21,6 +23,9 @@ import java.util.List;
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.2.2", recordFormat = {"Time", "Level", "Player", "World", "X", "Y", "Z", "Type", "Action"})
 public final class ItemDefender extends PackageModule {
+
+    @Inject
+    private LanguageEntry language;
 
     @EventHandler
     public void onItemHeld(PlayerItemHeldEvent event) {
@@ -53,26 +58,26 @@ public final class ItemDefender extends PackageModule {
         }
 
         Material m = stack.getType();
-        boolean b1 = this.isItemIllegal(m);
+        boolean itemIllegal = this.isItemIllegal(m);
         boolean b2 = this.isItemWarning(m);
 
-        if (!(b1 || b2)) {
+        if (!(itemIllegal || b2)) {
             return;
         }
 
-        if (b1) {
+        if (itemIllegal) {
             p.getInventory().remove(m);
         }
 
-        if (b1 && b2) {
+        if (itemIllegal && b2) {
             b2 = false;
         }
 
         if (say) {
-            if (b1) {
-                this.getLanguage().sendMessage(p, "illegal-item", m.getKey().toString());
+            if (itemIllegal) {
+                this.language.sendMessage(p, "illegal-item", m.getKey().toString());
             } else {
-                this.getLanguage().sendMessage(p, "warning-item", m.getKey().toString());
+                this.language.sendMessage(p, "warning-item", m.getKey().toString());
             }
         }
 
@@ -92,14 +97,14 @@ public final class ItemDefender extends PackageModule {
 
         PluginMessenger.broadcastMapped("item:access", (map) -> map
                         .put("player", p.getName())
-                        .put("type", b1 ? "illegal" : "warning")
+                        .put("type", itemIllegal ? "illegal" : "warning")
                         .put("item", m.getKey().getKey()));
 
         if (this.getConfig().getBoolean("broadcast")) {
-            if (b1) {
-                this.getLanguage().broadcastMessage(true,false, "illegal-item-broadcast", p.getName(), m.getKey().toString());
+            if (itemIllegal) {
+                this.language.broadcastMessage(true,false, "illegal-item-broadcast", p.getName(), m.getKey().toString());
             } else {
-                this.getLanguage().broadcastMessage(true,false, "warning-item-broadcast", p.getName(), m.getKey().toString());
+                this.language.broadcastMessage(true,false, "warning-item-broadcast", p.getName(), m.getKey().toString());
             }
         }
     }

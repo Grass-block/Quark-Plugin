@@ -13,20 +13,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.tbstcraft.quark.framework.command.CommandManager;
-import org.tbstcraft.quark.framework.command.CommandProvider;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.CommandManager;
+import org.tbstcraft.quark.foundation.command.CommandProvider;
+import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.data.ModuleDataService;
-import org.tbstcraft.quark.internal.data.PlayerDataService;
+import org.tbstcraft.quark.data.ModuleDataService;
+import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.util.BukkitSound;
-import org.tbstcraft.quark.util.platform.APIProfile;
-import org.tbstcraft.quark.util.platform.BukkitCodec;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.foundation.platform.BukkitCodec;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -246,10 +246,11 @@ public final class Waypoint extends CommandModule {
         }
     }
 
-    @QuarkCommand(name = "sethome", playerOnly = true, permission = "+quark.waypoint.sethome")
+    @QuarkCommand(name = "sethome", playerOnly = true, permission = "+quark.warp.sethome")
     public static final class SetHomeCommand extends ModuleCommand<Waypoint> {
         public SetHomeCommand(Waypoint waypoint) {
             super(waypoint);
+            this.init();
         }
 
         @Override
@@ -264,10 +265,11 @@ public final class Waypoint extends CommandModule {
         }
     }
 
-    @QuarkCommand(name = "home", playerOnly = true, permission = "+quark.waypoint.tp-home")
+    @QuarkCommand(name = "home", playerOnly = true, permission = "+quark.warp.tp-home")
     public static final class WarpHomeCommand extends ModuleCommand<Waypoint> {
         public WarpHomeCommand(Waypoint waypoint) {
             super(waypoint);
+            this.init();
         }
 
         @Override
@@ -284,10 +286,11 @@ public final class Waypoint extends CommandModule {
         }
     }
 
-    @QuarkCommand(name = "back", playerOnly = true, permission = "+quark.waypoint.back")
+    @QuarkCommand(name = "back", playerOnly = true, permission = "+quark.warp.back")
     public static final class BackToDeathCommand extends ModuleCommand<Waypoint> {
         public BackToDeathCommand(Waypoint waypoint) {
             super(waypoint);
+            this.init();
         }
 
         @Override

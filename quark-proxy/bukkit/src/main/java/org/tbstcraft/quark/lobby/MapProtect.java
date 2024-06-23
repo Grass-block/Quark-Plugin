@@ -8,7 +8,7 @@ import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.service.base.permission.PermissionService;
+import org.tbstcraft.quark.internal.permission.PermissionService;
 
 @QuarkModule(version = "1.0.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)

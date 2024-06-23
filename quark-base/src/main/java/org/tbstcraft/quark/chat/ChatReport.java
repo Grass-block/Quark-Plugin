@@ -6,15 +6,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.tbstcraft.quark.CustomChatRenderer;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.framework.command.CommandProvider;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.CommandProvider;
+import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.text.TextBuilder;
-import org.tbstcraft.quark.util.platform.APIProfile;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
 
 import java.util.*;
 

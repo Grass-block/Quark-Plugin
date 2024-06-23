@@ -3,8 +3,8 @@ package org.tbstcraft.quark.internal.command;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.framework.command.CoreCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.CoreCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.util.ObjectOperationResult;
 import org.tbstcraft.quark.util.ObjectStatus;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-@QuarkCommand(name = "package", permission = "-quark.configure.packages")
+@QuarkCommand(name = "package", permission = "-quark.packages")
 public final class PackageCommand extends CoreCommand {
     static String messageId(ObjectOperationResult result, String success) {
         return switch (result) {

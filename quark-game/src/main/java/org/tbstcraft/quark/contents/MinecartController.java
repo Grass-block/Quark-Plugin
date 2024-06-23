@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.contents;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,13 +11,14 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.util.Vector;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.framework.data.language.Language;
+import org.tbstcraft.quark.data.language.Language;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.service.base.task.TaskService;
-import org.tbstcraft.quark.util.platform.BukkitUtil;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
+import org.tbstcraft.quark.internal.task.TaskService;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.text.DecimalFormat;
 import java.util.HashSet;
@@ -27,6 +29,9 @@ import java.util.Locale;
 public final class MinecartController extends PackageModule {
     private final HashSet<Player> speeds = new HashSet<>();
 
+    @Inject
+    private LanguageEntry language;
+    
     private static String getTaskIdentifier(Player p) {
         return "quark://minecart_controller/speed_calc/%s".formatted(p.getName());
     }
@@ -126,17 +131,17 @@ public final class MinecartController extends PackageModule {
         String template = Language.generateTemplate(this.getConfig(), "ui", (s) -> {
             String s2;
             if (thrustLevel > 0) {
-                s2 = this.getLanguage().getMessage(locale, "run-mode-boost");
+                s2 = this.language.getMessage(locale, "run-mode-boost");
             } else if (thrustLevel == 0) {
-                s2 = this.getLanguage().getMessage(locale, "run-mode-run");
+                s2 = this.language.getMessage(locale, "run-mode-run");
             } else {
-                s2 = this.getLanguage().getMessage(locale, "run_mode_break");
+                s2 = this.language.getMessage(locale, "run_mode_break");
             }
             if (speed == 0) {
-                s2 = this.getLanguage().getMessage(locale, "run-mode-stop");
+                s2 = this.language.getMessage(locale, "run-mode-stop");
             }
             if (speed == getConfig().getDouble("max-speed")) {
-                s2 = this.getLanguage().getMessage(locale, "run-mode-run");
+                s2 = this.language.getMessage(locale, "run-mode-run");
             }
             return s.replace("{run-mode}", s2);
         });
@@ -145,7 +150,7 @@ public final class MinecartController extends PackageModule {
                 .replace("{acceleration}", accelerationColumn)
                 .replace("{level}", thrustLevelColumn);
 
-        String ui = this.getLanguage().buildTemplate(locale, template);
+        String ui = this.language.buildTemplate(locale, template);
         PlayerUtil.sendActionBarTitle(p, ui);
     }
 

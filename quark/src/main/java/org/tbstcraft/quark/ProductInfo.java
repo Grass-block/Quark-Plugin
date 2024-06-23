@@ -3,9 +3,9 @@ package org.tbstcraft.quark;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.tbstcraft.quark.framework.packages.PackageManager;
-import org.tbstcraft.quark.service.base.ProductService;
-import org.tbstcraft.quark.util.text.TextBuilder;
-import org.tbstcraft.quark.util.text.TextSender;
+import org.tbstcraft.quark.internal.ProductService;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.foundation.text.TextSender;
 
 import java.util.Properties;
 

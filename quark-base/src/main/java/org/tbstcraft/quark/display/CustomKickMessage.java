@@ -7,7 +7,7 @@ import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.tbstcraft.quark.framework.data.language.Language;
+import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;

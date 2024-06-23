@@ -5,7 +5,7 @@ import org.tbstcraft.quark.framework.service.Service;
 
 import java.util.Set;
 
-public class DirectServiceRegistry extends ServiceRegistry {
+public final class DirectServiceRegistry extends ServiceRegistry {
     private final Set<Class<? extends Service>> services;
 
     public DirectServiceRegistry(IPackage pkg, Set<Class<? extends Service>> services) {

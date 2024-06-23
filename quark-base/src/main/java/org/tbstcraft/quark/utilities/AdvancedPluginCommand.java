@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.utilities;
 
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -7,12 +8,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.PluginsCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.data.language.LanguageEntry;
-import org.tbstcraft.quark.framework.data.language.Language;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.util.platform.BukkitPluginManager;
+import org.tbstcraft.quark.foundation.platform.BukkitPluginManager;
 
 import java.io.File;
 import java.util.Arrays;
@@ -23,6 +24,9 @@ import java.util.Objects;
 @QuarkCommand(name = "plugins", op = true)
 @QuarkModule(version = "1.1.0")
 public final class AdvancedPluginCommand extends CommandModule {
+    @Inject
+    private LanguageEntry language;
+    
     private void listPlugins(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
         for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
@@ -38,7 +42,7 @@ public final class AdvancedPluginCommand extends CommandModule {
                     .append(p.getDescription().getVersion())
                     .append("\n");
         }
-        this.getLanguage().sendMessage(sender, "list", sb.toString());
+        this.language.sendMessage(sender, "list", sb.toString());
     }
 
     private void sendPluginInfo(CommandSender sender, String name) {
@@ -51,7 +55,7 @@ public final class AdvancedPluginCommand extends CommandModule {
 
         StringBuilder builder = new StringBuilder(512);
 
-        LanguageEntry language = this.getLanguage();
+        LanguageEntry language = this.language;
         Locale locale = Language.locale(sender);
         builder.append("  ").append(language.getMessage(locale, "info-name", desc.getName(), desc.getPrefix())).append("\n");
         builder.append("  ").append(language.getMessage(locale, "info-version", desc.getVersion())).append("\n");
@@ -65,24 +69,24 @@ public final class AdvancedPluginCommand extends CommandModule {
         for (String s : desc.getLibraries()) {
             builder.append(ChatColor.GOLD).append("     - ").append(ChatColor.WHITE).append(s).append("\n");
         }
-        this.getLanguage().sendMessage(sender, "info", name, builder.toString());
+        this.language.sendMessage(sender, "info", name, builder.toString());
     }
 
 
     private void disablePlugin(CommandSender sender, String name) {
         Bukkit.getPluginManager().disablePlugin(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin(name)));
-        this.getLanguage().sendMessage(sender, "disable", name);
+        this.language.sendMessage(sender, "disable", name);
     }
 
     private void enablePlugin(CommandSender sender, String name) {
         Bukkit.getPluginManager().enablePlugin(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin(name)));
-        this.getLanguage().sendMessage(sender, "enable", name);
+        this.language.sendMessage(sender, "enable", name);
     }
 
 
     private void unloadPlugin(CommandSender sender, String name) {
         if (BukkitPluginManager.unload(name)) {
-            this.getLanguage().sendMessage(sender, "unload", name);
+            this.language.sendMessage(sender, "unload", name);
             return;
         }
         this.sendExceptionMessage(sender);
@@ -90,7 +94,7 @@ public final class AdvancedPluginCommand extends CommandModule {
 
     private void loadPlugin(CommandSender sender, String name) {
         if (BukkitPluginManager.load(name) == null) {
-            this.getLanguage().sendMessage(sender, "enable", name);
+            this.language.sendMessage(sender, "enable", name);
             return;
         }
         this.sendExceptionMessage(sender);
@@ -103,7 +107,7 @@ public final class AdvancedPluginCommand extends CommandModule {
             return;
         }
         BukkitPluginManager.reload(name);
-        this.getLanguage().sendMessage(sender, "reload", name);
+        this.language.sendMessage(sender, "reload", name);
     }
 
 

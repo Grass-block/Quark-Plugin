@@ -6,6 +6,7 @@ language:
     sys-success: "{#green}系统{#dark_aqua} > {#gray}"
     sys-operation: "{#light-purple}系统{#dark_aqua} > {#gray}"
     hint: "{#gray}[{#green}!{#gray}]{#gray}"
+    info: "{#gray}[{#aqua}!{#gray}]{#gray}"
     warning: "{#gray}[{#yellow}!{#gray}]{#gray}"
     error: "{#gray}[{#red}!{#gray}]{#gray}"
   command:

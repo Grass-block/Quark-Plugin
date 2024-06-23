@@ -4,20 +4,21 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.foundation.platform.BukkitPluginManager;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
 import org.tbstcraft.quark.util.*;
-import org.tbstcraft.quark.util.platform.BukkitPluginManager;
-import org.tbstcraft.quark.util.platform.BukkitUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 @QuarkService(id = "package", impl = PackageManager.Impl.class)
@@ -34,7 +35,7 @@ public interface PackageManager extends Service {
     static List<String> getSubPacksFromServer() {
         List<String> list = new ArrayList<>();
         for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
-            if (!verifySubPackage(p)) {
+            if (!verify(p)) {
                 continue;
             }
             list.add(p.getName());
@@ -45,7 +46,7 @@ public interface PackageManager extends Service {
     static List<File> getSubPacksFromFolder() {
         List<File> list = new ArrayList<>();
         for (File f : BukkitPluginManager.getAllPluginFiles()) {
-            if (!verifySubPackage(f)) {
+            if (!verify(f)) {
                 continue;
             }
             list.add(f);
@@ -53,14 +54,19 @@ public interface PackageManager extends Service {
         return list;
     }
 
-    static boolean verifySubPackage(Plugin p) {
+    static boolean verify(Plugin p) {
         if (!p.getName().startsWith(Quark.PLUGIN_ID)) {
             return false;
         }
-        return !p.getName().equals(Quark.PLUGIN_ID);
+
+        if (p.getName().equals(Quark.PLUGIN_ID)) {
+            return false;
+        }
+
+        return p.getResource("/product-info.properties") != null;
     }
 
-    static boolean verifySubPackage(File f) {
+    static boolean verify(File f) {
         String id;
         try {
             id = BukkitUtil.getPluginDescription(f).getName();
@@ -71,11 +77,25 @@ public interface PackageManager extends Service {
         if (!id.startsWith(Quark.PLUGIN_ID)) {
             return false;
         }
-        return !id.equals(Quark.PLUGIN_ID);
+        if (id.equals(Quark.PLUGIN_ID)) {
+            return false;
+        }
+        try {
+            JarFile jf = new JarFile(f);
+            if (jf.getJarEntry("product-info.properties") == null) {
+                jf.close();
+                return false;
+            }
+            jf.close();
+
+            return true;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @SuppressWarnings("unused")
-    static void loadSubPacks() {
+    static void reload() {
         for (String s : getSubPacksFromServer()) {
             BukkitPluginManager.unload(s);
         }
@@ -172,7 +192,7 @@ public interface PackageManager extends Service {
 
     default void enableAll() {
         for (String id : this.getPackages().keySet()) {
-            if (Identifiers.external(id).equals(CORE_PKG_ID)){
+            if (Identifiers.external(id).equals(CORE_PKG_ID)) {
                 continue;
             }
             this.enable(id);
@@ -181,7 +201,7 @@ public interface PackageManager extends Service {
 
     default void disableAll() {
         for (String id : this.getPackages().keySet()) {
-            if (Identifiers.external(id).equals(CORE_PKG_ID)){
+            if (Identifiers.external(id).equals(CORE_PKG_ID)) {
                 continue;
             }
             this.disable(id);
@@ -213,8 +233,8 @@ public interface PackageManager extends Service {
                     this.statusMap.put(pkg.getId(), Quark.PLUGIN.getConfig().getBoolean("config.default-status.package") ? "enabled" : "disabled");
                     this.saveStatus();
                 }
-                if (Identifiers.external(pkg.getId()).equals(CORE_PKG_ID)){
-                    this.statusMap.put(pkg.getId(),"enabled");
+                if (Identifiers.external(pkg.getId()).equals(CORE_PKG_ID)) {
+                    this.statusMap.put(pkg.getId(), "enabled");
                 }
                 if (getStatus(pkg.getId()) == ObjectStatus.ENABLED) {
                     try {
@@ -303,7 +323,7 @@ public interface PackageManager extends Service {
 
         @Override
         public ObjectOperationResult enable(String id) {
-            if (Identifiers.external(id).equals(CORE_PKG_ID)){
+            if (Identifiers.external(id).equals(CORE_PKG_ID)) {
                 return ObjectOperationResult.BLOCKED_INTERNAL;
             }
             ObjectOperationResult result = enable0(id);
@@ -316,7 +336,7 @@ public interface PackageManager extends Service {
 
         @Override
         public ObjectOperationResult disable(String id) {
-            if (Identifiers.external(id).equals(CORE_PKG_ID)){
+            if (Identifiers.external(id).equals(CORE_PKG_ID)) {
                 return ObjectOperationResult.BLOCKED_INTERNAL;
             }
             ObjectOperationResult result = disable0(id);
@@ -337,7 +357,7 @@ public interface PackageManager extends Service {
 
         @Override
         public void onEnable() {
-            DataFix.moveFile("/config/packages.properties","/data/packages.properties");
+            DataFix.moveFile("/config/packages.properties", "/data/packages.properties");
             try {
                 this.statusMap.load(new FileInputStream(this.getStatusFile()));
             } catch (IOException e) {

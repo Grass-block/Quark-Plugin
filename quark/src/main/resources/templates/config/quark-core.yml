@@ -6,9 +6,9 @@ config:
     - http-service
     - remote-message-service
   smtp-service:
-    server: smtp.example.com:25
-    username: example@example.com
-    password: example-password
+    server: {$smtp-server}
+    username: {$smtp-user}
+    password: {$smtp-password}
   http-service:
     host: 127.0.0.1
     port: 8125

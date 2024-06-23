@@ -5,18 +5,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.framework.command.AbstractCommand;
-import org.tbstcraft.quark.framework.command.CommandManager;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.util.platform.APIProfileTest;
-import org.tbstcraft.quark.util.platform.BukkitUtil;
+import org.tbstcraft.quark.foundation.command.AbstractCommand;
+import org.tbstcraft.quark.foundation.command.CommandManager;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.platform.APIProfileTest;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.util.ExceptionUtil;
 
 public interface InternalCommands {
     Listener INVALID_COMMAND_WARN = new InvalidCommandWarn();
     @SuppressWarnings("unchecked")
     Class<? extends AbstractCommand>[] COMMANDS = new Class[]{
-            SetPasswordCommand.class,
             QuarkPluginCommand.class
     };
 

@@ -2,13 +2,13 @@ package org.tbstcraft.quark.internal.command;
 
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.framework.command.CoreCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.data.config.Queries;
+import org.tbstcraft.quark.foundation.command.CoreCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.data.config.Queries;
 
 import java.util.List;
 
-@QuarkCommand(name = "global-vars", permission = "-quark.configure.global-vars")
+@QuarkCommand(name = "global-vars", permission = "-quark.global-vars")
 public final class GlobalVarsCommand extends CoreCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {

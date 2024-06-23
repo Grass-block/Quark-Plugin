@@ -8,17 +8,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.tbstcraft.quark.framework.command.CommandManager;
-import org.tbstcraft.quark.framework.data.config.Queries;
+import org.tbstcraft.quark.foundation.command.CommandManager;
+import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.platform.APIProfile;
-import org.tbstcraft.quark.util.platform.APIProfileTest;
-import org.tbstcraft.quark.util.text.TextBuilder;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.foundation.platform.APIProfileTest;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
 
 
 @AutoRegister(ServiceType.EVENT_LISTEN)

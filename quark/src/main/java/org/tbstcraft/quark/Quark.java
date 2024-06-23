@@ -1,16 +1,18 @@
 package org.tbstcraft.quark;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.tbstcraft.quark.framework.data.config.Configuration;
-import org.tbstcraft.quark.framework.data.config.Language;
-import org.tbstcraft.quark.framework.data.config.Queries;
-import org.tbstcraft.quark.framework.data.config.YamlUtil;
+import org.tbstcraft.quark.data.config.Configuration;
+import org.tbstcraft.quark.data.config.Language;
+import org.tbstcraft.quark.data.config.Queries;
+import org.tbstcraft.quark.data.config.YamlUtil;
 import org.tbstcraft.quark.util.Timer;
-import org.tbstcraft.quark.util.platform.BukkitPluginManager;
+import org.tbstcraft.quark.foundation.platform.BukkitPluginManager;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -31,6 +33,27 @@ public final class Quark extends JavaPlugin {
         return coreAvailable;
     }
 
+    public static void reload(CommandSender audience) {
+        new Thread(() -> {
+            try {
+                Locale locale = org.tbstcraft.quark.data.language.Language.locale(audience);
+                String msg = LANGUAGE.getMessage(locale, "packages", "load");
+
+                Class<?> commandManager = Class.forName("org.tbstcraft.quark.foundation.command.CommandManager");
+                Class<?> packageManager = Class.forName("org.tbstcraft.quark.framework.packages.PackageManager");
+                Class<?> pluginLoader = Class.forName("org.tbstcraft.quark.foundation.platform.BukkitPluginManager");
+
+                pluginLoader.getMethod("reload", String.class).invoke(null, PLUGIN_ID);
+                packageManager.getMethod("reload").invoke(null);
+                commandManager.getMethod("sync").invoke(null);
+
+                audience.sendMessage(msg);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+    }
+
     @Override
     public void onEnable() {
         PLUGIN = this;
@@ -47,7 +70,7 @@ public final class Quark extends JavaPlugin {
             Class.forName("org.tbstcraft.quark.Bootstrap");
             Class.forName("org.tbstcraft.quark.Bootstrap$BootOperations");
             Class.forName("org.tbstcraft.quark.Bootstrap$ContextComponent");
-            Class.forName("org.tbstcraft.quark.framework.data.config.Queries");
+            Class.forName("org.tbstcraft.quark.data.config.Queries");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

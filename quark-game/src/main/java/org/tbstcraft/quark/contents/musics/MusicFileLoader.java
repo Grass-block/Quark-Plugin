@@ -3,8 +3,8 @@ package org.tbstcraft.quark.contents.musics;
 import me.gb2022.apm.remote.protocol.BufferUtil;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.contents.MusicPlayer;
-import org.tbstcraft.quark.framework.data.assets.AssetGroup;
-import org.tbstcraft.quark.service.network.RemoteMessageService;
+import org.tbstcraft.quark.data.assets.AssetGroup;
+import org.tbstcraft.quark.internal.RemoteMessageService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -53,7 +53,7 @@ public interface MusicFileLoader {
             File f = this.folder.getFile(name);
 
             if (!f.exists() || f.length() == 0) {
-                RemoteMessageService.getInstance().sendQuery(this.contentServer, "/music/get", (b) -> BufferUtil.writeString(b, name))
+                RemoteMessageService.query(this.contentServer, "/music/get", (b) -> BufferUtil.writeString(b, name))
                         .timeout(1000, () -> {
                             throw new RuntimeException(MusicPlayer.TIMEOUT);
                         }).result(b -> {
@@ -77,7 +77,7 @@ public interface MusicFileLoader {
         public Set<String> list() {
             Set<String> lists = new HashSet<>();
 
-            RemoteMessageService.getInstance().sendQuery(contentServer, "/music/list", (b -> {
+            RemoteMessageService.query(contentServer, "/music/list", (b -> {
             })).timeout(5000, () -> {
             }).result((b) -> lists.addAll(List.of(BufferUtil.readString(b).split(";")))).sync();
             return lists;

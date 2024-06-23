@@ -1,6 +1,7 @@
 global-vars:
   server:
     server-name: '{#purple}Quark example server'
+    server-name-plain: 'Quark example server'
     server-website: 'https://quark.tbstmc.xyz'
   contact:
     qq-invite-link: https://qm.qq.com/cgi-bin/qm/qr?-wv=1027&k=Ac0aa6hRRS-tQg13ejKX0T9ju5bvBYNW&group-code=733345889

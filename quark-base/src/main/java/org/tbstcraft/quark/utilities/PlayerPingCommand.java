@@ -3,16 +3,16 @@ package org.tbstcraft.quark.utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.util.List;
 
 @QuarkModule(version = "1.0.0")
 @QuarkCommand(name = "ping")
-public class PlayerPingCommand extends CommandModule {
+public final class PlayerPingCommand extends CommandModule {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {

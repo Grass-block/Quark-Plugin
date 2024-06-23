@@ -7,7 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.tbstcraft.quark.util.text.TextBuilder;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
 
 import java.util.ArrayList;
 import java.util.List;

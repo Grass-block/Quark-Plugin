@@ -8,7 +8,7 @@ import org.tbstcraft.quark.framework.packages.provider.QuarkPackageProvider;
 import java.util.Set;
 
 @QuarkPackageProvider
-public class QuarkBase extends MultiPackageProvider {
+public final class QuarkBase extends MultiPackageProvider {
 
     @Override
     public Set<PackageInitializer> createInitializers() {

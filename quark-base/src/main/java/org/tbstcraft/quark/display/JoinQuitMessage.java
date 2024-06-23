@@ -3,24 +3,29 @@ package org.tbstcraft.quark.display;
 import me.gb2022.apm.remote.event.RemoteEventHandler;
 import me.gb2022.apm.remote.event.remote.RemoteMessageEvent;
 import me.gb2022.apm.remote.protocol.BufferUtil;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.service.network.RemoteMessageService;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
+import org.tbstcraft.quark.internal.RemoteMessageService;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.util.function.Consumer;
 
 @QuarkModule(version = "1.1.0")
 @AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.REMOTE_MESSAGE})
 public final class JoinQuitMessage extends PackageModule {
+
+    @Inject
+    private LanguageEntry language;
 
     private void broadcast(String name, Consumer<Player> handler) {
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -36,14 +41,14 @@ public final class JoinQuitMessage extends PackageModule {
         event.setJoinMessage(null);
         if (this.getConfig().getBoolean("proxy")) {
             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1, 1);
-            RemoteMessageService.getInstance().sendMessage("proxy", "/transfer/join_server", buf -> {
+            RemoteMessageService.message("proxy", "/transfer/join_server", buf -> {
                 BufferUtil.writeString(buf, event.getPlayer().getName());
             });
             return;
         }
         String player = event.getPlayer().getName();
-        this.broadcast(player, (p) -> this.getLanguage().sendMessage(p, "join", player));
-        this.getLanguage().sendMessage(PlayerUtil.strictFindPlayer(player), "welcome-message", player);
+        this.broadcast(player, (p) -> this.language.sendMessage(p, "join", player));
+        this.language.sendMessage(PlayerUtil.strictFindPlayer(player), "welcome-message", player);
     }
 
     @EventHandler
@@ -54,33 +59,33 @@ public final class JoinQuitMessage extends PackageModule {
             return;
         }
         String player = event.getPlayer().getName();
-        this.broadcast(player, (p) -> this.getLanguage().sendMessage(p, "leave", player));
+        this.broadcast(player, (p) -> this.language.sendMessage(p, "leave", player));
     }
 
     @RemoteEventHandler("/transfer/join")
     public void onPlayerJoin(RemoteMessageEvent event) {
         String[] data = BufferUtil.readString(event.getData()).split(";");
-        this.broadcast(data[0], (p) -> this.getLanguage().sendMessage(p, "proxy-join", data[0], data[1]));
-        this.getLanguage().sendMessage(PlayerUtil.strictFindPlayer(data[0]), "proxy-send", data[2]);
+        this.broadcast(data[0], (p) -> this.language.sendMessage(p, "proxy-join", data[0], data[1]));
+        this.language.sendMessage(PlayerUtil.strictFindPlayer(data[0]), "proxy-send", data[2]);
         Player p = PlayerUtil.strictFindPlayer(data[0]);
     }
 
     @RemoteEventHandler("/transfer/leave")
     public void onPlayerQuit(RemoteMessageEvent event) {
         String[] data = BufferUtil.readString(event.getData()).split(";");
-        this.broadcast(data[0], (p) -> this.getLanguage().sendMessage(p, "proxy-leave", data[0], data[1]));
+        this.broadcast(data[0], (p) -> this.language.sendMessage(p, "proxy-leave", data[0], data[1]));
     }
 
     @RemoteEventHandler("/transfer/join_proxy")
     public void onPlayerJoinProxy(RemoteMessageEvent event) {
         String data = BufferUtil.readString(event.getData());
-        this.broadcast(data, (p) -> this.getLanguage().sendMessage(p, "join", data));
-        this.getLanguage().sendMessage(PlayerUtil.strictFindPlayer(data), "welcome-message", data);
+        this.broadcast(data, (p) -> this.language.sendMessage(p, "join", data));
+        this.language.sendMessage(PlayerUtil.strictFindPlayer(data), "welcome-message", data);
     }
 
     @RemoteEventHandler("/transfer/quit_proxy")
     public void onPlayerQuitProxy(RemoteMessageEvent event) {
         String data = BufferUtil.readString(event.getData());
-        this.broadcast(data, (p) -> this.getLanguage().sendMessage(p, "leave", data));
+        this.broadcast(data, (p) -> this.language.sendMessage(p, "leave", data));
     }
 }

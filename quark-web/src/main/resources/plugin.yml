@@ -1,0 +1,16 @@
+#identifier
+name: quark-web
+version: '${version}-${core_version}'
+
+#api
+main: org.atcraftmc.quark.web.QuarkWeb
+api-version: 1.18
+folia-supported: true
+load: POSTWORLD
+depend: ["quark"]
+
+#description
+authors: ["GrassBlock2022","TBSTMC"]
+website: https://quark.tbstmc.xyz
+description: web(api) functions extension pack.
+prefix: QuarkProxy

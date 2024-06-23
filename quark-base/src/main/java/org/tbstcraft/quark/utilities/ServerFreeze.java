@@ -1,8 +1,8 @@
 package org.tbstcraft.quark.utilities;
 
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.service.base.task.TaskService;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.tbstcraft.quark.internal.task.TaskService;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 
@@ -11,6 +11,7 @@ import java.util.Objects;
 
 @QuarkModule(version = "0.3", beta = true)
 @QuarkCommand(name = "freeze", op = true)
+@Deprecated
 public class ServerFreeze extends CommandModule implements Runnable {
     public static final String TASK_ID = "freeze::lock";
 

@@ -12,3 +12,6 @@ config:
     proxy-exchange-host: example.com
     proxy-exchange-port: 25843
     proxy-exchange-key: "(enter your custom key)"
+    smtp-server: smtp.example.com:25
+    smtp-user: example@example.com
+    smtp-password: "(enter your custom key)"

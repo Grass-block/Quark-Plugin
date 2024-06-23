@@ -9,17 +9,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.util.CachedServerIcon;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.framework.command.CommandProvider;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.data.assets.Asset;
-import org.tbstcraft.quark.framework.data.config.Language;
-import org.tbstcraft.quark.framework.data.config.Queries;
+import org.tbstcraft.quark.api.QueryPingEvent;
+import org.tbstcraft.quark.foundation.command.CommandProvider;
+import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.data.assets.Asset;
+import org.tbstcraft.quark.data.config.Language;
+import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.text.ComponentBlock;
-import org.tbstcraft.quark.util.text.TextBuilder;
+import org.tbstcraft.quark.foundation.text.ComponentBlock;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
 
 import java.io.File;
 import java.util.List;
@@ -56,6 +57,16 @@ public final class CustomMotd extends PackageModule {
     @EventHandler
     public void onPing(ServerListPingEvent e) {
         e.setMotd(generateMotdMessage().toString());
+
+        if (this.cachedServerIcon == null) {
+            return;
+        }
+        e.setServerIcon(this.cachedServerIcon);
+    }
+
+    @EventHandler
+    public void onPing(QueryPingEvent e) {
+        e.setMotd(generateMotdMessage().toPlainTextString());
 
         if (this.cachedServerIcon == null) {
             return;

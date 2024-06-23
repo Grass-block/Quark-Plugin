@@ -14,7 +14,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.service.base.task.TaskService;
+import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.util.HashSet;
 import java.util.Objects;

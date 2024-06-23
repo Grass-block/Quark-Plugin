@@ -1,15 +1,15 @@
 package org.tbstcraft.quark.internal.command;
 
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.framework.command.CoreCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
-import org.tbstcraft.quark.framework.data.config.ConfigDelegation;
-import org.tbstcraft.quark.framework.data.config.Configuration;
-import org.tbstcraft.quark.framework.data.language.LanguageEntry;
+import org.tbstcraft.quark.foundation.command.CoreCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.data.config.ConfigDelegation;
+import org.tbstcraft.quark.data.config.Configuration;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 
 import java.util.List;
 
-@QuarkCommand(name = "config", permission = "-quark.configure.config")
+@QuarkCommand(name = "config", permission = "-quark.config")
 public final class ConfigCommand extends CoreCommand {
     @Override
     public void onCommand(CommandSender sender, String[] args) {

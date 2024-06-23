@@ -3,8 +3,8 @@
   "version": "0.10",
   "package_namespace": "org.tbstcraft.quark.proxysupport",
   "modules": {
+    "chat-sync": ".ChatSync",
     "bungee-connection-protect": ".BungeeConnectionProtect",
-    "proxy-transfer-display": ".ProxyTransferDisplay",
     "forge-server-teleportation": ".ForgeServerTeleportation",
     "mcsm-dynamic-instance": ".MCSMDynamicInstance",
     "server-statement-observer": ".ServerStatementObserver"

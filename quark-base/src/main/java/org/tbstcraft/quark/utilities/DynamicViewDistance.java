@@ -1,20 +1,22 @@
 package org.tbstcraft.quark.utilities;
 
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.framework.command.CommandProvider;
-import org.tbstcraft.quark.framework.command.ModuleCommand;
-import org.tbstcraft.quark.framework.command.QuarkCommand;
+import org.bukkit.permissions.Permission;
+import org.tbstcraft.quark.foundation.command.CommandProvider;
+import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.service.base.permission.PermissionService;
-import org.tbstcraft.quark.util.platform.APIProfile;
-import org.tbstcraft.quark.util.platform.PlayerUtil;
+import org.tbstcraft.quark.internal.permission.PermissionService;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.util.container.CachedInfo;
 
 import java.util.List;
@@ -25,18 +27,14 @@ import java.util.Objects;
 @QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT, APIProfile.ARCLIGHT, APIProfile.SPIGOT})
 public class DynamicViewDistance extends PackageModule {
 
-
-    @Override
-    public void enable() {
-        PermissionService.createPermission("-quark.view-distance.set-other");
-    }
+    @Inject("+quark.view-distance.set-other")
+    private Permission setOtherPermission;
 
     @Override
     public void disable() {
         for (Player p : Bukkit.getOnlinePlayers()) {
             resetCustomViewDistance(p);
         }
-        PermissionService.deletePermission("-quark.view-distance.set-other");
     }
 
     @EventHandler
@@ -74,7 +72,7 @@ public class DynamicViewDistance extends PackageModule {
                 getLanguage().sendMessage(sender, "unset", args[0], val);
                 return;
             }
-            if (sender.hasPermission("quark.view-distance.set-other") && !Objects.equals(args[0], sender.getName())) {
+            if (sender.hasPermission(this.getModule().setOtherPermission) && !Objects.equals(args[0], sender.getName())) {
                 sendPermissionMessage(sender);
                 return;
             }

@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class CustomEvent extends Event {
     public static final Map<Class<? extends CustomEvent>, HandlerList> HANDLER_LISTS = new HashMap<>();
@@ -24,6 +25,8 @@ public abstract class CustomEvent extends Event {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        getHandlers();
     }
 
     public static HandlerList getHandlerList(Class<? extends CustomEvent> clazz) {
@@ -38,6 +41,6 @@ public abstract class CustomEvent extends Event {
 
     @Override
     public final @NotNull HandlerList getHandlers() {
-        return HANDLER_LISTS.get(this.getClass());
+        return Objects.requireNonNull(getHandlerList(this.getClass()));
     }
 }

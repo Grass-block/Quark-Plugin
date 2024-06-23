@@ -3,7 +3,7 @@ package org.tbstcraft.quark.tweaks;
 import org.bukkit.event.Listener;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.util.platform.BukkitUtil;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 
 import java.util.HashMap;
 import java.util.Map;

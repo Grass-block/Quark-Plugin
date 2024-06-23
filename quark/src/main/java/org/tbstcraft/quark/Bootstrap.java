@@ -4,20 +4,17 @@ import me.gb2022.apm.client.ClientMessenger;
 import me.gb2022.apm.client.backend.MessageBackend;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.tbstcraft.quark.internal.command.InternalCommands;
-import org.tbstcraft.quark.internal.command.QuarkPluginCommand;
-import org.tbstcraft.quark.framework.data.config.Configuration;
-import org.tbstcraft.quark.framework.data.config.Language;
-import org.tbstcraft.quark.framework.data.config.Queries;
+import org.tbstcraft.quark.data.config.Configuration;
+import org.tbstcraft.quark.data.config.Language;
+import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceManager;
-import org.tbstcraft.quark.util.text.TextBuilder;
-import org.tbstcraft.quark.util.text.TextSender;
-import org.tbstcraft.quark.internal.QuarkInternalPackage;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.util.DeferredLogger;
 import org.tbstcraft.quark.util.Timer;
-import org.tbstcraft.quark.util.platform.APIProfileTest;
+import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 
 import java.io.File;
 import java.lang.annotation.ElementType;
@@ -55,9 +52,9 @@ public interface Bootstrap {
     interface BootOperations {
         @ContextComponent(order = 0)
         static void guiding(Quark instance) throws Exception {
-            Class.forName("org.tbstcraft.quark.util.platform.APIProfile");
-            Class.forName("org.tbstcraft.quark.util.text.TextSender");
-            Class.forName("org.tbstcraft.quark.util.text.TextBuilder");
+            Class.forName("org.tbstcraft.quark.foundation.platform.APIProfile");
+            Class.forName("org.tbstcraft.quark.foundation.text.TextSender");
+            Class.forName("org.tbstcraft.quark.foundation.text.TextBuilder");
         }
 
         @ContextComponent(order = 1, text = "Bootstrap initialization completed")
@@ -144,9 +141,7 @@ public interface Bootstrap {
             Service.initBase();
             QuarkInternalPackage.register(PackageManager.INSTANCE.get());
 
-            Service.init();
             Queries.initialize();
-            QuarkPluginCommand.ReloadCommand.ReloadTask.initLoaders();
 
             ClientMessenger.setBackend(MessageBackend.bukkit(Quark.PLUGIN));
             ClientMessenger.getBackend().start();
@@ -158,7 +153,6 @@ public interface Bootstrap {
         static void stopService(Quark instance) {
             ServiceManager.unregisterAll();
 
-            Service.stop();
             Service.stopBase();
 
             ClientMessenger.getBackend().stop();
