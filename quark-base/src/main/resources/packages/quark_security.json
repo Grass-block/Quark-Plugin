@@ -4,12 +4,10 @@
   "package_namespace": "org.tbstcraft.quark.security",
   "modules": {
     "explosion-defender": ".ExplosionDefender",
-    "ip-defender": ".IPDefender",
     "permission-manager": ".PermissionManager",
     "we-size-defender": ".WorldEditSectionSizeDefender",
     "item-defender": ".ItemDefender",
     "protection-area": ".ProtectionArea",
-    "account-activation": ".account.AccountActivation",
     "advanced-permission-control": ".AdvancedPermissionControl"
   },
   "services": [

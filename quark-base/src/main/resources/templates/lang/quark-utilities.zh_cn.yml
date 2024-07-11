@@ -1,4 +1,9 @@
 language:
+  -module-names:
+    item-command: 物品命令绑定
+    surrounding-refresh: 环境方块刷新
+    player-ping-command: 玩家延迟查询
+    calculator: 计算器
   kick-on-reload:
     reload-hint:
       - "{#white}服务器正在重载。为保证游戏正常您已被暂时踢出。"
@@ -31,8 +36,10 @@ language:
     info-libs: "{#gold}依赖库{#white}:"
   calculator:
     calc: "[{#blue}计算{#white}]{#gray} {#var} = {#var}"
+    tip: "{#gray}使用{#gold}/calc [表达式]{#gray}进行简便计算。"
   player-ping-command:
     ping-msg: "{global#sys-info}你的延迟是: {#var} {#gray}ms"
+    tip: "{#gray}使用{#gold}/ping{#gray}来查询当前的延迟！"
   block-update-locker:
     lock: "{global#sys-info}已锁定方块更新。"
     unlock: "{global#sys-info}已解锁方块更新。"
@@ -40,6 +47,7 @@ language:
     bind: "{global#sys-info}已将物品 {#var} 绑定到命令行 {#var}。"
     unbind: "{global#sys-info}已将清除物品 {#var} 的命令行绑定。"
     bind-fail: "{global#sys-error}无法将命令行绑定到空手。"
+    tip: "{#gray}使用{#gold}/item-command{#gray}可以将命令绑定在你的物品上，使用物品即可快速执行该命令。"
   custom-log-format:
     enable: "{global#sys-operation}{#gray}自定义服务端日志格式已启用。"
     disable: "{global#sys-operation}{#gray}自定义服务端日志格式已停用。"
@@ -52,7 +60,8 @@ language:
   console-command:
     execute: "{global#sys-operation}已提交命令行: {#var}"
   advanced-ban-command:
-    msg-ban-complete: "{global#sys-success}已封禁玩家 {#var} 至 {#var},原因: {#var}"
+    msg-ban-complete: "{global#sys-success}已封禁玩家 {#var} 至 {#var},原因: {#var}。"
+    broadcast: "{global#sys-info}玩家{#var} 因 {#var} 被操作者 {#var} 封禁至 {#var}。"
   player-position-lock:
     lock: '{global#sys-info}您的位置已被锁定。'
     unlock: '{global#sys-info}您的位置已被解锁。'
@@ -61,3 +70,23 @@ language:
   camera-movement:
     cam-start: '{global#sys-info}镜头路径开始({#var} ticks)'
     cam-end: '{global#sys-info}镜头路径结束。'
+  surrounding-refresh:
+    to-big: '{global#error}选取半径过大。'
+    not-found: '{global#error}目标玩家{#var}未找到。'
+    success: '{global#success}正在向{#var}发送区域重刷新请求。'
+    refresh-target: '{global#info}正在刷新您身边{#var}半径的区域，这可能导致卡顿，请不要移动。'
+    refresh-complete: '{global#info}成功刷新了您周围的方块数据。'
+    tip: "{#gray}如果您遇到假方块，使用{#gold}/refresh-area [半径]{#gray}可以快速刷新您附近的方块。"
+  force-sprint:
+    tip: "{#gray}使用{#gold}/sprint{#gray}可以快速切换自动疾跑。"
+    enable: "{global#info}自动疾跑已开启。"
+    disable: "{global#info}自动疾跑已关闭。"
+  item-custom-name:
+    bind: "{global#sys-info}已将物品 {#var} 绑定到自定义语言键 {#var}。"
+    unbind: "{global#sys-info}已将清除物品 {#var} 自定义语言键绑定。"
+    bind-fail: "{global#sys-error}无法将自定义语言键绑定到空手。"
+    menu: "{#yellow}|| {#aqua}菜单 {#yellow}||"
+    donate: "{#yellow}|| {#green}赞助 {#yellow}||"
+    sign-in: "{#yellow}|| {#red}签到 {#yellow}||"
+  stop-confirm:
+    hint: "{#red} 你确定要关闭服务器吗?这可能会导致服务终止。如果确定的话,请使用{#yellow}/stop confirm"

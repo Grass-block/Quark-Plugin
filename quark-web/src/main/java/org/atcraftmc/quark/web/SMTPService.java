@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.internal;
+package org.atcraftmc.quark.web;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.tbstcraft.quark.Quark;

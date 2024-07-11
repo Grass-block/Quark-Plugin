@@ -1,11 +1,9 @@
 package org.atcraftmc.quark.web;
 
 import com.google.gson.JsonObject;
+import org.atcraftmc.quark.web.http.HttpHandlerContext;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.internal.HttpService;
-import org.tbstcraft.quark.internal.http.HttpHandlerContext;
-import org.tbstcraft.quark.internal.http.HttpRequest;
 
 @QuarkModule(version = "0.3-beta")
 public final class HttpAuthorizer extends PackageModule {
@@ -14,7 +12,6 @@ public final class HttpAuthorizer extends PackageModule {
         HttpService.registerHandler(this);
     }
 
-    @HttpRequest("/auth/login")
     public void login(HttpHandlerContext ctx) {
         String name = ctx.getParam("name");
         String password = ctx.getParam("password");
@@ -33,7 +30,6 @@ public final class HttpAuthorizer extends PackageModule {
         obj.addProperty("remain", TokenStorageService.remain(token));
     }
 
-    @HttpRequest("/auth/logout")
     public void logout(HttpHandlerContext ctx) {
         String token = ctx.getParam("token");
         if (token == null) {
@@ -47,7 +43,6 @@ public final class HttpAuthorizer extends PackageModule {
         ctx.createJsonReturn().addProperty("token", TokenStorageService.destroy(token));
     }
 
-    @HttpRequest("/auth/extend")
     public void extend(HttpHandlerContext ctx) {
         String token = ctx.getParam("token");
         String time = ctx.getParam("time");
@@ -65,7 +60,6 @@ public final class HttpAuthorizer extends PackageModule {
         obj.addProperty("remain", TokenStorageService.extend(token, Integer.parseInt(time)));
     }
 
-    @HttpRequest("/auth/minecraft")
     public void authMinecraft(HttpHandlerContext ctx) {
 
     }

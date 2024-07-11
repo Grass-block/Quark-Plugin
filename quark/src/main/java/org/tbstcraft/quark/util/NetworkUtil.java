@@ -1,5 +1,7 @@
 package org.tbstcraft.quark.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -8,20 +10,12 @@ import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 public interface NetworkUtil {
-    String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36";
+    String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
     String ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7";
 
     static String httpGet(String url) throws IOException {
         String str;
-        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-
-        con.setRequestMethod("GET");
-        con.setRequestProperty("User-Agent", USER_AGENT);
-        con.setRequestProperty("Accept", ACCEPT);
-        con.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8");
-
-        con.setRequestProperty("x-requested-with", "xmlhttprequest");
-        con.setRequestProperty("Content-Type", "application/json");
+        HttpURLConnection con = getHttpURLConnection(url);
 
         var code = con.getResponseCode();
         if (code != 200) {
@@ -37,6 +31,20 @@ public interface NetworkUtil {
         in.close();
         con.disconnect();
         return str;
+    }
+
+    private static @NotNull HttpURLConnection getHttpURLConnection(String url) throws IOException {
+        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+
+        con.setRequestMethod("GET");
+        con.setRequestProperty("User-Agent", USER_AGENT);
+        con.setRequestProperty("Accept", ACCEPT);
+        con.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8");
+        con.setRequestProperty("Accept-Encoding", "gzip, deflate, br, zst");
+
+        con.setRequestProperty("x-requested-with", "xmlhttprequest");
+        con.setRequestProperty("Content-Type", "application/json");
+        return con;
     }
 
     static String httpPost(String url) {
@@ -82,6 +90,11 @@ public interface NetworkUtil {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        public RequestBuilder copy(Consumer<RequestBuilder> copied) {
+            copied.accept(this);
+            return this;
         }
     }
 }

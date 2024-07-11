@@ -26,6 +26,7 @@ import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.foundation.region.Region;
 import org.tbstcraft.quark.foundation.region.SimpleRegion;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 
 import java.util.*;
 
@@ -168,7 +169,7 @@ public final class ProtectionArea extends PackageModule {
                 this.getLanguage().sendMessage(sender, "region_list");
                 Map<String, SimpleRegion> map = this.getModule().getRegions();
                 for (String s : map.keySet()) {
-                    sender.sendMessage(Queries.GLOBAL_TEMPLATE_ENGINE.handle("{#gold}%s {#gray}-> {#white}%s".formatted(s, map.get(s).toString())));
+                    sender.sendMessage(PlaceHolderService.format("{#gold}%s {#gray}-> {#white}%s".formatted(s, map.get(s).toString())));
                 }
                 return;
             }

@@ -13,6 +13,7 @@ import org.bukkit.permissions.Permission;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.internal.permission.PermissionService;
 
 @QuarkModule(version = "1.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
@@ -26,7 +27,7 @@ public final class AdvancedPermissionControl extends PackageModule {
     @Inject("+quark.player.break")
     public Permission breakPermission;
 
-    @Inject("+quark.player.interact-entity")
+    @Inject("+quark.player.interactentity")
     public Permission interactEntityPermission;
 
     private void testPermission(Cancellable event, Player player, Permission permission) {
@@ -37,6 +38,10 @@ public final class AdvancedPermissionControl extends PackageModule {
         getLanguage().sendMessage(player, "no-perm", permission.getName());
     }
 
+    @Override
+    public void enable() {
+        PermissionService.update();
+    }
 
     @EventHandler
     public void onPlayerChat(final AsyncPlayerChatEvent event) {

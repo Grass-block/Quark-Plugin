@@ -1,8 +1,8 @@
-package org.tbstcraft.quark.internal;
+package org.atcraftmc.quark.web;
 
+import org.atcraftmc.quark.web.http.HTTPServer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.tbstcraft.quark.framework.service.*;
-import org.tbstcraft.quark.internal.http.HTTPServer;
 
 @QuarkService(id = "http-service")
 public interface HttpService extends Service {

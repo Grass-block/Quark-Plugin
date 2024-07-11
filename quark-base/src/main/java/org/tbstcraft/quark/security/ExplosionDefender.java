@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.security;
 
+import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Bukkit;
@@ -13,19 +14,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.data.ModuleDataService;
+import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.data.config.Queries;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.foundation.region.SimpleRegion;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
-import org.tbstcraft.quark.foundation.region.SimpleRegion;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 
 import java.util.*;
 
@@ -87,6 +89,8 @@ public final class ExplosionDefender extends PackageModule {
     }
 
     public void handle(Location loc, String explodedId) {
+        System.out.println("awwa2");
+        PluginMessenger.broadcastMapped("quark:explosion", (b) -> b.put("loc", loc));
         if (this.getConfig().getBoolean("override-explosion")) {
             Objects.requireNonNull(loc.getWorld()).createExplosion(loc, 4f, false, false);
         }
@@ -121,7 +125,7 @@ public final class ExplosionDefender extends PackageModule {
                 this.getLanguage().sendMessage(sender, "region-list");
                 Map<String, SimpleRegion> map = this.getModule().getWhiteListedRegions();
                 for (String s : map.keySet()) {
-                    sender.sendMessage(Queries.GLOBAL_TEMPLATE_ENGINE.handle("{#gold}%s {#gray}-> {#white}%s".formatted(s, map.get(s).toString())));
+                    sender.sendMessage(PlaceHolderService.format("{#gold}%s {#gray}-> {#white}%s".formatted(s, map.get(s).toString())));
                 }
                 return;
             }

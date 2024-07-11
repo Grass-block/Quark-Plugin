@@ -5,13 +5,14 @@ language:
     sys-error: "{#red}系统{#dark_aqua} > {#gray}"
     sys-success: "{#green}系统{#dark_aqua} > {#gray}"
     sys-operation: "{#light-purple}系统{#dark_aqua} > {#gray}"
-    hint: "{#gray}[{#green}!{#gray}]{#gray}"
+    hint: "{#gray}[{#white}!{#gray}]{#gray}"
+    success: "{#gray}[{#green}!{#gray}]{#gray}"
     info: "{#gray}[{#aqua}!{#gray}]{#gray}"
     warning: "{#gray}[{#yellow}!{#gray}]{#gray}"
     error: "{#gray}[{#red}!{#gray}]{#gray}"
   command:
     exception: "{global#sys-error}语法有误，或执行该命令时出现了内部错误。"
-    lack-permission: "{global#sys-error}很抱歉，你没有执行该命令的权限。"
+    lack-permission: "{global#sys-error}很抱歉，你没有执行该命令的权限({#var})。"
     player-only: "{global#sys-error}该命令只允许玩家执行。"
     sync-commands: "{global#sys-operation}命令同步完成。"
   module:

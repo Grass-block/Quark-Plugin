@@ -18,12 +18,20 @@ public interface Language {
     static Locale locale(CommandSender sender) {
         try {
             if (sender instanceof Player player) {
-                return locale(player.getLocale());
+                Locale locale = locale(player.getLocale());
+
+                return Locale.CHINA;
+
+                //todo why the hell is bukkit language detection inaccurate???
+
+                //if (locale != Locale.ENGLISH) {
+                    //return locale;
+                //}
             } else {
                 //todo:env lang opt
                 return Locale.ENGLISH;
             }
-        }catch (NoSuchMethodError error){
+        } catch (NoSuchMethodError error) {
             return Locale.CHINA;
         }
     }
@@ -31,14 +39,13 @@ public interface Language {
     static Locale locale(String id) {
         return switch (id) {
             case "zh_cn" -> Locale.SIMPLIFIED_CHINESE;
-            case "en_us" -> Locale.US;
-            case "en" -> Locale.ENGLISH;
+            case "en_us", "en" -> Locale.US;
             default -> Locale.CHINA;
         };
     }
 
     static String locale(Locale locale) {
-        if (locale == Locale.ENGLISH) {
+        if (locale == Locale.ENGLISH || locale == Locale.US) {
             return "en_us";
         }
         return locale.toLanguageTag().replace('-', '_').toLowerCase();

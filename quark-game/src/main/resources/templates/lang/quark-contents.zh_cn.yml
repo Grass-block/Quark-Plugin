@@ -8,6 +8,9 @@ language:
     stair-seat: 楼梯座椅
     tpa: 传送请求
     waypoint: 导航点
+    hats: 戴帽子
+  stair-seat:
+    tip: "{#gray}对着楼梯方块右键可以坐下。"
   waypoint:
     exist: '{global#sys-error}已存在导航点 {#var}。'
     not-exist: '{global#sys-error}已存在导航点 {#var}。'
@@ -22,6 +25,9 @@ language:
     back-not-set: "{global#sys-error}你还没死亡过。"
     back-tp-success: "{global#sys-success}已将你传送到上次死亡地点。"
     back-hint: "{global#sys-info}你的死亡地点已经记录。使用 {#gold}/back{#gray} 或 {click(command,/back)}{#white}[{#aqua}点此传送{#white}]"
+    tip: "{#gray}使用{#gold}/waypoint{#gray}可以建立你自己的导航或者使用公共导航点。"
+    tip-back: "{#gray}使用{#gold}/back{#gray}可以快速回到死亡位置。"
+    tip-home: "{#gray}使用{#gold}/sethome{#gray}添加一个家，用{#gold}/home{#gray}可以快速回家。"
   minecart-controller:
     run-mode-run: "{#aqua}运行"
     run-mode-boost: "{#green}加速"
@@ -69,4 +75,14 @@ language:
     reload: "{global#sys-info}成功重载配方组。"
     restore: "{global#sys-info}成功保存样例配方组。"
   item-counter:
+  hats:
+    empty: "{global#error}你没有拿着任何东西。"
+    not-found: "{global#error}指定的玩家不存在。"
+    failed: "{global#error}玩家的头盔槽位不为空。"
+    success: "{global#info}成功替换帽子。"
+  elevator:
+    tip:
+      - "{#gray}使用金锭，红石和活塞来合成电梯方块，在他们上方跳跃或潜行可以快速上下。"
+      - "{#gray}为了电梯正常识别，电梯上方2格内部必须为空气。"
+      - "{#gray}您可在 {click(link,https://www.atforever.world/wiki.html#server-function.md)}{#white}[{#aqua}此处{#white}]{#gray}查询配方。"
 

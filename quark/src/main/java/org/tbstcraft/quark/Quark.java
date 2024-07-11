@@ -1,32 +1,29 @@
 package org.tbstcraft.quark;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.tbstcraft.quark.data.config.Configuration;
 import org.tbstcraft.quark.data.config.Language;
-import org.tbstcraft.quark.data.config.Queries;
-import org.tbstcraft.quark.data.config.YamlUtil;
-import org.tbstcraft.quark.util.Timer;
 import org.tbstcraft.quark.foundation.platform.BukkitPluginManager;
+import org.tbstcraft.quark.framework.packages.PackageManager;
+import org.tbstcraft.quark.util.Timer;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 public final class Quark extends JavaPlugin {
     public static final String PLUGIN_ID = "quark";
+    public static final String CORE_UA = "quark/tm8.5[electron_3];c-api_1.3;pnw_1.4";
+
     public static Language LANGUAGE;
     public static Configuration CONFIG;
     public static Quark PLUGIN;
     public static Logger LOGGER;
-
     private static boolean coreAvailable = false;
-
-    private String instanceId;
+    private String instanceUUID;
     private boolean fastBoot;
 
     public static boolean isCoreUnavailable() {
@@ -54,16 +51,42 @@ public final class Quark extends JavaPlugin {
         }).start();
     }
 
+    private void detectCounter() {
+        final String[] COUNTER_CONFLICT_LIST = new String[]{
+                "quark-display",
+                //"quark-chat",
+                //"quark-security",
+                //"quark-utilities"
+        };
+
+        Plugin counter = Bukkit.getPluginManager().getPlugin("Counter");
+
+        if (counter == null) {
+            return;
+        }
+        if (!counter.getClass().getName().equals("org.kyoikumi.plugin.counter.Counter")) {
+            return;
+        }
+
+        LOGGER.severe("detected counter plugin, this may cause conflict.");
+        LOGGER.severe("we WON'T fix any problem of duplicated function.");
+
+        for (String s : COUNTER_CONFLICT_LIST) {
+            LOGGER.severe("[CounterConflict] rejected local package %s.".formatted(s));
+            PackageManager.addRejection(s);
+        }
+    }
+
     @Override
     public void onEnable() {
         PLUGIN = this;
-        BukkitPluginManager.INSTANCE_CACHE.set(this);
+        BukkitPluginManager.CORE_REF.set(this);
 
         this.saveDefaultConfig();
         this.reloadConfig();
 
         this.fastBoot = getConfig().getBoolean("config.startup.fast-boot");
-        this.instanceId = UUID.randomUUID().toString();
+        this.instanceUUID = UUID.randomUUID().toString();
 
         try {
             Class.forName("org.tbstcraft.quark.util.Timer");
@@ -77,18 +100,12 @@ public final class Quark extends JavaPlugin {
 
         Timer.restartTiming();
 
-        InputStream templateResource = Objects.requireNonNull(this.getClass().getResourceAsStream("/config.yml"));
-        YamlConfiguration template = YamlConfiguration.loadConfiguration(new InputStreamReader(templateResource));
-
-        YamlUtil.update(getConfig(), template, false, 3);
-
-        this.saveConfig();
-        Queries.setEnvironmentVars(Objects.requireNonNull(getConfig().getConfigurationSection("config.environment")));
-
         Bootstrap.run(Bootstrap.BootOperations.class, this);
         coreAvailable = true;
 
         LOGGER.info("Initialization completed.(%d ms)".formatted(Timer.passedTime()));
+
+        detectCounter();
     }
 
     @Override
@@ -101,8 +118,8 @@ public final class Quark extends JavaPlugin {
         LOGGER.info("Stop completed.(%d ms)".formatted(Timer.passedTime()));
     }
 
-    public String getInstanceId() {
-        return this.instanceId;
+    public String getInstanceUUID() {
+        return this.instanceUUID;
     }
 
     public boolean isFastBoot() {

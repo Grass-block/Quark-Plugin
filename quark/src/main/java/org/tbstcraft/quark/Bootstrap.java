@@ -4,19 +4,23 @@ import me.gb2022.apm.client.ClientMessenger;
 import me.gb2022.apm.client.backend.MessageBackend;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.tbstcraft.quark.data.config.Configuration;
 import org.tbstcraft.quark.data.config.Language;
 import org.tbstcraft.quark.data.config.Queries;
+import org.tbstcraft.quark.data.config.YamlUtil;
+import org.tbstcraft.quark.foundation.platform.APIProfileTest;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceManager;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
-import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.util.DeferredLogger;
 import org.tbstcraft.quark.util.Timer;
-import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -75,7 +79,7 @@ public interface Bootstrap {
                 TextSender.sendToConsole(TextBuilder.build("""
                         {color(red)}Quark核心检测到您正在使用Folia服务端!{color(white)}
                           Folia兼容已自动启用。我们不保证任何功能的可用!
-                        
+                                                
                         {color(red)}Quark core detected you are using Folia Server!{color(white)}
                           Folia compat are automatically enabled.We do NOT ensure any feature's availability!
                         """));
@@ -133,15 +137,20 @@ public interface Bootstrap {
         static void configuration(Quark instance) {
             Quark.LANGUAGE = Language.create("quark-core");
             Quark.CONFIG = new Configuration("quark-core");
-            Queries.reloadExternal();
+
+            InputStream templateResource = Objects.requireNonNull(instance.getClass().getResourceAsStream("/config.yml"));
+            YamlConfiguration template = YamlConfiguration.loadConfiguration(new InputStreamReader(templateResource));
+
+            YamlUtil.update(instance.getConfig(), template, false, 3);
+
+            instance.saveConfig();
+            Queries.setEnvironmentVars(Objects.requireNonNull(instance.getConfig().getConfigurationSection("config.environment")));
         }
 
         @ContextComponent(order = 5, text = "Service started")
         static void startService(Quark instance) {
             Service.initBase();
             QuarkInternalPackage.register(PackageManager.INSTANCE.get());
-
-            Queries.initialize();
 
             ClientMessenger.setBackend(MessageBackend.bukkit(Quark.PLUGIN));
             ClientMessenger.getBackend().start();

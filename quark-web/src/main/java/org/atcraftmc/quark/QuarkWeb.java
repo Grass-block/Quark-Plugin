@@ -1,4 +1,4 @@
-package org.atcraftmc.quark.web;
+package org.atcraftmc.quark;
 
 import org.tbstcraft.quark.FeatureAvailability;
 import org.tbstcraft.quark.framework.packages.initializer.JsonPackageInitializer;

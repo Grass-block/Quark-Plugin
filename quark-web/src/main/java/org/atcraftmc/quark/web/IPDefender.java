@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.security;
+package org.atcraftmc.quark.web;
 
 import com.google.gson.JsonParser;
 import me.gb2022.apm.local.PluginMessenger;

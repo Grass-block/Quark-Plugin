@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public final class JsonPackageInitializer implements PackageInitializer {
+    public static final JsonParser PARSER = new JsonParser();
+
     private final FeatureAvailability availability;
     private final String location;
     private JsonObject obj;
@@ -31,7 +33,7 @@ public final class JsonPackageInitializer implements PackageInitializer {
             throw new RuntimeException("cannot find json identifier: " + this.location);
         }
 
-        this.obj = JsonParser.parseReader(new InputStreamReader(in)).getAsJsonObject();
+        this.obj = PARSER.parse(new InputStreamReader(in)).getAsJsonObject();
         if (this.obj == null) {
             throw new RuntimeException("failed to load identifier: " + this.location);
         }
@@ -49,7 +51,7 @@ public final class JsonPackageInitializer implements PackageInitializer {
 
     @Override
     public ServiceRegistry getServiceRegistry(AbstractPackage pkg) {
-        if(!this.obj.has("services")){
+        if (!this.obj.has("services")) {
             return null;
         }
         return new JsonServiceRegistry(pkg, this.obj);

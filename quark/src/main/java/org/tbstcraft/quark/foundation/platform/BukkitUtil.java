@@ -179,6 +179,9 @@ public interface BukkitUtil {
         if (locale == null) {
             return "zh_cn";
         }
+        if (locale.startsWith("en")) {
+            return "en_us";
+        }
         if (locale.startsWith("zh")) {
             return locale.toLowerCase();
         }

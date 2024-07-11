@@ -1,7 +1,5 @@
 #file: noinspection HttpUrlsUsage
 config:
-  account-activation:
-    verify-link-delegation: 'http://service.tbstmc.xyz/api'
   explosion-defender:
     override-explosion: true
     record: true
@@ -23,13 +21,6 @@ config:
       - "water_bucket"
       - "respawn_anchor"
       - "end_crystal"
-  ip-defender:
-    record: true
-    auto-ban: false
-    auto-ban-day-time: 0
-    auto-ban-hour-time: 0
-    auto-ban-minute-time: 10
-    auto-ban-second-time: 0
   we-size-defender:
     selection-size: 128
     operation-size: 16

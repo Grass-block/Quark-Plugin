@@ -2,8 +2,8 @@ package org.atcraftmc.quark.web;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import me.gb2022.commons.reflect.AutoRegister;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.atcraftmc.quark.web.http.HttpHandlerContext;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.profile.PlayerProfile;
@@ -12,15 +12,16 @@ import org.tbstcraft.quark.api.QueryPingEvent;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.http.HttpHandlerContext;
-import org.tbstcraft.quark.internal.http.HttpRequest;
 
 @QuarkModule(version = "1.0.0")
-@AutoRegister(ServiceType.HTTP_SERVER)
 public final class ServerQueries extends PackageModule {
 
-    @HttpRequest("/query/players")
+    @Override
+    public void checkCompatibility() throws Throwable {
+        Class.forName("org.bukkit.profile.PlayerProfile");
+        HttpService.registerHandler(this);
+    }
+
     public void queryPlayers(HttpHandlerContext context) {
         JsonObject object = context.createJsonReturn();
 
@@ -45,7 +46,6 @@ public final class ServerQueries extends PackageModule {
         object.add("players", array);
     }
 
-    @HttpRequest("/query/ping")
     public void queryMotd(HttpHandlerContext context) {
         JsonObject object = context.createJsonReturn();
         QueryPingEvent event = BukkitUtil.callEvent(new QueryPingEvent());

@@ -10,6 +10,9 @@ import org.tbstcraft.quark.framework.service.ServiceInject;
 import org.tbstcraft.quark.util.Comments;
 import org.tbstcraft.quark.util.NetworkUtil;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.util.Base64;
 import java.util.Objects;
@@ -36,11 +39,17 @@ public interface ProductService extends Service {
 
     static String getSystemIdentifier() {
         try {
-            NetworkInterface networkInterfaces = NetworkInterface.getByIndex(0);
-            return SHA.getSHA512(Base64.getEncoder().encodeToString(networkInterfaces.getHardwareAddress()), false);
+            for (int i=0;i<8;i++){
+                NetworkInterface networkInterfaces = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
+                if(networkInterfaces==null){
+                    continue;
+                }
+                return SHA.getSHA224(Base64.getEncoder().encodeToString(networkInterfaces.getHardwareAddress()), false);
+            }
         } catch (Exception e) {
             return "__error__";
         }
+        return "__error__";
     }
 
     static boolean isActivated() {

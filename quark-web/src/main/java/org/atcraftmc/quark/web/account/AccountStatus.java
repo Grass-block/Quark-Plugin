@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.security.account;
+package org.atcraftmc.quark.web.account;
 
 //integrated classes
 enum AccountStatus {

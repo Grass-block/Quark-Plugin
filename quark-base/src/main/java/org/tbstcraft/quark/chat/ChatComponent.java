@@ -2,29 +2,51 @@ package org.tbstcraft.quark.chat;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.tbstcraft.quark.api.PluginMessages;
+import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandManager;
-import org.tbstcraft.quark.data.config.Queries;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.foundation.platform.APIProfileTest;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.compat.Compat;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
-import org.tbstcraft.quark.foundation.platform.APIProfileTest;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolders;
+import org.tbstcraft.quark.util.placeholder.GloballyPlaceHolder;
+
+import java.util.HashSet;
 
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @Compat(ChatComponent.PaperCompat.class)
 @QuarkModule(id = "chat-component", version = "1.3.0")
 public final class ChatComponent extends PackageModule {
+    GloballyPlaceHolder chat = PlaceHolders.chat();
+
+    @Inject("tip")
+    private LanguageItem tip;
+
+    @Override
+    public void enable() {
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+    }
+
+    @Override
+    public void disable() {
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
+    }
 
     @EventHandler
     public void onChatting(AsyncPlayerChatEvent event) {
@@ -32,8 +54,9 @@ public final class ChatComponent extends PackageModule {
             return;
         }
         String msg = event.getMessage();
-        msg = Queries.GLOBAL_TEMPLATE_ENGINE.handle(msg);
+        msg = PlaceHolderService.format(msg);
         msg = processChar(msg);
+        msg = processColorChars(msg);
         event.setMessage(TextBuilder.build(msg).toString());
     }
 
@@ -42,9 +65,13 @@ public final class ChatComponent extends PackageModule {
         if (CommandManager.isQuarkCommand(event.getMessage().split(" ")[0].replace("/", ""))) {
             return;
         }
+        if (event.getMessage().contains("self-msg")) {
+            return;
+        }
         String msg = event.getMessage();
-        msg = Queries.GLOBAL_TEMPLATE_ENGINE.handle(msg);
+        msg = PlaceHolderService.format(msg);
         msg = processChar(msg);
+        msg = processColorChars(msg);
         event.setMessage(TextBuilder.build(msg).toString());
     }
 
@@ -92,6 +119,12 @@ public final class ChatComponent extends PackageModule {
         return output.toString();
     }
 
+    public String processColorChars(String input) {
+        for (String s : chat.getRegisterKeys()) {
+            input = input.replace(s, chat.get(s));
+        }
+        return input;
+    }
 
     @CompatDelegate(APIProfile.PAPER)
     @AutoRegister(ServiceType.EVENT_LISTEN)
@@ -103,7 +136,8 @@ public final class ChatComponent extends PackageModule {
         @EventHandler
         public void onChatting(AsyncChatEvent event) {
             String msg = LegacyComponentSerializer.legacySection().serialize(event.message());
-            msg = Queries.GLOBAL_TEMPLATE_ENGINE.handle(msg);
+            msg = getParent().processColorChars(msg);
+            msg = PlaceHolderService.format(msg);
             msg = this.getParent().processChar(msg);
             event.message(TextBuilder.buildComponent(msg));
         }
@@ -115,7 +149,12 @@ public final class ChatComponent extends PackageModule {
                 if (origin == null) {
                     continue;
                 }
-                event.line(i, TextBuilder.buildComponent(LegacyComponentSerializer.legacySection().serialize(origin)));
+
+                String text = LegacyComponentSerializer.legacySection().serialize(origin);
+                text = this.getParent().processColorChars(text);
+                text = this.getParent().processChar(text);
+
+                event.line(i, TextBuilder.buildComponent(text));
             }
         }
     }

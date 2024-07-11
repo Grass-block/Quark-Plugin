@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.internal.http;
+package org.atcraftmc.quark.web.http;
 
 import com.sun.net.httpserver.HttpServer;
 import org.tbstcraft.quark.Quark;

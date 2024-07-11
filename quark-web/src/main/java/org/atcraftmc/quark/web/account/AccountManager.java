@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.security.account;
+package org.atcraftmc.quark.web.account;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
 import org.tbstcraft.quark.data.PlayerDataService;

@@ -101,7 +101,7 @@ public final class MCSMDynamicInstance extends PackageModule {
         event.writeResult((byteBuf -> byteBuf.writeByte(114)));
     }
 
-    @QuarkCommand(name = "join-dyn-server", permission = "+quark.dyn-server")
+    @QuarkCommand(name = "join-dyn-server", permission = "+quark.dynserver")
     public static final class JoinDynamicServerCommand extends ModuleCommand<MCSMDynamicInstance> {
         @Override
         public void onCommand(CommandSender sender, String[] args) {

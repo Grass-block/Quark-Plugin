@@ -1,5 +1,7 @@
 package org.tbstcraft.quark.contents;
 
+import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -19,29 +21,40 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.util.Vector;
-import me.gb2022.commons.reflect.AutoRegister;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.api.PluginMessages;
+import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.data.language.LanguageItem;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Objects;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "2.0.1")
 public final class StairSeat extends PackageModule {
     public static final String CHAIR_ENTITY_ID = "quark_chair_entity";
-
     private final HashMap<String, Entity> entityMapping = new HashMap<>();
     private final HashMap<String, Location> locationMapping = new HashMap<>();
     private final HashMap<Location, String> handledBlocks = new HashMap<>();
+
+    @Inject("tip")
+    private LanguageItem tip;
+
+    @Override
+    public void enable() {
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+    }
 
     @Override
     public void disable() {
         for (String s : this.entityMapping.keySet()) {
             this.removePlayerSeat(s);
         }
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
     }
 
     @EventHandler

@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.internal.http;
+package org.atcraftmc.quark.web.http;
 
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;

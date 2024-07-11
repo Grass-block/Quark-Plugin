@@ -1,8 +1,10 @@
 package org.tbstcraft.quark.internal.permission;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
@@ -17,8 +19,31 @@ public interface PermissionService extends Service {
     @ServiceInject
     ServiceHolder<PermissionService> INSTANCE = new ServiceHolder<>();
 
+    static Permission getPermission(String codec) {
+        String name = codec;
+
+        if (codec.matches("^[+\\-!].*")) {
+            name = codec.substring(1);
+        }
+
+        Permission permission = Bukkit.getPluginManager().getPermission(name);
+
+        if (permission == null) {
+            if (codec.matches("^[+\\-!].*")) {
+                Quark.LOGGER.warning("created unregistered permission " + codec);
+                permission = createPermissionObject(codec);
+            }
+        }
+
+        return permission;
+    }
+
     static Permission createObject(String perm) {
         String id = perm.substring(1);
+        if (!id.matches("^[a-z.]+$")) {
+            throw new IllegalArgumentException("Invalid permission id: " + id);
+        }
+
         return new Permission(id, switch (perm.charAt(0)) {
             case '+' -> PermissionDefault.TRUE;
             case '-' -> PermissionDefault.OP;
@@ -33,6 +58,12 @@ public interface PermissionService extends Service {
 
     static Permission createPermissionObject(String fmt) {
         return INSTANCE.get().create(fmt);
+    }
+
+    static void update() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.recalculatePermissions();
+        }
     }
 
     static void deletePermission(String fmt) {
@@ -56,12 +87,18 @@ public interface PermissionService extends Service {
         @Override
         public Permission create(String perm) {
             Permission permission = createObject(perm);
-            Permission replacement = Bukkit.getPluginManager().getPermission(perm.substring(1));
+
+            if (perm.matches("^[a-z.]+$")) {
+                perm = perm.substring(1);
+            }
+
+            Permission replacement = Bukkit.getPluginManager().getPermission(perm);
             if (replacement != null) {
                 replacement.setDefault(permission.getDefault());
             } else {
                 Bukkit.getPluginManager().addPermission(permission);
             }
+
             this.map.put(permission.getName(), permission);
             return permission;
         }

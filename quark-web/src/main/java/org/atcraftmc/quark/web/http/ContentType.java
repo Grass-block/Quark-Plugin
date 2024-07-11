@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.internal.http;
+package org.atcraftmc.quark.web.http;
 
 public enum ContentType {
     TEXT("text/plain;encoding=utf-8"),

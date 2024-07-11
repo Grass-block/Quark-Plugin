@@ -1,11 +1,15 @@
 package org.tbstcraft.quark.chat;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
+import me.gb2022.commons.reflect.Inject;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.tbstcraft.quark.CustomChatRenderer;
 import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.api.PluginMessages;
+import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
@@ -27,6 +31,19 @@ import java.util.*;
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class ChatReport extends PackageModule {
     private final Map<String, String> records = new HashMap<>();
+
+    @Inject("tip")
+    private LanguageItem tip;
+
+    @Override
+    public void enable() {
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+    }
+
+    @Override
+    public void disable(){
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
+    }
 
     @EventHandler
     public void onChat(AsyncChatEvent event) {

@@ -1,5 +1,5 @@
 language:
-  server-transfer-message:
-    server-in-dev: '{global#sys-info}子服务器正在开发，敬请期待.'
-    server-transfer:
-      - '{global#sys-success}已将你传送至 {#var} 服务器，使用 {#gold}/hub{#gray},{#gold}/lobby{#gray}或者{click(command,/hub)}[{#aqua}点击此处{#white}]{#gray}来返回大厅!'
+  default-inventory:
+    edit-start: "{global#info}你打开了默认物品栏编辑器。"
+    edit-complete: "{global#info}默认物品栏已更新。"
+    cover: "{global#info}默认物品栏配置已覆盖到您的物品栏。"

@@ -18,7 +18,7 @@ import java.util.*;
 @SuppressWarnings({"removal"})
 public interface BukkitPluginManager {
     HashMap<String, String> CACHE = new HashMap<>();
-    ObjectContainer<Quark> INSTANCE_CACHE = new ObjectContainer<>();
+    ObjectContainer<Quark> CORE_REF = new ObjectContainer<>();
 
     static Plugin load(String file) {
         try {
@@ -28,7 +28,7 @@ public interface BukkitPluginManager {
                 unload(BukkitUtil.getPluginDescription(f).getName());
 
                 if (APIProfileTest.isArclightBasedServer()) {
-                    p = INSTANCE_CACHE.get().getPluginLoader().loadPlugin(f);
+                    p = CORE_REF.get().getPluginLoader().loadPlugin(f);
                 } else {
                     p = Bukkit.getPluginManager().loadPlugin(f);
                 }

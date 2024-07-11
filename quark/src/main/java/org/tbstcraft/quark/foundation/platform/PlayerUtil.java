@@ -9,6 +9,9 @@ import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.framework.event.BanMessageFetchEvent;
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolders;
+import org.tbstcraft.quark.util.placeholder.PlaceHolder;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -119,8 +122,8 @@ public interface PlayerUtil {
 
     static void setPlayerTab(Player player, String header, String footer) {
         try {
-            header = Queries.PLAYER_TEMPLATE_ENGINE.handle(player, header);
-            footer = Queries.PLAYER_TEMPLATE_ENGINE.handle(player, footer);
+            header = PlaceHolderService.formatPlayer(player, header);
+            footer = PlaceHolderService.formatPlayer(player, footer);
 
             if (APIProfileTest.isPaperCompat()) {
                 player.sendPlayerListHeader(TextBuilder.buildComponent(header));

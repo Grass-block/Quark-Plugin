@@ -5,6 +5,7 @@ import org.tbstcraft.quark.foundation.text.ComponentBlock;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public final class LanguageItem {
     private final ILanguageAccess parent;
@@ -81,5 +82,13 @@ public final class LanguageItem {
 
     public void broadcastRandomMessage(boolean op, boolean console, Object... format) {
         this.parent.broadcastRandomMessage(op, console, this.namespace, this.id, format);
+    }
+
+    public Set<Locale> getIncludeLocales() {
+        return Set.of();
+    }
+
+    public String getId() {
+        return "%s:%s".formatted(this.namespace, this.id);
     }
 }

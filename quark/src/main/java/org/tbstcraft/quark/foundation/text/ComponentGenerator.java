@@ -67,7 +67,7 @@ public interface ComponentGenerator {
             }
             sb.delete(sb.length() - 1, sb.length());
             sb.append(">").append(content).append("</gradient>");
-            return ((TextComponent) MINI_MESSAGE_DISPATCHER.deserialize(sb.toString())).toBuilder();
+            return ((TextComponent) MINI_MESSAGE_DISPATCHER.deserialize(sb.toString().replaceAll("§[0-9/a-z]",""))).toBuilder();
         }
 
         String colorArg = col[0];

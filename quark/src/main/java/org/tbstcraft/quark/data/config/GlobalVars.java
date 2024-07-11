@@ -4,33 +4,20 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.util.FilePath;
-import org.tbstcraft.quark.util.query.TemplateEngine;
 
 import java.io.*;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 public final class GlobalVars {
-    private final Set<String> keys = new HashSet<>();
+    private Plugin holder = Quark.PLUGIN;
 
-    private final TemplateEngine target;
-    private Plugin holder;
+    public Map<String, String> loadMap() {
+        Map<String, String> map = new HashMap<>();
 
-    public GlobalVars(TemplateEngine target) {
-        this.target = target;
-    }
-
-    public void setHolder(Plugin holder) {
-        this.holder = holder;
-    }
-
-    private File getExternalFile() {
-        return new File(FilePath.pluginFolder(this.holder.getName()) + "/global_vars.yml");
-    }
-
-    public void load() {
         try {
             File f = this.getExternalFile();
             this._update(false, f);
@@ -44,21 +31,15 @@ public final class GlobalVars {
 
             ConfigurationSection root = external.getConfigurationSection("global-vars");
             if (root == null) {
-                return;
+                return map;
             }
-
-            for (String s : this.keys) {
-                this.target.unregister(s);
-            }
-            this.keys.clear();
 
             for (String s : root.getKeys(false)) {
                 if (!root.isConfigurationSection(s)) {
-                    if (this.keys.contains(s)) {
+                    if (map.containsKey(s)) {
                         continue;
                     }
-                    this.target.register(s, () -> root.get(s));
-                    this.keys.add(s);
+                    map.put(s, root.getString(s));
                     continue;
                 }
 
@@ -69,24 +50,32 @@ public final class GlobalVars {
                 for (String key2 : section.getKeys(false)) {
                     String id = s + ":" + key2;
 
-                    if (!this.keys.contains(key2)) {
-                        this.target.register(key2, () -> section.get(key2));
-                        this.keys.add(key2);
+                    if (!map.containsKey(key2)) {
+                        map.put(key2, Objects.requireNonNull(section.get(key2)).toString());
                     }
-                    if (!this.keys.contains(id)) {
-                        this.target.register(id, () -> section.get(key2));
-                        this.keys.add(id);
+                    if (!map.containsKey(id)) {
+                        map.put(id, Objects.requireNonNull(section.get(key2)).toString());
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new RuntimeException(e);
         }
+
+        return map;
+    }
+
+    public void setHolder(Plugin holder) {
+        this.holder = holder;
+    }
+
+    private File getExternalFile() {
+        FilePath.tryReleaseAndGetFile("/templates/global_vars.yml", FilePath.pluginFolder(this.holder.getName()) + "/global_vars.yml");
+        return new File(FilePath.pluginFolder(this.holder.getName()) + "/global_vars.yml");
     }
 
     public void restore() {
         FilePath.tryReleaseAndGetFile("/templates/global_vars.yml", FilePath.pluginFolder(this.holder.getName()) + "/global_vars.yml");
-        this.load();
     }
 
     public void sync() {
@@ -110,7 +99,7 @@ public final class GlobalVars {
                 YamlUtil.update(external, internal, sync, 3);
                 external.save(f);
             }
-        } catch (IOException | InvalidConfigurationException e) {
+        } catch (Throwable e) {
             throw new RuntimeException(e);
         }
     }

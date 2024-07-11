@@ -14,7 +14,6 @@ import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.permission.PermissionService;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.util.container.CachedInfo;
@@ -27,7 +26,7 @@ import java.util.Objects;
 @QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT, APIProfile.ARCLIGHT, APIProfile.SPIGOT})
 public class DynamicViewDistance extends PackageModule {
 
-    @Inject("+quark.view-distance.set-other")
+    @Inject("-quark.viewdistance.other")
     private Permission setOtherPermission;
 
     @Override
@@ -58,7 +57,7 @@ public class DynamicViewDistance extends PackageModule {
         return dist;
     }
 
-    @QuarkCommand(name = "view-distance", permission = "+quark.view-distance")
+    @QuarkCommand(name = "view-distance", permission = "+quark.viewdistance")
     public static final class ViewDistanceCommand extends ModuleCommand<DynamicViewDistance> {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
@@ -73,7 +72,7 @@ public class DynamicViewDistance extends PackageModule {
                 return;
             }
             if (sender.hasPermission(this.getModule().setOtherPermission) && !Objects.equals(args[0], sender.getName())) {
-                sendPermissionMessage(sender);
+                sendPermissionMessage(sender, "(ServerOperator)");
                 return;
             }
 

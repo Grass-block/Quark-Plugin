@@ -6,6 +6,7 @@ import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.foundation.text.ComponentBlock;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.foundation.text.TextSender;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 
 import java.util.List;
 import java.util.Locale;
@@ -65,7 +66,7 @@ public abstract class ILanguageAccess {
             return src.replace(s, inline);
         });
 
-        return Queries.GLOBAL_TEMPLATE_ENGINE.handle(source);
+        return PlaceHolderService.format(PlaceHolderService.format(source));
     }
 
     private String match(String src, Pattern pattern, BiFunction<String, String, String> process) {
@@ -113,7 +114,7 @@ public abstract class ILanguageAccess {
     }
 
     public void sendTemplate(CommandSender sender, String namespace, String template) {
-        TextSender.sendBlock(sender,TextBuilder.build(this.buildTemplate(Language.locale(sender), namespace, template)));
+        TextSender.sendBlock(sender, TextBuilder.build(this.buildTemplate(Language.locale(sender), namespace, template)));
     }
 
     //component

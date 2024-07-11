@@ -33,37 +33,28 @@ public abstract class CommandModule extends PackageModule implements CommandExec
     }
 
     public void sendPermissionMessage(CommandSender sender) {
-        this.commandAdapter.sendPermissionMessage(sender);
+        this.commandAdapter.sendPermissionMessage(sender, "(ServerOperator)");
+    }
+
+    public void sendPlayerOnlyMessage(CommandSender sender){
+        this.commandAdapter.sendPlayerOnlyMessage(sender);
     }
 
     public static final class AdapterCommand<T extends CommandModule> extends ModuleCommand<T> {
-        public AdapterCommand(T commandModule) {
-            super(commandModule);
+        public AdapterCommand(T module) {
+            super(module);
+            this.init();
+            this.setExecutor(module);
+        }
+
+        @Override
+        public void init(T module) {
+            this.setExecutor(module);
         }
 
         @Override
         public QuarkCommand getDescriptor() {
             return this.getModule().getClass().getAnnotation(QuarkCommand.class);
-        }
-
-        @Override
-        public void onCommand(CommandSender sender, String[] args) {
-            if (this.getModule().execute(sender, args)) {
-                return;
-            }
-            if (this.getModule().getCovered() == null) {
-                return;
-            }
-            //this.getModule().getCovered().execute(sender, this.getLabel(), args);
-        }
-
-        @Override
-        public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-            this.getModule().onTab(sender, buffer, tabList);
-            if (this.getModule().getCovered() == null) {
-                return;
-            }
-            //tabList.addAll(this.getModule().getCovered().tabComplete(sender, this.getLabel(), args));
         }
 
         @Override

@@ -63,7 +63,7 @@ public interface PackageManager extends Service {
             return false;
         }
 
-        return p.getResource("/product-info.properties") != null;
+        return p.getResource("product-info.properties") != null;
     }
 
     static boolean verify(File f) {
@@ -174,6 +174,10 @@ public interface PackageManager extends Service {
 
     static Map<String, AbstractPackage> getAllPackages() {
         return INSTANCE.get().getPackages();
+    }
+
+    static void addRejection(String s) {
+
     }
 
     AbstractPackage get(String id);

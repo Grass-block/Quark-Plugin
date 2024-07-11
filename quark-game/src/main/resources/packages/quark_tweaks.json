@@ -11,6 +11,7 @@
     "double-door-sync": ".DoubleDoorSync",
     "entity-leash": ".EntityLeash",
     "dispenser-block-placer": ".DispenserBlockPlacer",
-    "realistic-sleep": ".RealisticSleep"
+    "realistic-sleep": ".RealisticSleep",
+    "portable-shulker-box": ".PortableShulkerBox"
   }
 }

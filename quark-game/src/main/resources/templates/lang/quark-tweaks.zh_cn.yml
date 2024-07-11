@@ -8,12 +8,20 @@ language:
     freecam: 自由视角
     vein-miner: 连锁采集
     realistic-sleep: 真实睡眠
+    portable-shulker-box: 快速打开潜影盒
+  vein-miner:
+    tip: "{#gray}潜行挖掘可以一次采集相连放置的矿石，木头和树叶，当然，这也会消耗更多耐久。"
   fly-speed-modifier:
     cmd-speed-set: "{global#info}飞行速度已被设为 {#var} 。"
     toggle: "{global#info}飞行模式已切换"
+    tip: "{#gray}使用{#gold}/flyspeed [数值]{#gray}可以调节您的飞行速度"
   freecam:
     start: "{global#info}自由视角已打开。"
     reset: "{global#info}自由视角已关闭。"
+    tip: "{#gray}使用{#gold}/freecam{#gray}可以启用或关闭自由视角，以便于您进行更好的探索。"
   realistic-sleep:
     sleep-day: '{global#sys-info}你正在非正常睡觉时间睡觉，请使用 {#gold}/leave-bed{#gray} 或者 {click(command,/leave-bed)}{#white}[{#green}点击此处{#white}]{reset}{#gray}来离开床。'
     leave-bed: '{global#sys-info}你已离开床。你可以随时再次睡觉。'
+    tip: "{#gray}白天躺在床上可以恢复血量，在夜晚则可以帮助全服玩家跳过时间。"
+  dispenser-block-placer:
+    tip: "{#gray}当收到信号时，发射器会尝试放置方块；如果正在发射的物品是工具，则会尝试用工具破坏面前的方块。"

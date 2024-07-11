@@ -4,7 +4,7 @@ version: '${version}'
 
 #api
 main: org.tbstcraft.quark.Quark
-api-version: 1.18
+api-version: 1.13
 folia-supported: true
 load: POSTWORLD
 softdepend: ['quark-platform']

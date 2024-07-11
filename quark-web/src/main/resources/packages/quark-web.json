@@ -3,6 +3,12 @@
   "version": "0.10",
   "package_namespace": "org.atcraftmc.quark.web",
   "modules": {
-    "server-queries":".ServerQueries"
-  }
+    "account-activation": ".account.AccountActivation",
+    "ip-defender": ".IPDefender",
+    "server-queries": ".ServerQueries"
+  },
+  "services": [
+    ".SMTPService",
+    ".HttpService"
+  ]
 }

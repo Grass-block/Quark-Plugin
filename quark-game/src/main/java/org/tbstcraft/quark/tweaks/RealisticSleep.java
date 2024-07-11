@@ -1,5 +1,7 @@
 package org.tbstcraft.quark.tweaks;
 
+import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
@@ -9,15 +11,17 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
+import org.tbstcraft.quark.api.PluginMessages;
+import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
 
 import java.util.*;
 
@@ -30,8 +34,12 @@ public final class RealisticSleep extends PackageModule {
     private final Set<Player> daySleepingPlayers = new HashSet<>();
     private final Set<Player> whateverSleepingPlayers = new HashSet<>();
 
+    @Inject("tip")
+    private LanguageItem tip;
+
     @Override
     public void enable() {
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
         TaskService.timerTask("quark:rs:health", 0, this.getConfig().getInt("health-interval"), () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (!this.whateverSleepingPlayers.contains(p)) {
@@ -63,17 +71,18 @@ public final class RealisticSleep extends PackageModule {
         });
     }
 
+    @Override
+    public void disable() {
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
+        TaskService.cancelTask("quark:rs:daemon");
+    }
+
+
     private Set<Player> getPlayerList(Player p) {
         if (!this.sleepingPlayers.containsKey(p.getWorld())) {
             this.sleepingPlayers.put(p.getWorld(), new HashSet<>());
         }
         return this.sleepingPlayers.get(p.getWorld());
-    }
-
-
-    @Override
-    public void disable() {
-        TaskService.cancelTask("quark:rs:daemon");
     }
 
     @EventHandler

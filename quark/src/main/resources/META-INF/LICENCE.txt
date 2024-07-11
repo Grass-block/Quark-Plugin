@@ -1,6 +1,5 @@
 Quark 最终用户许可协议
 
-* 请以原页面一切内容为准[https://www.atforever.world/wiki.html#quark/eula.md]
 * 为便于阅读，以下附带有协议原文的副本。
 
 使用A. T. Network Quark Framework(以下简称"Quark")的用户须遵守本协议，使用Quark即认为您遵守本协议。

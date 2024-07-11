@@ -4,7 +4,7 @@ version: '1.0.36'
 
 #api
 main: org.tbstcraft.quark.platform.Main
-api-version: 1.18
+api-version: 1.14
 folia-supported: true
 load: POSTWORLD
 

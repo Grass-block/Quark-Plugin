@@ -16,6 +16,7 @@ import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.foundation.text.TextSender;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -98,13 +99,13 @@ public final class ChatAt extends PackageModule {
         ConfigurationSection cfg = this.getConfig();
         String target = column.replaceFirst("@", "");
         String completedTemplate = Objects.requireNonNull(cfg.getString("at-template")).replace("{player}", target);
-        return Queries.GLOBAL_TEMPLATE_ENGINE.handle(completedTemplate);
+        return PlaceHolderService.format(completedTemplate);
     }
 
     public String generateTitleMessage(String msg, Player p) {
         ConfigurationSection cfg = this.getConfig();
         String template = Objects.requireNonNull(cfg.getString("at-title-template"));
         String completedTemplate = template.replace("{player}", p.getName()).replace("{message}", msg);
-        return Queries.GLOBAL_TEMPLATE_ENGINE.handle(completedTemplate);
+        return PlaceHolderService.format(completedTemplate);
     }
 }

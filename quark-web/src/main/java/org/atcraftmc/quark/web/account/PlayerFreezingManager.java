@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.security.account;
+package org.atcraftmc.quark.web.account;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

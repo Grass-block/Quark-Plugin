@@ -2,13 +2,16 @@ package org.tbstcraft.quark;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.tbstcraft.quark.framework.packages.PackageManager;
-import org.tbstcraft.quark.internal.ProductService;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.foundation.text.TextSender;
+import org.tbstcraft.quark.framework.packages.PackageManager;
+import org.tbstcraft.quark.internal.ProductService;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolders;
 
 import java.util.Properties;
 
+@SuppressWarnings("TrailingWhitespacesInTextBlock")
 public interface ProductInfo {
     Properties METADATA = new Properties();
 
@@ -65,40 +68,46 @@ public interface ProductInfo {
         f = f.substring(0, f.length() - 1);
 
         String s = """
-                 ================{#red}[{#white}Quark-统计信息{#red}]{#white}================
+                {#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一
+                 Quark-统计信息{#red}:
                 {;}
-                  已安装的模块: {#aqua}{#module_installed}{#white}
-                  已启用的模块: {#aqua}{#module_enabled}{#white}
-                  生成的玩家档案: {#aqua}{#player_data_count}{#white}
-                  生成的模块档案: {#aqua}{#module_data_count}{#white}
+                  已安装的模块: {#aqua}{#module-installed}{#white}
+                  已启用的模块: {#aqua}{#module-enabled}{#white}
+                  生成的玩家档案: {#aqua}{#player-data-count}{#white}
+                  生成的模块档案: {#aqua}{#module-data-count}{#white}
                   已安装的子包:
                 %s
-                  核心版本: {#aqua}{#quark_version}{#white}
-                  框架版本: {#aqua}{#quark_framework_version}{#white}
-                  构建时间: {#aqua}{#build_time}{#white}
-                """.formatted(f);
-        TextSender.sendBlock(sender, TextBuilder.build(s));
+                  核心版本: {#aqua}{#quark-version}{#white}
+                  构建时间: {#aqua}{#build-time}{#white}
+                                
+                  {#gray}core_UA: %s
+                  {#gray}instance_id: %s
+                  {#gray}install_id: %s
+                {#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一
+                """.formatted(f, Quark.CORE_UA, Quark.PLUGIN.getInstanceUUID(), ProductService.getSystemIdentifier());
+        TextSender.sendBlock(sender, TextBuilder.build(PlaceHolderService.format(s, PlaceHolders.quarkStats())));
     }
 
     static void sendInfoDisplay(CommandSender sender) {
         String s = """
                 {logo}
-                
+                                
                  强大的Minecraft服务器综合管理插件。
 
                  官方网站: {color(aqua);underline;click(link,https://quark.tbstmc.xyz)}https://quark.tbstmc.xyz{none}
                  联系我们: {#aqua}tbstmc@163.com{none}
-                
+                                
                  测试服务器: ATCraft Network
                  开发: GrassBlock2022
                  多语言: ChatGPT by OpenAI
                  特别感谢: Mipa[Folia平台测试] 以及所有的第三方库开发者
-                
+                               
                  {#red}[{#white}第三方库{#red}]{#white}
                   - LevelDB: 数据存储
                   - AdventureAPI: 玩家界面实现
-                
+                                
                  {#white}Copyright @ATCraft Network(TBSTMC)(China). All Right Reserved.
+                {#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一
                 """;
         if (ProductService.isActivated()) {
             s = s.replace("{activate}", "已激活");
@@ -107,7 +116,7 @@ public interface ProductInfo {
         }
 
         if (!(sender instanceof ConsoleCommandSender)) {
-            String prefix = " ================{#red}[{#white}Quark-关于{#red}]{#white}================\n";
+            String prefix = "{#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一\n";
 
             TextSender.sendBlock(sender, TextBuilder.build(prefix + s.replace("{logo}", textLogo())));
         } else {

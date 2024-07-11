@@ -6,6 +6,7 @@
     "map-protect": ".MapProtect",
     "player-protect": ".PlayerProtect",
     "back-to-spawn": ".BackToSpawn",
-    "npc-chat": ".NPCChat"
+    "npc-chat": ".NPCChat",
+    "default-inventory": ".DefaultInventory"
   }
 }

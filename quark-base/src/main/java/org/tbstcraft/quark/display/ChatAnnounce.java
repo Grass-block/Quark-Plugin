@@ -1,24 +1,29 @@
 package org.tbstcraft.quark.display;
 
+import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.PluginMessages;
+import org.tbstcraft.quark.data.ModuleDataService;
+import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.data.language.Language;
+import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import me.gb2022.commons.reflect.AutoRegister;
-import org.tbstcraft.quark.data.language.LanguageEntry;
-import org.tbstcraft.quark.data.language.Language;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
 
-import java.util.List;
-import java.util.function.Function;
+import java.util.*;
 
 @QuarkModule(version = "0.3.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
@@ -55,7 +60,7 @@ public final class ChatAnnounce extends PackageModule {
         }
         this.index++;
         for (Player p : Bukkit.getOnlinePlayers()) {
-            sendMessage(p);
+            sendHint(p);
         }
         this.freeze = true;
     }
@@ -64,21 +69,102 @@ public final class ChatAnnounce extends PackageModule {
         return this.language.getMessageList(Language.locale(sender), "content");
     }
 
-    private void sendMessage(CommandSender sender) {
-        Function<String, String> processor = (s) ->
-                s.formatted(this.getContents(sender).get((int) (this.index % this.getContents(sender).size())));
+    private void sendHint(CommandSender sender) {
+        Locale locale = Language.locale(sender);
+        String msg = this.getContents(sender).get((int) (this.index % this.getContents(sender).size()));
+        String mode = this.language.getMessage(locale, "type-hint");
 
-
-
-        this.language.sendTemplate(sender,Language.generateTemplate(this.getConfig(), "ui", processor));
+        this.language.sendTemplate(sender, Language.generateTemplate(this.getConfig(), "ui", (s) -> s.formatted(mode, msg)));
     }
+
+    private void sendAnnounce(CommandSender sender) {
+        NBTTagCompound tag = ModuleDataService.getEntry(this.getFullId());
+
+        if (!tag.hasKey("announce")) {
+            return;
+        }
+
+        Locale locale = Language.locale(sender);
+        String msg = tag.getString("announce");
+        String mode = this.language.getMessage(locale, "type-announce");
+
+        this.language.sendTemplate(sender, Language.generateTemplate(this.getConfig(), "ui", (s) -> s.formatted(mode, msg)));
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void sendTip(CommandSender sender) {
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> {
+            List<LanguageItem> list = new ArrayList<>(s);
+
+            Locale locale = Language.locale(sender);
+
+            String msg = list.get(new Random().nextInt(list.size())).getMessage(Language.locale(sender));
+            String mode = this.language.getMessage(locale, "type-tip");
+            String btn = this.language.getMessage(locale, "tip-append");
+
+            this.language.sendTemplate(sender, Language.generateTemplate(this.getConfig(), "ui", (ss) -> ss.formatted(mode + "  " + btn, msg)));
+        });
+    }
+
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        this.sendTip(event.getPlayer());
+        this.sendAnnounce(event.getPlayer());
+    }
+
 
     @QuarkCommand(name = "chat-hint")
     public static final class HintCommand extends ModuleCommand<ChatAnnounce> {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
-            this.getModule().sendMessage(sender);
-            this.getModule().index++;
+            switch (args[0]) {
+                case "hint" -> {
+                    this.getModule().sendHint(sender);
+                    this.getModule().index++;
+                }
+                case "tips" -> this.getModule().sendTip(sender);
+                case "announce" -> this.getModule().sendAnnounce(sender);
+                case "set-announce" -> {
+                    if (!sender.isOp()) {
+                        this.sendPermissionMessage(sender, "(ServerOperator)");
+                        return;
+                    }
+
+                    String content = Objects.equals(args[1], "none") ? null : args[1] + "{;}";
+
+                    String entry = this.getModuleFullId();
+                    if (content == null) {
+                        ModuleDataService.getEntry(entry).getTagMap().remove("announce");
+                    } else {
+                        ModuleDataService.getEntry(entry).setString("announce", content);
+                    }
+
+                    ModuleDataService.save(entry);
+
+                    if (content == null) {
+                        this.getLanguage().sendMessage(sender, "custom-clear");
+                    } else {
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            if (p == sender) {
+                                continue;
+                            }
+                            this.getModule().sendAnnounce(sender);
+                        }
+                        this.getLanguage().sendMessage(sender, "custom-set", content);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
+            if (buffer.length == 1) {
+                tabList.add("hint");
+                tabList.add("tips");
+                tabList.add("set-announce");
+                tabList.add("announce");
+            }
         }
     }
 }

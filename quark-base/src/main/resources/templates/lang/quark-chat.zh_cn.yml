@@ -9,6 +9,22 @@ language:
     chat-at: At玩家
     chat-component: 聊天组件
     chat-filter: 聊天过滤器
+    chatgpt: ChatGPT
+  chatgpt:
+    request: "{global#sys-success}正在向ChatGPT发送聊天信息: {#var}"
+    request-gpt4: "{global#sys-success}正在向ChatGPT(4.0/NewBing)发送聊天信息(可能较慢): {#var}"
+    response: "{#aqua}ChatGPT {#gold}>> {#var}"
+    cooldown: "{global#sys-error}您正处于对话冷却状态({#var}秒)，请稍后再试。"
+    tip:
+      - "{#gray}您可以使用 {#gold}/chat-gpt{#gray}来和ChatGPT进行无上下文聊天。"
+      - "{#gray}聊天需要权限，每行对话请间隔10s。"
+      - "{#gray}API由像素云赞助，请勿滥用！"
+  chat-translator:
+    tip: '{#gray}您可以点击玩家发送的聊天信息后方的"[🌐]"将其翻译为您的客户端语言。'
+  chat-component:
+    tip:
+      - '{#gray}在聊天，告示牌和命令（部分支持）中，您可以使用富文本标签对文字添加更多效果。'
+      - '{#gray}点击{click(link,https://www.atforever.world/wiki.html#quark/template-engine.md)}[此处]{;}{#gray}了解更多。'
   chat-mute:
     message-banned: '[{#yellow}系统{#white}]{#gray}你被禁言了.'
     add: '[{#light-purple}系统{#white}]{#gray}成功将玩家 {#var} 加入列表。'
@@ -24,9 +40,11 @@ language:
     view: "{global#sys-info}以下是您在离线期间收到的留言:{#return}%s"
     view-hint: "{global#sys-info}您在离线期间收到了 {#var} 条留言，使用命令{#gold}/mail view{#gray} 或 {click(command,/mail view)}{#white}[{#aqua}点击查看{#white}]"
     view-none: "{global#sys-info}您在离线期间未收到任何留言。"
+    tip: '{#gray}如果一个玩家不在线，你可以用{#gold}/mail [玩家] [内容]进行留言。'
   chat-report:
     not-exist: "{global#sys-error}您要举报的聊天记录条目不存在, 或许它已经被举报过了。"
     success: "{global#sys-success}您已提交对 {#var} 的聊天举报 ({#var})。"
+    tip: '{#gray}如果一位玩家发送的信息包含了不合适的内容，你可以点击聊天文本后面的"[!]"进行举报。'
   chat-filter:
     reload: "{global#sys-success}成功重载规则文件。"
     save: "{global#sys-success}成功保存默认规则文件。"

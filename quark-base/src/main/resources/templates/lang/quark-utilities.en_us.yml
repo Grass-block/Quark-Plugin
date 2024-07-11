@@ -1,0 +1,92 @@
+language:
+  -module-names:
+    item-command: Item-Command Binding
+    surrounding-refresh: Surround Block Refresh
+    player-ping-command: Player Ping Query
+    calculator: Calculator
+  kick-on-reload:
+    reload-hint:
+      - "{#white}The server is reloading. To ensure normal gameplay, you have been temporarily kicked."
+      - "{#white}Please rejoin shortly.{#return}"
+    stop-hint:
+      - "{#white}The server has been shut down due to a fault or maintenance."
+      - "{#white}We apologize for any inconvenience caused.{#return}"
+  maintenance:
+    start: "{global#sys-operation}{#gray}Maintenance started."
+    end: "{global#sys-operation}{#gray}Maintenance ended."
+    kick-message:
+      - 'You cannot enter as the server is under maintenance.'
+      - 'Maintenance will take some time, please be patient. We apologize for any inconvenience.'
+  advanced-plugin-command:
+    list: "{global#sys-operation}Here are all the plugins: {#return}{#var}"
+    enable: "{global#sys-operation}Enabled plugin {#var}."
+    disable: "{global#sys-operation}Disabled plugin {#var}."
+    load: "{global#sys-operation}Loaded plugin {#var}."
+    unload: "{global#sys-operation}Unloaded plugin {#var}."
+    reload: "{global#sys-operation}Reloaded plugin {#var}."
+    info: "{global#sys-operation}Here is the information about plugin {#var}:{#return}%s"
+    info-name: "{#gold}Name{#white}: %s[%s]"
+    info-version: "{#gold}Version{#white}: %s"
+    info-author: "{#gold}Author{#white}: %s"
+    info-desc: "{#gold}Description{#white}: %s"
+    info-api: "{#gold}API Version{#white}: %s"
+    info-depend: "{#gold}Dependencies{#white}: %s"
+    info-soft-depend: "{#gold}Soft Dependencies{#white}: %s"
+    info-main: "{#gold}Main Class{#white}: %s"
+    info-libs: "{#gold}Libraries{#white}:"
+  calculator:
+    calc: "[{#blue}Calculation{#white}]{#gray} {#var} = {#var}"
+    tip: "{#gray}Use {#gold}/calc [expression]{#gray} for quick calculations."
+  player-ping-command:
+    ping-msg: "{global#sys-info}Your ping is: {#var} {#gray}ms"
+    tip: "{#gray}Use {#gold}/ping{#gray} to check your current ping!"
+  block-update-locker:
+    lock: "{global#sys-info}Block updates have been locked."
+    unlock: "{global#sys-info}Block updates have been unlocked."
+  item-command:
+    bind: "{global#sys-info}Item {#var} has been bound to the command {#var}."
+    unbind: "{global#sys-info}Cleared the command binding of item {#var}."
+    bind-fail: "{global#sys-error}Cannot bind command to an empty hand."
+    tip: "{#gray}Use {#gold}/item-command{#gray} to bind commands to your items, allowing quick execution of the command using the item."
+  custom-log-format:
+    enable: "{global#sys-operation}{#gray}Custom server log format enabled."
+    disable: "{global#sys-operation}{#gray}Custom server log format disabled."
+    reload: "{global#sys-operation}{#gray}Custom server log format reloaded."
+    restore: "{global#sys-operation}{#gray}Custom server log format reset."
+  dynamic-view-distance:
+    set: "{global#sys-operation}Set the view distance of player {#var} to {#white}%d{#gray} chunks."
+    unset: "{global#sys-operation}Removed the view distance setting of player {#var}."
+    set-target: "{global#sys-success}Your view distance has been set to {#white}%d{#gray} chunks."
+  console-command:
+    execute: "{global#sys-operation}Submitted console command: {#var}"
+  advanced-ban-command:
+    msg-ban-complete: "{global#sys-success}Banned player {#var} until {#var}, reason: {#var}."
+    broadcast: "{global#sys-info}Player {#var} was banned by {#var} until {#var} for {#var}."
+  player-position-lock:
+    lock: '{global#sys-info}Your position has been locked.'
+    unlock: '{global#sys-info}Your position has been unlocked.'
+    lock-player: '{global#sys-operation}You have locked the position of {#var}.'
+    unlock-player: '{global#sys-operation}You have unlocked the position of {#var}.'
+  camera-movement:
+    cam-start: '{global#sys-info}Camera path started ({#var} ticks)'
+    cam-end: '{global#sys-info}Camera path ended.'
+  surrounding-refresh:
+    to-big: '{global#error}Selection radius too large.'
+    not-found: '{global#error}Target player {#var} not found.'
+    success: '{global#success}Sending area refresh request to {#var}.'
+    refresh-target: '{global#info}Refreshing the area within a radius of {#var} around you. This may cause lag, please do not move.'
+    refresh-complete: '{global#info}Successfully refreshed the block data around you.'
+    tip: "{#gray}If you encounter ghost blocks, use {#gold}/refresh-area [radius]{#gray} to quickly refresh the blocks around you."
+  force-sprint:
+    tip: "{#gray}Use {#gold}/sprint{#gray} to quickly toggle auto sprint."
+    enable: "{global#info}Auto sprint enabled."
+    disable: "{global#info}Auto sprint disabled."
+  item-custom-name:
+    bind: "{global#sys-info}Bound item {#var} to custom language key {#var}."
+    unbind: "{global#sys-info}Cleared the custom language key binding of item {#var}."
+    bind-fail: "{global#sys-error}Cannot bind custom language key to an empty hand."
+    menu: "{#yellow}|| {#aqua}Menu {#yellow}||"
+    donate: "{#yellow}|| {#green}Donate {#yellow}||"
+    sign-in: "{#yellow}|| {#red}Sign In {#yellow}||"
+  stop-confirm:
+    hint: "{#red} Are you sure you want to stop the server? This may cause service interruption. If you are sure, please use {#yellow}/stop confirm"

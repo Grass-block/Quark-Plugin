@@ -13,16 +13,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.tbstcraft.quark.foundation.command.CommandProvider;
+import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.data.ModuleDataService;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.util.*;
@@ -77,9 +78,8 @@ public final class BossbarAnnouncement extends PackageModule {
     }
 
     public void addBar(Player p) {
-        Locale locale = Language.locale(p);
-        final Locale _locale = locale;
-        BossBar b = this.bars.computeIfAbsent(locale, s -> generateBossbar(_locale));
+        final Locale locale = Language.locale(p);
+        BossBar b = this.bars.computeIfAbsent(locale, s -> generateBossbar(locale));
         b.addPlayer(p);
     }
 
@@ -139,7 +139,7 @@ public final class BossbarAnnouncement extends PackageModule {
                 for (String s : args) {
                     sb.append(s).append(" ");
                 }
-                String content = Queries.GLOBAL_TEMPLATE_ENGINE.handle(sb.toString());
+                String content = PlaceHolderService.format(sb.toString());
                 tag.setString("custom", content);
                 this.getLanguage().sendMessage(sender, "custom-set", content);
                 this.getModule().setContent(content);

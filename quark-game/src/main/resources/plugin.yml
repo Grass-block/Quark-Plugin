@@ -4,7 +4,7 @@ version: '${version}-${core_version}'
 
 #api
 main: org.tbstcraft.quark.QuarkGame
-api-version: 1.18
+api-version: 1.14
 folia-supported: true
 load: POSTWORLD
 depend: ["quark"]

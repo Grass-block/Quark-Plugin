@@ -10,6 +10,8 @@
     "chat-at": ".ChatAt",
     "mail": ".Mail",
     "chat-report": ".ChatReport",
-    "daily-sentence": ".DailySentence"
+    "daily-sentence": ".DailySentence",
+    "chatgpt": ".ChatGPT",
+    "self-message": ".SelfMessage"
   }
 }

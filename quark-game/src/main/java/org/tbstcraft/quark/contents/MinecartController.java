@@ -13,12 +13,12 @@ import org.bukkit.util.Vector;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.text.DecimalFormat;
 import java.util.HashSet;
@@ -31,7 +31,7 @@ public final class MinecartController extends PackageModule {
 
     @Inject
     private LanguageEntry language;
-    
+
     private static String getTaskIdentifier(Player p) {
         return "quark://minecart_controller/speed_calc/%s".formatted(p.getName());
     }
@@ -128,23 +128,23 @@ public final class MinecartController extends PackageModule {
 
         Locale locale = Language.locale(p);
 
-        String template = Language.generateTemplate(this.getConfig(), "ui", (s) -> {
-            String s2;
-            if (thrustLevel > 0) {
-                s2 = this.language.getMessage(locale, "run-mode-boost");
-            } else if (thrustLevel == 0) {
-                s2 = this.language.getMessage(locale, "run-mode-run");
-            } else {
-                s2 = this.language.getMessage(locale, "run_mode_break");
-            }
-            if (speed == 0) {
-                s2 = this.language.getMessage(locale, "run-mode-stop");
-            }
-            if (speed == getConfig().getDouble("max-speed")) {
-                s2 = this.language.getMessage(locale, "run-mode-run");
-            }
-            return s.replace("{run-mode}", s2);
-        });
+        String template = Language.generateTemplate(this.getConfig(), "ui");
+
+        String runMode;
+        if (thrustLevel > 0) {
+            runMode = this.language.getMessage(locale, "run-mode-boost");
+        } else if (thrustLevel == 0) {
+            runMode = this.language.getMessage(locale, "run-mode-run");
+        } else {
+            runMode = this.language.getMessage(locale, "run_mode_break");
+        }
+        if (speed == 0) {
+            runMode = this.language.getMessage(locale, "run-mode-stop");
+        }
+        if (speed == getConfig().getDouble("max-speed")) {
+            runMode = this.language.getMessage(locale, "run-mode-run");
+        }
+        template = template.replace("{run-mode}", runMode);
 
         template = template.replace("{speed}", speedColumn)
                 .replace("{acceleration}", accelerationColumn)

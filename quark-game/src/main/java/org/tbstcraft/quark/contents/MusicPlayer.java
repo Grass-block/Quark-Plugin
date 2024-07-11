@@ -35,8 +35,6 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.*;
 import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.internal.RemoteMessageService;
-import org.tbstcraft.quark.internal.http.HttpHandlerContext;
-import org.tbstcraft.quark.internal.http.HttpRequest;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiSystem;
@@ -161,16 +159,6 @@ public final class MusicPlayer extends PackageModule {
             case "play" -> playMusic(args[1], args[2], Integer.parseInt(args[3]));
         }
     }
-
-    @HttpRequest("/music/list")
-    public JsonElement queryMusics(HttpHandlerContext context) {
-        JsonArray array = new JsonArray();
-        for (String s : this.loader.list()) {
-            array.add(s);
-        }
-        return array;
-    }
-
 
     public void pauseMusic(String player) {
         this.getLanguage().broadcastMessage(false,false, "pause", player);

@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.tweaks;
 
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -7,6 +8,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.tbstcraft.quark.api.PluginMessages;
+import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import me.gb2022.commons.reflect.AutoRegister;
@@ -15,6 +19,7 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
@@ -24,12 +29,22 @@ public final class FreeCam extends CommandModule {
     private final Map<String, GameMode> gameModes = new HashMap<>();
     private final Map<String, Location> locations = new HashMap<>();
 
+    @Inject("tip")
+    private LanguageItem tip;
+
     @Override
-    public void disable() {
-        super.disable();
+    public void enable() {
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+        super.enable();
+    }
+
+    @Override
+    public void disable(){
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
         for (Player p : Bukkit.getOnlinePlayers()) {
             reset(p);
         }
+        super.disable();
     }
 
     public void reset(Player player) {

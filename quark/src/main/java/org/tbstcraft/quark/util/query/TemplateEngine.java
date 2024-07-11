@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 public final class TemplateEngine {
     public static final Pattern EXTRACT_PATTERN = Pattern.compile("\\{#(.*?)\\}");
+
     public static final String REPLACE_PATTERN = "{#%s}";
 
     private final QueryHandler queryHandler = new QueryHandler();

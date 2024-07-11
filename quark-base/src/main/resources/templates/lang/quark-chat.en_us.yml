@@ -1,0 +1,52 @@
+language:
+  -module-name:
+    chat-mute: Chat Mute
+    chat-format: Chat Format
+    mail: Mail
+    chat-report: Chat Report
+    daily-sentence: Daily Sentence
+    npc-chat: NPC Chat
+    chat-at: At Player
+    chat-component: Chat Component
+    chat-filter: Chat Filter
+    chatgpt: ChatGPT
+  chatgpt:
+    request: "{global#sys-success}Sending chat message to ChatGPT: {#var}"
+    request-gpt4: "{global#sys-success}Sending chat message to ChatGPT (4.0/NewBing) (might be slower): {#var}"
+    response: "{#aqua}ChatGPT {#gold}>> {#var}"
+    cooldown: "{global#sys-error}You are in chat cooldown ({#var} seconds), please try again later."
+    tip:
+      - "{#gray}You can use {#gold}/chat-gpt{#gray} to chat with ChatGPT without context."
+      - "{#gray}Chatting requires permission, and there should be a 10s interval between each line of dialogue."
+      - "{#gray}API sponsored by Pixel Cloud, please do not abuse!"
+  chat-translator:
+    tip: '{#gray}You can click the "[🌐]" at the end of the chat message sent by a player to translate it to your client language.'
+  chat-component:
+    tip:
+      - '{#gray}In chat, sign, and commands (partial supported), you can use rich text tags to add more effects to the text.'
+      - '{#gray}Click {click(link,https://www.atforever.world/wiki.html#quark/template-engine.md)}[here]{;}{#gray} to learn more.'
+  chat-mute:
+    message-banned: '[{#yellow}System{#white}]{#gray}You are muted.'
+    add: '[{#light-purple}System{#white}]{#gray}Successfully added player {#var} to the list.'
+    add-target: '[{#yellow}System{#white}]{#gray}You have been muted by admin {#var}!'
+    remove: '[{#light-purple}System{#white}]{#gray}Successfully removed player {#var} from the list.'
+    remove-target: '[{green}System{#white}]{#gray}You have been unmuted by admin {#var}!'
+  chat-format:
+    op-header: '{#light-purple}Admin'
+    player-header: '{#dark-aqua}Player'
+  mail:
+    receive-direct: "{global#sys-info}Player {#var} sent you a message: {#var}"
+    send-success: "{global#sys-info}Successfully sent a message to player {#var}: {#var}"
+    view: "{global#sys-info}Here are the messages you received while offline: {#return}%s"
+    view-hint: "{global#sys-info}You received {#var} messages while offline. Use the command {#gold}/mail view{#gray} or {click(command,/mail view)}{#white}[{#aqua}Click to view{#white}]"
+    view-none: "{global#sys-info}You did not receive any messages while offline."
+    tip: '{#gray}If a player is offline, you can use {#gold}/mail [player] [content] to leave a message.'
+  chat-report:
+    not-exist: "{global#sys-error}The chat log entry you want to report does not exist, or it might have already been reported."
+    success: "{global#sys-success}You have submitted a chat report for {#var} ({#var})."
+    tip: '{#gray}If a player sends inappropriate content, you can click the "[!]" after the chat text to report it.'
+  chat-filter:
+    reload: "{global#sys-success}Successfully reloaded the rule file."
+    save: "{global#sys-success}Successfully saved the default rule file."
+  daily-sentence:
+    sentence: "{hover(text,Text from {#red}[{#white}Hitokoto{#red}]{#gray}(https://hitokoto.cn/))}{#red}[{#white}Daily Sentence{#red}] {#white}%s {#gray}——%s({#var})"

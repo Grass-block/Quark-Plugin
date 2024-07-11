@@ -11,15 +11,15 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
-import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.data.language.Language;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
+import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -105,7 +105,7 @@ public final class CustomScoreboard extends PackageModule {
         String template = Language.generateTemplate(this.getConfig(), "ui");
 
         String ui = this.getLanguage().buildTemplate(locale, template).replace("{player}", player.getName());
-        ui = Queries.PLAYER_TEMPLATE_ENGINE.handle(player, ui);
+        ui = PlaceHolderService.formatPlayer(player, ui);
         List<String> uiBlock = TextBuilder.buildStringBlocks(ui);
 
         Map<String, Integer> existing = new HashMap<>();

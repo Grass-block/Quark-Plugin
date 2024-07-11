@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.internal.http;
+package org.atcraftmc.quark.web.http;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

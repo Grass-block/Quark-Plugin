@@ -4,10 +4,11 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.internal.permission.PermissionService;
 import org.tbstcraft.quark.util.ExceptionUtil;
 
@@ -17,8 +18,13 @@ import java.util.function.Function;
 @SuppressWarnings("NullableProblems")
 public abstract class AbstractCommand extends Command implements CommandExecuter {
     private final Map<String, AbstractCommand> subCommands = new HashMap<>();
+    private final LanguageEntry commandMessages = Quark.LANGUAGE.entry("command");
     private Command covered;
-    private LanguageEntry commandMessages = Quark.LANGUAGE.entry("command");
+    protected CommandExecuter executor = this;
+
+    public void setExecutor(CommandExecuter executor) {
+        this.executor = executor;
+    }
 
     protected AbstractCommand() {
         super("");
@@ -36,13 +42,15 @@ public abstract class AbstractCommand extends Command implements CommandExecuter
         if (permission.equals(QuarkCommand.NO_INFO)) {
             return;
         }
-        String[] perms = this.optionalDescriptorInfo(QuarkCommand::permission, "").split(";");
+        String[] perms = this.getRawPermission().split(";");
         for (String str : perms) {
             if (Objects.equals(str, "")) {
                 continue;
             }
             PermissionService.createPermission(str);
         }
+
+        PermissionService.update();
     }
 
     //description
@@ -77,12 +85,14 @@ public abstract class AbstractCommand extends Command implements CommandExecuter
 
     @Override
     public final @NotNull String getPermission() {
-        return optionalDescriptorInfo((d) ->
-                        d.permission()
-                                .replaceFirst("\\+", "")
-                                .replaceFirst("-", "")
-                                .replace("!", "")
-                , QuarkCommand.NO_INFO);
+        return getRawPermission()
+                .replaceFirst("\\+", "")
+                .replaceFirst("-", "")
+                .replace("!", "");
+    }
+
+    public final String getRawPermission() {
+        return optionalDescriptorInfo(QuarkCommand::permission, "");
     }
 
     @Override
@@ -106,8 +116,8 @@ public abstract class AbstractCommand extends Command implements CommandExecuter
         this.commandMessages.sendMessage(sender, "exception");
     }
 
-    public final void sendPermissionMessage(CommandSender sender) {
-        this.commandMessages.sendMessage(sender, "lack_permission");
+    public final void sendPermissionMessage(CommandSender sender, String s) {
+        this.commandMessages.sendMessage(sender, "lack_permission", "{;}" + s);
     }
 
     public final void sendPlayerOnlyMessage(CommandSender sender) {
@@ -137,7 +147,7 @@ public abstract class AbstractCommand extends Command implements CommandExecuter
             tabList.addAll(this.subCommands.keySet());
         }
 
-        this.onTab(sender, args, tabList);
+        this.executor.onTab(sender, args, tabList);
         return tabList;
     }
 
@@ -164,7 +174,7 @@ public abstract class AbstractCommand extends Command implements CommandExecuter
         }
 
         try {
-            this.onCommand(sender, args);
+            this.executor.onCommand(sender, args);
         } catch (Exception e) {
             if ((e instanceof ArrayIndexOutOfBoundsException)) {
                 this.sendExceptionMessage(sender);
@@ -191,22 +201,27 @@ public abstract class AbstractCommand extends Command implements CommandExecuter
         if (permission.equals(QuarkCommand.NO_INFO)) {
             if (this.isOP() && !sender.isOp()) {
                 if (msg) {
-                    this.sendPermissionMessage(sender);
+                    this.sendPermissionMessage(sender, "(ServerOperator)");
                 }
                 return true;
             }
         } else {
-            String[] perms = this.getPermission().split(";");
-            if (perms.length == 0) {
-                return true;
-            }
+            String[] perms = this.getRawPermission().split(";");
             for (String str : perms) {
                 if (Objects.equals(str, "")) {
                     continue;
                 }
-                if (!sender.hasPermission(str)) {
+
+                Permission perm = PermissionService.getPermission(str);
+
+                if (perm == null) {
+                    Quark.LOGGER.warning("skipped unknown permission: " + str);
+                    continue;
+                }
+
+                if (!sender.hasPermission(perm)) {
                     if (msg) {
-                        this.sendPermissionMessage(sender);
+                        this.sendPermissionMessage(sender, str);
                     }
                     return true;
                 }

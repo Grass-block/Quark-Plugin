@@ -5,9 +5,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.language.ILanguageAccess;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.util.FilePath;
 import org.tbstcraft.quark.util.Identifiers;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @Deprecated
 public final class Language extends ILanguageAccess {
     public static final String CHINESE_SIMPLIFIED = "zh_cn";
-    public static final String[] ENABLED_LANGUAGES = new String[]{CHINESE_SIMPLIFIED};
+    public static final String[] ENABLED_LANGUAGES = new String[]{CHINESE_SIMPLIFIED, "en_us"};
 
     public static final String TEMPLATE_DIR = "/templates/lang/%s.%s.yml";
     private final HashMap<String, YamlConfiguration> sections = new HashMap<>();
@@ -91,6 +91,9 @@ public final class Language extends ILanguageAccess {
                 YamlConfiguration cfg = new YamlConfiguration();
                 String srcDir = TEMPLATE_DIR.formatted(this.id, locale);
                 InputStream is = this.owner.getClass().getResourceAsStream(srcDir);
+                if (is == null) {
+                    continue;
+                }
                 YamlUtil.loadUTF8(cfg, is);
                 YamlUtil.update(this.sections.get(locale), cfg, clean, 3);
 
@@ -147,7 +150,7 @@ public final class Language extends ILanguageAccess {
         namespace = Identifiers.external(namespace);
 
         ConfigurationSection section = this.getNameSpace(locale, namespace);
-        if (section == null) {
+        if (section == null || !section.contains(id)) {
             section = this.getNameSpace(Locale.CHINA, namespace);
         }
         if (section == null) {

@@ -11,17 +11,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.data.language.LanguageEntry;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.util.container.CachedInfo;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.framework.module.CommandModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
+import org.tbstcraft.quark.util.container.CachedInfo;
+import org.tbstcraft.quark.util.placeholder.StringObjectPlaceHolder;
 
 import java.util.List;
 import java.util.Objects;
@@ -41,6 +43,8 @@ public final class PlayerNameHeader extends CommandModule {
         for (Player p : Bukkit.getOnlinePlayers()) {
             this.attach(p);
         }
+
+        PlaceHolderService.PLAYER.register("rank", (StringObjectPlaceHolder<Player>) this::getHeader);
     }
 
     @Override
@@ -49,6 +53,8 @@ public final class PlayerNameHeader extends CommandModule {
         for (Player p : Bukkit.getOnlinePlayers()) {
             this.detach(p);
         }
+
+        PlaceHolderService.PLAYER.unregister("rank");
     }
 
     @Override
@@ -121,9 +127,9 @@ public final class PlayerNameHeader extends CommandModule {
         p.setCustomName(null);
     }
 
-    public Component getPlayerName(Player player) {
-        String header;
+    public String getHeader(Player player) {
         String name = player.getName();
+        String header;
         NBTTagCompound tag = ModuleDataService.getEntry("player-name-header");
         if (tag.hasKey(name)) {
             header = tag.getString(name);
@@ -134,10 +140,15 @@ public final class PlayerNameHeader extends CommandModule {
                 header = getConfig().getString("player-header");
             }
         }
+        return "{;}" + header + "{;}";
+    }
+
+    public Component getPlayerName(Player player) {
+        String header = getHeader(player);
         String template = this.getConfig().getString("template");
         if (template == null) {
             return Component.text(player.getName());
         }
-        return TextBuilder.buildComponent(Queries.GLOBAL_TEMPLATE_ENGINE.handle(template.replace("{player}", player.getName()).replace("{header}", header + TextBuilder.EMPTY_COMPONENT)));
+        return TextBuilder.buildComponent(PlaceHolderService.format(template.replace("{player}", player.getName()).replace("{header}", header + TextBuilder.EMPTY_COMPONENT)));
     }
 }

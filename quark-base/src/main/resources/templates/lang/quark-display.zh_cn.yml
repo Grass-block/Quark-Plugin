@@ -1,7 +1,8 @@
 language:
   custom-motd:
-    motd-command: '{global#sys-info}Quark生成的服务器MOTD信息: '
-    icon-refresh: '{global#sys-info}成功刷新MOTD图片缓存。'
+    motd-command: '{global#info}服务器MOTD信息: '
+    icon-refresh: '{global#success}成功刷新MOTD图片缓存。'
+    text-refresh: '{global#success}成功刷新MOTD文字缓存。'
   join-quit-message:
     join: '{global#sys-info}{#gray}玩家 {#white}{#var}{#gray} 加入了服务器，欢迎。'
     leave: '{global#sys-info}玩家 {#white}{#var}{#gray} 离开了服务器。'
@@ -41,13 +42,15 @@ language:
     set-header: '{global#sys-operation}将 {#var} 的头衔设置为 {#var}。'
     clear-header: '{global#sys-operation}将 {#var} 的头衔清除。'
   welcome-message:
-    title: '{#gold}>> 欢迎!'
+    title: '{#gold}欢迎!'
     content: '{#white}欢迎来到{#server-name}{#white}服务器,祝你玩得开心!'
     callback: '{#gray}(本消息可用{#gold}/welcome-message{#gray}再次呼出)'
   custom-scoreboard:
     title: '{#aqua}{#server-name}{#reset}'
-    date: '{#gray}日期: {#white}{#date}'
-    player: '{#gray}玩家名称: {#white}{player}'
+    date: '{#gray}日期: {#white}{#date-day}'
+    time: '{#gray}时间: {#white}{#date-time}'
+    player: '{#gray}玩家: {#white}{player}'
+    rank: '{#gray}身份: {#white}{#rank}'
     play-time: '{#gray}游戏时间: {#white}{#play-time}'
     world-time: '{#gray}世界时间: {#white}{#world-time}'
     player-count: '{#gray}在线玩家: {#white}{#player}'
@@ -58,6 +61,12 @@ language:
     qq-group: '{#gray}QQ群:{#aqua}{#underline}{#qq-group}'
   chat-announce:
     title: '提示:'
+    type-tip: '{#green}技巧:'
+    type-hint: '{#gold}提示:'
+    tip-append: "{click(command,/chat-hint tips)}{#white}[{#blue}更多{#white}]{;}"
+    type-announce: '{#aqua}公告:'
+    custom-set: '{global#sys-operation}成功设置自定义公告内容: {#white}%s'
+    custom-clear: '{global#sys-operation}成功清除自定义公告内容。'
     content:
       - - '{#purple}{#server-name}{#white}全服包括子服范围内严禁开挂、盗窃、不文明行为。'
         - '{#white}若有不文明行为，我们将会在累积后对您作出处罚。'

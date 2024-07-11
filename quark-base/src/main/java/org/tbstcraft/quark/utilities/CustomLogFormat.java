@@ -20,7 +20,7 @@ import java.net.URL;
 import java.util.List;
 
 @QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT, APIProfile.SPIGOT, APIProfile.ARCLIGHT})
-@QuarkCommand(name = "log-format", permission = "quark.log-format")
+@QuarkCommand(name = "log-format", permission = "-quark.logformat")
 public final class CustomLogFormat extends CommandModule {
     @Inject("log.xml;false")
     private Asset logAsset;

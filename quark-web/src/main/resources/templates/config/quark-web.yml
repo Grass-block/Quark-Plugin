@@ -1,0 +1,10 @@
+config:
+  account-activation:
+    verify-link-delegation: 'http://service.tbstmc.xyz/api'
+  ip-defender:
+    record: true
+    auto-ban: false
+    auto-ban-day-time: 0
+    auto-ban-hour-time: 0
+    auto-ban-minute-time: 10
+    auto-ban-second-time: 0

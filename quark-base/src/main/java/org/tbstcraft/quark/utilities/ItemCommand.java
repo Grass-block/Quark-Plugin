@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -8,6 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.tbstcraft.quark.api.PluginMessages;
+import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
@@ -16,6 +20,7 @@ import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,6 +28,19 @@ import java.util.Objects;
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({ItemCommand.ItemCommandCommand.class})
 public final class ItemCommand extends PackageModule {
+
+    @Inject("tip")
+    private LanguageItem tip;
+
+    @Override
+    public void enable() {
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+    }
+
+    @Override
+    public void disable(){
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
+    }
 
     @Override
     public void checkCompatibility() throws Throwable {

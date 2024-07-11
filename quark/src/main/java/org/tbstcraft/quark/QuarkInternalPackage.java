@@ -8,6 +8,7 @@ import org.tbstcraft.quark.framework.packages.initializer.PackageBuilderInitiali
 import org.tbstcraft.quark.framework.packages.initializer.PackageInitializer;
 import org.tbstcraft.quark.framework.record.RecordService;
 import org.tbstcraft.quark.internal.*;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.internal.ui.UIManager;
 
@@ -26,15 +27,13 @@ public interface QuarkInternalPackage {
                 .service(CacheService.class)
                 .service(CommandEventService.class)
                 .service(RecordService.class)
+                .service(PlaceHolderService.class)
                 .service(ModuleDataService.class)
                 .service(PlayerDataService.class)
                 .service(InternalCommandsProvider.class)
-                .service(SMTPService.class)
-                .service(HttpService.class)
                 .service(RemoteMessageService.class)
-                .service(HttpService.class)
-                .service(SMTPService.class)
                 .service(UIManager.class)
+
 
                 .module("reserved", Reserved.class)
                 .module("demo-warning", DemoWarning.class)

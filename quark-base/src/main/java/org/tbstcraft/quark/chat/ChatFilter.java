@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(id = "chat-filter", version = "1.0.0")
-@QuarkCommand(name = "chat-filter", permission = "-quark.config.chat-filter")
+@QuarkCommand(name = "chat-filter", permission = "-quark.config.chatfilter")
 public final class ChatFilter extends CommandModule {
     private final Set<Pattern> patterns = new HashSet<>();
 

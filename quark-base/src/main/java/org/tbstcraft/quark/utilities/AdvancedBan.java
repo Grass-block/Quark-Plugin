@@ -6,10 +6,10 @@ import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.util.container.CachedInfo;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.util.Calendar;
 import java.util.List;
@@ -50,13 +50,19 @@ public final class AdvancedBan extends CommandModule {
         String player = args[0];
         String reason = args[1];
 
-        PlayerUtil.banPlayer(player, BanList.Type.NAME,reason,calender.getTime(),sender.getName());
+        PlayerUtil.banPlayer(player, BanList.Type.NAME, reason, calender.getTime(), sender.getName());
+
+        String date = SharedObjects.DATE_FORMAT.format(calender.getTime());
 
         this.getLanguage().sendMessage(sender, "msg-ban-complete",
                 player,
-                SharedObjects.DATE_FORMAT.format(calender.getTime()),
+                date,
                 reason
         );
+
+        if (this.getConfig().getBoolean("broadcast")) {
+            this.getLanguage().broadcastMessage(false, false, "broadcast", player, reason, sender.getName(), date);
+        }
     }
 
     @Override

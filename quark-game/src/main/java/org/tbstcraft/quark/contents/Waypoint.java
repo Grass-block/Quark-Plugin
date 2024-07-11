@@ -5,6 +5,8 @@ import me.gb2022.apm.client.event.ClientRequestEvent;
 import me.gb2022.apm.client.event.driver.ClientEventHandler;
 import me.gb2022.commons.nbt.NBTBase;
 import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -13,32 +15,40 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.tbstcraft.quark.api.PluginMessages;
+import org.tbstcraft.quark.data.ModuleDataService;
+import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.data.PlayerDataService;
+import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import me.gb2022.commons.reflect.AutoRegister;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.data.PlayerDataService;
-import org.tbstcraft.quark.util.BukkitSound;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.platform.BukkitCodec;
 import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.framework.module.CommandModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.util.BukkitSound;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @QuarkCommand(name = "waypoint")
 @QuarkModule(version = "2.0.3", compatBlackList = {APIProfile.ARCLIGHT})
 @CommandProvider({Waypoint.WaypointCommand.class})
-@AutoRegister({ServiceType.EVENT_LISTEN,ServiceType.CLIENT_MESSAGE})
+@AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.CLIENT_MESSAGE})
 public final class Waypoint extends CommandModule {
     private final Map<String, Location> deathPoints = new HashMap<>();
+
+    @Inject("tip")
+    private LanguageItem tip;
+
+    @Inject("tip-home")
+    private LanguageItem tipHome;
+
+    @Inject("tip-back")
+    private LanguageItem tipBack;
 
     @ClientEventHandler("/quark/waypoint/list-private")
     public void onWaypointFetchPrivate(ClientRequestEvent event) {
@@ -65,23 +75,35 @@ public final class Waypoint extends CommandModule {
 
     @Override
     public void enable() {
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+
         if (this.getConfig().getBoolean("home")) {
             CommandManager.registerCommand(new SetHomeCommand(this));
             CommandManager.registerCommand(new WarpHomeCommand(this));
+
+            PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tipHome));
         }
         if (this.getConfig().getBoolean("back-to-death")) {
             CommandManager.registerCommand(new BackToDeathCommand(this));
+
+            PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tipBack));
         }
     }
 
     @Override
     public void disable() {
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
+
         if (this.getConfig().getBoolean("home")) {
             CommandManager.unregisterCommand("sethome");
             CommandManager.unregisterCommand("home");
+
+            PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tipHome));
         }
         if (this.getConfig().getBoolean("back-to-death")) {
             CommandManager.unregisterCommand("back");
+
+            PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tipBack));
         }
     }
 
@@ -137,7 +159,7 @@ public final class Waypoint extends CommandModule {
             }
 
             if (!sender.isOp() && !args[0].contains("-private")) {
-                this.sendPermissionMessage(sender);
+                this.sendPermissionMessage(sender, "(ServerOperator)");
                 return;
             }
 
@@ -265,7 +287,7 @@ public final class Waypoint extends CommandModule {
         }
     }
 
-    @QuarkCommand(name = "home", playerOnly = true, permission = "+quark.warp.tp-home")
+    @QuarkCommand(name = "home", playerOnly = true, permission = "+quark.warp.tphome")
     public static final class WarpHomeCommand extends ModuleCommand<Waypoint> {
         public WarpHomeCommand(Waypoint waypoint) {
             super(waypoint);

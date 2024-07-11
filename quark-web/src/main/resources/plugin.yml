@@ -3,8 +3,8 @@ name: quark-web
 version: '${version}-${core_version}'
 
 #api
-main: org.atcraftmc.quark.web.QuarkWeb
-api-version: 1.18
+main: org.atcraftmc.quark.QuarkWeb
+api-version: 1.14
 folia-supported: true
 load: POSTWORLD
 depend: ["quark"]

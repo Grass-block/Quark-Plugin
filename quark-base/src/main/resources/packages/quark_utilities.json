@@ -18,6 +18,10 @@
     "item-command": ".ItemCommand",
     "console-command": ".ConsoleCommand",
     "player-position-lock": ".PlayerPositionLock",
-    "camera-movement": ".CameraMovement"
+    "camera-movement": ".CameraMovement",
+    "surrounding-refresh": ".SurroundingRefresh",
+    "force-sprint": ".ForceSprint",
+    "item-custom-name": ".ItemCustomName",
+    "stop-confirm": ".StopConfirm"
   }
 }

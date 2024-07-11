@@ -57,7 +57,7 @@ public final class PlayerPositionLock extends PackageModule {
         public void onCommand(CommandSender sender, String[] args) {
             if (args.length > 0) {
                 if (!sender.isOp()) {
-                    this.sendPermissionMessage(sender);
+                    this.sendPermissionMessage(sender, "(ServerOperator)");
                     return;
                 }
 

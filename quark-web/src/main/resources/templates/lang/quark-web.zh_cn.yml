@@ -1,0 +1,36 @@
+language:
+  account-activation:
+    mail-title: '{#server-name-plain} | 账户验证'
+    mail-greeting: "您好，{player}:"
+    mail-content: '您好 ,我们已收到您在{#server-name-plain}内的账户操作请求。请点击下面按钮验证您的 E-mail：'
+    mail-link: 如果您单击「验证 E-mail」按钮时遇到问题，请复制下方链接到浏览器中访问。
+    mail-verify: 本信件的安全代码是 {safety_code} ,请确认其与Minecraft中提示一致。如果您未注册帐号，请忽略此邮件。
+
+    result-html-success-title: '验证成功'
+    result-html-failed-title: '验证失败'
+    result-html-success-content: '您的账户已经成功完成操作。您现在可以安全的关闭这个页面并回到Minecraft了。'
+    result-html-failed-content: '抱歉，您的账户并未通过验证，可能是随机码不一致。请回到Minecraft并重新发送一封邮件。'
+
+    msg-send-complete: '{global#sys-success}一封邮件已被发送至您填写的邮箱({#var}), 邮件的安全代码是 {#var}, 请注意查收。'
+    msg-send-failed: '{global#sys-error}我们未能成功发送邮件到您的邮箱({#var}), 请检查是否填写错误，或联系管理员。'
+
+    link-title: "{#gold}链接账户"
+    link-guide: "{#gray}使用 {#gold}/account link [mail] {#gray} 来链接账户。"
+    link-hint: '{global#sys-warning}检测到您未绑定邮箱。{msg#link-guide}'
+
+    verify-title: "{#gold}验证账户"
+    verify-guide: "{#gray}使用 {#gold}/account verify {#gray} 来验证账户。"
+    verify-hint: '{global#sys-warning}检测到您未验证邮箱。{msg#verify-guide}'
+
+    link-failed: '{global#sys-error}您的账户已经连接过一个可用的邮箱。若要换绑请使用/account unlink。'
+    unlink-failed: '{global#sys-error}您的账户还没有连接到可用的邮箱, 因此您不能解绑。'
+    unlinked: '{global#sys-success}您的账户已经成功从 {#var} 解除绑定。'
+    verify-failed: '{global#sys-error}您的账户还未链接邮箱。'
+    verified: '{global#sys-info}恭喜，您的账户已经完成激活, 请重新进入服务器。'
+    interaction-block: '{global#sys-warning}在完成账户验证之前，您还不能聊天和交互。'
+    unverify-success: '{global#sys-info}您的账户已经取消激活状态, 请重新进入服务器。'
+    kick-info: "检测到您的IP状态异常，您的账户已被取消激活。{#return}请重新进入服务器。"
+  ip-defender:
+    new-ip: '{global#info}检测到您的IP属地为{#var} 。(该信息只对您可见)'
+    ip-warn: '{global#warning}检测到您的IP属地为{#var},与上次({#var})发生变化,您的ip变化已被记录。'
+    auto-ban-reason: '由于您的IP变化,我们怀疑您的账户出现了安全问题。'

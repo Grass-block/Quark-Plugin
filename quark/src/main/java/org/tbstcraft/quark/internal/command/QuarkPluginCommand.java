@@ -45,9 +45,8 @@ public final class QuarkPluginCommand extends CoreCommand {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
             if (APIProfileTest.isArclightBasedServer()) {
-                this.getLanguage().sendMessage(sender, "platform-unsupported");
-                return;
-
+                //this.getLanguage().sendMessage(sender, "platform-unsupported");
+                //return;
             }
             if (Quark.PLUGIN.isFastBoot()) {
                 this.getLanguage().sendMessage(sender, "fastboot-unsupported");

@@ -28,8 +28,6 @@ dependencies {
 dependencies {
     compileOnly 'org.iq80.leveldb:leveldb:0.12'
 
-    implementation projectLocal('javax.mail-1.6.2')
-
     implementation localStorage("me.gb2022.commons-nbt")
     implementation localStorage("me.gb2022.commons-math")
     implementation localStorage('me.gb2022.commons-crypto')

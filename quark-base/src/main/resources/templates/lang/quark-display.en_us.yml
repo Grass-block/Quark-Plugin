@@ -1,0 +1,73 @@
+language:
+  custom-motd:
+    motd-command: '{global#info}Server MOTD info: '
+    icon-refresh: '{global#success}Successfully refreshed MOTD image cache.'
+    text-refresh: '{global#success}Successfully refreshed MOTD text cache.'
+  join-quit-message:
+    join: '{global#sys-info}{#gray}Player {#white}{#var}{#gray} joined the server, welcome.'
+    leave: '{global#sys-info}Player {#white}{#var}{#gray} left the server.'
+    proxy-join: '{global#sys-info}{#gray}Player {#white}{#var}{#gray} (from {#var}) joined the server, welcome.'
+    proxy-leave: '{global#sys-info}Player {#white}{#var}{#gray} (to {#var}) left the server.'
+    welcome-message: '{global#sys-info}Welcome ({#var}) to {#server-name}{#gray} server, have fun!'
+    proxy-send: '{global#sys-info}You have been sent to {#var} server. Use {#gold}/hub, /lobby{#gray} to return to the lobby!'
+  tab-menu:
+    welcome-header: Welcome to {#aqua}{#server-name}{#reset} server!
+    tps: '{#gray}TPS: {#white}{#tps}{#white}/20'
+    mspt: '{#gray}MSPT: {#white}{#mspt}{#white}'
+    ping: '{#gray}Ping: {#white}{#ping}'
+    player: '{#gray}Current online: {#white}{#player}'
+    max-player: '{#gray}Max: {#white}{#max-player}'
+    date: '{#gray}Date/Time: {#white}{#date}'
+    website: '{#gray}Website: {#aqua}{#underline}{#server-website}'
+  custom-ban-message:
+    header: '{#white}You have been banned from {#aqua}{#server-name}{#reset}'
+    name: Sorry, your have been banned by {#server-name}.
+    ip: Sorry, your address has been banned by {#server-name}.
+    hint: If you believe this is an error, please provide your full information to the admin.
+    reason: '{#yellow}Ban reason{#white}: {reason}'
+    info: '{#gray}Operator{#white}: {source}    {#gray}End time: {expire}'
+    website-hint: '{#gray}Visit website: {#aqua}{#underline}{#server-website}'
+  custom-kick-message:
+    header: '{#white}You have been kicked from {#aqua}{#server-name}{#white} server'
+    website-hint: '{#gray}Visit website: {#aqua}{#underline}{#server-website}'
+  bossbar-announcement:
+    custom-set: '{global#sys-operation}Successfully set custom BossBar content: {#white}%s'
+    custom-clear: '{global#sys-operation}Successfully cleared custom BossBar content.'
+    text:
+      - '{#white}Welcome to {#server-name}!'
+      - '{#white}Consider donating?'
+      - '{#white}Enjoy your game!'
+      - '{#white}Website: {#aqua}{#underline}{#server-website}'
+  player-name-header:
+    set-header: '{global#sys-operation}Set player name tag of {#var} to {#var}.'
+    clear-header: '{global#sys-operation}Cleared name tag of {#var}.'
+  welcome-message:
+    title: '{#gold}>> Welcome!'
+    content: '{#white}Welcome to {#server-name}{#white} server, enjoy your stay!'
+    callback: '{#gray}(This message can be recalled using {#gold}/welcome-message{#gray})'
+  custom-scoreboard:
+    title: '{#aqua}{#server-name}{#reset}'
+    date: '{#gray}Date: {#white}{#date}'
+    player: '{#gray}Player name: {#white}{player}'
+    play-time: '{#gray}Play time: {#white}{#play-time}'
+    world-time: '{#gray}World time: {#white}{#world-time}'
+    player-count: '{#gray}Online players: {#white}{#player}'
+    ping: '{#gray}Current latency (reference): {#white}{#ping}'
+    tps: '{#gray}TPS: {#white}{#tps}{#white}/20'
+    mspt: '{#gray}MSPT: {#white}{#mspt}{#white}'
+    website: '{#yellow}{#server-website}'
+    qq-group: '{#gray}QQ group: {#aqua}{#underline}{#qq-group}'
+  chat-announce:
+    title: 'Notice:'
+    type-tip: '{#green}Tip:'
+    type-hint: '{#purple}Hint:'
+    type-announce: '{#aqua}Announcement:'
+    custom-set: '{global#sys-operation}Successfully set custom announcement content: {#white}%s'
+    custom-clear: '{global#sys-operation}Successfully cleared custom announcement content.'
+    content:
+      - - '{#purple}{#server-name}{#white} prohibits cheating, stealing, and inappropriate behavior across the entire server and its sub-servers.'
+        - '{#white}Inappropriate behavior will be punished after accumulation.'
+        - '{#white}Cheating and stealing will result in bans, rollback, and removal of all your stuffs.'
+      - - '{#purple}{#server-name}{#white} prohibits all activities that violate laws and regulations.'
+        - '{#white}Any violations will be directly reported, and serious cases will be handed over to the police.'
+        - '{#white}We will retain your actions until the end of the evidence collection.'

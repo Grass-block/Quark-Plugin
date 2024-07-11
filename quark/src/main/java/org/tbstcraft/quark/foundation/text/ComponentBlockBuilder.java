@@ -3,6 +3,7 @@ package org.tbstcraft.quark.foundation.text;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.tbstcraft.quark.data.config.Queries;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -73,7 +74,7 @@ public final class ComponentBlockBuilder {
     }
 
     public ComponentBlock build(String raw, Component... format) {
-        raw = Queries.GLOBAL_TEMPLATE_ENGINE.handle(raw);
+        raw = PlaceHolderService.format(raw);
 
         raw = processURLs(raw);
         raw = preprocessTags(raw);

@@ -1,9 +1,13 @@
-package org.tbstcraft.quark.security.account;
+package org.atcraftmc.quark.web.account;
 
 import me.gb2022.apm.local.MappedBroadcastEvent;
 import me.gb2022.apm.local.PluginMessageHandler;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.quark.web.SMTPService;
+import org.atcraftmc.quark.web.http.ContentType;
+import org.atcraftmc.quark.web.http.HttpHandlerContext;
+import org.atcraftmc.quark.web.http.HttpRequest;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -21,11 +25,7 @@ import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.HttpService;
-import org.tbstcraft.quark.internal.SMTPService;
-import org.tbstcraft.quark.internal.http.ContentType;
-import org.tbstcraft.quark.internal.http.HttpHandlerContext;
-import org.tbstcraft.quark.internal.http.HttpRequest;
+import org.atcraftmc.quark.web.HttpService;
 import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.ExceptionUtil;
 

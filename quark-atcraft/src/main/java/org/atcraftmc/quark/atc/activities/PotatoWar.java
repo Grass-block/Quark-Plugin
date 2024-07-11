@@ -9,14 +9,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.data.ModuleDataService;
+import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.data.ModuleDataService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,13 +80,18 @@ public final class PotatoWar extends PackageModule {
 
     @QuarkCommand(name = "potato-war")
     public static final class QueryCommand extends ModuleCommand<PotatoWar> {
-        private StringBuilder query(String target, String template) {
+        private StringBuilder query(String target, String template, boolean full) {
             StringBuilder sb = new StringBuilder();
 
             List<Map.Entry<String, Integer>> sortedEntries = new ArrayList<>(this.getModule().counts.entrySet());
             sortedEntries.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
-            for (int i = 0; i < Math.min(5, sortedEntries.size()); i++) {
+            int limit = sortedEntries.size();
+            if (!full) {
+                limit = Math.min(limit, 5);
+            }
+
+            for (int i = 0; i < limit; i++) {
                 Map.Entry<String, Integer> entry = sortedEntries.get(i);
                 sb.append(template.formatted(i + 1, entry.getKey(), entry.getValue())).append('\n');
             }
@@ -116,11 +121,18 @@ public final class PotatoWar extends PackageModule {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
             String template = getConfig().getString("template");
-            String list = query(sender.getName(), template).toString();
+            String list = query(sender.getName(), template, args.length > 0).toString();
 
             String temp = Language.generateTemplate(this.getConfig(), "ui", (s -> s.formatted(list)));
 
             this.getLanguage().sendTemplate(sender, temp);
+        }
+
+        @Override
+        public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
+            if (buffer.length == 1) {
+                tabList.add("-full");
+            }
         }
     }
 }
