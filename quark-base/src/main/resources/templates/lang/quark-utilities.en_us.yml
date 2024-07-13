@@ -57,6 +57,9 @@ language:
     set: "{global#sys-operation}Set the view distance of player {#var} to {#white}%d{#gray} chunks."
     unset: "{global#sys-operation}Removed the view distance setting of player {#var}."
     set-target: "{global#sys-success}Your view distance has been set to {#white}%d{#gray} chunks."
+    tip:
+      - "{#gray}You can use{#gold}/view-distance [Player] [Distance] {#gray}To set your server render distance."
+      - "{#gray}If you feel stuttering(or high ping),consider lower your server rendering distance."
   console-command:
     execute: "{global#sys-operation}Submitted console command: {#var}"
   advanced-ban-command:

@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.utilities;
 
+import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -7,30 +8,50 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.Permission;
+import org.tbstcraft.quark.api.PluginMessages;
+import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import me.gb2022.commons.reflect.AutoRegister;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.util.container.CachedInfo;
+import org.tbstcraft.quark.utilities.viewdistance.ViewDistanceStrategy;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(DynamicViewDistance.ViewDistanceCommand.class)
 @QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT, APIProfile.ARCLIGHT, APIProfile.SPIGOT})
-public class DynamicViewDistance extends PackageModule {
+public final class DynamicViewDistance extends PackageModule {
 
     @Inject("-quark.viewdistance.other")
     private Permission setOtherPermission;
 
+    @Inject("tip")
+    private LanguageItem tip;
+
+    @Override
+    public void enable() {
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+    }
+
+    @Override
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void checkCompatibility() throws Throwable {
+        Player.class.getMethod("setSendViewDistance", int.class);
+        Player.class.getMethod("setViewDistance", int.class);
+    }
+
     @Override
     public void disable() {
+        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
         for (Player p : Bukkit.getOnlinePlayers()) {
             resetCustomViewDistance(p);
         }

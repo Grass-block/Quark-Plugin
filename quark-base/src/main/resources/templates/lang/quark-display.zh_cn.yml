@@ -34,7 +34,7 @@ language:
     custom-set: '{global#sys-operation}成功设置自定义Boss栏内容: {#white}%s'
     custom-clear: '{global#sys-operation}成功清除自定义Boss栏内容。'
     text:
-      - '{#white}欢迎来到{#server-name}!'
+      - '{#white}欢迎来到{#server-name-plain}!'
       - '{#white}赞助一下?'
       - '{#white}祝你玩得开心!'
       - '{#white}官网: {#aqua}{#underline}{#server-website}'

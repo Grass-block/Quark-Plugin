@@ -12,7 +12,7 @@ public interface MiniGameService {
     ServiceHolder<MiniGameService> INSTANCE = new ServiceHolder<>();
 
 
-    static void registerGame(String id,Class) {
+    static void registerGame(String id,Class a) {
     }
 
     class Impl implements MiniGameService {

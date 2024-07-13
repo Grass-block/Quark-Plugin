@@ -19,7 +19,7 @@ import java.util.Set;
 
 @QuarkModule(id = "bungee-connection-protect")
 @AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.REMOTE_MESSAGE})
-public class BungeeConnectionProtect extends PackageModule {
+public final class BungeeConnectionProtect extends PackageModule {
     private final Set<String> sessions = new HashSet<>();
 
     @EventHandler(priority = EventPriority.LOWEST)

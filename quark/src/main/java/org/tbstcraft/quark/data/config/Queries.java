@@ -12,6 +12,9 @@ import java.util.regex.Pattern;
 public interface Queries {
     Map<String, String> ENVIRONMENT_VARS = new HashMap<>();
     Pattern ENV_PATTERN = Pattern.compile("\\{\\$(.*?)}");
+    Pattern ENV_PATTERN2 = Pattern.compile("/\\{\\$(.*?)}");
+
+
 
     static void setEnvironmentVars(ConfigurationSection section) {
         ENVIRONMENT_VARS.clear();
@@ -21,20 +24,40 @@ public interface Queries {
     }
 
     static String applyEnvironmentVars(String input) {
-        List<String> result = new ArrayList<>();
-        Matcher matcher = ENV_PATTERN.matcher(input);
-        while (matcher.find()) {
-            result.add(matcher.group());
+        try {
+            List<String> result2 = new ArrayList<>();
+            Matcher matcher2 = ENV_PATTERN2.matcher(input);
+            while (matcher2.find()) {
+                result2.add(matcher2.group());
+            }
+
+            for (String s : result2) {
+                String s2 = s.substring(3, s.length() - 1);
+                String replacement = ENVIRONMENT_VARS.get(s2);
+                if (replacement == null) {
+                    continue;
+                }
+                input = input.replace(s, replacement);
+            }
+
+            List<String> result = new ArrayList<>();
+            Matcher matcher = ENV_PATTERN.matcher(input);
+            while (matcher.find()) {
+                result.add(matcher.group());
+            }
+
+            for (String s : result) {
+                String s2 = s.substring(2, s.length() - 1);
+                String replacement = ENVIRONMENT_VARS.get(s2);
+                if (replacement == null) {
+                    continue;
+                }
+                input = input.replace(s, replacement);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
-        for (String s : result) {
-            String s2 = s.substring(2, s.length() - 1);
-            String replacement = ENVIRONMENT_VARS.get(s2);
-            if (replacement == null) {
-                continue;
-            }
-            input = input.replace(s, replacement);
-        }
         return input;
     }
 }

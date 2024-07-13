@@ -1,6 +1,4 @@
 config:
-  chat-format:
-    template: '[{header}{#white}]{player} {#gold}> {#gray}{message}'
   chat-at:
     title-fadein: 10
     title-fadeout: 10

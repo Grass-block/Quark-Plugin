@@ -6,6 +6,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.tbstcraft.quark.data.config.Configuration;
 import org.tbstcraft.quark.data.config.Language;
+import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.foundation.platform.BukkitPluginManager;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.util.Timer;
@@ -31,7 +32,7 @@ public final class Quark extends JavaPlugin {
     }
 
     public static void reload(CommandSender audience) {
-        new Thread(() -> {
+        Runnable task = () -> {
             try {
                 Locale locale = org.tbstcraft.quark.data.language.Language.locale(audience);
                 String msg = LANGUAGE.getMessage(locale, "packages", "load");
@@ -48,7 +49,13 @@ public final class Quark extends JavaPlugin {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }).start();
+        };
+
+        if(APIProfileTest.isArclightBasedServer()){
+            task.run();
+        }else {
+            new Thread(task).start();
+        }
     }
 
     private void detectCounter() {

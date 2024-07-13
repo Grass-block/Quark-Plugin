@@ -1,8 +1,8 @@
 package org.tbstcraft.quark.framework.module;
 
 import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.framework.module.standalone.StandaloneModuleProvider;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.framework.module.standalone.StandaloneModuleProvider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -36,4 +36,6 @@ public @interface QuarkModule {
     FeatureAvailability available() default FeatureAvailability.INHERIT;
 
     boolean internal() default false;
+
+    boolean defaultEnable() default true;
 }

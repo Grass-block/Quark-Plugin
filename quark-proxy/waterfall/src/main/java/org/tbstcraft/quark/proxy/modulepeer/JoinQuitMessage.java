@@ -13,8 +13,9 @@ import org.tbstcraft.quark.proxy.module.ProxyModule;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class JoinQuitMessage extends ProxyModule {
+public final class JoinQuitMessage extends ProxyModule {
     private final Map<String, String> previousLocations = new HashMap<>();
     private final Map<String, String> currentLocations = new HashMap<>();
 
@@ -35,22 +36,22 @@ public class JoinQuitMessage extends ProxyModule {
         this.currentLocations.put(player, current);
     }
 
-
     @RemoteEventHandler("/transfer/join_server")
     public void onServerConnect(RemoteMessageEvent event) {
         String player = BufferUtil.readString(event.getData());
 
-
-        if (this.currentLocations.containsKey(player)) {
+        if (!this.currentLocations.containsKey(player)) {
             QuarkProxy.LOGGER.warning("cannot detect player current location. fixed it to lobby");
         }
-        String prev = this.previousLocations.get(player);
-        String current = this.currentLocations.getOrDefault(player,"lobby");
 
-        if (!this.previousLocations.containsKey(player)) {
+        String current = this.currentLocations.getOrDefault(player, "lobby");
+        String prev = this.previousLocations.get(player);
+
+        if (!this.previousLocations.containsKey(player) || Objects.equals(prev, current)) {
             RemoteMessage.getMessenger().sendMessage(current, "/transfer/join_proxy", buf -> BufferUtil.writeString(buf, player));
             return;
         }
+
 
         RemoteMessage.getMessenger().sendMessage(current, "/transfer/join", buf -> {
             String server = Config.getSection("server").getString(prev, prev);

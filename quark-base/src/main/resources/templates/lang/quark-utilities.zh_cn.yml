@@ -57,6 +57,9 @@ language:
     set: "{global#sys-operation}已将玩家 {#var} 的视野距离设置为 {#white}%d{#gray} 个区块。"
     unset: "{global#sys-operation}已去除玩家 {#var} 的视野距离设置。"
     set-target: "{global#sys-success}你的视野距离被设置为 {#white}%d{#gray} 个区块。"
+    tip:
+      - "{#gray}您可以使用{#gold}/view-distance [玩家名字] [距离] {#gray}设置您的服务器渲染距离。"
+      - "{#gray}如果您感觉到卡顿(高延迟)，您可以尝试降低您的服务器渲染距离。"
   console-command:
     execute: "{global#sys-operation}已提交命令行: {#var}"
   advanced-ban-command:

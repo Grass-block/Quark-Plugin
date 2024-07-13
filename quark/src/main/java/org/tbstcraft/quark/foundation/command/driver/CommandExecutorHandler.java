@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface CommandExecutor {
+public @interface CommandExecutorHandler {
     String path();
 
     String permission() default "+quark.command.default";

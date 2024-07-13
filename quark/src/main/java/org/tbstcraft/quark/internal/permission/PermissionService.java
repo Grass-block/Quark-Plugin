@@ -96,7 +96,11 @@ public interface PermissionService extends Service {
             if (replacement != null) {
                 replacement.setDefault(permission.getDefault());
             } else {
-                Bukkit.getPluginManager().addPermission(permission);
+                try {
+                    Bukkit.getPluginManager().addPermission(permission);
+                }catch (Exception ignored){
+                    Quark.LOGGER.warning("duplicated permission:" + perm);
+                }
             }
 
             this.map.put(permission.getName(), permission);

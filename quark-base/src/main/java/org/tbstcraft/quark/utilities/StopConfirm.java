@@ -17,6 +17,7 @@ public final class StopConfirm extends PackageModule {
             return;
         }
         if (event.getMessage().contains("confirm")) {
+            event.setMessage(event.getMessage().replace("confirm",""));
             return;
         }
         event.setCancelled(true);
@@ -30,6 +31,7 @@ public final class StopConfirm extends PackageModule {
             return;
         }
         if (event.getCommand().contains("confirm")) {
+            event.setCommand(event.getCommand().replace("confirm",""));
             return;
         }
         event.setCancelled(true);

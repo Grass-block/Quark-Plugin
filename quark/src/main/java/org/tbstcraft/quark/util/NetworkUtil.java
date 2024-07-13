@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
@@ -13,37 +14,43 @@ public interface NetworkUtil {
     String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
     String ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7";
 
-    static String httpGet(String url) throws IOException {
+    static String httpGet(String url, boolean extraHeads) throws IOException {
         String str;
-        HttpURLConnection con = getHttpURLConnection(url);
+        HttpURLConnection con = getHttpURLConnection(url, extraHeads);
 
         var code = con.getResponseCode();
         if (code != 200) {
             InputStream error = con.getErrorStream();
-            str = new String(error.readAllBytes());
+            str = new String(error.readAllBytes(), StandardCharsets.UTF_8);
             error.close();
             con.disconnect();
             return str;
         }
 
         InputStream in = con.getInputStream();
-        str = new String(in.readAllBytes());
+        str = new String(in.readAllBytes(), StandardCharsets.UTF_8);
         in.close();
         con.disconnect();
         return str;
     }
 
-    private static @NotNull HttpURLConnection getHttpURLConnection(String url) throws IOException {
+    static String httpGet(String url) throws IOException {
+        return httpGet(url, true);
+    }
+
+    private static @NotNull HttpURLConnection getHttpURLConnection(String url, boolean extraHeads) throws IOException {
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 
         con.setRequestMethod("GET");
         con.setRequestProperty("User-Agent", USER_AGENT);
         con.setRequestProperty("Accept", ACCEPT);
-        con.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8");
-        con.setRequestProperty("Accept-Encoding", "gzip, deflate, br, zst");
+        if (extraHeads) {
+            con.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8");
+            con.setRequestProperty("Accept-Encoding", "gzip, deflate, br, zst");
 
-        con.setRequestProperty("x-requested-with", "xmlhttprequest");
-        con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("x-requested-with", "xmlhttprequest");
+            con.setRequestProperty("Content-Type", "application/json");
+        }
         return con;
     }
 
@@ -84,12 +91,16 @@ public interface NetworkUtil {
             return this.builder.deleteCharAt(builder.lastIndexOf("&")).toString();
         }
 
-        public void get(Consumer<String> result) {
+        public void get(Consumer<String> result, boolean extraHeads) {
             try {
-                result.accept(httpGet(build()));
+                result.accept(httpGet(build(), extraHeads));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        public void get(Consumer<String> result) {
+            get(result, true);
         }
 
         public RequestBuilder copy(Consumer<RequestBuilder> copied) {

@@ -3,21 +3,21 @@ package org.atcraftmc.quark.web;
 import com.google.gson.JsonParser;
 import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.BanList;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.Language;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.NetworkUtil;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -38,7 +38,7 @@ public final class IPDefender extends PackageModule {
         try {
             String s = NetworkUtil.httpGet("http://ip-api.com/json/%s?lang=en-US".formatted(
                     Objects.requireNonNull(player.getAddress()).toString().replace("/", "")
-                            .split(":")[0]));
+                            .split(":")[0]), false);
             ipLoc = "%s-%s-%s".formatted(
                     new JsonParser().parse(s).getAsJsonObject().get("country"),
                     new JsonParser().parse(s).getAsJsonObject().get("regionName"),

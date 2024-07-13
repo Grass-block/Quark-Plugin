@@ -56,7 +56,6 @@ public interface PlaceHolders {
 
         holder.register("version", GlobalPlaceHolder.value(Bukkit.getServer().getVersion()), "server-version");
         holder.register("bukkit-version", GlobalPlaceHolder.value(Bukkit.getServer().getBukkitVersion()));
-        holder.register("mc-version", GlobalPlaceHolder.value(Bukkit.getServer().getMinecraftVersion()));
         holder.register("name", Bukkit.getServer().getName());
         holder.register("max-player", Bukkit.getServer().getMaxPlayers());
         holder.register("player", GlobalPlaceHolder.object(() -> Bukkit.getOnlinePlayers().size()));

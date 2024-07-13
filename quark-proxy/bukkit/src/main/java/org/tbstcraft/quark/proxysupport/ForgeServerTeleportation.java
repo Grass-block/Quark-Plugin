@@ -13,10 +13,13 @@ import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import java.util.List;
 import java.util.Objects;
 
+/**
+* requires mod Vanilla CrossServer API Mod to be installed on client.
+*/
 @CommandProvider(ForgeServerTeleportation.HubCommand.class)
 @QuarkCommand(name = "teleport-server", permission = "+quark.stp")
 @QuarkModule(version = "1.0.0")
-public class ForgeServerTeleportation extends CommandModule {
+public final class ForgeServerTeleportation extends CommandModule {
     public static final String PREFIX = "{$client:connect}";
 
     @Override

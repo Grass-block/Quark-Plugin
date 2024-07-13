@@ -2,13 +2,13 @@ package org.tbstcraft.quark.framework.module;
 
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
 import org.tbstcraft.quark.util.*;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
-import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -321,7 +321,13 @@ public interface ModuleManager extends Service {
 
             this.moduleMap.put(m.getFullId(), m);
             if (getModuleStatus(m.getFullId()) == ObjectStatus.UNREGISTERED) {
-                this.statusMap.put(m.getFullId(), Quark.PLUGIN.getConfig().getBoolean("config.default-status.module") ? "enabled" : "disabled");
+                boolean status = false;
+
+                if (m.getDescriptor().defaultEnable()) {
+                    status = Quark.PLUGIN.getConfig().getBoolean("config.default-status.module");
+                }
+
+                this.statusMap.put(m.getFullId(), status ? "enabled" : "disabled");
                 this.saveStatus();
             }
             if (m.getDescriptor().internal()) {

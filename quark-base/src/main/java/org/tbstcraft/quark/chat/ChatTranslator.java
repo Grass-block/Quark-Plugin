@@ -19,7 +19,7 @@ import java.util.Objects;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(id = "chat-translator", version = "_dev", beta = true)
-public class ChatTranslator extends PackageModule {
+public final class ChatTranslator extends PackageModule {
     @Inject("tip")
     private LanguageItem tip;
 

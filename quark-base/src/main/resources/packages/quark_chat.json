@@ -10,7 +10,7 @@
     "chat-at": ".ChatAt",
     "mail": ".Mail",
     "chat-report": ".ChatReport",
-    "daily-sentence": ".DailySentence",
+    "hitokoto": ".Hitokoto",
     "chatgpt": ".ChatGPT",
     "self-message": ".SelfMessage"
   }

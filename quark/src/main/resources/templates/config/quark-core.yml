@@ -6,19 +6,19 @@ config:
     - http-service
     - remote-message-service
   smtp-service:
-    server: {$smtp-server}
-    username: {$smtp-user}
-    password: {$smtp-password}
+    server: /{$smtp-server}
+    username: /{$smtp-user}
+    password: /{$smtp-password}
   http-service:
     host: 127.0.0.1
     port: 8125
     backlog: 10
     threads: 3
   remote-message-service:
-    enable: {$proxy}
-    identifier: {$proxy-id}
-    proxy: {$proxy-exchange-mode}
-    host: {$proxy-exchange-host}
-    port: {$proxy-exchange-port}
-    key: {$proxy-exchange-key}
+    enable: /{$proxy}
+    identifier: /{$proxy-id}
+    proxy: /{$proxy-exchange-mode}
+    host: /{$proxy-exchange-host}
+    port: /{$proxy-exchange-port}
+    key: /{$proxy-exchange-key}
 

@@ -1,10 +1,12 @@
 package org.tbstcraft.quark.chat;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
+import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.tbstcraft.quark.CustomChatRenderer;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.api.PluginMessages;
@@ -13,12 +15,11 @@ import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
 
 import java.util.*;
 
@@ -41,11 +42,11 @@ public final class ChatReport extends PackageModule {
     }
 
     @Override
-    public void disable(){
+    public void disable() {
         PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncChatEvent event) {
         String uuid = UUID.randomUUID().toString().split("-")[4];
         String sender = event.getPlayer().getName();
@@ -53,9 +54,7 @@ public final class ChatReport extends PackageModule {
         String content = LegacyComponentSerializer.legacySection().serialize(event.message());
 
         String template = Objects.requireNonNull(getConfig().getString("append")).formatted(uuid);
-
-        CustomChatRenderer.renderer(event).postfix(TextBuilder.buildComponent(template));
-
+        CustomChatRenderer.renderer(event).postfixNearest(TextBuilder.buildComponent(template));
         this.records.put(uuid, "%s;%s;%s".formatted(time, sender, content));
     }
 

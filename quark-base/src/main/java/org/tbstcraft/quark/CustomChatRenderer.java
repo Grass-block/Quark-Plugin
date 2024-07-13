@@ -5,6 +5,7 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
@@ -12,7 +13,7 @@ import org.tbstcraft.quark.foundation.text.TextBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomChatRenderer implements ChatRenderer {
+public final class CustomChatRenderer implements ChatRenderer {
     private final List<Component> prefixes = new ArrayList<>();
     private final List<Component> postFixes = new ArrayList<>();
     private String template = "<%s> %s";
@@ -26,13 +27,23 @@ public class CustomChatRenderer implements ChatRenderer {
         return renderer;
     }
 
-    public CustomChatRenderer prefix(ComponentLike comp) {
+    public CustomChatRenderer prefixNearest(ComponentLike comp) {
         this.prefixes.add(comp.asComponent());
+        return this;
+    }
+
+    public CustomChatRenderer prefix(ComponentLike comp) {
+        this.prefixes.add(0, comp.asComponent());
         return this;
     }
 
     public CustomChatRenderer postfix(ComponentLike comp) {
         this.postFixes.add(comp.asComponent());
+        return this;
+    }
+
+    public CustomChatRenderer postfixNearest(ComponentLike comp) {
+        this.postFixes.add(0, comp.asComponent());
         return this;
     }
 
@@ -43,18 +54,18 @@ public class CustomChatRenderer implements ChatRenderer {
 
     @Override
     public @NotNull Component render(@NotNull Player source, @NotNull Component sourceDisplayName, @NotNull Component message, @NotNull Audience viewer) {
-        Component base = Component.text("");
+        TextComponent.Builder builder = Component.text();
 
         for (Component c : this.prefixes) {
-            base = base.append(c);
+            builder.append(c);
         }
 
-        base = base.append(TextBuilder.buildComponent(this.template, sourceDisplayName, message));
+        builder.append(TextBuilder.buildComponent(this.template, sourceDisplayName, message));
 
         for (Component c : this.postFixes) {
-            base = base.append(c);
+            builder.append(c);
         }
 
-        return base;
+        return builder.build();
     }
 }

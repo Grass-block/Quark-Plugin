@@ -58,6 +58,14 @@ public final class JsonPackageInitializer implements PackageInitializer {
     }
 
     @Override
+    public boolean isEnableByDefault() {
+        if (!this.obj.has("default-enable")) {
+            return true;
+        }
+        return this.obj.get("default-enable").getAsBoolean();
+    }
+
+    @Override
     public FeatureAvailability getAvailability(AbstractPackage pkg) {
         return this.availability;
     }

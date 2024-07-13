@@ -30,5 +30,9 @@ public interface PackageInitializer {
 
     ServiceRegistry getServiceRegistry(AbstractPackage pkg);
 
+    default boolean isEnableByDefault() {
+        return true;
+    }
+
     FeatureAvailability getAvailability(AbstractPackage pkg);
 }

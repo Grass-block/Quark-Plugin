@@ -4,7 +4,7 @@ language:
     chat-format: Chat Format
     mail: Mail
     chat-report: Chat Report
-    daily-sentence: Daily Sentence
+    hitokoto: Daily Sentence
     npc-chat: NPC Chat
     chat-at: At Player
     chat-component: Chat Component
@@ -48,5 +48,5 @@ language:
   chat-filter:
     reload: "{global#sys-success}Successfully reloaded the rule file."
     save: "{global#sys-success}Successfully saved the default rule file."
-  daily-sentence:
-    sentence: "{hover(text,Text from {#red}[{#white}Hitokoto{#red}]{#gray}(https://hitokoto.cn/))}{#red}[{#white}Daily Sentence{#red}] {#white}%s {#gray}——%s({#var})"
+  hitokoto:
+    sentence: "{hover(text,Text from {#red}[{#white}Hitokoto{#red}]{#gray}(https://hitokoto.cn/))}{#red}[{#white}Hitokoto{#red}] {#white}%s {#gray}——%s({#var})"

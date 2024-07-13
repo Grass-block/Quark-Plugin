@@ -79,7 +79,6 @@ public interface Bootstrap {
                 TextSender.sendToConsole(TextBuilder.build("""
                         {color(red)}Quark核心检测到您正在使用Folia服务端!{color(white)}
                           Folia兼容已自动启用。我们不保证任何功能的可用!
-                                                
                         {color(red)}Quark core detected you are using Folia Server!{color(white)}
                           Folia compat are automatically enabled.We do NOT ensure any feature's availability!
                         """));
@@ -135,9 +134,6 @@ public interface Bootstrap {
 
         @ContextComponent(order = 4, text = "Configuration loaded")
         static void configuration(Quark instance) {
-            Quark.LANGUAGE = Language.create("quark-core");
-            Quark.CONFIG = new Configuration("quark-core");
-
             InputStream templateResource = Objects.requireNonNull(instance.getClass().getResourceAsStream("/config.yml"));
             YamlConfiguration template = YamlConfiguration.loadConfiguration(new InputStreamReader(templateResource));
 
@@ -145,6 +141,9 @@ public interface Bootstrap {
 
             instance.saveConfig();
             Queries.setEnvironmentVars(Objects.requireNonNull(instance.getConfig().getConfigurationSection("config.environment")));
+
+            Quark.LANGUAGE = Language.create("quark-core");
+            Quark.CONFIG = new Configuration("quark-core");
         }
 
         @ContextComponent(order = 5, text = "Service started")
@@ -161,9 +160,7 @@ public interface Bootstrap {
         @ContextComponent(order = 0, text = "Service stopped.")
         static void stopService(Quark instance) {
             ServiceManager.unregisterAll();
-
             Service.stopBase();
-
             ClientMessenger.getBackend().stop();
         }
 

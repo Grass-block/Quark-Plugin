@@ -1,6 +1,7 @@
 {
   "id": "quark-lobby",
   "version": "0.10",
+  "default-enable": false,
   "package_namespace": "org.tbstcraft.quark.lobby",
   "modules": {
     "map-protect": ".MapProtect",

@@ -7,6 +7,7 @@
     "bungee-connection-protect": ".BungeeConnectionProtect",
     "forge-server-teleportation": ".ForgeServerTeleportation",
     "mcsm-dynamic-instance": ".MCSMDynamicInstance",
-    "server-statement-observer": ".ServerStatementObserver"
+    "server-statement-observer": ".ServerStatementObserver",
+    "proxy-ping": ".ProxyPing"
   }
 }

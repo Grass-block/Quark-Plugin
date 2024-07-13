@@ -4,7 +4,7 @@ language:
     chat-format: 聊天格式化
     mail: 留言
     chat-report: 聊天举报
-    daily-sentence: 一言
+    hitokoto: 一言
     npc-chat: NPC聊天
     chat-at: At玩家
     chat-component: 聊天组件
@@ -48,7 +48,7 @@ language:
   chat-filter:
     reload: "{global#sys-success}成功重载规则文件。"
     save: "{global#sys-success}成功保存默认规则文件。"
-  daily-sentence:
+  hitokoto:
     sentence: "{hover(text,文字来自 {#red}[{#white}一言{#red}]{#gray}(https://hitokoto.cn/))}{#red}[{#white}每日一言{#red}] {#white}%s {#gray}——%s({#var})"
   npc-chat:
     name-tbs: "[{#gold}腐竹{#white}]土拨鼠"

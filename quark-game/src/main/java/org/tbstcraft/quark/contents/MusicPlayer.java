@@ -1,7 +1,6 @@
 package org.tbstcraft.quark.contents;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import me.gb2022.apm.client.ClientMessenger;
 import me.gb2022.apm.client.event.ClientRequestEvent;
 import me.gb2022.apm.client.event.driver.ClientEventHandler;
@@ -22,19 +21,19 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.contents.musics.EnumInstrument;
 import org.tbstcraft.quark.contents.musics.MusicData;
 import org.tbstcraft.quark.contents.musics.MusicFileLoader;
 import org.tbstcraft.quark.contents.musics.MusicSession;
 import org.tbstcraft.quark.data.assets.AssetGroup;
+import org.tbstcraft.quark.foundation.command.CommandProvider;
+import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.*;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.RemoteMessageService;
+import org.tbstcraft.quark.internal.task.TaskService;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiSystem;
@@ -48,7 +47,7 @@ import java.util.Set;
 
 @CommandProvider(MusicPlayer.MusicCommand.class)
 @QuarkModule(version = "1.0.3")
-@AutoRegister({ServiceType.EVENT_LISTEN,ServiceType.REMOTE_MESSAGE,ServiceType.CLIENT_MESSAGE})
+@AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.REMOTE_MESSAGE, ServiceType.CLIENT_MESSAGE})
 public final class MusicPlayer extends PackageModule {
     public static final String UNSUPPORTED_FORMAT = "unsupported-format";
     public static final String RESOLVE_ERROR = "error-resolving";
@@ -161,23 +160,23 @@ public final class MusicPlayer extends PackageModule {
     }
 
     public void pauseMusic(String player) {
-        this.getLanguage().broadcastMessage(false,false, "pause", player);
+        this.getLanguage().broadcastMessage(false, false, "pause", player);
         this.globalSession.pause();
     }
 
     public void resumeMusic(String player) {
-        this.getLanguage().broadcastMessage(false,false, "resume", player);
+        this.getLanguage().broadcastMessage(false, false, "resume", player);
         this.globalSession.resume();
     }
 
     public void cancelMusic(String player) {
-        this.getLanguage().broadcastMessage(false,false, "cancel", player);
+        this.getLanguage().broadcastMessage(false, false, "cancel", player);
         this.globalSession.cancel();
     }
 
     public void playMusic(String player, String music, int pitch) {
         this.globalSession.play(select(music, pitch));
-        this.getLanguage().broadcastMessage(false,false, "play", player, music, pitch);
+        this.getLanguage().broadcastMessage(false, false, "play", player, music, pitch);
     }
 
 

@@ -27,9 +27,10 @@ config:
   bossbar-announcement:
     period: 1200
     bar-color: white
-    ui: '{#aqua}{#server-name} {#yellow}>> {rand#text}'
+    ui: '{#purple}{#server-name-plain} {#yellow}>> {rand#text}'
   chat-format:
     template: '{0} {color(gold)}> {color(gray)}{1}'
+    time: "   {#gray}%s"
   player-name-header:
     template: "[{#white}{header}{#white}] {player}"
     op-header: '{#dark-purple}管理'
@@ -67,4 +68,4 @@ config:
       - "%s"
       - "{#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一"
   join-quit-message:
-    proxy: {$proxy}
+    proxy: /{$proxy}

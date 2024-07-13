@@ -1,0 +1,8 @@
+{
+  "_default": {
+    "low": "bass_guitar",
+    "mid": "piano",
+    "high": "bell",
+    "fallback": "bass_drum"
+  }
+}

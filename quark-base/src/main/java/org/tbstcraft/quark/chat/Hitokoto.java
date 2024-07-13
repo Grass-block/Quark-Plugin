@@ -10,21 +10,21 @@ import org.tbstcraft.quark.util.NetworkUtil;
 
 import java.io.IOException;
 
-@QuarkCommand(name = "daily-sentence")
+@QuarkCommand(name = "hitokoto")
 @QuarkModule(version = "1.0.0")
-public final class DailySentence extends CommandModule {
+public final class Hitokoto extends CommandModule {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         try {
-            JsonObject json = JsonParser.parseString(NetworkUtil.httpGet("https://v1.hitokoto.cn/")).getAsJsonObject();
+            String dom = NetworkUtil.httpGet("https://v1.hitokoto.cn/", false);
+            JsonObject json = JsonParser.parseString(dom).getAsJsonObject();
 
             getLanguage().sendMessage(sender, "sentence",
                     json.get("hitokoto").getAsString(),
                     json.get("from").getAsString(),
                     json.get("id").getAsString()
             );
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
