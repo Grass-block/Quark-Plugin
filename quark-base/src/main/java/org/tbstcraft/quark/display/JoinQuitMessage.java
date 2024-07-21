@@ -3,20 +3,21 @@ package org.tbstcraft.quark.display;
 import me.gb2022.apm.remote.event.RemoteEventHandler;
 import me.gb2022.apm.remote.event.remote.RemoteMessageEvent;
 import me.gb2022.apm.remote.protocol.BufferUtil;
+import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.RemoteMessageService;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.util.function.Consumer;
 
@@ -39,6 +40,7 @@ public final class JoinQuitMessage extends PackageModule {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage(null);
+
         if (this.getConfig().getBoolean("proxy")) {
             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1, 1);
             RemoteMessageService.message("proxy", "/transfer/join_server", buf -> {

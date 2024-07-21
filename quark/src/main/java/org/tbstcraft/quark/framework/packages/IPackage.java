@@ -6,10 +6,9 @@ import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.FeatureAvailability;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.config.Configuration;
-import org.tbstcraft.quark.data.config.Language;
-import org.tbstcraft.quark.framework.module.providing.ModuleRegistry;
-import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.ModuleManager;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.providing.ModuleRegistry;
 import org.tbstcraft.quark.framework.service.providing.ServiceRegistry;
 import org.tbstcraft.quark.util.ExceptionUtil;
 
@@ -65,8 +64,6 @@ public interface IPackage {
 
     //---[context]---
     Logger getLogger();
-
-    Language getLanguageFile();
 
     Configuration getConfigFile();
 

@@ -2,7 +2,7 @@ plugins{
     id 'java'
 }
 
-project.setProperty("version","3.63.0")
+project.setProperty("version","0.63.12")
 
 apply from: "E:/Java/GradleScripts/build-base.gradle"
 
@@ -13,6 +13,15 @@ applyGlobalScript("/Dependencies.gradle")
 
 apply from: rootDir.getAbsolutePath()+"/info.gradle"
 
+repositories {
+    maven {
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+}
+
+dependencies {
+    compileOnly 'me.clip:placeholderapi:2.11.6'
+}
 
 //quark libraries(implemented by platform)
 dependencies {

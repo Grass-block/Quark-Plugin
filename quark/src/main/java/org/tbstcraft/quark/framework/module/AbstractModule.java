@@ -4,15 +4,16 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.foundation.command.AbstractCommand;
 import org.tbstcraft.quark.data.language.ILanguageAccess;
+import org.tbstcraft.quark.data.language.LanguageContainer;
 import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.tbstcraft.quark.foundation.command.AbstractCommand;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.framework.module.compat.CompatContainer;
 import org.tbstcraft.quark.framework.module.services.ModuleServices;
 import org.tbstcraft.quark.framework.packages.IPackage;
 import org.tbstcraft.quark.framework.record.EmptyRecordEntry;
 import org.tbstcraft.quark.framework.record.RecordEntry;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -30,7 +31,6 @@ public abstract class AbstractModule implements Listener {
 
     public AbstractModule() {
     }
-
 
     //api
     public void enable() {
@@ -194,13 +194,13 @@ public abstract class AbstractModule implements Listener {
     }
 
     public String getDisplayName(Locale locale) {
-        ILanguageAccess lang = this.getParent().getLanguageFile();
+        ILanguageAccess lang = LanguageContainer.getInstance().access(this.getParent().getId());
 
-        if (!lang.hasKey("_module-name", this.getId())) {
+        if (!lang.hasKey("-module-name", this.getId())) {
             return this.getId();
         }
 
-        String displayName = lang.getMessage(locale, "_module-name", this.getId());
+        String displayName = lang.getMessage(locale, "-module-name", this.getId());
         return "%s{#gray}({#white}%s{#gray})".formatted(getId(), displayName);
     }
 }

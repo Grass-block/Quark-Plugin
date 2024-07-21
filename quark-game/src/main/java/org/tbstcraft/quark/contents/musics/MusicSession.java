@@ -3,8 +3,8 @@ package org.tbstcraft.quark.contents.musics;
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.contents.MusicPlayer;
 import org.tbstcraft.quark.data.language.Language;
-import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.text.DecimalFormat;
 import java.util.HashSet;

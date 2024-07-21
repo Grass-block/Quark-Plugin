@@ -6,12 +6,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.assets.Asset;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
 
 import java.io.IOException;
 import java.io.InputStream;

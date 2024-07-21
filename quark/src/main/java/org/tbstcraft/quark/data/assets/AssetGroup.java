@@ -133,6 +133,6 @@ public final class AssetGroup {
     }
 
     public boolean existFolder() {
-        return this.folder.exists();
+        return this.folder.exists() && Objects.requireNonNull(this.folder.listFiles()).length != 0;
     }
 }

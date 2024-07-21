@@ -7,7 +7,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.event.EventHandler;
 import org.tbstcraft.quark.proxy.RemoteMessage;
-import org.tbstcraft.quark.proxy.ServerMessageService;
 
 import java.nio.charset.StandardCharsets;
 

@@ -4,6 +4,7 @@ import me.gb2022.apm.local.MappedBroadcastEvent;
 import me.gb2022.apm.local.PluginMessageHandler;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.quark.web.HttpService;
 import org.atcraftmc.quark.web.SMTPService;
 import org.atcraftmc.quark.web.http.ContentType;
 import org.atcraftmc.quark.web.http.HttpHandlerContext;
@@ -12,7 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.assets.Asset;
@@ -25,7 +26,6 @@ import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.atcraftmc.quark.web.HttpService;
 import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.ExceptionUtil;
 
@@ -73,7 +73,7 @@ public final class AccountActivation extends PackageModule {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
         this.testPlayer(event.getPlayer());
     }
 

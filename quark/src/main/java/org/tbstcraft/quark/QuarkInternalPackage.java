@@ -34,9 +34,13 @@ public interface QuarkInternalPackage {
                 .service(RemoteMessageService.class)
                 .service(UIManager.class)
 
-
                 .module("reserved", Reserved.class)
                 .module("demo-warning", DemoWarning.class)
-                .module("version-log-viewer", VersionLogViewer.class);
+                .module("version-log-viewer", VersionLogViewer.class)
+                .module("counter-conflict-handler", CounterPluginConflictHandler.class)
+                .module("modrinth-version-check", ModrinthVersionCheck.class)
+
+                .language("quark-core", "zh_cn")
+                .language("quark-core", "en_us");
     }
 }

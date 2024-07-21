@@ -10,7 +10,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
@@ -26,8 +26,6 @@ import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolders;
 import org.tbstcraft.quark.util.placeholder.GloballyPlaceHolder;
 
-import java.util.HashSet;
-
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @Compat(ChatComponent.PaperCompat.class)
@@ -40,12 +38,12 @@ public final class ChatComponent extends PackageModule {
 
     @Override
     public void enable() {
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
     }
 
     @Override
     public void disable() {
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
     }
 
     @EventHandler

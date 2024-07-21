@@ -21,4 +21,6 @@ config:
     host: /{$proxy-exchange-host}
     port: /{$proxy-exchange-port}
     key: /{$proxy-exchange-key}
+  locale:
+    join-delay: 20
 

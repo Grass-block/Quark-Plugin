@@ -4,7 +4,6 @@ import me.gb2022.apm.remote.event.RemoteEventHandler;
 import me.gb2022.apm.remote.event.remote.RemoteMessageEvent;
 import me.gb2022.apm.remote.protocol.BufferUtil;
 import me.gb2022.commons.reflect.AutoRegister;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -14,7 +13,6 @@ import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.RemoteMessageService;
-import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 
 import java.util.Objects;
 

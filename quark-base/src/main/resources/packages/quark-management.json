@@ -1,0 +1,15 @@
+{
+  "id": "quark-management",
+  "version": "1.0",
+  "package_namespace": "org.tbstcraft.quark.management",
+  "modules": {
+    "advanced-plugin-command": ".AdvancedPluginCommand",
+    "kick-on-reload": ".KickOnReload",
+    "maintenance": ".Maintenance",
+    "advanced-ban-command": ".AdvancedBan",
+    "stop-confirm": ".StopConfirm"
+  },
+  "languages": [
+    "quark-management:zh_cn"
+  ]
+}

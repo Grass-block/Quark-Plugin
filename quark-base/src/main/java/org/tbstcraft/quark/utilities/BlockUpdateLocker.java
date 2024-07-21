@@ -1,15 +1,15 @@
 package org.tbstcraft.quark.utilities;
 
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.*;
-import me.gb2022.commons.reflect.AutoRegister;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 import java.util.List;
 

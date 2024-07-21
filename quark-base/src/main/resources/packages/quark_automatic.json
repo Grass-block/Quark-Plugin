@@ -6,5 +6,8 @@
     "vm-garbage-cleaner": ".VMGarbageCleaner",
     "auto-plugin-reload": ".AutoPluginReload",
     "auto-save": ".AutoSave"
-  }
+  },
+  "languages": [
+    "quark-automatic:zh_cn"
+  ]
 }

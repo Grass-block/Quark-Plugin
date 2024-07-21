@@ -1,16 +1,28 @@
 import java.text.SimpleDateFormat
 
+task copyInfo(type: Copy) {
+    from('src/main/resources') {
+        include 'product-info.properties'
+        include 'plugin.yml'
+    }
+    into 'build/resources/main'
+    // 禁用up-to-date检查
+    outputs.upToDateWhen { false }
+}
+
+tasks.processResources.dependsOn(copyInfo)
+
 processResources {
     doFirst {
         filesMatching('**/product-info.properties') {
             expand([
-                    'version': project.property("version"),
-                    'build_time' : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
+                    'version'   : project.property("version"),
+                    'build_time': new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
             ])
         }
         filesMatching("**/plugin.yml") {
             expand([
-                    'version': project.property("version"),
+                    'version'     : project.property("version"),
                     'core_version': project(":quark").property("version")
             ])
         }

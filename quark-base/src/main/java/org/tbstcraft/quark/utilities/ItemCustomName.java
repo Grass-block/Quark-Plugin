@@ -8,7 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -35,7 +35,7 @@ public final class ItemCustomName extends PackageModule {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerJoin(final PlayerJoinEvent event) {
+    public void onPlayerJoin(final DelayedPlayerJoinEvent event) {
         refreshInventory(event.getPlayer().getInventory(), Language.locale(event.getPlayer()));
     }
 

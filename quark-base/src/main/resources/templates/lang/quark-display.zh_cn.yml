@@ -74,3 +74,5 @@ language:
       - - '{#purple}{#server-name}{#white}禁止一切违反国家法律法规条例的行为。'
         - '{#white}若有发现我们将直接举报，严重者我们将会交给警方处理。'
         - '{#white}我们将会保留您的行为直到取证结束。'
+  npc-chat:
+    not-found: "{global#error}未找到 {#var} 的NPC聊天上下文。"

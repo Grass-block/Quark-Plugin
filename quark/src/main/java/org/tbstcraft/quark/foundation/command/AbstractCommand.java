@@ -16,13 +16,13 @@ import java.util.*;
 import java.util.function.Function;
 
 @SuppressWarnings("NullableProblems")
-public abstract class AbstractCommand extends Command implements CommandExecuter {
+public abstract class AbstractCommand extends Command implements CommandExecutor {
     private final Map<String, AbstractCommand> subCommands = new HashMap<>();
     private final LanguageEntry commandMessages = Quark.LANGUAGE.entry("command");
     private Command covered;
-    protected CommandExecuter executor = this;
+    protected CommandExecutor executor = this;
 
-    public void setExecutor(CommandExecuter executor) {
+    public void setExecutor(CommandExecutor executor) {
         this.executor = executor;
     }
 

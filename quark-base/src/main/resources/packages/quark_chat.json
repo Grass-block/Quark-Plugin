@@ -12,6 +12,11 @@
     "chat-report": ".ChatReport",
     "hitokoto": ".Hitokoto",
     "chatgpt": ".ChatGPT",
-    "self-message": ".SelfMessage"
-  }
+    "self-message": ".SelfMessage",
+    "npc-chat": ".NPCChat"
+  },
+  "languages": [
+    "quark-chat:zh_cn",
+    "quark-chat:en_us"
+  ]
 }

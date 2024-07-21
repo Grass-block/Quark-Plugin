@@ -1,12 +1,12 @@
 package org.tbstcraft.quark.lobby;
 
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.permission.PermissionService;
 

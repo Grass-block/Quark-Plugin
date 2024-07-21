@@ -1,12 +1,11 @@
 package org.tbstcraft.quark.foundation.command.driver;
 
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.foundation.command.CommandExecuter;
+import org.tbstcraft.quark.foundation.command.CommandExecutor;
 
 import java.lang.reflect.Method;
-import java.util.List;
 
-public final class CommandOptionExecution implements CommandExecuter {
+public final class CommandOptionExecution implements CommandExecutor {
     private final Method method;
     private final CommandExecutorHandler descriptor;
 

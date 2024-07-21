@@ -2,11 +2,11 @@ package org.tbstcraft.quark.util.container;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
-import org.tbstcraft.quark.internal.CacheService;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.internal.CacheService;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public interface CachedInfo {
 
     final class EventAdapter implements Listener {
         @EventHandler
-        public void onPlayerJoin(PlayerJoinEvent event) {
+        public void onPlayerJoin(DelayedPlayerJoinEvent event) {
             refreshPlayerNames();
         }
 

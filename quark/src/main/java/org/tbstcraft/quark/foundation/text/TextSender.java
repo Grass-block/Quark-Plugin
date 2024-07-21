@@ -8,13 +8,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.time.Duration;

@@ -9,10 +9,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
@@ -91,7 +90,7 @@ public final class PlayerNameHeader extends CommandModule {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
         this.attach(event.getPlayer());
     }
 

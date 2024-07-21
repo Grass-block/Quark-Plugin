@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.security;
 
 import me.gb2022.apm.local.PluginMessenger;
+import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,7 +15,6 @@ import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 import java.util.Date;

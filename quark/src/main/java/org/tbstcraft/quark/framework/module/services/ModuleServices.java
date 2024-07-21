@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
 import org.tbstcraft.quark.data.assets.Asset;
 import org.tbstcraft.quark.data.assets.AssetGroup;
+import org.tbstcraft.quark.data.language.LanguageContainer;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.AbstractCommand;
@@ -33,7 +34,7 @@ public interface ModuleServices {
             .injector(AssetGroup.class, (p, m) -> new AssetGroup(m.getOwnerPlugin(), p[0], p.length == 1 || Boolean.parseBoolean(p[1])))
             .injector(Permission.class, (p, m) -> PermissionService.createPermissionObject(p[0]))
             .injector(LanguageEntry.class, (p, m) -> m.getLanguage())
-            .injector(LanguageItem.class, (p, m) -> m.getParent().getLanguageFile().item(m.getId(), p[0]))
+            .injector(LanguageItem.class, (p, m) -> LanguageContainer.getInstance().item(m.getParent().getId(), m.getId(), p[0]))
             .build();
 
     static void init(AbstractModule module) {

@@ -3,16 +3,16 @@ package org.tbstcraft.quark.data;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
 import org.tbstcraft.quark.util.DataFix;
 import org.tbstcraft.quark.util.FilePath;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 
 import java.io.File;
 
@@ -80,7 +80,7 @@ public interface PlayerDataService extends Service {
         }
 
         @EventHandler
-        public void onPlayerJoin(PlayerJoinEvent event) {
+        public void onPlayerJoin(DelayedPlayerJoinEvent event) {
             this.backend.getEntry(event.getPlayer().getName());
         }
 

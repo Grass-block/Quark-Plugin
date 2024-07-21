@@ -18,11 +18,11 @@ dependencies {
     implementation localStorage('me.gb2022.commons-event')
     implementation localStorage("me.gb2022.commons-math")
 
-    compileOnly("io.netty:netty-buffer:4.1.100.Final")
+    compileOnly 'io.netty:netty-buffer:4.1.100.Final'
 
     implementation 'com.moandjiezana.toml:toml4j:0.7.2'
 }
 
-jar{
-    archiveBaseName="quark-proxy-waterfall"
+jar {
+    archiveBaseName = "quark-proxy-waterfall"
 }

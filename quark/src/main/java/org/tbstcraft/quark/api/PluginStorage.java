@@ -1,16 +1,28 @@
-package org.tbstcraft.quark.data;
+package org.tbstcraft.quark.api;
 
 import org.tbstcraft.quark.Quark;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
-public interface PlaceHolderStorage {
+@SuppressWarnings("unchecked")
+public interface PluginStorage {
     Map<String, Object> STORAGE = new HashMap<>();
 
-    static <I> I get(String name, Class<I> type, Consumer<I> func) {
+    static <I> Set<I> set(String name, Consumer<HashSet<I>> func) {
+        return object(name, HashSet.class, func::accept);
+    }
+
+    static <I> List<I> list(String name, Consumer<List<I>> func) {
+        return object(name, List.class, func::accept);
+    }
+
+    static <I, I2> Map<I, I2> map(String name, Consumer<Map<I, I2>> func) {
+        return object(name, Map.class, func::accept);
+    }
+
+    static <I> I object(String name, Class<I> type, Consumer<I> func) {
         I item = type.cast(STORAGE.get(name));
 
         if (item == null) {

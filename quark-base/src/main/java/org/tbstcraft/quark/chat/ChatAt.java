@@ -7,15 +7,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.data.config.Queries;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.foundation.text.TextSender;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 
 import java.util.HashSet;
@@ -27,7 +26,7 @@ import java.util.Set;
 public final class ChatAt extends PackageModule {
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             PlayerUtil.addChatTabOption(player, "@" + event.getPlayer().getName());
             PlayerUtil.addChatTabOption(event.getPlayer(), "@" + player.getName());

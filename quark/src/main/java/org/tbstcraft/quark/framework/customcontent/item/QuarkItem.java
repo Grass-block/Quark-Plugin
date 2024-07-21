@@ -1,7 +1,6 @@
 package org.tbstcraft.quark.framework.customcontent.item;
 
 import org.bukkit.Material;
-import org.tbstcraft.quark.framework.customcontent.block.DropChance;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

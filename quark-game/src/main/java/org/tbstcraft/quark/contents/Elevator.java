@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.contents;
 
+import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Location;
@@ -20,24 +21,22 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.api.PluginStorage;
+import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.crafting.RecipeBuilder;
+import org.tbstcraft.quark.foundation.crafting.RecipeManager;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.customcontent.CustomMeta;
 import org.tbstcraft.quark.framework.customcontent.item.CustomItem;
 import org.tbstcraft.quark.framework.customcontent.item.QuarkItem;
-import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
-import org.tbstcraft.quark.foundation.crafting.RecipeBuilder;
-import org.tbstcraft.quark.foundation.crafting.RecipeManager;
 
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -72,13 +71,13 @@ public final class Elevator extends PackageModule {
 
     @Override
     public void enable() {
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
         RecipeManager.register(RECIPE);
     }
 
     @Override
     public void disable(){
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
         RecipeManager.unregister(RECIPE);
     }
 

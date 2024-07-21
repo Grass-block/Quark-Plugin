@@ -22,7 +22,7 @@ public final class Configuration {
     public Configuration(Plugin owner, String id) {
         this.owner = owner;
         this.ownerId = "quark";
-        ConfigDelegation.CONFIG_REGISTRY.put(id, this);
+        ConfigContainer.CONFIG_REGISTRY.put(id, this);
         this.id = id;
         this.load();
         this.sync(false);

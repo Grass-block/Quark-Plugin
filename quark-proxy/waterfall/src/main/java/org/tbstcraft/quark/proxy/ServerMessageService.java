@@ -7,11 +7,9 @@ import net.md_5.bungee.api.config.ServerInfo;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public interface ServerMessageService {
     Map<String, CodecCipher> MAP = new HashMap<>();

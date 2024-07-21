@@ -1,8 +1,8 @@
 package org.tbstcraft.quark.framework.service.providing;
 
 import org.tbstcraft.quark.framework.packages.IPackage;
-import org.tbstcraft.quark.framework.service.ServiceManager;
 import org.tbstcraft.quark.framework.service.Service;
+import org.tbstcraft.quark.framework.service.ServiceManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -35,7 +35,7 @@ public abstract class ServiceRegistry {
         this.create(this.services);
         for (Class<? extends Service> service : this.services) {
             try {
-                serviceManager.registerService(service);
+                serviceManager.unregisterService(service);
             } catch (Exception e) {
                 this.getPackage().getLogger().severe("failed to unregister service %s: %s".formatted(
                         service.getName(), e.getMessage()));

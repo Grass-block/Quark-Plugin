@@ -1,8 +1,8 @@
 package org.tbstcraft.quark.framework.module.providing;
 
 import org.tbstcraft.quark.framework.module.AbstractModule;
-import org.tbstcraft.quark.framework.packages.IPackage;
 import org.tbstcraft.quark.framework.module.ModuleManager;
+import org.tbstcraft.quark.framework.packages.IPackage;
 
 import java.util.HashSet;
 import java.util.Set;

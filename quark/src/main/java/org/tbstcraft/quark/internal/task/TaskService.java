@@ -4,11 +4,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
-import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 
 import java.util.Map;
 import java.util.UUID;

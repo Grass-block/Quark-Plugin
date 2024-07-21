@@ -18,12 +18,12 @@ public final class PasswordAuthorcation extends CoreCommand {
         switch (args[0]) {
             case "set" -> SharedObjects.SHARED_THREAD_POOL.submit(() -> {
                 PlayerAuthService.set(sender.getName(), args[1]);
-                Quark.LANGUAGE.sendMessage(sender, "auth", "password_set", args[1]);
+                //Quark.LANGUAGE.sendMessage(sender, "auth", "password_set", args[1]);
             });
             case "reset" -> SharedObjects.SHARED_THREAD_POOL.submit(() -> {
                 String rand = PlayerAuthService.generateRandom();
                 PlayerAuthService.set(sender.getName(), rand);
-                Quark.LANGUAGE.sendMessage(sender, "auth", "password_set", rand);
+                //Quark.LANGUAGE.sendMessage(sender, "auth", "password_set", rand);
             });
             default -> this.sendExceptionMessage(sender);
         }

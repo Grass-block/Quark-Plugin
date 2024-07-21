@@ -7,7 +7,7 @@ import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -36,12 +36,14 @@ public final class ProxyPing extends PackageModule {
             }
         });
         PlaceHolderService.PLAYER.register("ping", (StringObjectPlaceHolder<Player>) p -> BukkitUtil.formatPing(ping(p)));
+        PlaceHolderService.PLAYER.register("ping-value", (StringObjectPlaceHolder<Player>) p -> String.valueOf(ping(p)));
     }
 
     @Override
     public void disable() {
         TaskService.cancelTask("quark:proxy-ping:update");
         PlaceHolderService.PLAYER.register("ping", (StringObjectPlaceHolder<Player>) p -> BukkitUtil.formatPing(PlayerUtil.getPing(p)));
+        PlaceHolderService.PLAYER.register("ping-value", (StringObjectPlaceHolder<Player>) p -> String.valueOf(PlayerUtil.getPing(p)));
     }
 
     @PluginMessageHandler("proxy-ping:update")
@@ -51,7 +53,7 @@ public final class ProxyPing extends PackageModule {
 
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
         ping(event.getPlayer());
     }
 

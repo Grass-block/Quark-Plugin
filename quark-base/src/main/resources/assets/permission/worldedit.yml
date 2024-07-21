@@ -1,0 +1,18 @@
+tags:
+  we-full:
+    - "+worldedit.*"
+  we-primary:
+    - "+worldedit.selection.pos"
+    - "+worldedit.selection.cuboid"
+    - "+worldedit.clipboard.copy"
+    - "+worldedit.clipboard.paste"
+    - "+worldedit.help"
+    - "+worldedit.biome.set"
+    - "+worldedit.schematic.list"
+    - "+worldedit.schematic.save"
+    - "+worldedit.clipboard.save"
+    - "+worldedit.history.undo.self"
+    - "+worldedit.history.redo.self"
+    - "+worldedit.navigation.*"
+    - "+worldedit.region.set"
+    - "+worldedit.selection.pos"

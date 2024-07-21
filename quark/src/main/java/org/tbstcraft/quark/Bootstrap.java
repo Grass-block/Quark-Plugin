@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.tbstcraft.quark.data.config.Configuration;
-import org.tbstcraft.quark.data.config.Language;
 import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.data.config.YamlUtil;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
@@ -142,7 +141,6 @@ public interface Bootstrap {
             instance.saveConfig();
             Queries.setEnvironmentVars(Objects.requireNonNull(instance.getConfig().getConfigurationSection("config.environment")));
 
-            Quark.LANGUAGE = Language.create("quark-core");
             Quark.CONFIG = new Configuration("quark-core");
         }
 

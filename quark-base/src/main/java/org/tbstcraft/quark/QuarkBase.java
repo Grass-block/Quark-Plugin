@@ -17,7 +17,8 @@ public final class QuarkBase extends MultiPackageProvider {
                 new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark_display.json"),
                 new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark_chat.json"),
                 new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark_utilities.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark_automatic.json")
+                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark_automatic.json"),
+                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark-management.json")
         );
     }
 }

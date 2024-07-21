@@ -3,9 +3,9 @@ package org.tbstcraft.quark.foundation.command;
 import org.bukkit.command.Command;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.framework.event.command.CommandEvent;
 import org.tbstcraft.quark.framework.event.command.CommandTabEvent;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,12 +23,14 @@ public interface CommandRegistry {
             Map<String, Command> commands = CommandManager.getCommandEntries();
             command.fetchCovered();
             commands.put(command.getName(), command);
+            commands.put("quark:" + command.getName(), command);
         }
 
         @Override
         public void unregister(AbstractCommand command) {
             Map<String, Command> commands = CommandManager.getCommandEntries();
             commands.remove(command.getName());
+            commands.remove("quark:" + command.getName());
 
             Command covered = command.getCovered();
             if (covered == null) {
@@ -47,6 +49,7 @@ public interface CommandRegistry {
             WrappedCommandExecutor executor = new WrappedCommandExecutor(command);
             BukkitUtil.registerEventListener(executor);
             this.executorMap.put(command.getName(), executor);
+            this.executorMap.put("quark:" + command.getName(), executor);
         }
 
         @Override
@@ -57,6 +60,7 @@ public interface CommandRegistry {
             }
             BukkitUtil.unregisterEventListener(executor);
             this.executorMap.remove(command.getName());
+            this.executorMap.remove("quark:" + command.getName());
         }
 
 

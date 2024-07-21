@@ -23,6 +23,8 @@ public interface PlaceHolderService extends Service {
     GloballyPlaceHolder SERVER = PlaceHolders.server();
     GloballyPlaceHolder TEXT_STYLE = PlaceHolders.chat();
 
+    PAPIWrapper PAPI_WRAPPER = PAPIWrapper.getInstance();
+
     @ServiceInject
     static void start() {
         reloadExternal();
@@ -39,14 +41,14 @@ public interface PlaceHolderService extends Service {
     }
 
     static String format(String input) {
-        return PlaceHolder.format(PATTERN, input, GLOBAL_VAR, SERVER, TEXT_STYLE);
+        return PAPI_WRAPPER.handle(PlaceHolder.format(PATTERN, input, GLOBAL_VAR, SERVER, TEXT_STYLE));
     }
 
     static String formatPlayer(Player player, String input) {
-        return PlaceHolder.formatObjective(PATTERN, player, input, PLAYER);
+        return PAPI_WRAPPER.handlerPlayer(player, PlaceHolder.formatObjective(PATTERN, player, input, PLAYER));
     }
 
     static String format(String s, GloballyPlaceHolder... placeHolders) {
-        return PlaceHolder.format(PATTERN, s, placeHolders);
+        return PAPI_WRAPPER.handle(PlaceHolder.format(PATTERN, s, placeHolders));
     }
 }

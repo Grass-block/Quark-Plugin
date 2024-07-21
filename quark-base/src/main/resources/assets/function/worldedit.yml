@@ -1,0 +1,11 @@
+functions:
+  /mirror:
+    - /copy
+    - /flip
+    - /paste
+  /save-schem:
+    - /copy
+    - /schem save {arg0}
+  /drain-water:
+    - /set ^[waterlogged=false]
+    - /replace water air

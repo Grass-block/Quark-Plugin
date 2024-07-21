@@ -4,36 +4,35 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.config.YamlUtil;
 import org.tbstcraft.quark.util.FilePath;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.HashSet;
 import java.util.Set;
 
 public final class LanguagePack {
     public static final String TEMPLATE_DIR = "/templates/lang/%s.%s.yml";
     public static final String FILE_DIR = "%s/lang/%s/%s.yml";
-
     private final String id;
-    private final Locale locale;
+    private final String locale;
+
     private final YamlConfiguration config = new YamlConfiguration();
 
     private final Plugin owner;
 
-    public LanguagePack(String id, Locale locale, Plugin owner) {
+    public LanguagePack(String id, String locale, Plugin owner) {
         this.id = id;
         this.locale = locale;
         this.owner = owner;
     }
 
-    static boolean existType(Plugin owner, String id, Locale locale) {
+    static boolean existType(Plugin owner, String id, String locale) {
         File f = new File(FILE_DIR.formatted(
-                FilePath.pluginFolder(owner.getName()),
+                FilePath.pluginFolder(Quark.PLUGIN_ID),
                 Language.locale(locale),
                 id
         ));
@@ -65,48 +64,6 @@ public final class LanguagePack {
         return this.getRootSection().getConfigurationSection(namespace);
     }
 
-    public String getMessage(String namespace, String id) {
-        ConfigurationSection section = this.getNamespace(namespace);
-        if (section == null) {
-            return error("NS_NOT_FOUND", namespace, id);
-        }
-
-        if (!section.contains(id)) {
-            return error("MSG_NOT_FOUND", namespace, id);
-        }
-
-        if (!section.isString(id)) {
-            List<String> list = section.getStringList(id);
-            StringBuilder sb = new StringBuilder();
-            int i = 0;
-            for (String s2 : list) {
-                i++;
-                sb.append(s2);
-                if (i < list.size() - 1) {
-                    sb.append("\n");
-                }
-            }
-            return sb.toString();
-        }
-        return section.getString(id);
-    }
-
-    public List<String> getMessageList(String namespace, String id) {
-        ConfigurationSection section = this.getNamespace(namespace);
-        if (section == null) {
-            return Collections.singletonList(error("NS_NOT_FOUND", namespace, id));
-        }
-
-        if (!section.contains(id)) {
-            return Collections.singletonList(error("MSG_NOT_FOUND", namespace, id));
-        }
-
-        if (!section.isList(id)) {
-            return Collections.singletonList(error("NOT_LIST", namespace, id));
-        }
-        return section.getStringList(id);
-    }
-
     public boolean hasEntry(String namespace, String id) {
         ConfigurationSection section = this.getNamespace(namespace);
         if (section == null) {
@@ -123,7 +80,6 @@ public final class LanguagePack {
             return;
         }
         YamlUtil.loadUTF8(template, is);
-
         YamlUtil.update(this.config, template, clean, 3);
 
         this.save();
@@ -135,6 +91,7 @@ public final class LanguagePack {
             if (!f.exists() || f.length() == 0) {
                 this.restore();
             }
+            sync(false);
             this.config.load(fileDir());
         } catch (IOException | InvalidConfigurationException e) {
             throw new RuntimeException(e);
@@ -161,7 +118,7 @@ public final class LanguagePack {
 
     private String fileDir() {
         return FILE_DIR.formatted(
-                FilePath.pluginFolder(this.owner.getName()),
+                FilePath.pluginFolder(Quark.PLUGIN.getName()),
                 Language.locale(this.locale),
                 this.id
         );
@@ -169,7 +126,7 @@ public final class LanguagePack {
 
     public Set<String> getEntries(String namespace) {
         ConfigurationSection section = this.getNamespace(namespace);
-        if (namespace == null) {
+        if (section == null) {
             return Set.of();
         }
         return section.getKeys(false);
@@ -177,5 +134,40 @@ public final class LanguagePack {
 
     public Set<String> getNamespaces() {
         return this.getRootSection().getKeys(false);
+    }
+
+    public Set<String> getKeys() {
+        Set<String> keys = new HashSet<>();
+
+        for (String entry : getNamespaces()) {
+            for (String k : getEntries(entry)) {
+                keys.add("%s:%s".formatted(entry, k));
+            }
+        }
+
+        return keys;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public Object getObject(String full) {
+        return getObject(full.split(":")[0], full.split(":")[1]);
+    }
+
+    public Object getObject(String namespace, String id) {
+        ConfigurationSection section = this.getNamespace(namespace);
+        return section.get(id);
+    }
+
+
+    @Override
+    public String toString() {
+        return this.id + ":" + this.locale;
     }
 }

@@ -1,9 +1,12 @@
 package org.tbstcraft.quark.framework.packages.initializer;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.FeatureAvailability;
+import org.tbstcraft.quark.data.language.LanguagePack;
 import org.tbstcraft.quark.framework.module.providing.JsonModuleRegistry;
 import org.tbstcraft.quark.framework.module.providing.ModuleRegistry;
 import org.tbstcraft.quark.framework.packages.AbstractPackage;
@@ -12,7 +15,10 @@ import org.tbstcraft.quark.framework.service.providing.ServiceRegistry;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
 
+@SuppressWarnings("deprecation")//JsonParser.parse[static] does not exist in older GSON.
 public final class JsonPackageInitializer implements PackageInitializer {
     public static final JsonParser PARSER = new JsonParser();
 
@@ -37,6 +43,23 @@ public final class JsonPackageInitializer implements PackageInitializer {
         if (this.obj == null) {
             throw new RuntimeException("failed to load identifier: " + this.location);
         }
+    }
+
+    @Override
+    public Set<LanguagePack> createLanguagePack(AbstractPackage pkg) {
+        Set<LanguagePack> packs = new HashSet<>();
+
+        JsonArray languages = this.obj.getAsJsonArray("languages");
+        if (languages == null) {
+            return packs;
+        }
+
+        for (JsonElement element : languages) {
+            String[] item = element.getAsString().split(":");
+            packs.add(new LanguagePack(item[0], item[1], pkg.getOwner()));
+        }
+
+        return packs;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.utilities;
+package org.tbstcraft.quark.management;
 
 import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
@@ -8,12 +8,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.PluginsCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.data.language.Language;
+import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.platform.BukkitPluginManager;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.foundation.platform.BukkitPluginManager;
 
 import java.io.File;
 import java.util.Arrays;

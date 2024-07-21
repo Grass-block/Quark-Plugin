@@ -1,18 +1,6 @@
 config:
-  advanced-ban-command:
-    broadcast: true
-  kick-on-reload:
-    op-ignore: false
   maintenance:
     reload-ui:
-  command-function:
-    /mirror:
-      - /copy
-      - /flip
-      - /paste
-    /save-schem:
-      - /copy
-      - /schem save {arg0}
   dynamic-view-distance:
     max: 32
 

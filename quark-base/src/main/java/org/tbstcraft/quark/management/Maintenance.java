@@ -1,20 +1,21 @@
-package org.tbstcraft.quark.utilities;
+package org.tbstcraft.quark.management;
 
 import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.permissions.Permission;
+import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.permission.PermissionService;
 
 import java.util.List;
 
@@ -25,10 +26,8 @@ import java.util.List;
 public final class Maintenance extends PackageModule {
     boolean isEnabled = false;
 
-    @Override
-    public void enable() {
-        PermissionService.createPermission("-quark.maintenance.bypass");
-    }
+    @Inject("-quark.maintenance.bypass")
+    private Permission bypass;
 
     @EventHandler
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
@@ -40,7 +39,7 @@ public final class Maintenance extends PackageModule {
 
         if (p != null) {
             locale = p.getLocale();
-            if (p.hasPermission("quark.maintenance.bypass")) {
+            if (p.hasPermission(this.bypass)) {
                 return;
             }
         }
@@ -52,7 +51,7 @@ public final class Maintenance extends PackageModule {
 
     public void kickAll() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.hasPermission("quark.maintenance.bypass")) {
+            if (player.hasPermission(this.bypass)) {
                 continue;
             }
 

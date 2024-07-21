@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.chat;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -8,16 +9,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import me.gb2022.commons.reflect.AutoRegister;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.data.ModuleDataService;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.util.container.CachedInfo;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 
 import java.util.List;
 import java.util.Objects;

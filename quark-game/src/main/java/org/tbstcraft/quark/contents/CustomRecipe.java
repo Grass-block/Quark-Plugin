@@ -5,14 +5,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Recipe;
+import org.tbstcraft.quark.data.assets.AssetGroup;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.data.assets.AssetGroup;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.foundation.crafting.RecipeDeserializer;
 import org.tbstcraft.quark.foundation.crafting.RecipeManager;
+import org.tbstcraft.quark.framework.module.PackageModule;
+import org.tbstcraft.quark.framework.module.QuarkModule;
 
 import java.util.HashSet;
 import java.util.List;

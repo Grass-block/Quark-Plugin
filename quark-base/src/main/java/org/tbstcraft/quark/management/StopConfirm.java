@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.utilities;
+package org.tbstcraft.quark.management;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.event.EventHandler;

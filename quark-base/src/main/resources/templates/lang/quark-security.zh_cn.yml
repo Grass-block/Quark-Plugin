@@ -35,4 +35,11 @@ language:
   permission-manager:
     cmd-group-set: "{global#sys-operation}已将玩家 {#var} 所属的权限组更改为 {#var}。"
     cmd-perm-set: "{global#sys-operation}已将玩家 {#var} 的权限节点 {#var} 的值改为 {#var}。"
-    cmd-player-not-found: "{global#sys-operation}你说的这人是谁？我不到啊？"
+    cmd-player-not-found: "{global#sys-operation}无法找到指定的玩家。"
+    cmd-tag-add: "{global#sys-operation}已向玩家 {#var} 添加权限标签 {#var}。"
+    cmd-tag-remove: "{global#sys-operation}已向玩家 {#var} 移除权限标签 {#var}。"
+  ip-defender:
+    detect: '{global#info}检测到您的IP属地为{#var} 。(该信息只对您可见)'
+    warn: '{global#warning}检测到您的IP属地为{#var},与上次的位置发生变化,您的ip变化已被记录。'
+    check: '{global#sys-info}您的IP属地为{#var} 。(该信息只对您可见)'
+    auto-ban-reason: '由于您的IP变化,我们怀疑您的账户出现了安全问题。'

@@ -30,7 +30,3 @@ language:
     interaction-block: '{global#sys-warning}在完成账户验证之前，您还不能聊天和交互。'
     unverify-success: '{global#sys-info}您的账户已经取消激活状态, 请重新进入服务器。'
     kick-info: "检测到您的IP状态异常，您的账户已被取消激活。{#return}请重新进入服务器。"
-  ip-defender:
-    new-ip: '{global#info}检测到您的IP属地为{#var} 。(该信息只对您可见)'
-    ip-warn: '{global#warning}检测到您的IP属地为{#var},与上次({#var})发生变化,您的ip变化已被记录。'
-    auto-ban-reason: '由于您的IP变化,我们怀疑您的账户出现了安全问题。'

@@ -10,4 +10,5 @@ include 'quark-proxy:bukkit'
 include 'quark-proxy:waterfall'
 include 'quark-minigame'
 include 'quark-atcraft'
+include 'quark-api'
 

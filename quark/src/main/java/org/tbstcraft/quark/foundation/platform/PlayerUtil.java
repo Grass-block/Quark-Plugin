@@ -5,13 +5,10 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.data.config.Queries;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.event.BanMessageFetchEvent;
 import org.tbstcraft.quark.framework.module.ModuleManager;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
-import org.tbstcraft.quark.internal.placeholder.PlaceHolders;
-import org.tbstcraft.quark.util.placeholder.PlaceHolder;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -132,7 +129,8 @@ public interface PlayerUtil {
             }
             player.setPlayerListHeader(header);
             player.setPlayerListFooter(footer);
-        }catch (NoSuchMethodError ignored){}
+        } catch (NoSuchMethodError ignored) {
+        }
     }
 
     static long getPlayTime(Player player) {
@@ -173,14 +171,7 @@ public interface PlayerUtil {
     }
 
     static Player strictFindPlayer(String name) {
-        Player p = Bukkit.getPlayer(name);
-        if (p == null) {
-            return null;
-        }
-        if (!p.getName().equals(name)) {
-            return null;
-        }
-        return p;
+        return Bukkit.getPlayerExact(name);
     }
 
     static void addChatTabOption(Player player, String... opt) {

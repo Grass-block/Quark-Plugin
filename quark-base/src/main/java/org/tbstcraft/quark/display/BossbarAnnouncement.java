@@ -3,6 +3,8 @@ package org.tbstcraft.quark.display;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -11,15 +13,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.platform.APIProfileTest;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -33,7 +36,7 @@ import java.util.*;
 @QuarkModule(version = "1.1.0")
 public final class BossbarAnnouncement extends PackageModule {
     public static final String TASK_UPDATE_TID = "quark-display:custom_bossbar:update";
-    private final HashMap<Locale, BossBar> bars = new HashMap<>();
+    private final HashMap<Locale, BossbarWrapper> bars = new HashMap<>();
     private String content = null;
 
     @Inject
@@ -68,7 +71,7 @@ public final class BossbarAnnouncement extends PackageModule {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
         this.addBar(event.getPlayer());
     }
 
@@ -79,49 +82,133 @@ public final class BossbarAnnouncement extends PackageModule {
 
     public void addBar(Player p) {
         final Locale locale = Language.locale(p);
-        BossBar b = this.bars.computeIfAbsent(locale, s -> generateBossbar(locale));
-        b.addPlayer(p);
+        BossbarWrapper b = this.bars.computeIfAbsent(locale, s -> generateBossbar(locale));
+        b.add(p);
     }
 
     public void removeBar(Player p) {
         Locale locale = Language.locale(p);
-        for (BossBar bar : new ArrayList<>(this.bars.values())) {
-            bar.removePlayer(p);
+        for (BossbarWrapper bar : new ArrayList<>(this.bars.values())) {
+            bar.remove(p);
         }
-        BossBar bar = this.bars.get(Language.locale(p));
+        BossbarWrapper bar = this.bars.get(Language.locale(p));
         if (bar == null) {
             return;
         }
-        if (bar.getPlayers().isEmpty()) {
-            bar.setVisible(false);
-            bar.removeAll();
+        if (bar.getAudiences().isEmpty()) {
             this.bars.remove(locale);
         }
     }
 
-    public BossBar generateBossbar(Locale locale) {
+    private BossbarWrapper generateBossbar(Locale locale) {
         String msg = this.language.buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui"));
 
-        BarColor color = BarColor.valueOf(Objects.requireNonNull(this.getConfig().getString("bar-color")).toUpperCase());
+        BossbarWrapper wrapper = BossbarWrapper.create();
 
-        BossBar bar = Bukkit.createBossBar(msg, color, BarStyle.SOLID);
-        bar.setTitle(msg);
-        return bar;
+        wrapper.color(this.getConfig().getString("bar-color"));
+        wrapper.title(TextBuilder.buildComponent(msg));
+        return wrapper;
     }
-
 
     public void updateBossbar() {
         Set<Locale> _keySet = this.bars.keySet();
         for (Locale locale : _keySet) {
             String msg = this.getLanguage().buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui"));
-            BossBar bar = this.bars.get(locale);
+            BossbarWrapper bar = this.bars.get(locale);
             if (this.content != null) {
-                bar.setTitle(this.content);
+                bar.title(TextBuilder.buildComponent(this.content));
             } else {
-                bar.setTitle(msg);
+                bar.title(TextBuilder.buildComponent(msg));
+            }
+        }
+    }
+
+    interface BossbarWrapper {
+        static BossbarWrapper create() {
+            if (APIProfileTest.isPaperCompat()) {
+                return new AdventureBossbar();
+            }
+            return new BukkitBossbar();
+        }
+
+        void add(Player audience);
+
+        void remove(Player audience);
+
+        void title(Component title);
+
+        void color(String content);
+
+        Set<Player> getAudiences();
+
+        final class AdventureBossbar implements BossbarWrapper {
+            private final net.kyori.adventure.bossbar.BossBar bar;
+            private final Set<Player> players = new HashSet<>();
+
+            public AdventureBossbar() {
+                this.bar = net.kyori.adventure.bossbar.BossBar.bossBar(Component.text(), 1.0f, net.kyori.adventure.bossbar.BossBar.Color.WHITE, net.kyori.adventure.bossbar.BossBar.Overlay.PROGRESS);
+            }
+
+            @Override
+            public void add(Player audience) {
+                audience.showBossBar(this.bar);
+                this.players.add(audience);
+            }
+
+            @Override
+            public void remove(Player audience) {
+                audience.hideBossBar(this.bar);
+                this.players.remove(audience);
+            }
+
+            @Override
+            public void title(Component title) {
+                this.bar.name(title);
+            }
+
+            @Override
+            public void color(String content) {
+                this.bar.color(net.kyori.adventure.bossbar.BossBar.Color.valueOf(content.toUpperCase()));
+            }
+
+            @Override
+            public Set<Player> getAudiences() {
+                return this.players;
             }
         }
 
+        final class BukkitBossbar implements BossbarWrapper {
+            private final BossBar bar;
+
+            public BukkitBossbar() {
+                this.bar = Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID);
+            }
+
+            @Override
+            public void add(Player audience) {
+                this.bar.addPlayer(audience);
+            }
+
+            @Override
+            public void remove(Player audience) {
+                this.bar.removePlayer(audience);
+            }
+
+            @Override
+            public void title(Component title) {
+                this.bar.setTitle(LegacyComponentSerializer.legacySection().serialize(title));
+            }
+
+            @Override
+            public void color(String content) {
+                this.bar.setColor(BarColor.valueOf(content.toUpperCase()));
+            }
+
+            @Override
+            public Set<Player> getAudiences() {
+                return new HashSet<>(this.bar.getPlayers());
+            }
+        }
     }
 
     @QuarkCommand(name = "bossbar-announce", op = true)

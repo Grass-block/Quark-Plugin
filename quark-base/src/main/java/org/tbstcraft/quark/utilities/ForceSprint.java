@@ -3,7 +3,7 @@ package org.tbstcraft.quark.utilities;
 import me.gb2022.commons.reflect.Inject;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.platform.PlayerUtil;
@@ -26,7 +26,7 @@ public final class ForceSprint extends CommandModule {
     @Override
     public void enable() {
         super.enable();
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
         TaskService.timerTask("sprint:tick", 10, 10, () -> {
             for (String player : this.players) {
                 Objects.requireNonNull(PlayerUtil.strictFindPlayer(player)).setSprinting(true);
@@ -37,7 +37,7 @@ public final class ForceSprint extends CommandModule {
     @Override
     public void disable() {
         super.disable();
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
     }
 
     @Override

@@ -8,10 +8,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.tbstcraft.quark.api.PluginMessages;
+import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.data.PlaceHolderStorage;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.data.language.LanguageItem;
@@ -91,10 +91,13 @@ public final class ChatAnnounce extends PackageModule {
         this.language.sendTemplate(sender, Language.generateTemplate(this.getConfig(), "ui", (s) -> s.formatted(mode, msg)));
     }
 
-    @SuppressWarnings("rawtypes")
     private void sendTip(CommandSender sender) {
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> {
-            List<LanguageItem> list = new ArrayList<>(s);
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> {
+            List<LanguageItem> list = new ArrayList<>();
+
+            for (Object o : s) {
+                list.add((LanguageItem) o);
+            }
 
             Locale locale = Language.locale(sender);
 
@@ -108,7 +111,7 @@ public final class ChatAnnounce extends PackageModule {
 
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
         this.sendTip(event.getPlayer());
         this.sendAnnounce(event.getPlayer());
     }

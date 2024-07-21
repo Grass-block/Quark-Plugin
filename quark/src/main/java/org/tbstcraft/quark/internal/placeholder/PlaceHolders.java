@@ -89,6 +89,9 @@ public interface PlaceHolders {
             return String.format("%02d:%02d", hour, min);
         });
 
+        holder.register("ping-value", (StringObjectPlaceHolder<Player>) p -> String.valueOf(PlayerUtil.getPing(p)));
+
+
         return holder;
     }
 

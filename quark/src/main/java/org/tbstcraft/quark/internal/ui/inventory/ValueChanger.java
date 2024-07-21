@@ -3,9 +3,9 @@ package org.tbstcraft.quark.internal.ui.inventory;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.internal.ui.callback.InventoryActionListener;
 import org.tbstcraft.quark.internal.ui.callback.ValueEventHandler;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 
 public final class ValueChanger implements InventoryComponent, InventoryActionListener {
     private static final int[] SCALES = new int[]{1, 5, 10, 50};

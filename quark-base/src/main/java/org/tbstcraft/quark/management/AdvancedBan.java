@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.utilities;
+package org.tbstcraft.quark.management;
 
 import org.bukkit.BanList;
 import org.bukkit.command.Command;

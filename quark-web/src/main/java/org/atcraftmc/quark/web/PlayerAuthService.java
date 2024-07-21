@@ -4,13 +4,13 @@ import me.gb2022.commons.math.SHA;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.data.PlayerDataService;
-import org.tbstcraft.quark.util.container.ObjectContainer;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.framework.service.Service;
+import org.tbstcraft.quark.util.container.ObjectContainer;
 
 import java.util.Base64;
 import java.util.Objects;
@@ -96,14 +96,14 @@ public interface PlayerAuthService extends Service {
         }
 
         @EventHandler
-        public void onPlayerJoin(PlayerJoinEvent event) {
+        public void onPlayerJoin(DelayedPlayerJoinEvent event) {
             NBTTagCompound tag = PlayerDataService.getEntry(event.getPlayer().getName(), "auth_service");
             if (tag.hasKey(PATH)) {
                 return;
             }
             String pwd = generateRandom();
             set(event.getPlayer().getName(), pwd);
-            Quark.LANGUAGE.sendMessage(event.getPlayer(), "auth", "password_set", pwd);
+            //Quark.LANGUAGE.sendMessage(event.getPlayer(), "auth", "password_set", pwd);
         }
     }
 }

@@ -7,13 +7,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.server.TabCompleteEvent;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.framework.event.command.CommandEvent;
 import org.tbstcraft.quark.framework.event.command.CommandTabEvent;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 
 @QuarkService(id = "command-event", impl = CommandEventService.CommandEventAdapter.class)
 public interface CommandEventService extends Service {

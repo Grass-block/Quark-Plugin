@@ -12,7 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
@@ -39,7 +39,7 @@ public final class RealisticSleep extends PackageModule {
 
     @Override
     public void enable() {
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
         TaskService.timerTask("quark:rs:health", 0, this.getConfig().getInt("health-interval"), () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (!this.whateverSleepingPlayers.contains(p)) {
@@ -73,7 +73,7 @@ public final class RealisticSleep extends PackageModule {
 
     @Override
     public void disable() {
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
         TaskService.cancelTask("quark:rs:daemon");
     }
 

@@ -2,9 +2,8 @@ package org.tbstcraft.quark.data.config;
 
 import java.util.HashMap;
 
-public interface ConfigDelegation {
+public interface ConfigContainer {
     HashMap<String, Configuration> CONFIG_REGISTRY = new HashMap<>();
-    HashMap<String, Language> LANGUAGE_REGISTRY = new HashMap<>();
 
     static void reloadConfigs() {
         for (Configuration file : CONFIG_REGISTRY.values()) {
@@ -22,28 +21,6 @@ public interface ConfigDelegation {
         for (Configuration file : CONFIG_REGISTRY.values()) {
             file.sync(clean);
         }
-    }
-
-    static void reloadLanguages() {
-        for (Language languageFile : LANGUAGE_REGISTRY.values()) {
-            languageFile.reload();
-        }
-    }
-
-    static void restoreLanguages() {
-        for (Language languageFile : LANGUAGE_REGISTRY.values()) {
-            languageFile.restore();
-        }
-    }
-
-    static void syncLanguages(boolean clean) {
-        for (Language lang : LANGUAGE_REGISTRY.values()) {
-            lang.sync(clean);
-        }
-    }
-
-    static Language getLanguage(String id) {
-        return LANGUAGE_REGISTRY.get(id);
     }
 
     static Configuration getConfig(String arg) {

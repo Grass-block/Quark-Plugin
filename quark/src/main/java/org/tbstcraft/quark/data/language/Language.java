@@ -2,7 +2,7 @@ package org.tbstcraft.quark.data.language;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
+import org.tbstcraft.quark.internal.LocaleService;
 import org.tbstcraft.quark.util.Identifiers;
 
 import java.util.List;
@@ -16,39 +16,15 @@ public interface Language {
     Pattern LOCALIZED_GLOBAL_VAR = Pattern.compile("\\{global#(.*?)}");
 
     static Locale locale(CommandSender sender) {
-        try {
-            if (sender instanceof Player player) {
-                Locale locale = locale(player.getLocale());
-
-                return Locale.CHINA;
-
-                //todo why the hell is bukkit language detection inaccurate???
-
-                //if (locale != Locale.ENGLISH) {
-                    //return locale;
-                //}
-            } else {
-                //todo:env lang opt
-                return Locale.ENGLISH;
-            }
-        } catch (NoSuchMethodError error) {
-            return Locale.CHINA;
-        }
+        return LocaleService.locale(sender);
     }
 
     static Locale locale(String id) {
-        return switch (id) {
-            case "zh_cn" -> Locale.SIMPLIFIED_CHINESE;
-            case "en_us", "en" -> Locale.US;
-            default -> Locale.CHINA;
-        };
+        return LocaleMapping.locale(id);
     }
 
     static String locale(Locale locale) {
-        if (locale == Locale.ENGLISH || locale == Locale.US) {
-            return "en_us";
-        }
-        return locale.toLanguageTag().replace('-', '_').toLowerCase();
+        return LocaleMapping.minecraft(locale);
     }
 
 

@@ -10,13 +10,11 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-
-import java.util.HashSet;
 
 @QuarkModule(version = "1.0.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
@@ -32,12 +30,12 @@ public final class DispenserBlockPlacer extends PackageModule {
 
     @Override
     public void enable() {
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
     }
 
     @Override
     public void disable() {
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
     }
 
     @EventHandler

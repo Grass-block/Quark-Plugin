@@ -8,7 +8,7 @@ import org.bukkit.block.data.Ageable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
@@ -47,7 +47,7 @@ public final class PotatoWar extends PackageModule {
     }
 
     @EventHandler
-    public void onPlayerJoin(final PlayerJoinEvent event) {
+    public void onPlayerJoin(final DelayedPlayerJoinEvent event) {
         String temp = Language.generateTemplate(this.getConfig(), "announce-ui");
         this.getLanguage().sendTemplate(event.getPlayer(), temp);
     }

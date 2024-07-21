@@ -1,11 +1,11 @@
 package org.tbstcraft.quark.internal.command;
 
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.data.config.ConfigDelegation;
+import org.tbstcraft.quark.data.config.ConfigContainer;
 import org.tbstcraft.quark.data.config.Configuration;
 import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.tbstcraft.quark.foundation.command.CoreCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommand;
 
 import java.util.List;
 
@@ -16,15 +16,15 @@ public final class ConfigCommand extends CoreCommand {
         LanguageEntry language = this.getLanguage();
         switch (args[0]) {
             case "reload-all" -> {
-                ConfigDelegation.reloadConfigs();
+                ConfigContainer.reloadConfigs();
                 language.sendMessage(sender, "reload-all");
             }
             case "restore-all" -> {
-                ConfigDelegation.restoreConfigs();
+                ConfigContainer.restoreConfigs();
                 language.sendMessage(sender, "restore-all");
             }
             case "restore" -> {
-                Configuration file = ConfigDelegation.CONFIG_REGISTRY.get(args[1]);
+                Configuration file = ConfigContainer.CONFIG_REGISTRY.get(args[1]);
                 if (file == null) {
                     this.sendExceptionMessage(sender);
                     return;
@@ -33,7 +33,7 @@ public final class ConfigCommand extends CoreCommand {
                 language.sendMessage(sender, "restore", args[1]);
             }
             case "reload" -> {
-                Configuration file = ConfigDelegation.CONFIG_REGISTRY.get(args[1]);
+                Configuration file = ConfigContainer.CONFIG_REGISTRY.get(args[1]);
                 if (file == null) {
                     this.sendExceptionMessage(sender);
                     return;
@@ -42,7 +42,7 @@ public final class ConfigCommand extends CoreCommand {
                 language.sendMessage(sender, "reload", args[1]);
             }
             case "sync" -> {
-                Configuration file = ConfigDelegation.getConfig(args[1]);
+                Configuration file = ConfigContainer.getConfig(args[1]);
                 if (file == null) {
                     this.sendExceptionMessage(sender);
                     return;
@@ -51,7 +51,7 @@ public final class ConfigCommand extends CoreCommand {
                 language.sendMessage(sender, "sync", args[1]);
             }
             case "sync-all" -> {
-                ConfigDelegation.syncConfigs(true);
+                ConfigContainer.syncConfigs(true);
                 language.sendMessage(sender, "sync-all");
             }
         }
@@ -68,7 +68,7 @@ public final class ConfigCommand extends CoreCommand {
             tabList.add("sync-all");
         }
         if (buffer.length == 2 && !buffer[0].contains("-all")) {
-            tabList.addAll(ConfigDelegation.CONFIG_REGISTRY.keySet());
+            tabList.addAll(ConfigContainer.CONFIG_REGISTRY.keySet());
         }
     }
 

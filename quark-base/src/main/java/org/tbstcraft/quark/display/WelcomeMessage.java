@@ -5,25 +5,25 @@ import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.tbstcraft.quark.data.PlayerDataService;
+import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.data.language.Language;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.internal.task.TaskService;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
-import org.tbstcraft.quark.foundation.text.TextSender;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({WelcomeMessage.WelcomeMessageCommand.class})
 @QuarkModule(version = "0.1.0")
 public final class WelcomeMessage extends PackageModule {
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
         String id = event.getPlayer().getName();
         NBTTagCompound tag = PlayerDataService.getEntry(id, this.getId());
         if (tag.hasKey("join")) {

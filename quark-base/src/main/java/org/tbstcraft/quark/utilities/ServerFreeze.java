@@ -1,10 +1,10 @@
 package org.tbstcraft.quark.utilities;
 
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.util.List;
 import java.util.Objects;

@@ -27,7 +27,7 @@ public interface PackageProvider {
         return Objects.equals(this.getCoreInstanceId(), newId);
     }
 
-    default boolean isCoreExist(){
+    default boolean isCoreExist() {
         Logger logger = this.getLogger();
 
         try {
@@ -37,7 +37,7 @@ public interface PackageProvider {
             return false;
         }
 
-        return true;
+        return Quark.isCoreAvailable();
     }
 
     Logger getLogger();

@@ -13,5 +13,8 @@
     "dispenser-block-placer": ".DispenserBlockPlacer",
     "realistic-sleep": ".RealisticSleep",
     "portable-shulker-box": ".PortableShulkerBox"
-  }
+  },
+  "languages": [
+    "quark-tweaks:zh_cn"
+  ]
 }

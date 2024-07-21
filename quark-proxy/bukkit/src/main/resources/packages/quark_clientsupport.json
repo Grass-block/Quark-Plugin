@@ -4,5 +4,8 @@
   "package_namespace": "org.tbstcraft.quark.clientsupport",
   "modules": {
     "player-protocol-display": ".PlayerProtocolDisplay"
-  }
+  },
+  "languages": [
+    "quark-clientsupport:zh_cn"
+  ]
 }

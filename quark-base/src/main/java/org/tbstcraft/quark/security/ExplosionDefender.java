@@ -15,7 +15,6 @@ import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;

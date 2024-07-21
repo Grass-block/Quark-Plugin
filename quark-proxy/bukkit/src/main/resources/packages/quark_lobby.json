@@ -7,7 +7,9 @@
     "map-protect": ".MapProtect",
     "player-protect": ".PlayerProtect",
     "back-to-spawn": ".BackToSpawn",
-    "npc-chat": ".NPCChat",
     "default-inventory": ".DefaultInventory"
-  }
+  },
+  "languages": [
+    "quark-lobby:zh_cn"
+  ]
 }

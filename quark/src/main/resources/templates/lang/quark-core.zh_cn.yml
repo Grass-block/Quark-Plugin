@@ -68,7 +68,15 @@ language:
     fastboot-unsupported: "{global#sys-error}FastBoot(快速启动)不支持重载，请 {#gold}/reload{#gray} 或关闭FastBoot。"
   folia-compat:
     disabled: "{global#sys-error}该功能因为Folia无相应兼容API以无法使用。"
-    reload-warn:  "{global#sys-error}Folia的重载会导致所有插件和命令无法正常加载, 你应该重启服务器!"
+    reload-warn: "{global#sys-error}Folia的重载会导致所有插件和命令无法正常加载, 你应该重启服务器!"
   version-log-viewer:
     view: "{global#sys-info}以下是 Quark 版本 {#var} 的更新日志:"
     not-found: "{global#sys-error}未找到 Quark 版本 {#var} 的更新日志。"
+  locale:
+    set: "{global#sys-info}你的服务端语言已被设为 {#var}, 部分显示可能需要重进才能更新。"
+    preset: "{global#sys-info}检测到您的语言为 {#var}. 如语言错误, 请使用{#gold}/locale [语言]{#gray}进行选择。"
+  modrinth-version-check:
+    require: "{global#sys-info}有新的版本 {#var}, {click(link,%s)}{#white}[{#green}查看{#white}]{;}"
+    no-require: "{global#sys-info}您的版本已经为最新版 {#var}，无需进行更新。"
+    exception: "{global#sys-info}检查版本时出现错误，请查看控制台。"
+    checking: "{global#sys-info}正在检查版本..."

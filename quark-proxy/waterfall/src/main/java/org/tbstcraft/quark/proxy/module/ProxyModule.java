@@ -4,7 +4,6 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
 import org.tbstcraft.quark.proxy.QuarkProxy;
 import org.tbstcraft.quark.proxy.RemoteMessage;
-import org.tbstcraft.quark.proxy.modulepeer.JoinQuitMessage;
 
 public abstract class ProxyModule implements Listener {
     private QuarkProxy parent;

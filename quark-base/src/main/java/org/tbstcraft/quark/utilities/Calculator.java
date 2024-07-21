@@ -3,13 +3,12 @@ package org.tbstcraft.quark.utilities;
 import me.gb2022.commons.reflect.Inject;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Stack;
 
@@ -25,13 +24,13 @@ public final class Calculator extends CommandModule {
 
     @Override
     public void enable() {
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
         super.enable();
     }
 
     @Override
     public void disable(){
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
         super.disable();
     }
 

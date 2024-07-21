@@ -16,8 +16,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.tbstcraft.quark.api.PluginMessages;
+import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.data.PlaceHolderStorage;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandManager;
@@ -32,7 +32,10 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.util.BukkitSound;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @QuarkCommand(name = "waypoint")
 @QuarkModule(version = "2.0.3", compatBlackList = {APIProfile.ARCLIGHT})
@@ -75,35 +78,35 @@ public final class Waypoint extends CommandModule {
 
     @Override
     public void enable() {
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
 
         if (this.getConfig().getBoolean("home")) {
             CommandManager.registerCommand(new SetHomeCommand(this));
             CommandManager.registerCommand(new WarpHomeCommand(this));
 
-            PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tipHome));
+            PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tipHome));
         }
         if (this.getConfig().getBoolean("back-to-death")) {
             CommandManager.registerCommand(new BackToDeathCommand(this));
 
-            PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tipBack));
+            PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tipBack));
         }
     }
 
     @Override
     public void disable() {
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
 
         if (this.getConfig().getBoolean("home")) {
             CommandManager.unregisterCommand("sethome");
             CommandManager.unregisterCommand("home");
 
-            PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tipHome));
+            PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tipHome));
         }
         if (this.getConfig().getBoolean("back-to-death")) {
             CommandManager.unregisterCommand("back");
 
-            PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tipBack));
+            PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tipBack));
         }
     }
 

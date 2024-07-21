@@ -2,6 +2,7 @@ package org.tbstcraft.quark.framework.service;
 
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.framework.packages.PackageManager;
+import org.tbstcraft.quark.internal.LocaleService;
 import org.tbstcraft.quark.internal.ProductService;
 import org.tbstcraft.quark.internal.permission.PermissionService;
 
@@ -11,7 +12,8 @@ public interface Service {
             PermissionService.class,
             ProductService.class,
             PackageManager.class,
-            ModuleManager.class
+            ModuleManager.class,
+            LocaleService.class
     };
 
     static void initBase() {

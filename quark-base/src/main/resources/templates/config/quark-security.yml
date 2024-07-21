@@ -25,44 +25,12 @@ config:
     selection-size: 128
     operation-size: 16
     total-size: 1024
+  ip-defender:
+    record: true
+    auto-ban: false
+    auto-ban-day-time: 0
+    auto-ban-hour-time: 0
+    auto-ban-minute-time: 10
+    auto-ban-second-time: 0
   permission-manager:
     default-group: player
-    groups:
-      operator:
-        disallow:
-          - minecraft.command.stop
-          - minecraft.command.reload
-        allow:
-          - minecraft.command.*
-          - worldedit.command.*
-      player:
-        disallow: [ ]
-        allow: [ ]
-      player-we-primary:
-        disallow: [ ]
-        allow:
-          - minecraft.command.tp
-          - minecraft.command.gamemode
-          - worldedit.selection.pos
-          - worldedit.selection.cuboid
-          - worldedit.clipboard.copy
-          - worldedit.clipboard.paste
-          - worldedit.help
-          - worldedit.biome.set
-          - worldedit.schematic.list
-          - worldedit.schematic.save
-          - worldedit.clipboard.save
-          - worldedit.history.undo.self
-          - worldedit.history.redo.self
-          - worldedit.navigation.*
-          - worldedit.region.set
-          - worldedit.selection.pos
-      player-we:
-        disallow: [ ]
-        allow:
-          - minecraft.command.tp
-          - minecraft.command.gamemode
-          - worldedit.*
-      guest:
-        allow: [ ]
-        disallow: [ ]

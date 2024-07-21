@@ -4,8 +4,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public interface CommandExecuter {
-
+public interface CommandExecutor {
 
     default boolean onTab(CommandSender sender, String[] buffer, List<String> tabList) {
         this.onCommandTab(sender, buffer, tabList);

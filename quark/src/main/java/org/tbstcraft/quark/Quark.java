@@ -1,33 +1,40 @@
 package org.tbstcraft.quark;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.tbstcraft.quark.data.config.Configuration;
-import org.tbstcraft.quark.data.config.Language;
+import org.tbstcraft.quark.data.language.ILanguageAccess;
+import org.tbstcraft.quark.data.language.LanguageContainer;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.foundation.platform.BukkitPluginManager;
-import org.tbstcraft.quark.framework.packages.PackageManager;
+import org.tbstcraft.quark.metrics.Metrics;
 import org.tbstcraft.quark.util.Timer;
 
 import java.util.Locale;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+/**
+ * <h3>江城子·程序员之歌</h3>
+ * 十年生死两茫茫，写程序，到天亮。千万代码，Bug何处藏。纵使上线又何妨，朝令改，夕断肠。<br>
+ * 甲方每天新想法，天天改，日日忙。相顾无言，惟有泪千行。每晚灯火阑珊处，夜难寐，赶工狂。
+ */
 public final class Quark extends JavaPlugin {
+    public static final int METRIC_PLUGIN_ID = 22683;
     public static final String PLUGIN_ID = "quark";
-    public static final String CORE_UA = "quark/tm8.5[electron_3];c-api_1.3;pnw_1.4";
+    public static final String CORE_UA = "quark/tm8.6[electron3.1]";
 
-    public static Language LANGUAGE;
+    public static final ILanguageAccess LANGUAGE = LanguageContainer.getInstance().access("quark-core");
+    public static Metrics METRICS;
     public static Configuration CONFIG;
     public static Quark PLUGIN;
     public static Logger LOGGER;
+
     private static boolean coreAvailable = false;
-    private String instanceUUID;
+    private final String instanceUUID = UUID.randomUUID().toString();
     private boolean fastBoot;
 
-    public static boolean isCoreUnavailable() {
+    public static boolean isCoreAvailable() {
         return coreAvailable;
     }
 
@@ -51,36 +58,10 @@ public final class Quark extends JavaPlugin {
             }
         };
 
-        if(APIProfileTest.isArclightBasedServer()){
+        if (APIProfileTest.isArclightBasedServer()) {
             task.run();
-        }else {
+        } else {
             new Thread(task).start();
-        }
-    }
-
-    private void detectCounter() {
-        final String[] COUNTER_CONFLICT_LIST = new String[]{
-                "quark-display",
-                //"quark-chat",
-                //"quark-security",
-                //"quark-utilities"
-        };
-
-        Plugin counter = Bukkit.getPluginManager().getPlugin("Counter");
-
-        if (counter == null) {
-            return;
-        }
-        if (!counter.getClass().getName().equals("org.kyoikumi.plugin.counter.Counter")) {
-            return;
-        }
-
-        LOGGER.severe("detected counter plugin, this may cause conflict.");
-        LOGGER.severe("we WON'T fix any problem of duplicated function.");
-
-        for (String s : COUNTER_CONFLICT_LIST) {
-            LOGGER.severe("[CounterConflict] rejected local package %s.".formatted(s));
-            PackageManager.addRejection(s);
         }
     }
 
@@ -93,7 +74,8 @@ public final class Quark extends JavaPlugin {
         this.reloadConfig();
 
         this.fastBoot = getConfig().getBoolean("config.startup.fast-boot");
-        this.instanceUUID = UUID.randomUUID().toString();
+
+        METRICS = new Metrics(this, METRIC_PLUGIN_ID);
 
         try {
             Class.forName("org.tbstcraft.quark.util.Timer");
@@ -111,8 +93,6 @@ public final class Quark extends JavaPlugin {
         coreAvailable = true;
 
         LOGGER.info("Initialization completed.(%d ms)".formatted(Timer.passedTime()));
-
-        detectCounter();
     }
 
     @Override
@@ -130,6 +110,6 @@ public final class Quark extends JavaPlugin {
     }
 
     public boolean isFastBoot() {
-        return fastBoot;
+        return this.fastBoot;
     }
 }

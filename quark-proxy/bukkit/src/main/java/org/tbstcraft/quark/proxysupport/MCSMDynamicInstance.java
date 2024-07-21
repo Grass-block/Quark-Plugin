@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
@@ -30,13 +30,16 @@ import java.util.function.Consumer;
 public final class MCSMDynamicInstance extends PackageModule {
     @Override
     public void enable() {
+        if (!this.getConfig().getBoolean("instance")) {
+            return;
+        }
         if (Bukkit.getOnlinePlayers().isEmpty()) {
             this.scheduleStop();
         }
     }
 
     @EventHandler
-    public void onPlayerJoin(final PlayerJoinEvent event) {
+    public void onPlayerJoin(final DelayedPlayerJoinEvent event) {
         if (!this.getConfig().getBoolean("instance")) {
             return;
         }

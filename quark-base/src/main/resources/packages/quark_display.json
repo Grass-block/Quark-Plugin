@@ -15,5 +15,9 @@
     "welcome-message": ".WelcomeMessage",
     "custom-scoreboard": ".CustomScoreboard",
     "chat-announce": ".ChatAnnounce"
-  }
+  },
+  "languages": [
+    "quark-display:zh_cn",
+    "quark-display:en_us"
+  ]
 }

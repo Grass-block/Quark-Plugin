@@ -6,10 +6,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.Permission;
 import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.data.PlaceHolderStorage;
+import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
@@ -19,10 +20,13 @@ import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.container.CachedInfo;
+import org.tbstcraft.quark.utilities.viewdistance.CustomSettingStrategy;
+import org.tbstcraft.quark.utilities.viewdistance.PlayerCountStrategy;
 import org.tbstcraft.quark.utilities.viewdistance.ViewDistanceStrategy;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +34,7 @@ import java.util.Objects;
 @CommandProvider(DynamicViewDistance.ViewDistanceCommand.class)
 @QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT, APIProfile.ARCLIGHT, APIProfile.SPIGOT})
 public final class DynamicViewDistance extends PackageModule {
+    private final List<ViewDistanceStrategy> pipeline = new ArrayList<>();
 
     @Inject("-quark.viewdistance.other")
     private Permission setOtherPermission;
@@ -39,7 +44,17 @@ public final class DynamicViewDistance extends PackageModule {
 
     @Override
     public void enable() {
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.add(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
+
+        //this.pipeline.add(new NetworkPingStrategy());
+        this.pipeline.add(new PlayerCountStrategy());
+        this.pipeline.add(new CustomSettingStrategy());
+
+        TaskService.timerTask("view-distance:calc", 0, 20, () -> {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                calculatePlayerViewDistance(p, false, false);
+            }
+        });
     }
 
     @Override
@@ -47,67 +62,113 @@ public final class DynamicViewDistance extends PackageModule {
     public void checkCompatibility() throws Throwable {
         Player.class.getMethod("setSendViewDistance", int.class);
         Player.class.getMethod("setViewDistance", int.class);
+        Player.class.getMethod("getLastLogin");
     }
 
     @Override
     public void disable() {
-        PlaceHolderStorage.get(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, HashSet.class, (s) -> s.remove(this.tip));
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
+
+        TaskService.cancelTask("view-distance:calc");
+
+        int val = Bukkit.getViewDistance();
         for (Player p : Bukkit.getOnlinePlayers()) {
-            resetCustomViewDistance(p);
+            p.setViewDistance(val);
+            p.setSendViewDistance(val);
         }
     }
 
     @EventHandler
+    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
+        TaskService.laterTask(10, () -> this.calculatePlayerViewDistance(event.getPlayer(), true, false));
+    }
+
+    @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        resetCustomViewDistance(event.getPlayer());
+        int val = Bukkit.getViewDistance();
+        event.getPlayer().setViewDistance(val);
+        event.getPlayer().setSendViewDistance(val);
     }
 
-    private int setCustomViewDistance(Player player, int dist) {
-        dist = Math.max(2, Math.min(dist, this.getConfig().getInt("max")));
-        PlayerUtil.setViewDistance(player, dist);
-        PlayerUtil.setSendViewDistance(player, dist);
-        this.getLanguage().sendMessage(player, "set-target", dist);
-        return dist;
-    }
 
-    private int resetCustomViewDistance(Player player) {
-        int dist = player.getWorld().getViewDistance();
-        PlayerUtil.setViewDistance(player, dist);
-        PlayerUtil.setSendViewDistance(player, player.getWorld().getSendViewDistance());
-        this.getLanguage().sendMessage(player, "set-target", dist);
-        return dist;
+    public void calculatePlayerViewDistance(final Player player, boolean remind, boolean forceRemind) {
+        int value = Bukkit.getViewDistance();
+        boolean programRemind = false;
+
+        for (ViewDistanceStrategy strategy : pipeline) {
+            value = strategy.determine(player, value);
+            programRemind = strategy.remindPlayer(player, programRemind);
+        }
+
+        value = Math.max(2, Math.min(32, value));
+
+        if ((programRemind && remind) || forceRemind) {
+            this.getLanguage().sendMessage(player, "set-self", value);
+        }
+
+        player.setViewDistance(value);
+        player.setSendViewDistance(value);
     }
 
     @QuarkCommand(name = "view-distance", permission = "+quark.viewdistance")
     public static final class ViewDistanceCommand extends ModuleCommand<DynamicViewDistance> {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
-            Player player = PlayerUtil.strictFindPlayer(args[0]);
+            int value = Objects.equals(args[0], "reset") ? -1 : Integer.parseInt(args[0]);
+
+            Player player;
+
+            if (args.length > 1) {
+                if (!sender.hasPermission(this.getModule().setOtherPermission)) {
+                    sendPermissionMessage(sender, "-quark.viewdistance.other");
+                    return;
+                }
+
+                player = PlayerUtil.strictFindPlayer(args[1]);
+            } else {
+                if (!(sender instanceof Player p)) {
+                    this.sendPlayerOnlyMessage(sender);
+                    return;
+                }
+                player = p;
+            }
+
             if (player == null) {
                 getLanguage().sendMessage(sender, "player-not-exist");
                 return;
             }
-            if (Objects.equals(args[1], "unset")) {
-                int val = this.getModule().resetCustomViewDistance(player);
-                getLanguage().sendMessage(sender, "unset", args[0], val);
-                return;
-            }
-            if (sender.hasPermission(this.getModule().setOtherPermission) && !Objects.equals(args[0], sender.getName())) {
-                sendPermissionMessage(sender, "(ServerOperator)");
+
+            boolean isSelf = sender.getName().equals(player.getName());
+
+            if (value == -1) {
+                CustomSettingStrategy.clear(player);
+                if (!isSelf) {
+                    getLanguage().sendMessage(sender, "reset-target", args[0]);
+                }
+                getLanguage().sendMessage(player, "reset-self");
+
+                this.getModule().calculatePlayerViewDistance(player, false, false);
                 return;
             }
 
-            int val = this.getModule().setCustomViewDistance(player, Integer.parseInt(args[1]));
-            getLanguage().sendMessage(sender, "set", args[0], val);
+            value = Math.max(2, Math.min(32, value));
+
+            CustomSettingStrategy.set(player, value);
+            if (!isSelf) {
+                getLanguage().sendMessage(sender, "set-target", args[0], value);
+            }
+            getLanguage().sendMessage(player, "set-self", value);
+
+            this.getModule().calculatePlayerViewDistance(player, false, false);
         }
 
         @Override
         public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
             if (buffer.length == 1) {
-                tabList.addAll(CachedInfo.getOnlinePlayerNames());
+                tabList.addAll(List.of("2", "4", "8", "16", "24", "32", "reset"));
             }
             if (buffer.length == 2) {
-                tabList.addAll(List.of("2", "4", "8", "16", "24", "32", "unset"));
+                tabList.addAll(CachedInfo.getOnlinePlayerNames());
             }
         }
     }

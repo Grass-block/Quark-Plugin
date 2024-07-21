@@ -12,3 +12,7 @@ config:
     append: '{click(command,/chat-report %s);color(red)}[!]'
   chat-translator:
     append: '{click(command,/translate %s);color(aqua)}[🌐]'
+  npc-chat:
+    template: "{#gray}[NPC]{#white}{name} {#gold}: {#gray}{text}"
+    inactive-time: 8000
+    sound: true

@@ -3,9 +3,9 @@ package org.tbstcraft.quark.framework.packages.provider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.framework.packages.AbstractPackage;
+import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.framework.packages.PluginPackage;
 import org.tbstcraft.quark.framework.packages.initializer.PackageInitializer;
-import org.tbstcraft.quark.framework.packages.PackageManager;
 
 import java.util.HashSet;
 import java.util.Set;

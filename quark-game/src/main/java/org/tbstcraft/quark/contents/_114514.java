@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.contents;
 
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -9,7 +10,6 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
 

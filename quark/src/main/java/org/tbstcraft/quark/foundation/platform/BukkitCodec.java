@@ -1,8 +1,8 @@
 package org.tbstcraft.quark.foundation.platform;
 
+import me.gb2022.commons.nbt.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import me.gb2022.commons.nbt.NBTTagCompound;
 
 import java.util.Objects;
 

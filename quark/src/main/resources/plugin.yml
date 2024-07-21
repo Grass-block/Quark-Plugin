@@ -7,7 +7,7 @@ main: org.tbstcraft.quark.Quark
 api-version: 1.13
 folia-supported: true
 load: POSTWORLD
-softdepend: ['quark-platform']
+softdepend: [ 'quark-platform','PlaceholderAPI' ]
 
 #description
 authors: [ "GrassBlock2022","TBSTMC" ]

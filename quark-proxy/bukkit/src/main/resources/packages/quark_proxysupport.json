@@ -9,5 +9,8 @@
     "mcsm-dynamic-instance": ".MCSMDynamicInstance",
     "server-statement-observer": ".ServerStatementObserver",
     "proxy-ping": ".ProxyPing"
-  }
+  },
+  "languages": [
+    "quark-proxysupport:zh_cn"
+  ]
 }

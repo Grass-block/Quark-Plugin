@@ -1,12 +1,12 @@
 package org.tbstcraft.quark.lobby;
 
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)

@@ -2,7 +2,6 @@ package org.tbstcraft.quark.data.language;
 
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.foundation.text.ComponentBlock;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.foundation.text.TextSender;
@@ -21,8 +20,6 @@ public abstract class ILanguageAccess {
     public abstract List<String> getRawMessageList(Locale locale, String namespace, String id);
 
     public abstract boolean hasKey(String namespace, String id);
-
-    public abstract boolean hasNamespace(String namespace);
 
     public String getRawRandomMessage(Locale locale, String namespace, String id) {
         List<String> list = this.getMessageList(locale, namespace, id);

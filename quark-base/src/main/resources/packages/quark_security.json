@@ -8,9 +8,13 @@
     "we-size-defender": ".WorldEditSectionSizeDefender",
     "item-defender": ".ItemDefender",
     "protection-area": ".ProtectionArea",
-    "advanced-permission-control": ".AdvancedPermissionControl"
+    "advanced-permission-control": ".AdvancedPermissionControl",
+    "ip-defender": ".IPDefender"
   },
   "services": [
     ".WESessionTrackService"
+  ],
+  "languages": [
+    "quark-security:zh_cn"
   ]
 }

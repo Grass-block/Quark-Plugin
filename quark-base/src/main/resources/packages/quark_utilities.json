@@ -4,14 +4,10 @@
   "package_namespace": "org.tbstcraft.quark.utilities",
   "modules": {
     "command-tab-fix": ".CommandTabFix",
-    "kick-on-reload": ".KickOnReload",
-    "maintenance": ".Maintenance",
-    "advanced-plugin-command": ".AdvancedPluginCommand",
     "calculator": ".Calculator",
     "command-function": ".CommandFunction",
     "player-ping-command": ".PlayerPingCommand",
     "custom-log-format": ".CustomLogFormat",
-    "advanced-ban-command": ".AdvancedBan",
     "dynamic-view-distance": ".DynamicViewDistance",
     "server-freeze": ".ServerFreeze",
     "block-update-locker": ".BlockUpdateLocker",
@@ -21,7 +17,10 @@
     "camera-movement": ".CameraMovement",
     "surrounding-refresh": ".SurroundingRefresh",
     "force-sprint": ".ForceSprint",
-    "item-custom-name": ".ItemCustomName",
-    "stop-confirm": ".StopConfirm"
-  }
+    "item-custom-name": ".ItemCustomName"
+  },
+  "languages": [
+    "quark-utilities:zh_cn",
+    "quark-utilities:en_us"
+  ]
 }

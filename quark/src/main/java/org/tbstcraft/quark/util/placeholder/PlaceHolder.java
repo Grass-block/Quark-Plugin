@@ -30,24 +30,28 @@ public interface PlaceHolder {
     }
 
     static String format(StringExtraction extraction, String input, GloballyPlaceHolder... placeHolders) {
-        return handle(extraction, input, (key) -> {
-            for (GloballyPlaceHolder placeHolder : placeHolders) {
+        for (GloballyPlaceHolder placeHolder : placeHolders) {
+            input = handle(extraction, input, (key) -> {
                 if (placeHolder.has(key)) {
                     return placeHolder.get(key);
                 }
-            }
-            return null;
-        });
+                return null;
+            });
+        }
+
+        return input;
     }
 
     static <I> String formatObjective(StringExtraction extraction, I target, String input, ObjectivePlaceHolder<I>... placeHolders) {
-        return handle(extraction, input, (key) -> {
-            for (ObjectivePlaceHolder<I> placeHolder : placeHolders) {
+        for (ObjectivePlaceHolder<I> placeHolder : placeHolders) {
+            input = handle(extraction, input, (key) -> {
                 if (placeHolder.has(key)) {
                     return placeHolder.get(key, target);
                 }
-            }
-            return null;
-        });
+                return null;
+            });
+        }
+
+        return input;
     }
 }

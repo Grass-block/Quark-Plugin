@@ -4,13 +4,13 @@ import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.apm.remote.event.RemoteEventHandler;
 import me.gb2022.apm.remote.event.remote.RemoteMessageEvent;
 import me.gb2022.apm.remote.protocol.BufferUtil;
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import me.gb2022.commons.reflect.AutoRegister;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 import java.util.HashSet;

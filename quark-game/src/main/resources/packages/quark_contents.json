@@ -14,5 +14,8 @@
     "elytra-aeronautics": ".ElytraAeronautics",
     "music-player": ".MusicPlayer",
     "hats": ".Hats"
-  }
+  },
+  "languages": [
+    "quark-contents:zh_cn"
+  ]
 }

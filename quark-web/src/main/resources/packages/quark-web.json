@@ -4,11 +4,13 @@
   "package_namespace": "org.atcraftmc.quark.web",
   "modules": {
     "account-activation": ".account.AccountActivation",
-    "ip-defender": ".IPDefender",
     "server-queries": ".ServerQueries"
   },
   "services": [
     ".SMTPService",
     ".HttpService"
+  ],
+  "languages": [
+    "quark-web:zh_cn"
   ]
 }

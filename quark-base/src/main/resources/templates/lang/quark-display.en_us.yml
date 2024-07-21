@@ -43,16 +43,17 @@ language:
     clear-header: '{global#sys-operation}Cleared name tag of {#var}.'
   welcome-message:
     title: '{#gold}>> Welcome!'
-    content: '{#white}Welcome to {#server-name}{#white} server, enjoy your stay!'
+    content: '{#white}Welcome to {#server-name}{#white} server, Enjoy your game!'
     callback: '{#gray}(This message can be recalled using {#gold}/welcome-message{#gray})'
   custom-scoreboard:
     title: '{#aqua}{#server-name}{#reset}'
-    date: '{#gray}Date: {#white}{#date}'
-    player: '{#gray}Player name: {#white}{player}'
-    play-time: '{#gray}Play time: {#white}{#play-time}'
-    world-time: '{#gray}World time: {#white}{#world-time}'
-    player-count: '{#gray}Online players: {#white}{#player}'
-    ping: '{#gray}Current latency (reference): {#white}{#ping}'
+    date: '{#gray}Date: {#white}{#date-day}'
+    time: '{#gray}Time: {#white}{#date-time}'
+    player: '{#gray}Player: {#white}{player}'
+    play-time: '{#gray}PlayTime: {#white}{#play-time}'
+    world-time: '{#gray}WorldTime: {#white}{#world-time}'
+    player-count: '{#gray}Online: {#white}{#player}'
+    ping: '{#gray}Ping: {#white}{#ping}'
     tps: '{#gray}TPS: {#white}{#tps}{#white}/20'
     mspt: '{#gray}MSPT: {#white}{#mspt}{#white}'
     website: '{#yellow}{#server-website}'
@@ -71,3 +72,5 @@ language:
       - - '{#purple}{#server-name}{#white} prohibits all activities that violate laws and regulations.'
         - '{#white}Any violations will be directly reported, and serious cases will be handed over to the police.'
         - '{#white}We will retain your actions until the end of the evidence collection.'
+    npc-chat:
+      not-found: "{global#error}Cannot find {#var}'s NPC chat context."

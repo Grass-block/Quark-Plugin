@@ -1,6 +1,5 @@
 package org.tbstcraft.quark.proxy.module;
 
-import net.md_5.bungee.api.event.ServerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.event.EventHandler;
 import org.tbstcraft.quark.proxy.Config;

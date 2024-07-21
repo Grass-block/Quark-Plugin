@@ -38,7 +38,7 @@ public interface NetworkUtil {
         return httpGet(url, true);
     }
 
-    private static @NotNull HttpURLConnection getHttpURLConnection(String url, boolean extraHeads) throws IOException {
+    static @NotNull HttpURLConnection getHttpURLConnection(String url, boolean extraHeads) throws IOException {
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 
         con.setRequestMethod("GET");
