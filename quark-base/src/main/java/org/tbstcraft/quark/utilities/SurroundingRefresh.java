@@ -13,7 +13,7 @@ import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -60,7 +60,7 @@ public final class SurroundingRefresh extends CommandModule {
                 sendPermissionMessage(sender);
                 return;
             }
-            target = PlayerUtil.strictFindPlayer(args[1]);
+            target = Bukkit.getPlayerExact(args[1]);
             if (target == null) {
                 getLanguage().sendMessage(sender, "not-found");
                 return;
@@ -83,7 +83,7 @@ public final class SurroundingRefresh extends CommandModule {
             if (!sender.isOp()) {
                 return;
             }
-            tabList.addAll(PlayerUtil.getAllOnlinePlayerNames());
+            tabList.addAll(Players.getAllOnlinePlayerNames());
         }
     }
 

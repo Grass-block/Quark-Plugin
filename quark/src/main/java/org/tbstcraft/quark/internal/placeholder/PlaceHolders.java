@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.internal.placeholder;
 
+import me.gb2022.commons.Formating;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -9,10 +10,9 @@ import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.ModuleManager;
-import org.tbstcraft.quark.util.ObjectStatus;
-import org.tbstcraft.quark.util.Utility;
+import me.gb2022.commons.TriState;
 import org.tbstcraft.quark.util.placeholder.*;
 
 import java.util.Date;
@@ -76,8 +76,8 @@ public interface PlaceHolders {
         holder.register("custom-name", (StringObjectPlaceHolder<Player>) Player::getName);
         holder.register("address", (StringObjectPlaceHolder<Player>) (p) -> Objects.requireNonNull(p.getAddress()).getAddress().getHostAddress());
         holder.register("locale", (StringObjectPlaceHolder<Player>) (p) -> Language.locale(Language.locale(p)));
-        holder.register("ping", (StringObjectPlaceHolder<Player>) (p) -> BukkitUtil.formatPing(PlayerUtil.getPing(p)));
-        holder.register("play-time", (StringObjectPlaceHolder<Player>) (p) -> Utility.formatDuring(PlayerUtil.getPlayTime(p)));
+        holder.register("ping", (StringObjectPlaceHolder<Player>) (p) -> BukkitUtil.formatPing(Players.getPing(p)));
+        holder.register("play-time", (StringObjectPlaceHolder<Player>) (p) -> Formating.formatDuringFull(Players.getPlayTime(p)));
         holder.register("world-time", (StringObjectPlaceHolder<Player>) (p) -> {
             int time = (int) p.getWorld().getTime() - 18000;
 
@@ -89,7 +89,7 @@ public interface PlaceHolders {
             return String.format("%02d:%02d", hour, min);
         });
 
-        holder.register("ping-value", (StringObjectPlaceHolder<Player>) p -> String.valueOf(PlayerUtil.getPing(p)));
+        holder.register("ping-value", (StringObjectPlaceHolder<Player>) p -> String.valueOf(Players.getPing(p)));
 
 
         return holder;
@@ -99,7 +99,7 @@ public interface PlaceHolders {
         GloballyPlaceHolder holder = new GloballyPlaceHolder();
 
         holder.register("module-installed", GlobalPlaceHolder.object(() -> ModuleManager.getAllModules().size()));
-        holder.register("module-enabled", GlobalPlaceHolder.object(() -> ModuleManager.getByStatus(ObjectStatus.ENABLED).size()));
+        holder.register("module-enabled", GlobalPlaceHolder.object(() -> ModuleManager.getByStatus(TriState.FALSE).size()));
         holder.register("player-data-count", GlobalPlaceHolder.object(PlayerDataService::getEntryCount));
         holder.register("module-data-count", GlobalPlaceHolder.object(ModuleDataService::getEntryCount));
         holder.register("quark-version", (StringPlaceHolder) ProductInfo::version);

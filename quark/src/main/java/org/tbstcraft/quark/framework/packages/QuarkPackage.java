@@ -9,7 +9,6 @@ import java.lang.annotation.RetentionPolicy;
 public @interface QuarkPackage {
     String value() default "";
 
-    // TODO: 2024/3/12 FULL package activation check
     FeatureAvailability available() default FeatureAvailability.PREMIUM;
 
     boolean config() default true;

@@ -59,3 +59,5 @@ language:
     menu: "{#yellow}|| {#aqua}Menu {#yellow}||"
     donate: "{#yellow}|| {#green}Donate {#yellow}||"
     sign-in: "{#yellow}|| {#red}Sign In {#yellow}||"
+  position-align:
+    align: "{global#sys-success}Set your coordiante to [{#var},{#var},{#var}] [{#var}|{#var}]。."

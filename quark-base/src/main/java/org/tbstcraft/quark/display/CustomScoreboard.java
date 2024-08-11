@@ -6,7 +6,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -63,7 +63,7 @@ public final class CustomScoreboard extends PackageModule {
     }
 
     @EventHandler
-    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         setScoreboard(event.getPlayer());
     }
 

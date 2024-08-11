@@ -10,12 +10,12 @@ public abstract class CommandModule extends PackageModule implements CommandExec
 
     @Override
     public void enable() {
-        CommandManager.registerCommand(this.commandAdapter);
+        CommandManager.registerQuarkCommand(this.commandAdapter);
     }
 
     @Override
     public void disable() {
-        CommandManager.unregisterCommand(this.commandAdapter);
+        CommandManager.unregister(this.commandAdapter);
     }
 
     public Command getCoveredCommand() {

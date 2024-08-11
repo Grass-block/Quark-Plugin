@@ -8,7 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -35,7 +35,7 @@ public final class ItemCustomName extends PackageModule {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerJoin(final DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(final PlayerJoinEvent event) {
         refreshInventory(event.getPlayer().getInventory(), Language.locale(event.getPlayer()));
     }
 
@@ -59,6 +59,9 @@ public final class ItemCustomName extends PackageModule {
             if (stack == null) {
                 continue;
             }
+            if(stack.getItemMeta()==null){
+                continue;
+            }
             refreshItem(stack, locale);
         }
     }
@@ -66,8 +69,8 @@ public final class ItemCustomName extends PackageModule {
     private void refreshItem(ItemStack stack, Locale locale) {
         ItemMeta meta = stack.getItemMeta();
         if (!CustomMeta.hasItemPDCProperty(stack, "custom_name")) {
-            meta.displayName(null);
-            stack.setItemMeta(meta);
+            //meta.displayName(null);
+            //stack.setItemMeta(meta);
             return;
         }
 

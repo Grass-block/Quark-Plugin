@@ -1,11 +1,11 @@
 package org.tbstcraft.quark.framework.packages;
 
+import me.gb2022.commons.TriState;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.foundation.platform.BukkitPluginManager;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
+import org.tbstcraft.quark.foundation.platform.PluginUtil;
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
@@ -45,7 +45,7 @@ public interface PackageManager extends Service {
 
     static List<File> getSubPacksFromFolder() {
         List<File> list = new ArrayList<>();
-        for (File f : BukkitPluginManager.getAllPluginFiles()) {
+        for (File f : PluginUtil.getAllPluginFiles()) {
             if (!verify(f)) {
                 continue;
             }
@@ -69,7 +69,7 @@ public interface PackageManager extends Service {
     static boolean verify(File f) {
         String id;
         try {
-            id = BukkitUtil.getPluginDescription(f).getName();
+            id = PluginUtil.getPluginDescription(f).getName();
         } catch (InvalidDescriptionException e) {
             throw new RuntimeException(e);
         }
@@ -97,10 +97,10 @@ public interface PackageManager extends Service {
     @SuppressWarnings("unused")
     static void reload() {
         for (String s : getSubPacksFromServer()) {
-            BukkitPluginManager.unload(s);
+            PluginUtil.unload(s);
         }
         for (File f : getSubPacksFromFolder()) {
-            BukkitPluginManager.load(f.getName());
+            PluginUtil.load(f.getName());
         }
     }
 
@@ -137,7 +137,7 @@ public interface PackageManager extends Service {
         INSTANCE.get().disableAll();
     }
 
-    static Set<AbstractPackage> getByStatus(ObjectStatus status) {
+    static Set<AbstractPackage> getByStatus(TriState status) {
         Set<AbstractPackage> result = new HashSet<>();
         for (String id : INSTANCE.get().getPackages().keySet()) {
             if (getPackageStatus(id) != status) {
@@ -152,7 +152,7 @@ public interface PackageManager extends Service {
         return INSTANCE.get().get(id);
     }
 
-    static Set<String> getIdsByStatus(ObjectStatus status) {
+    static Set<String> getIdsByStatus(TriState status) {
         Set<String> result = new HashSet<>();
         for (String id : INSTANCE.get().getPackages().keySet()) {
             if (getPackageStatus(id) != status) {
@@ -165,10 +165,10 @@ public interface PackageManager extends Service {
 
     //status
     static boolean isPackageEnabled(String id) {
-        return getPackageStatus(id) == ObjectStatus.ENABLED;
+        return getPackageStatus(id) == TriState.FALSE;
     }
 
-    static ObjectStatus getPackageStatus(String id) {
+    static TriState getPackageStatus(String id) {
         return INSTANCE.get().getStatus(id);
     }
 
@@ -184,7 +184,7 @@ public interface PackageManager extends Service {
 
     Map<String, AbstractPackage> getPackages();
 
-    ObjectStatus getStatus(String id);
+    TriState getStatus(String id);
 
     ObjectOperationResult enable(String id);
 
@@ -233,7 +233,7 @@ public interface PackageManager extends Service {
             try {
                 pkg.initializePackage();
                 this.packages.put(pkg.getId(), pkg);
-                if (getStatus(pkg.getId()) == ObjectStatus.UNREGISTERED) {
+                if (getStatus(pkg.getId()) == TriState.UNKNOWN) {
                     boolean enable = false;
                     if (pkg.getInitializer().isEnableByDefault()) {
                         enable = Quark.PLUGIN.getConfig().getBoolean("config.default-status.package");
@@ -245,7 +245,7 @@ public interface PackageManager extends Service {
                 if (Identifiers.external(pkg.getId()).equals(CORE_PKG_ID)) {
                     this.statusMap.put(pkg.getId(), "enabled");
                 }
-                if (getStatus(pkg.getId()) == ObjectStatus.ENABLED) {
+                if (getStatus(pkg.getId()) == TriState.FALSE) {
                     try {
                         pkg.onEnable();
                     } catch (Exception ex) {
@@ -259,6 +259,9 @@ public interface PackageManager extends Service {
 
         @Override
         public void removePackage(String id) {
+            if (this.getStatus(id) == TriState.TRUE) {
+                return;
+            }
             if (!this.packages.containsKey(id)) {
                 return;
             }
@@ -296,10 +299,10 @@ public interface PackageManager extends Service {
         }
 
         private ObjectOperationResult enable0(String id) {
-            if (getStatus(id) == ObjectStatus.UNREGISTERED) {
+            if (getStatus(id) == TriState.UNKNOWN) {
                 return ObjectOperationResult.NOT_FOUND;
             }
-            if (getStatus(id) == ObjectStatus.ENABLED) {
+            if (getStatus(id) == TriState.FALSE) {
                 return ObjectOperationResult.ALREADY_OPERATED;
             }
             try {
@@ -313,10 +316,10 @@ public interface PackageManager extends Service {
         }
 
         private ObjectOperationResult disable0(String id) {
-            if (getStatus(id) == ObjectStatus.UNREGISTERED) {
+            if (getStatus(id) == TriState.UNKNOWN) {
                 return ObjectOperationResult.NOT_FOUND;
             }
-            if (getStatus(id) == ObjectStatus.DISABLED) {
+            if (getStatus(id) == TriState.TRUE) {
                 return ObjectOperationResult.ALREADY_OPERATED;
             }
             try {
@@ -357,11 +360,11 @@ public interface PackageManager extends Service {
         }
 
         @Override
-        public ObjectStatus getStatus(String id) {
+        public TriState getStatus(String id) {
             if (!this.statusMap.containsKey(id)) {
-                return ObjectStatus.UNREGISTERED;
+                return TriState.UNKNOWN;
             }
-            return Objects.equals(this.statusMap.get(id), "enabled") ? ObjectStatus.ENABLED : ObjectStatus.DISABLED;
+            return Objects.equals(this.statusMap.get(id), "enabled") ? TriState.FALSE : TriState.TRUE;
         }
 
         @Override

@@ -5,13 +5,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.defaults.PluginsCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.BukkitPluginManager;
+import org.tbstcraft.quark.foundation.platform.PluginUtil;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 
@@ -21,12 +20,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+@SuppressWarnings("removal")
 @QuarkCommand(name = "plugins", op = true)
 @QuarkModule(version = "1.1.0")
 public final class AdvancedPluginCommand extends CommandModule {
     @Inject
     private LanguageEntry language;
-    
+
     private void listPlugins(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
         for (Plugin p : Bukkit.getPluginManager().getPlugins()) {
@@ -35,12 +35,7 @@ public final class AdvancedPluginCommand extends CommandModule {
             } else {
                 sb.append(ChatColor.RED);
             }
-            sb.append(p.getName())
-                    .append(ChatColor.GRAY)
-                    .append(" -> ")
-                    .append(ChatColor.WHITE)
-                    .append(p.getDescription().getVersion())
-                    .append("\n");
+            sb.append(p.getName()).append(ChatColor.GRAY).append(" -> ").append(ChatColor.WHITE).append(p.getDescription().getVersion()).append("\n");
         }
         this.language.sendMessage(sender, "list", sb.toString());
     }
@@ -85,7 +80,7 @@ public final class AdvancedPluginCommand extends CommandModule {
 
 
     private void unloadPlugin(CommandSender sender, String name) {
-        if (BukkitPluginManager.unload(name)) {
+        if (PluginUtil.unload(name)) {
             this.language.sendMessage(sender, "unload", name);
             return;
         }
@@ -93,7 +88,7 @@ public final class AdvancedPluginCommand extends CommandModule {
     }
 
     private void loadPlugin(CommandSender sender, String name) {
-        if (BukkitPluginManager.load(name) == null) {
+        if (PluginUtil.load(name) == null) {
             this.language.sendMessage(sender, "enable", name);
             return;
         }
@@ -106,7 +101,7 @@ public final class AdvancedPluginCommand extends CommandModule {
             this.sendExceptionMessage(sender);
             return;
         }
-        BukkitPluginManager.reload(name);
+        PluginUtil.reload(name);
         this.language.sendMessage(sender, "reload", name);
     }
 
@@ -158,6 +153,6 @@ public final class AdvancedPluginCommand extends CommandModule {
 
     @Override
     public Command getCoveredCommand() {
-        return new PluginsCommand("plugins");
+        return new org.bukkit.command.defaults.PluginsCommand("plugins");
     }
 }

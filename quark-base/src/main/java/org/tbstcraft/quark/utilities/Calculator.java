@@ -5,6 +5,8 @@ import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
+import org.tbstcraft.quark.foundation.command.CommandExecution;
+import org.tbstcraft.quark.foundation.command.CommandSuggestion;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -100,17 +102,10 @@ public final class Calculator extends CommandModule {
     }
 
 
-
-
     @Override
-    public void onCommand(CommandSender sender, String[] args) {
-        this.getLanguage().sendMessage(sender, "calc", args[0], calculate(args[0]));
-    }
+    public void execute(CommandExecution context) {
+        String exp=context.requireArgumentAt(0);
 
-    @Override
-    public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-        if (buffer.length == 1) {
-            tabList.add("<math expression here>");
-        }
+        this.getLanguage().sendMessage(context.getSender(), "calc", exp, calculate(exp));
     }
 }

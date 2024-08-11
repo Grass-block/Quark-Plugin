@@ -2,6 +2,7 @@ package org.tbstcraft.quark;
 
 import me.gb2022.apm.client.ClientMessenger;
 import me.gb2022.apm.client.backend.MessageBackend;
+import me.gb2022.commons.Timer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,7 +16,6 @@ import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceManager;
 import org.tbstcraft.quark.util.DeferredLogger;
-import org.tbstcraft.quark.util.Timer;
 
 import java.io.File;
 import java.io.InputStream;

@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 
 import java.util.function.Predicate;
 
@@ -22,7 +22,7 @@ public abstract class AudienceProvider implements AudienceService {
 
     @Override
     public final ForwardingAudience operators() {
-        return players(PlayerUtil.getOnlinePlayers(Player::isOp));
+        return players(Players.getOnlinePlayers(Player::isOp));
     }
 
     @Override
@@ -32,7 +32,7 @@ public abstract class AudienceProvider implements AudienceService {
 
     @Override
     public final Audience player(String name) {
-        return player(PlayerUtil.strictFindPlayer(name));
+        return player(Bukkit.getPlayerExact(name));
     }
 
     @Override

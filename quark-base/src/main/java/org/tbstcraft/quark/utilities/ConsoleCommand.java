@@ -8,7 +8,7 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 
 import java.util.List;
 
-@QuarkCommand(name = "console", op = true)
+@QuarkCommand(name = "console", permission = "-quark.console")
 @QuarkModule(version = "1.0.0")
 public final class ConsoleCommand extends CommandModule {
     @Override

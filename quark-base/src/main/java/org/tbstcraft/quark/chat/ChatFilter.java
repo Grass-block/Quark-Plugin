@@ -13,6 +13,7 @@ import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.util.CachedInfo;
 
 import java.util.HashSet;
 import java.util.List;
@@ -53,9 +54,14 @@ public final class ChatFilter extends CommandModule {
 
                 for (String part : parts) {
                     if (!part.isEmpty()) {
-                        regexBuilder.append(Pattern.quote(part)).append("|");
+                        var p = part.replace("+", "");
+                        if (p.isEmpty() || p.isBlank()) {
+                            continue;
+                        }
+                        regexBuilder.append(p).append("+").append("|");
                     }
                 }
+                regexBuilder.deleteCharAt(regexBuilder.length() - 1);
                 exp = regexBuilder.toString();
             }
 
@@ -78,15 +84,47 @@ public final class ChatFilter extends CommandModule {
     }
 
     public String filter(String msg) {
-        for (Pattern pattern : this.patterns) {
-            Matcher matcher = pattern.matcher(msg);
+        msg = msg.replace("\ufffa", "").replace("\ufffb", "");
 
-            while (matcher.find()) {
-                String match = matcher.group();
-                msg = msg.replace(match, "*".repeat(match.length()));
-            }
+        for (String name : CachedInfo.getAllPlayerNames()) {
+            msg = msg.replaceAll("(?<!\ufffa[^\ufffb])" + name + "+(?![^\ufffa]*?\ufffb)", "\ufffa" + name + "\ufffb");
         }
-        return msg;
+
+        msg = "\ufffb" + msg + "\ufffa";
+
+        var buffer = new StringBuilder();
+        var result = new StringBuilder();
+
+        for (char c : msg.toCharArray()) {
+
+            if (c == '\ufffa') {
+                var m = buffer.toString();
+                buffer.delete(0, buffer.length());
+
+                for (Pattern pattern : this.patterns) {
+                    Matcher matcher = pattern.matcher(m);
+
+                    while (matcher.find()) {
+                        String match = matcher.group();
+                        m = m.replace(match, "*".repeat(match.length()));
+                    }
+                }
+
+                result.append(m);
+
+                continue;
+            }
+            if (c == '\ufffb') {
+                result.append(buffer);
+                buffer.delete(0, buffer.length());
+            }
+
+            buffer.append(c);
+
+
+        }
+
+        return result.toString().replace("\ufffa","").replace("\ufffb","");
     }
 
     @Override

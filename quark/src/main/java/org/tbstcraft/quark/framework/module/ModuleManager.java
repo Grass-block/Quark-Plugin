@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.framework.module;
 
+import me.gb2022.commons.TriState;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
@@ -71,7 +72,7 @@ public interface ModuleManager extends Service {
         INSTANCE.get().reloadAll();
     }
 
-    static Set<AbstractModule> getByStatus(ObjectStatus status) {
+    static Set<AbstractModule> getByStatus(TriState status) {
         Set<AbstractModule> result = new HashSet<>();
         for (String id : INSTANCE.get().getModules().keySet()) {
             if (getModuleStatus(id) != status) {
@@ -82,7 +83,7 @@ public interface ModuleManager extends Service {
         return result;
     }
 
-    static Set<String> getIdsByStatus(ObjectStatus status) {
+    static Set<String> getIdsByStatus(TriState status) {
         Set<String> result = new HashSet<>();
         for (String id : INSTANCE.get().getModules().keySet()) {
             if (getModuleStatus(id) != status) {
@@ -105,10 +106,10 @@ public interface ModuleManager extends Service {
 
     //status
     static boolean isEnabled(String id) {
-        return getModuleStatus(id) == ObjectStatus.ENABLED;
+        return getModuleStatus(id) == TriState.FALSE;
     }
 
-    static ObjectStatus getModuleStatus(String id) {
+    static TriState getModuleStatus(String id) {
         return INSTANCE.get().getStatus(id);
     }
 
@@ -121,7 +122,7 @@ public interface ModuleManager extends Service {
 
     Map<String, AbstractModule> getModules();
 
-    ObjectStatus getStatus(String id);
+    TriState getStatus(String id);
 
 
     //operation
@@ -230,10 +231,10 @@ public interface ModuleManager extends Service {
         }
 
         private ObjectOperationResult enable0(String id) {
-            if (getStatus(id) == ObjectStatus.UNREGISTERED) {
+            if (getStatus(id) == TriState.UNKNOWN) {
                 return ObjectOperationResult.NOT_FOUND;
             }
-            if (getStatus(id) == ObjectStatus.ENABLED) {
+            if (getStatus(id) == TriState.FALSE) {
                 return ObjectOperationResult.ALREADY_OPERATED;
             }
             try {
@@ -247,10 +248,10 @@ public interface ModuleManager extends Service {
         }
 
         private ObjectOperationResult disable0(String id) {
-            if (getStatus(id) == ObjectStatus.UNREGISTERED) {
+            if (getStatus(id) == TriState.UNKNOWN) {
                 return ObjectOperationResult.NOT_FOUND;
             }
-            if (getStatus(id) == ObjectStatus.DISABLED) {
+            if (getStatus(id) == TriState.TRUE) {
                 return ObjectOperationResult.ALREADY_OPERATED;
             }
             try {
@@ -291,11 +292,11 @@ public interface ModuleManager extends Service {
         }
 
         @Override
-        public ObjectStatus getStatus(String id) {
+        public TriState getStatus(String id) {
             if (!this.statusMap.containsKey(id)) {
-                return ObjectStatus.UNREGISTERED;
+                return TriState.UNKNOWN;
             }
-            return Objects.equals(this.statusMap.get(id), "enabled") ? ObjectStatus.ENABLED : ObjectStatus.DISABLED;
+            return Objects.equals(this.statusMap.get(id), "enabled") ? TriState.FALSE : TriState.TRUE;
         }
 
 
@@ -320,7 +321,7 @@ public interface ModuleManager extends Service {
             }
 
             this.moduleMap.put(m.getFullId(), m);
-            if (getModuleStatus(m.getFullId()) == ObjectStatus.UNREGISTERED) {
+            if (getModuleStatus(m.getFullId()) == TriState.UNKNOWN) {
                 boolean status = false;
 
                 if (m.getDescriptor().defaultEnable()) {
@@ -333,7 +334,7 @@ public interface ModuleManager extends Service {
             if (m.getDescriptor().internal()) {
                 this.statusMap.put(m.getFullId(), "enabled");
             }
-            if (getModuleStatus(m.getFullId()) == ObjectStatus.ENABLED && !m.isBeta()) {
+            if (getModuleStatus(m.getFullId()) == TriState.FALSE && !m.isBeta()) {
                 try {
                     this.get(m.getFullId()).enableModule();
                 } catch (Exception ex) {
@@ -345,7 +346,7 @@ public interface ModuleManager extends Service {
 
         @Override
         public void unregister(String id, Logger callback) {
-            if (this.getStatus(id) == ObjectStatus.ENABLED) {
+            if (this.getStatus(id) == TriState.FALSE) {
                 AbstractModule m = this.get(id);
                 if (m != null) {
                     try {

@@ -1,0 +1,39 @@
+//file:noinspection VulnerableLibrariesLocal
+plugins {
+    id 'java'
+}
+
+apply from: "E:/Java/GradleScripts/build-base.gradle"
+
+applyGlobalScript("Publish/ProjectOutput.gradle")
+applyGlobalScript("Publish/MinecraftBungeeServerTest.gradle")
+applyGlobalScript("/Dependencies.gradle")
+
+group = 'org.tbstcraft'
+
+repositories {
+    maven {
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+}
+
+dependencies {
+    compileOnly 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
+    annotationProcessor 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
+
+    implementation localStorage("me.gb2022.commons-nbt")
+    implementation localStorage("me.gb2022.commons-math")
+    implementation localStorage('me.gb2022.commons-crypto')
+    implementation localStorage('me.gb2022.commons-container')
+    implementation localStorage('me.gb2022.commons-general')
+    implementation localStorage('me.gb2022.commons-event')
+
+    implementation localStorage('me.gb2022.apm-plugin')
+    implementation localStorage('me.gb2022.apm-remote')
+
+    compileOnly 'io.netty:netty-buffer:4.1.100.Final'
+}
+
+jar {
+    archiveBaseName = "quark-proxy-velocity"
+}

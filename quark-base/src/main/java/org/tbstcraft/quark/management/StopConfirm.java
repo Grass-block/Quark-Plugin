@@ -8,16 +8,18 @@ import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
+import java.util.List;
+
 @QuarkModule(version = "1.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class StopConfirm extends PackageModule {
     @EventHandler
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        if (!event.getMessage().startsWith("/stop")) {
+        if (!List.of(event.getMessage().split("")).contains("/stop")) {
             return;
         }
         if (event.getMessage().contains("confirm")) {
-            event.setMessage(event.getMessage().replace("confirm",""));
+            event.setMessage(event.getMessage().replace("confirm", ""));
             return;
         }
         event.setCancelled(true);
@@ -31,7 +33,7 @@ public final class StopConfirm extends PackageModule {
             return;
         }
         if (event.getCommand().contains("confirm")) {
-            event.setCommand(event.getCommand().replace("confirm",""));
+            event.setCommand(event.getCommand().replace("confirm", ""));
             return;
         }
         event.setCancelled(true);

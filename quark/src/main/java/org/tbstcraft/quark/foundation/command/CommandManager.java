@@ -6,13 +6,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.util.ExceptionUtil;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -20,42 +19,79 @@ public interface CommandManager {
     CommandRegistry.DirectCommandRegistry DIRECT = new CommandRegistry.DirectCommandRegistry();
     CommandRegistry.EventCommandRegistry EVENT = new CommandRegistry.EventCommandRegistry();
 
-    @SuppressWarnings("unchecked")
-    static void registerCommand(Command command) {
-        if (command instanceof AbstractCommand cmd) {
-            registerQuarkCommand(cmd);
-            return;
-        }
-        String id = command.getName();
+    @SuppressWarnings("rawtypes")
+    static Map<String, Command> getKnownCommands(CommandMap map) {
         try {
-            CommandMap map = getCommandMap();
-            Field field = SimpleCommandMap.class.getDeclaredField("knownCommands");
-            field.setAccessible(true);
-            Object o = field.get(map);
-            ((HashMap<String, Command>) o).put(id, command);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            ExceptionUtil.log(Quark.LOGGER, e);
+            Field f = SimpleCommandMap.class.getDeclaredField("knownCommands");
+            f.setAccessible(true);
+            Object cmdMap = f.get(map);
+            return (Map) cmdMap;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    static void unregisterCommand(Command command) {
-        if (command instanceof AbstractCommand cmd) {
-            unregisterQuarkCommand(cmd);
-            return;
+    static CommandMap getCommandMap() {
+        Class<?> c = Bukkit.getServer().getClass();
+        try {
+            Method m = c.getMethod("getCommandMap");
+            m.setAccessible(true);
+            return (CommandMap) m.invoke(Bukkit.getServer());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
-        unregisterCommand(command.getName());
     }
 
-    static void unregisterCommand(String name) {
+    static void register(Command command) {
         CommandMap map = getCommandMap();
-        try {
-            Field field = SimpleCommandMap.class.getDeclaredField("knownCommands");
-            field.setAccessible(true);
-            Object o = field.get(map);
-            ((HashMap<?, ?>) o).remove(name);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            ExceptionUtil.log(Quark.LOGGER, e);
+        Map<String, Command> knownCommands = getKnownCommands(map);
+
+        command.register(map);
+
+        if (command instanceof AbstractCommand cmd) {
+            cmd.fetchCovered();
+            cmd.init();
+            BukkitUtil.registerEventListener(cmd);
+
+            knownCommands.put("quark:" + command.getName(), cmd);
         }
+
+        knownCommands.put(command.getName(), command);
+        for (String alias : command.getAliases()) {
+            knownCommands.put(alias, command);
+        }
+    }
+
+    static Command unregister(String name) {
+        CommandMap map = getCommandMap();
+        Map<String, Command> knownCommands = getKnownCommands(map);
+
+        Command c = knownCommands.get(name);
+
+        knownCommands.remove(name);
+
+        if (c == null) {
+            return null;
+        }
+        c.unregister(map);
+        for (String alias : c.getAliases()) {
+            knownCommands.remove(alias);
+        }
+        if (c instanceof AbstractCommand cmd) {
+            knownCommands.remove("quark:" + name);
+
+            BukkitUtil.unregisterEventListener(cmd);
+            Command covered = cmd.getCovered();
+            if (covered == null) {
+                return c;
+            }
+            knownCommands.put(name, covered);
+        }
+        return c;
+    }
+
+    static void unregister(Command command) {
+        unregister(command.getName());
     }
 
     static boolean isQuarkCommand(String id) {
@@ -76,16 +112,6 @@ public interface CommandManager {
         }
     }
 
-    static CommandMap getCommandMap() {
-        Class<?> c = Bukkit.getServer().getClass();
-        try {
-            Method m = c.getMethod("getCommandMap");
-            m.setAccessible(true);
-            return (CommandMap) m.invoke(Bukkit.getServer());
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     static void sync() {
         try {
@@ -97,19 +123,11 @@ public interface CommandManager {
     }
 
     static void registerQuarkCommand(AbstractCommand command) {
-        if (command.isEventBased()) {
-            EVENT.register(command);
-        } else {
-            DIRECT.register(command);
-        }
+        register(command);
     }
 
     static void unregisterQuarkCommand(AbstractCommand command) {
-        if (command.isEventBased()) {
-            EVENT.unregister(command);
-        } else {
-            DIRECT.unregister(command);
-        }
+        unregister(command);
     }
 
     @SuppressWarnings("unchecked")

@@ -32,7 +32,6 @@ public abstract class ServiceRegistry {
     }
 
     public final void unregister(ServiceManager serviceManager) {
-        this.create(this.services);
         for (Class<? extends Service> service : this.services) {
             try {
                 serviceManager.unregisterService(service);

@@ -13,7 +13,7 @@ import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -52,7 +52,7 @@ public final class FreeCam extends CommandModule {
             return;
         }
         player.setGameMode(this.gameModes.get(id));
-        PlayerUtil.teleport(player, this.locations.get(id));
+        Players.teleport(player, this.locations.get(id));
         this.gameModes.remove(id);
         this.locations.remove(id);
         this.getLanguage().sendMessage(player, "reset");

@@ -2,7 +2,6 @@ package org.tbstcraft.quark.lobby;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -29,7 +28,10 @@ public final class MapProtect extends PackageModule {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR) {
+        if (!event.hasBlock()) {
+            return;
+        }
+        if (!event.hasItem()) {
             return;
         }
         if (event.getPlayer().hasPermission("quark.lobby.interact")) {

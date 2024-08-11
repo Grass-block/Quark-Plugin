@@ -1,11 +1,12 @@
 package org.tbstcraft.quark.proxysupport;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.permission.PermissionService;
@@ -51,7 +52,7 @@ public final class ForgeServerTeleportation extends CommandModule {
                 sendPermissionMessage(sender);
                 return;
             }
-            Objects.requireNonNull(PlayerUtil.strictFindPlayer(args[1])).sendMessage(PREFIX + host);
+            Objects.requireNonNull(Bukkit.getPlayerExact(args[1])).sendMessage(PREFIX + host);
         }
     }
 
@@ -62,7 +63,7 @@ public final class ForgeServerTeleportation extends CommandModule {
             tabList.addAll(Objects.requireNonNull(section).getKeys(false));
         }
         if (buffer.length == 2) {
-            tabList.addAll(PlayerUtil.getAllOnlinePlayerNames());
+            tabList.addAll(Players.getAllOnlinePlayerNames());
         }
     }
 

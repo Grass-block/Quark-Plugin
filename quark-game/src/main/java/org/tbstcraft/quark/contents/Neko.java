@@ -13,7 +13,7 @@ import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.container.CachedInfo;
+import org.tbstcraft.quark.util.CachedInfo;
 
 import java.util.HashSet;
 import java.util.List;

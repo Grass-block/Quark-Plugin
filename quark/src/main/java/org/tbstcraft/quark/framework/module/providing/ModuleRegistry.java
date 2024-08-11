@@ -41,7 +41,7 @@ public abstract class ModuleRegistry {
                 }
                 moduleManager.unregister(module.getFullId(), this.pkg.getLogger());
             } catch (Exception e) {
-                this.getPackage().getLogger().severe("failed to register module %s: %s".formatted(
+                this.getPackage().getLogger().severe("failed to unregister module %s: %s".formatted(
                         module.getClass().getName(), e.getMessage()));
             }
         }

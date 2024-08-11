@@ -9,19 +9,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
-import org.tbstcraft.quark.util.container.CachedInfo;
+import org.tbstcraft.quark.util.CachedInfo;
 import org.tbstcraft.quark.util.placeholder.StringObjectPlaceHolder;
 
 import java.util.List;
@@ -58,7 +57,7 @@ public final class PlayerNameHeader extends CommandModule {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        Player p = PlayerUtil.strictFindPlayer(args[1]);
+        Player p = Bukkit.getPlayerExact(args[1]);
         NBTTagCompound entry = ModuleDataService.getEntry(this.getId());
         if (Objects.equals(args[0], "set")) {
             entry.setString(args[1], args[2]);
@@ -90,7 +89,7 @@ public final class PlayerNameHeader extends CommandModule {
     }
 
     @EventHandler
-    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         this.attach(event.getPlayer());
     }
 

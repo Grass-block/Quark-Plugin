@@ -10,12 +10,12 @@ tasks.named('build').get().dependsOn(':quark:build')
 //quark libraries
 dependencies {
     compileOnly 'org.jetbrains:annotations:24.0.0'
-    compileOnly 'net.kyori:adventure-api:4.11.0'
+    compileOnly 'net.kyori:adventure-api:4.17.0'
 }
 
 //api
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
     compileOnly 'io.netty:netty-buffer:4.1.25.Final'
     compileOnly project(":quark")
 

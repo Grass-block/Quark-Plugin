@@ -12,7 +12,7 @@
     "tpa": ".TPA",
     "waypoint": ".Waypoint",
     "elytra-aeronautics": ".ElytraAeronautics",
-    "music-player": ".MusicPlayer",
+    "music-player": ".music.MusicPlayer",
     "hats": ".Hats"
   },
   "languages": [

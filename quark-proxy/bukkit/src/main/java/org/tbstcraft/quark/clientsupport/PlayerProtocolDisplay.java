@@ -3,7 +3,7 @@ package org.tbstcraft.quark.clientsupport;
 import me.gb2022.apm.client.event.ClientProtocolInitEvent;
 import me.gb2022.apm.client.event.driver.ClientEventHandler;
 import me.gb2022.commons.reflect.AutoRegister;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.bukkit.Bukkit;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -14,6 +14,7 @@ public final class PlayerProtocolDisplay extends PackageModule {
 
     @ClientEventHandler
     public void onPlayerProtocolInitialized(ClientProtocolInitEvent event){
-        this.getLanguage().sendMessage(PlayerUtil.strictFindPlayer(event.getPlayer()),"protocol-init");
+        String name = event.getPlayer();
+        this.getLanguage().sendMessage(Bukkit.getPlayerExact(name),"protocol-init");
     }
 }

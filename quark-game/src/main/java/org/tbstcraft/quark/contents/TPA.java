@@ -1,113 +1,120 @@
 package org.tbstcraft.quark.contents;
 
-import me.gb2022.commons.reflect.Inject;
+import me.gb2022.commons.container.RequestStorage;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.data.language.LanguageEntry;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
-import org.tbstcraft.quark.framework.module.CommandModule;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.tbstcraft.quark.foundation.command.*;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
+import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.util.BukkitSound;
-import org.tbstcraft.quark.util.container.CachedInfo;
-
-import java.util.*;
 
 @QuarkModule(version = "1.0.2")
-@QuarkCommand(name = "tpa", playerOnly = true)
-public final class TPA extends CommandModule {
-    private final HashMap<String, Set<String>> requests = new HashMap<>();
+public final class TPA extends PackageModule {
+    private final TPACommand tpa = new TPACommand();
+    private final TPAHereCommand tpaHere = new TPAHereCommand();
 
-    @Inject
-    private LanguageEntry language;
-    
     @Override
-    public void onCommand(CommandSender sender, String[] args) {
-        Set<String> list = requests.get(sender.getName());
-        if (list == null) {
-            list = new HashSet<>();
-            this.requests.put(sender.getName(), list);
-        }
+    public void enable() {
+        this.tpa.initContext(this);
+        this.tpaHere.initContext(this);
 
-        if (Objects.equals(args[0], "list")) {
-            StringBuilder sb = new StringBuilder();
-            for (String s : getRequestList(sender.getName())) {
-                sb.append(s).append("\n");
-            }
-            this.language.sendMessage(sender, "list", sb);
-        }
+        CommandManager.register(this.tpa);
+        CommandManager.register(this.tpaHere);
 
-        String request = sender.getName();
-        String target = args[1];
-
-        Player requestPlayer = ((Player) sender);
-        Player targetPlayer = PlayerUtil.strictFindPlayer(target);
-
-        if (targetPlayer == null || !Bukkit.getOnlinePlayers().contains(targetPlayer)) {
-            getRequestList(request).remove(target);
-            this.language.sendMessage(sender, "player_not_found");
-        }
-
-        switch (args[0]) {
-            case "request" -> {
-                getRequestList(target).add(request);
-
-                this.language.sendMessage(requestPlayer, "send", target);
-                this.language.sendMessage(targetPlayer, "send_announce", request, request, request);
-                BukkitSound.ANNOUNCE.play(targetPlayer);
-            }
-            case "accept" -> {
-                if (!getRequestList(sender.getName()).contains(target)) {
-                    this.language.sendMessage(sender, "player_not_found");
-                }
-                getRequestList(sender.getName()).remove(target);
-                PlayerUtil.teleport(targetPlayer, requestPlayer.getLocation());
-                this.language.sendMessage(requestPlayer, "accept", target);
-                this.language.sendMessage(targetPlayer, "accepted", request);
-                BukkitSound.WARP.play(targetPlayer);
-            }
-            case "deny" -> {
-                if (!getRequestList(sender.getName()).contains(target)) {
-                    this.language.sendMessage(sender, "player_not_found");
-                }
-                getRequestList(request).remove(target);
-
-                this.language.sendMessage(requestPlayer, "deny", target);
-                this.language.sendMessage(targetPlayer, "denied", request);
-                BukkitSound.DENY.play(targetPlayer);
-            }
-        }
+        BukkitUtil.registerEventListener(this.tpa);
+        BukkitUtil.registerEventListener(this.tpaHere);
     }
 
     @Override
-    public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-        if (buffer.length == 1) {
-            tabList.add("request");
-            tabList.add("accept");
-            tabList.add("deny");
-            tabList.add("list");
+    public void disable() {
+        CommandManager.unregister(this.tpa);
+        CommandManager.unregister(this.tpaHere);
+
+        BukkitUtil.unregisterEventListener(this.tpa);
+        BukkitUtil.unregisterEventListener(this.tpaHere);
+    }
+
+    public static abstract class AbstractedTPACommand extends ModuleCommand<TPA> {
+        private final RequestStorage storage = new RequestStorage();
+
+        @Override
+        public void suggest(CommandSuggestion suggestion) {
+            String sender = suggestion.getSender().getName();
+
+            suggestion.suggest(0, "request", "accept", "deny");
+
+            suggestion.matchArgument(0, "request", (s) -> s.suggestOnlinePlayers(1));
+            suggestion.matchArgument(0, "accept", (s) -> s.suggest(1, this.storage.getRequestList(sender)));
+            suggestion.matchArgument(0, "deny", (s) -> s.suggest(1, this.storage.getRequestList(sender)));
         }
-        if (buffer.length == 2) {
-            switch (buffer[0]) {
-                case "accept", "deny" -> {
-                    Set<String> list = requests.putIfAbsent(sender.getName(), new HashSet<>());
-                    if (list == null) {
+
+        @Override
+        public void execute(CommandExecution context) {
+            Player sender = context.requireSenderAsPlayer();
+            Player target = context.requirePlayer(1);
+
+            String senderName = sender.getName();
+            String targetName = target.getName();
+
+            switch (context.requireEnum(0, "request", "accept", "deny")) {
+                case "accept" -> {
+                    if (!getStorage().containsRequest(senderName, targetName)) {
+                        getLanguage().sendMessage(sender, this.getName() + "-no-request", targetName);
                         return;
                     }
-                    tabList.addAll(list);
+                    this.onAccepted(sender, target);
+                    getLanguage().sendMessage(sender, this.getName() + "-accept-sender", targetName);
+                    getLanguage().sendMessage(target, this.getName() + "-accept-target", senderName);
+                    getStorage().removeRequest(senderName, targetName);
                 }
-                case "request" -> tabList.addAll(CachedInfo.getOnlinePlayerNames());
+                case "deny" -> {
+                    if (!getStorage().containsRequest(senderName, targetName)) {
+                        getLanguage().sendMessage(sender, this.getName() + "-no-request", targetName);
+                        return;
+                    }
+                    getLanguage().sendMessage(sender, this.getName() + "-deny-sender", targetName);
+                    getLanguage().sendMessage(target, this.getName() + "-deny-target", senderName);
+                    getStorage().removeRequest(senderName, targetName);
+                }
+                case "request" -> {
+                    getLanguage().sendMessage(sender, this.getName() + "-request-sender", targetName);
+                    getLanguage().sendMessage(target, this.getName() + "-request-target", senderName, senderName, senderName);
+                    getStorage().addRequest(targetName, senderName);
+                }
+            }
+        }
+
+        public RequestStorage getStorage() {
+            return this.storage;
+        }
+
+        public abstract void onAccepted(Player handler, Player target);
+
+        @EventHandler
+        public void onPlayerQuit(PlayerQuitEvent event) {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                this.getStorage().removeRequest(p.getName(), event.getPlayer().getName());
             }
         }
     }
 
-    public Set<String> getRequestList(String name) {
-        Set<String> list = requests.get(name);
-        if (list == null) {
-            list = new HashSet<>();
-            this.requests.put(name, list);
+    @QuarkCommand(name = "tpa", permission = "+quark.tpa")
+    public static final class TPACommand extends AbstractedTPACommand {
+
+        @Override
+        public void onAccepted(Player handler, Player target) {
+            target.teleport(handler.getLocation());
         }
-        return list;
+    }
+
+    @QuarkCommand(name = "tpahere", permission = "+quark.tpahere")
+    public static final class TPAHereCommand extends AbstractedTPACommand {
+
+        @Override
+        public void onAccepted(Player handler, Player target) {
+            handler.teleport(target.getLocation());
+        }
     }
 }

@@ -4,7 +4,7 @@ import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
-import org.tbstcraft.quark.util.container.CachedInfo;
+import org.tbstcraft.quark.util.CachedInfo;
 
 import java.util.HashMap;
 import java.util.Map;

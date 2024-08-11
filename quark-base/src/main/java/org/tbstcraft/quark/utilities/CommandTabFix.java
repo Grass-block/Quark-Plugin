@@ -2,7 +2,7 @@ package org.tbstcraft.quark.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.event.EventHandler;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.TabCompleteEvent;
 import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -68,7 +68,7 @@ public final class CommandTabFix extends PackageModule {
     }
 
     @EventHandler
-    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         CommandManager.sync();
     }
 }

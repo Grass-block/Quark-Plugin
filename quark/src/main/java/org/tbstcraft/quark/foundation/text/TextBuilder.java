@@ -1,8 +1,8 @@
 package org.tbstcraft.quark.foundation.text;
 
+import me.gb2022.commons.container.ThreadLocalStorage;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.tbstcraft.quark.util.ThreadLocalStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +15,16 @@ public interface TextBuilder {
         return THREAD_LOCAL_STORAGE.get().build(EMPTY_COMPONENT + s, format);
     }
 
+    static ComponentBlock build(String s, boolean checkURLFully, Component... format) {
+        return THREAD_LOCAL_STORAGE.get().build(EMPTY_COMPONENT + s, checkURLFully, format);
+    }
+
     static Component buildComponent(String s, Component... format) {
         return build(s, format).toSingleLine();
+    }
+
+    static Component buildComponent(String s, boolean checkURLFully, Component... format) {
+        return build(s, checkURLFully, format).toSingleLine();
     }
 
     static String buildString(String s, Component... format) {

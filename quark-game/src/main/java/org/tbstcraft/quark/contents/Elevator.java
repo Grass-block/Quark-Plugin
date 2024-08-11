@@ -29,7 +29,7 @@ import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.crafting.RecipeBuilder;
 import org.tbstcraft.quark.foundation.crafting.RecipeManager;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.customcontent.CustomMeta;
 import org.tbstcraft.quark.framework.customcontent.item.CustomItem;
 import org.tbstcraft.quark.framework.customcontent.item.QuarkItem;
@@ -109,7 +109,7 @@ public final class Elevator extends PackageModule {
 
         while (y < world.getMaxHeight()) {
             if (isValidElevator(world.getBlockAt(x, y, z))) {
-                PlayerUtil.teleport(player, player.getLocation().add(0, y + 1 - yo, 0));
+                Players.teleport(player, player.getLocation().add(0, y + 1 - yo, 0));
                 player.playSound(player.getLocation(), Sound.BLOCK_PISTON_EXTEND, 1, 0);
                 return;
             }
@@ -141,7 +141,7 @@ public final class Elevator extends PackageModule {
 
         while (y > -65) {
             if (isValidElevator(world.getBlockAt(x, y, z))) {
-                PlayerUtil.teleport(player, player.getLocation().add(0, y + 1 - yo, 0));
+                Players.teleport(player, player.getLocation().add(0, y + 1 - yo, 0));
                 player.playSound(player.getLocation(), Sound.BLOCK_PISTON_CONTRACT, 1, 0);
                 return;
             }

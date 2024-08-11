@@ -2,6 +2,6 @@ plugins{
     id 'java'
 }
 
-project.setProperty("version","2.1.65")
+project.setProperty("version","2.1.67")
 
 apply from:"E:/Java/Projects/Quark/modules.gradle"

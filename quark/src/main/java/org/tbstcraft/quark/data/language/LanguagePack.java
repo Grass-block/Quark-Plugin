@@ -14,13 +14,13 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class LanguagePack {
+public class LanguagePack {
     public static final String TEMPLATE_DIR = "/templates/lang/%s.%s.yml";
     public static final String FILE_DIR = "%s/lang/%s/%s.yml";
     private final String id;
     private final String locale;
 
-    private final YamlConfiguration config = new YamlConfiguration();
+    protected final YamlConfiguration dom = new YamlConfiguration();
 
     private final Plugin owner;
 
@@ -57,7 +57,7 @@ public final class LanguagePack {
     }
 
     public ConfigurationSection getRootSection() {
-        return this.config.getConfigurationSection("language");
+        return this.dom.getConfigurationSection("language");
     }
 
     public ConfigurationSection getNamespace(String namespace) {
@@ -80,7 +80,7 @@ public final class LanguagePack {
             return;
         }
         YamlUtil.loadUTF8(template, is);
-        YamlUtil.update(this.config, template, clean, 3);
+        YamlUtil.update(this.dom, template, clean, 3);
 
         this.save();
     }
@@ -91,8 +91,8 @@ public final class LanguagePack {
             if (!f.exists() || f.length() == 0) {
                 this.restore();
             }
+            this.dom.load(fileDir());
             sync(false);
-            this.config.load(fileDir());
         } catch (IOException | InvalidConfigurationException e) {
             throw new RuntimeException(e);
         }
@@ -104,13 +104,14 @@ public final class LanguagePack {
         if (is == null) {
             return;
         }
-        YamlUtil.loadUTF8(this.config, is);
+        YamlUtil.loadUTF8(this.dom, is);
+
         this.save();
     }
 
     private void save() {
         try {
-            this.config.save(fileDir());
+            this.dom.save(fileDir());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -119,7 +120,7 @@ public final class LanguagePack {
     private String fileDir() {
         return FILE_DIR.formatted(
                 FilePath.pluginFolder(Quark.PLUGIN.getName()),
-                Language.locale(this.locale),
+                this.locale,
                 this.id
         );
     }
@@ -169,5 +170,10 @@ public final class LanguagePack {
     @Override
     public String toString() {
         return this.id + ":" + this.locale;
+    }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
     }
 }

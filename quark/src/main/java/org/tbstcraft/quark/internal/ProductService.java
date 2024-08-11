@@ -1,19 +1,14 @@
 package org.tbstcraft.quark.internal;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import me.gb2022.commons.math.SHA;
-import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceInject;
 import org.tbstcraft.quark.util.Comments;
-import org.tbstcraft.quark.util.NetworkUtil;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Base64;
-import java.util.Objects;
 
 
 //激活：发送mac地址和访问码，远端服务器返回激活信息，并删除所有旧设备的激活信息。
@@ -87,40 +82,6 @@ public interface ProductService extends Service {
 
         public boolean isActivated() {
             return activated;
-        }
-    }
-
-    final class OnlineActivator extends Activator {
-        public static final String URL_BASE = "https://service.tbstmc.xyz/qapi";
-        public static final String ACTIVATE = "/product/activate?sid=%s&code=%s";
-        public static final String VERIFY = "/product/verify?sid=%s";
-
-        static OperationResult sendRequest(String path) {
-            String url = URL_BASE + path;
-
-            JsonObject obj;
-            try {
-                String content = NetworkUtil.httpGet(url);
-                obj = (JsonObject) JsonParser.parseString(content);
-            } catch (Exception e) {
-                Quark.LOGGER.severe("request failed for " + url);
-                return OperationResult.ERROR;
-            }
-            if (Objects.equals(obj.get("status").getAsString(), "success")) {
-                return OperationResult.SUCCESS;
-            }
-            return OperationResult.FAILED;
-        }
-
-        @Override
-        public OperationResult verify() {
-            return sendRequest(VERIFY.formatted(getSystemIdentifier()));
-        }
-
-        @Override
-        public OperationResult activate(String code) {
-            return sendRequest(ACTIVATE.formatted(getSystemIdentifier(), code));
-
         }
     }
 

@@ -1,15 +1,14 @@
 package org.tbstcraft.quark.internal;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLocaleChangeEvent;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.tbstcraft.quark.api.ClientLocaleChangeEvent;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.LocaleMapping;
 import org.tbstcraft.quark.foundation.command.AbstractCommand;
@@ -21,11 +20,8 @@ import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceInject;
-import org.tbstcraft.quark.internal.task.TaskService;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 @QuarkService(id = "locale")
 public interface LocaleService extends Service {
@@ -34,13 +30,13 @@ public interface LocaleService extends Service {
 
     @ServiceInject
     static void start() {
-        CommandManager.registerCommand(LANGUAGE_COMMAND);
+        CommandManager.registerQuarkCommand(LANGUAGE_COMMAND);
         BukkitUtil.registerEventListener(LISTENER);
     }
 
     @ServiceInject
     static void stop() {
-        CommandManager.unregisterCommand(LANGUAGE_COMMAND);
+        CommandManager.unregister(LANGUAGE_COMMAND);
         BukkitUtil.unregisterEventListener(LISTENER);
     }
 
@@ -59,8 +55,6 @@ public interface LocaleService extends Service {
         if (tag.getString("custom").equals(value)) {
             return;
         }
-
-        boolean b = tag.hasKey("custom");
 
         tag.setString("custom", value);
         PlayerDataService.save(name);
@@ -81,26 +75,28 @@ public interface LocaleService extends Service {
     }
 
     final class BukkitListener implements Listener {
+
         @EventHandler
-        public void onPlayerJoin(PlayerJoinEvent event) {
-            TaskService.laterTask(Quark.CONFIG.getConfig("locale").getInt("join-delay"), () -> {
-                var preset = Quark.LANGUAGE.item("locale", "preset");
-                var tag = PlayerDataService.getEntry(event.getPlayer().getName(), "locale");
-                var locale = event.getPlayer().getLocale();
+        public void onLocaleChange(PlayerLocaleChangeEvent event) {
+            var preset = Quark.LANGUAGE.item("locale", "preset");
+            var tag = PlayerDataService.getEntry(event.getPlayer().getName(), "locale");
+            var locale = event.getPlayer().getLocale();
 
-                if (!tag.hasKey("custom") || tag.getString("custom").equals("none")) {
-                    tag.setString("custom", "none");
-                    tag.setString("cache", locale);
-                    TextSender.sendTo(event.getPlayer(), preset.getMessageComponent(locale(event.getPlayer()), locale));
-                }
+            if (!tag.hasKey("custom") || tag.getString("custom").equals("none")) {
+                tag.setString("custom", "none");
+                tag.setString("cache", locale);
+                TextSender.sendTo(event.getPlayer(), preset.getMessageComponent(locale(event.getPlayer()), locale));
+            } else {
+                locale = tag.getString("cache");
+            }
 
-                Bukkit.getPluginManager().callEvent(new DelayedPlayerJoinEvent(event.getPlayer()));
-            });
+            Locale loc = LocaleMapping.locale(locale);
+            BukkitUtil.callEvent(new ClientLocaleChangeEvent(event.getPlayer(), loc));
         }
     }
 
     @SuppressWarnings("deprecation")//because other server still uses getLocale()
-    @QuarkCommand(name = "locale", permission = "+quark.locale")
+    @QuarkCommand(name = "locale", permission = "+quark.locale", playerOnly = true)
     final class LanguageDecideCommand extends CoreCommand {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
@@ -109,6 +105,7 @@ public interface LocaleService extends Service {
             }
             setCustomLanguage(sender.getName(), args[0]);
             Quark.LANGUAGE.sendMessage(sender, "locale", "set", args[0]);
+            BukkitUtil.callEvent(new ClientLocaleChangeEvent(((Player) sender), locale(sender)));
         }
 
         @Override

@@ -11,7 +11,7 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 @CommandProvider({VMGarbageCleaner.GCCommand.class})
-@QuarkModule(version = "1.3.0")
+@QuarkModule(version = "1.3.0", defaultEnable = false)//no needed
 public final class VMGarbageCleaner extends PackageModule {
     public static final String GC_TASK_TID = "quark:auto_gc:gc";
 

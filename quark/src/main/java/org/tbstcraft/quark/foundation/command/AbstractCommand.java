@@ -4,11 +4,13 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.language.LanguageEntry;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.internal.permission.PermissionService;
 import org.tbstcraft.quark.util.ExceptionUtil;
 
@@ -16,19 +18,41 @@ import java.util.*;
 import java.util.function.Function;
 
 @SuppressWarnings("NullableProblems")
-public abstract class AbstractCommand extends Command implements CommandExecutor {
+public abstract class AbstractCommand extends Command implements CommandExecutor, Listener {
     private final Map<String, AbstractCommand> subCommands = new HashMap<>();
     private final LanguageEntry commandMessages = Quark.LANGUAGE.entry("command");
-    private Command covered;
     protected CommandExecutor executor = this;
+    private Command covered;
+
+    protected AbstractCommand() {
+        super("");
+    }
 
     public void setExecutor(CommandExecutor executor) {
         this.executor = executor;
     }
 
-    protected AbstractCommand() {
-        super("");
+
+    @EventHandler
+    public void onCommandSend(PlayerCommandSendEvent event) {
+        if(!this.isRegistered()){
+            return;
+        }
+
+        String name = this.getName();
+        String name2 = "quark:" + this.getName();
+
+        if (!validateExecutable(event.getPlayer(), false)) {
+            return;
+        }
+
+        event.getCommands().remove(name);
+        event.getCommands().remove(name2);
+        for (String alias : this.getAliases()) {
+            event.getCommands().remove(alias);
+        }
     }
+
 
     protected void init() {
         for (Class<? extends AbstractCommand> clazz : this.getDescriptor().subCommands()) {
@@ -117,11 +141,11 @@ public abstract class AbstractCommand extends Command implements CommandExecutor
     }
 
     public final void sendPermissionMessage(CommandSender sender, String s) {
-        this.commandMessages.sendMessage(sender, "lack_permission", "{;}" + s);
+        this.commandMessages.sendMessage(sender, "error-lack-permission", "{;}" + s);
     }
 
     public final void sendPlayerOnlyMessage(CommandSender sender) {
-        this.commandMessages.sendMessage(sender, "player_only");
+        this.commandMessages.sendMessage(sender, "player-only");
     }
 
 
@@ -147,7 +171,7 @@ public abstract class AbstractCommand extends Command implements CommandExecutor
             tabList.addAll(this.subCommands.keySet());
         }
 
-        this.executor.onTab(sender, args, tabList);
+        this.executor.onCommandTab(sender, args, tabList);
         return tabList;
     }
 
@@ -198,7 +222,7 @@ public abstract class AbstractCommand extends Command implements CommandExecutor
             return true;
         }
         String permission = this.getPermission();
-        if (permission.equals(QuarkCommand.NO_INFO)) {
+        if (permission.isEmpty()) {
             if (this.isOP() && !sender.isOp()) {
                 if (msg) {
                     this.sendPermissionMessage(sender, "(ServerOperator)");
@@ -272,25 +296,5 @@ public abstract class AbstractCommand extends Command implements CommandExecutor
     @Override
     public final boolean testPermissionSilent(@NotNull CommandSender target) {
         return true;
-    }
-
-
-    public void assertArguments(String[] args, CommandArg... types) {
-        if (args.length != types.length) {
-            throw new CommandSyntaxException(this, args, types);
-        }
-
-        try {
-            for (int i = 0; i < args.length; i++) {
-                switch (types[i]) {
-                    case INT -> Integer.parseInt(args[i]);
-                    case FLOAT -> Float.parseFloat(args[i]);
-                    case PLAYER -> PlayerUtil.strictFindPlayer(args[i]);
-                }
-            }
-
-        } catch (Throwable e) {
-            throw new CommandSyntaxException(this, args, types);
-        }
     }
 }

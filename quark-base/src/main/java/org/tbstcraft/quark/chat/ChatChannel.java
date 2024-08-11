@@ -14,8 +14,11 @@ import org.tbstcraft.quark.framework.module.services.ServiceType;
 @QuarkCommand(name = "chat")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public class ChatChannel extends PackageModule {
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(final AsyncPlayerChatEvent event) {
         event.setCancelled(true);
+
+
     }
 }

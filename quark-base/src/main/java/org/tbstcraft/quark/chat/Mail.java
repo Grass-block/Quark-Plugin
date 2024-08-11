@@ -3,22 +3,22 @@ package org.tbstcraft.quark.chat;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.BukkitSound;
-import org.tbstcraft.quark.util.container.CachedInfo;
+import org.tbstcraft.quark.util.CachedInfo;
 
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +34,7 @@ public final class Mail extends CommandModule {
     private LanguageEntry language;
 
     @EventHandler
-    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         TaskService.asyncTask(() -> {
             Player sender = event.getPlayer();
             NBTTagCompound entry = PlayerDataService.getEntry(sender.getName(), this.getFullId());
@@ -81,7 +81,7 @@ public final class Mail extends CommandModule {
         }
         String content = TextBuilder.EMPTY_COMPONENT + sb + TextBuilder.EMPTY_COMPONENT;
         String recipient = args[0];
-        Player recipientPlayer = PlayerUtil.strictFindPlayer(recipient);
+        Player recipientPlayer = Bukkit.getPlayerExact(recipient);
         if (recipientPlayer != null) {
             this.language.sendMessage(recipientPlayer, "receive-direct", sender.getName(), content);
             this.language.sendMessage(sender, "send-success", recipient, content);

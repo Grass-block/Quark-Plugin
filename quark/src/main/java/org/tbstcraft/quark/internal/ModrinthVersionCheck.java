@@ -1,14 +1,13 @@
 package org.tbstcraft.quark.internal;
 
+import me.gb2022.commons.http.HTTPUtil;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
-import net.kyori.adventure.util.TriState;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
-import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.tbstcraft.quark.foundation.command.CommandExecutor;
 import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
@@ -18,7 +17,7 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.ExceptionUtil;
-import org.tbstcraft.quark.util.NetworkUtil;
+import me.gb2022.commons.TriState;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -59,14 +58,15 @@ public final class ModrinthVersionCheck extends PackageModule implements Command
     public void check(BiConsumer<TriState, String> callback) {
         TaskService.asyncTask(() -> {
             try {
-                HttpURLConnection con = NetworkUtil.getHttpURLConnection(API, false);
-                var arr = SharedObjects.JSON_PARSER.parse(new String(con.getInputStream().readAllBytes())).getAsJsonArray();
+                HttpURLConnection con = HTTPUtil.getHttpURLConnection(API, false);
+                var arr = SharedObjects.JSON_PARSER.parse(new String(con.getInputStream().readAllBytes()))
+                        .getAsJsonArray();
                 con.disconnect();
 
                 var latest = arr.get(0).getAsJsonObject();
 
                 var latestVersion = latest.get("version_number").getAsString();
-                var currentVersion = Quark.PLUGIN.getDescription().getVersion();
+                var currentVersion = getOwnerPlugin().getDescription().getVersion();
 
                 this.cachedVersion = latestVersion;
 
@@ -78,14 +78,14 @@ public final class ModrinthVersionCheck extends PackageModule implements Command
                 callback.accept(TriState.FALSE, currentVersion);
                 this.cachedState = TriState.FALSE;
             } catch (IOException e) {
-                callback.accept(TriState.NOT_SET, null);
+                callback.accept(TriState.UNKNOWN, null);
                 ExceptionUtil.log(getLogger(), e);
             }
         });
     }
 
     @EventHandler
-    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         if (!event.getPlayer().hasPermission(this.updateAnnounce)) {
             return;
         }
@@ -105,7 +105,7 @@ public final class ModrinthVersionCheck extends PackageModule implements Command
                     getLanguage().sendMessage(sender, "require", version, page);
                 }
                 case FALSE -> getLanguage().sendMessage(sender, "no-require", version);
-                case NOT_SET -> getLanguage().sendMessage(sender, "exception");
+                case UNKNOWN -> getLanguage().sendMessage(sender, "exception");
             }
         });
     }

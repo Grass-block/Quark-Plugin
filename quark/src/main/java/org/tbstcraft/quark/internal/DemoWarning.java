@@ -2,7 +2,7 @@ package org.tbstcraft.quark.internal;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.event.EventHandler;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.FeatureAvailability;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.foundation.text.TextSender;
@@ -27,7 +27,7 @@ public final class DemoWarning extends PackageModule {
 
 
     @EventHandler
-    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         if (event.getPlayer().isOp()) {
             TextSender.sendTo(event.getPlayer(), TextBuilder.build(WARN_OP));
         } else {

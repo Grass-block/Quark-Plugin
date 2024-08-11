@@ -15,6 +15,21 @@ language:
     lack-permission: "{global#sys-error}很抱歉，你没有执行该命令的权限({#var})。"
     player-only: "{global#sys-error}该命令只允许玩家执行。"
     sync-commands: "{global#sys-operation}命令同步完成。"
+
+    error-missing: "{global#error}语法有误: 在 {#var} 处缺少参数。"
+    error-argument-type-int: "{global#error}语法有误: 在 {#var} 处应为整形，实际输入 {#var}。"
+    error-argument-type-float: "{global#error}语法有误: 在 {#var} 处应为浮点，实际输入 {#var}。"
+    error-argument-type-double: "{global#error}语法有误: 在 {#var} 处应为双精度浮点，实际输入 {#var}。"
+    error-argument-type-enum: "{global#error}语法有误: 在 {#var} 处应为{#var}中的一个，实际输入 {#var}。"
+    error-require-player: "{global#error}语法有误: 在 {#var} 处需要一个玩家，实际({#var})不存在。"
+    error-argument-bound: "{global#error}语法有误: 在 {#var} 处数值应处于 {#var}-{#var} 区间内，实际为{#var}。"
+
+    error-lack-permission: "{global#error}权限不足: 缺少权限 {#var}。"
+    error-lack-any-permission: "{global#error}权限不足: 缺少 {#var} 中的任意一个权限。"
+    error-lack-all-permission: "{global#error}权限不足: 缺少 {#var} 中的任意全部权限。"
+    error-sender-is-not-player: "{global#error}目标错误: 您需要为一名玩家。"
+
+    error-internal-exception: "{global#error}执行此命令时出现内部错误，查看控制台获得更多信息。"
   module:
     list: "{global#sys-operation}以下是全部模块: {#return}%s"
     enable-all: "{global#sys-operation}成功启用所有模块。"

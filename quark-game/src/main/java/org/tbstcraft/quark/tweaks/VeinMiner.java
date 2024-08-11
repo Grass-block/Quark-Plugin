@@ -18,27 +18,27 @@ import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Pattern;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(id = "vein_miner")
 public final class VeinMiner extends PackageModule {
-    public static final int MAX_DEEP = 64;
     private final Set<String> breakingSession = new HashSet<>();
 
     @Inject("tip")
     private LanguageItem tip;
 
+    private Pattern pattern;
+
     @Override
     public void enable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
+        this.pattern = Pattern.compile(Objects.requireNonNull(this.getConfig().getString("regex")));
     }
 
     @Override
-    public void disable(){
+    public void disable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
     }
 
@@ -55,24 +55,22 @@ public final class VeinMiner extends PackageModule {
         }
 
         String id = event.getBlock().getType().getKey().getKey();
-        if (!isVeinMinedBlocks(id)) {
+        if (canNotChainMine(id)) {
             return;
         }
         event.setCancelled(true);
         this.breakingSession.add(event.getPlayer().getName());
-        mineBlockAt(event.getPlayer(), event.getBlock().getType(), event.getBlock(),0);
+        mineBlockAt(event.getPlayer(), event.getBlock().getType(), event.getBlock(), 0);
         this.breakingSession.remove(event.getPlayer().getName());
     }
 
-    private boolean isVeinMinedBlocks(String id){
-        return id.contains("_ore")
-                ||id.contains("_log")
-                ||id.contains("_leaves");
+    private boolean canNotChainMine(String id) {
+        return !this.pattern.matcher(id).find();
     }
 
 
     private void mineBlockAt(Player player, Material origin, Block block, int currentDeep) {
-        if(!isVeinMinedBlocks(block.getType().getKey().getKey())){
+        if (canNotChainMine(block.getType().getKey().getKey())) {
             return;
         }
 
@@ -80,7 +78,7 @@ public final class VeinMiner extends PackageModule {
             return;
         }
 
-        if (currentDeep >= MAX_DEEP) {
+        if (currentDeep >= getConfig().getInt("max-iterations")) {
             return;
         }
 

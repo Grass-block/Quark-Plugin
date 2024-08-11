@@ -1,13 +1,14 @@
 package org.tbstcraft.quark.contents;
 
 import me.gb2022.commons.reflect.Inject;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.Permission;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 
@@ -39,7 +40,7 @@ public final class Hats extends CommandModule {
                 sendPermissionMessage(sender);
                 return;
             }
-            target = PlayerUtil.strictFindPlayer(args[0]);
+            target = Bukkit.getPlayerExact(args[0]);
             if (target == null) {
                 getLanguage().sendMessage(sender, "not-found");
                 return;
@@ -61,7 +62,7 @@ public final class Hats extends CommandModule {
             if(!sender.isOp()){
                 return;
             }
-            tabList.addAll(PlayerUtil.getAllOnlinePlayerNames());
+            tabList.addAll(Players.getAllOnlinePlayerNames());
         }
     }
 

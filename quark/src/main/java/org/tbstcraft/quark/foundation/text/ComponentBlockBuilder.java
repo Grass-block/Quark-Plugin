@@ -10,7 +10,8 @@ import java.util.regex.Pattern;
 
 public final class ComponentBlockBuilder {
     public static final Pattern TAG_FILTER = Pattern.compile("\\{(color|click|underline|magic|reset|hover|none|[0-9]|;)[^}]*}");
-    public static final Pattern URL_FILTER = Pattern.compile("(https?://)?(([0-9a-z.]+\\.[a-z]+)|(([0-9]{1,3}\\.){3}[0-9]{1,3}))(:[0-9]+)?(/[0-9a-z%/.\\-_]*)?(\\?[0-9a-z=&%_\\-]*)?(#[0-9a-z=&%_\\-]*)?");
+    public static final Pattern URL_BASE_FILTER = Pattern.compile("https?://([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?");
+    public static final Pattern URL_FILTER = Pattern.compile("(https?://)(([0-9a-z.]+\\.[a-z]+)|(([0-9]{1,3}\\.){3}[0-9]{1,3}))(:[0-9]+)?(/[0-9a-z%/.\\-_]*)?(\\?[0-9a-z=&%_\\-]*)?(#[0-9a-z=&%_\\-]*)?");
 
     private final StringBuilder buffer = new StringBuilder(32);
     private TextComponent.Builder builder = Component.text();
@@ -27,9 +28,9 @@ public final class ComponentBlockBuilder {
         return s;
     }
 
-    public static String processURLs(String input) {
+    public static String processURLs(String input, boolean full) {
         String replacementText = "{click(link,%s)}%s{;}";
-        Matcher matcher = URL_FILTER.matcher(input);
+        Matcher matcher = (full ? URL_FILTER : URL_BASE_FILTER).matcher(input);
 
         StringBuilder result = new StringBuilder();
 
@@ -72,10 +73,10 @@ public final class ComponentBlockBuilder {
         this.builder.append(ComponentGenerator.buildComponent(content, args));
     }
 
-    public ComponentBlock build(String raw, Component... format) {
+    public ComponentBlock build(String raw, boolean fullURLCheck, Component... format) {
         raw = PlaceHolderService.format(raw);
 
-        raw = processURLs(raw);
+        raw = processURLs(raw, fullURLCheck);
         raw = preprocessTags(raw);
 
         this.format = format;
@@ -90,6 +91,10 @@ public final class ComponentBlockBuilder {
         block.add(this.builder.build());
 
         return block;
+    }
+
+    public ComponentBlock build(String raw, Component... format) {
+        return build(raw, false, format);
     }
 
     private void dispatchChar(char code, ComponentBlock block) {

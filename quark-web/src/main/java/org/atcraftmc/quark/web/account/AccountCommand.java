@@ -2,97 +2,80 @@ package org.atcraftmc.quark.web.account;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.tbstcraft.quark.foundation.command.CommandExecution;
+import org.tbstcraft.quark.foundation.command.CommandSuggestion;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
 
-import java.util.List;
-import java.util.Objects;
-
-@QuarkCommand(name = "account", subCommands = AccountCommand.LinkCommand.class, playerOnly = true)
+@QuarkCommand(name = "account", playerOnly = true)
 public final class AccountCommand extends ModuleCommand<AccountActivation> {
-    @Override
-    public void onCommand(CommandSender sender, String[] args) {
-        Player p = ((Player) sender);
-
-
-        switch (args[0]) {
-            case "verify" -> {
-                String mail = AccountManager.getMail(sender.getName());
-                if (!AccountManager.isValidMail(sender.getName())) {
-                    this.getLanguage().sendMessage(sender, "verify-failed");
-                }
-                String prefix = this.getConfig().getString("verify-link-delegation");
-                String code = AccountManager.generateActivationLink(prefix, () -> {
-                    AccountManager.setStatus(sender.getName(), AccountStatus.VERIFIED);
-                    this.getLanguage().sendMessage(sender, "verified");
-                    this.getModule().unfreeze(p);
-                });
-
-                this.getModule().sendVerifyMail(((Player) sender), mail, code);
-            }
-            case "unverify" -> {
-                String player = sender.getName();
-                AccountManager.setStatus(player, AccountStatus.UNVERIFIED);
-                this.getLanguage().sendMessage(sender, "unverify-success");
-                this.getModule().freeze(p, AccountStatus.UNVERIFIED);
-            }
-            case "unlink" -> {
-                String mail = AccountManager.getMail(sender.getName());
-                if (!AccountManager.isValidMail(sender.getName())) {
-                    this.getLanguage().sendMessage(sender, "unlink-failed");
-                }
-                String prefix = this.getConfig().getString("verify-link-delegation");
-                String code = AccountManager.generateActivationLink(prefix, () -> {
-                    AccountManager.setMail(sender.getName(), null);
-                    this.getLanguage().sendMessage(sender, "unlinked", mail);
-                    this.getModule().freeze(p, AccountStatus.UNLINKED);
-                });
-
-                this.getModule().sendVerifyMail(((Player) sender), mail, code);
-            }
-        }
-    }
 
     @Override
-    public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-        if (buffer.length == 1) {
-            tabList.add("link");
-            tabList.add("verify");
-            tabList.add("unverify");
-            tabList.add("unlink");
-        }
-        if (buffer.length == 2 && Objects.equals(buffer[0], "link")) {
-            tabList.add("example@example.com");
-        }
-    }
+    public void execute(CommandExecution context) {
+        Player p = context.requireSenderAsPlayer();
+        CommandSender sender = context.getSender();
+        String name = context.getSender().getName();
 
-    @QuarkCommand(name = "link", playerOnly = true)
-    public static final class LinkCommand extends ModuleCommand<AccountActivation> {
-        @Override
-        public void onCommand(CommandSender sender, String[] args) {
+        context.requireEnum(0, "verify", "link", "unlink", "unverify");
+
+        context.matchArgument(0, "verify", () -> {
+            String mail = AccountManager.getMail(name);
+            if (!AccountManager.isValidMail(name)) {
+                this.getLanguage().sendMessage(sender, "verify-failed");
+            }
+            String prefix = this.getConfig().getString("verify-link-delegation");
+            String code = AccountManager.generateActivationLink(prefix, () -> {
+                AccountManager.setStatus(name, AccountStatus.VERIFIED);
+                this.getLanguage().sendMessage(sender, "verified");
+                this.getModule().unfreeze(p);
+            });
+
+            this.getModule().sendVerifyMail(((Player) sender), mail, code);
+        });
+
+        context.matchArgument(0, "unverify", () -> {
+            AccountManager.setStatus(name, AccountStatus.UNVERIFIED);
+            this.getLanguage().sendMessage(sender, "unverify-success");
+            this.getModule().freeze(p, AccountStatus.UNVERIFIED);
+        });
+
+        context.matchArgument(0, "unlink", () -> {
+            String mail = AccountManager.getMail(name);
+            if (!AccountManager.isValidMail(name)) {
+                this.getLanguage().sendMessage(sender, "unlink-failed");
+            }
+            String prefix = this.getConfig().getString("verify-link-delegation");
+            String code = AccountManager.generateActivationLink(prefix, () -> {
+                AccountManager.setMail(name, null);
+                this.getLanguage().sendMessage(sender, "unlinked", mail);
+                this.getModule().freeze(p, AccountStatus.UNLINKED);
+            });
+
+            this.getModule().sendVerifyMail(((Player) sender), mail, code);
+        });
+
+        context.matchArgument(0, "link", () -> {
             String prefix = this.getConfig().getString("verify-link-delegation");
 
-            if (AccountManager.isValidMail(sender.getName())) {
+            if (AccountManager.isValidMail(name)) {
                 this.getLanguage().sendMessage(sender, "link-failed");
                 return;
             }
+
+            String mail = context.requireArgumentAt(0);
+
             String code = AccountManager.generateActivationLink(prefix, () -> {
-                AccountManager.setMail(sender.getName(), args[0]);
-                AccountManager.setStatus(sender.getName(), AccountStatus.VERIFIED);
+                AccountManager.setMail(name, mail);
+                AccountManager.setStatus(name, AccountStatus.VERIFIED);
                 this.getLanguage().sendMessage(sender, "verified");
             });
-            this.getModule().sendVerifyMail(((Player) sender), args[0], code);
-        }
+            this.getModule().sendVerifyMail(((Player) sender), mail, code);
+        });
+    }
 
-        @Override
-        public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-            if (buffer.length == 1) {
-                tabList.add("example@example.com");
-                tabList.add("@163.com");
-                tabList.add("@126.com");
-                tabList.add("@qq.com");
-                tabList.add("@gmail.com");
-            }
-        }
+    @Override
+    public void suggest(CommandSuggestion suggestion) {
+        suggestion.suggest(0, "link", "unlink", "verify", "unverify");
+        suggestion.matchArgument(0, "link", (s) -> s.suggest(1, "@163.com", "@126.com", "@qq.com", "@gmail.com"));
     }
 }

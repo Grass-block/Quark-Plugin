@@ -3,7 +3,6 @@ package org.tbstcraft.quark.contents;
 import com.google.gson.JsonArray;
 import me.gb2022.apm.client.event.ClientRequestEvent;
 import me.gb2022.apm.client.event.driver.ClientEventHandler;
-import me.gb2022.commons.nbt.NBTBase;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
@@ -15,27 +14,28 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.generator.WorldInfo;
+import org.bukkit.permissions.Permission;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.LanguageItem;
-import org.tbstcraft.quark.foundation.command.CommandManager;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.*;
+import org.tbstcraft.quark.foundation.command.assertion.NumberLimitation;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.platform.BukkitCodec;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.util.BukkitSound;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @QuarkCommand(name = "waypoint")
 @QuarkModule(version = "2.0.3", compatBlackList = {APIProfile.ARCLIGHT})
@@ -43,6 +43,12 @@ import java.util.Objects;
 @AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.CLIENT_MESSAGE})
 public final class Waypoint extends CommandModule {
     private final Map<String, Location> deathPoints = new HashMap<>();
+
+    @Inject("-quark.waypoint.public")
+    private Permission editPublicPermission;
+
+    @Inject("-quark.waypoint.bypass")
+    private Permission bypassAddLimitPermission;
 
     @Inject("tip")
     private LanguageItem tip;
@@ -81,13 +87,13 @@ public final class Waypoint extends CommandModule {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
 
         if (this.getConfig().getBoolean("home")) {
-            CommandManager.registerCommand(new SetHomeCommand(this));
-            CommandManager.registerCommand(new WarpHomeCommand(this));
+            CommandManager.registerQuarkCommand(new SetHomeCommand(this));
+            CommandManager.registerQuarkCommand(new WarpHomeCommand(this));
 
             PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tipHome));
         }
         if (this.getConfig().getBoolean("back-to-death")) {
-            CommandManager.registerCommand(new BackToDeathCommand(this));
+            CommandManager.registerQuarkCommand(new BackToDeathCommand(this));
 
             PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tipBack));
         }
@@ -98,13 +104,13 @@ public final class Waypoint extends CommandModule {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
 
         if (this.getConfig().getBoolean("home")) {
-            CommandManager.unregisterCommand("sethome");
-            CommandManager.unregisterCommand("home");
+            CommandManager.unregister("sethome");
+            CommandManager.unregister("home");
 
             PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tipHome));
         }
         if (this.getConfig().getBoolean("back-to-death")) {
-            CommandManager.unregisterCommand("back");
+            CommandManager.unregister("back");
 
             PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tipBack));
         }
@@ -124,82 +130,78 @@ public final class Waypoint extends CommandModule {
     public static final class WaypointCommand extends ModuleCommand<Waypoint> {
 
         @Override
-        public void onCommand(CommandSender sender, String[] args) {
-            String id = args.length >= 2 ? args[1] : null;
+        public void execute(CommandExecution context) {
+            var mode = context.requireEnum(0, "add-private", "remove-private", "tp-private", "list-private", "add", "remove", "tp", "list");
+            var isPrivate = mode.contains("private");
+            var sender = context.requireSenderAsPlayer();
 
             NBTTagCompound entry;
-            if (args[0].contains("-private")) {
-                entry = PlayerDataService.getEntry(sender.getName(), this.getModule().getId());
+            if (isPrivate) {
+                entry = PlayerDataService.getEntry(sender.getName(), getModule().getId());
             } else {
-                entry = ModuleDataService.getEntry(this.getModule().getId());
+                entry = ModuleDataService.getEntry(this.getModuleId());
             }
 
-            switch (args[0]) {
+            if (!isPrivate && !mode.contains("tp")) {
+                context.requirePermission(this.getModule().editPublicPermission);
+            }
+
+            switch (mode) {
                 case "list", "list-private" -> {
                     StringBuilder sb = new StringBuilder(128);
-                    entry.getTagMap().forEach((name, data) -> sb.append(name)
-                            .append(ChatColor.GRAY)
-                            .append(" -> ")
-                            .append(ChatColor.WHITE)
-                            .append(BukkitCodec.toString(BukkitCodec.fromNBT(entry.getCompoundTag(name))))
-                            .append("\n"));
+                    entry.getTagMap().forEach((name, data) -> sb.append(name).append(ChatColor.GRAY).append(" -> ").append(ChatColor.WHITE).append(BukkitCodec.toString(BukkitCodec.fromNBT(entry.getCompoundTag(name)))).append("\n"));
                     this.getLanguage().sendMessage(sender, "list", sb);
-                    return;
                 }
                 case "tp", "tp-private" -> {
+                    var id = context.requireArgumentAt(1);
+
                     NBTTagCompound tag = entry.getCompoundTag(id);
-                    if (tag == null) {
+                    if (tag == null || !tag.hasKey("world")) {
                         this.getLanguage().sendMessage(sender, "not-exist", id);
                         break;
                     }
-                    if (sender instanceof Player p) {
-                        PlayerUtil.teleport(p, BukkitCodec.fromNBT(tag));
-                        BukkitSound.WARP.play(p);
-                        this.getLanguage().sendMessage(sender, "tp-success", id);
-                    }
-                    return;
+
+                    Players.teleport(sender, BukkitCodec.fromNBT(tag));
+                    BukkitSound.WARP.play(sender);
+                    this.getLanguage().sendMessage(sender, "tp-success", id);
                 }
-            }
-
-            if (!sender.isOp() && !args[0].contains("-private")) {
-                this.sendPermissionMessage(sender, "(ServerOperator)");
-                return;
-            }
-
-            NBTTagCompound tag = entry.getCompoundTag(id);
-
-            switch (args[0]) {
                 case "add", "add-private" -> {
+                    var id = context.requireArgumentAt(1);
+                    var tag = entry.getCompoundTag(id);
+
                     if (tag.hasKey("world")) {
                         this.getLanguage().sendMessage(sender, "exist", id);
                         return;
                     }
-                    if (args[2].equals("@self")) {
-                        tag = BukkitCodec.toNBT(((Player) sender).getLocation());
+
+                    Location loc;
+
+                    if (!context.hasArgumentAt(2) || Objects.equals(context.requireArgumentAt(2), "@self")) {
+                        loc = sender.getLocation();
                     } else {
-                        if (!this.getConfig().getBoolean("allow-coordinate-add")
-                                && !sender.isOp()
-                                && Objects.equals(args[0], "add-private")) {
-                            this.sendExceptionMessage(sender);
-                            return;
-                        }
-                        Location loc = new Location(
-                                Bukkit.getWorld(args[2]),
-                                Double.parseDouble(args[3]),
-                                Double.parseDouble(args[4]),
-                                Double.parseDouble(args[5])
-                        );
-                        if (args.length >= 8) {
-                            loc.setYaw(Float.parseFloat(args[6]));
-                            loc.setPitch(Float.parseFloat(args[7]));
+
+                        if (!this.getConfig().getBoolean("allow-coordinate-add")) {
+                            context.requirePermission(this.getModule().bypassAddLimitPermission);
                         }
 
-                        tag = BukkitCodec.toNBT(loc);
+                        loc = new Location(Bukkit.getWorld(context.requireEnum(2, Bukkit.getWorlds().stream().map(WorldInfo::getName).collect(Collectors.toSet()))), context.requireArgumentDouble(3, NumberLimitation.any()), context.requireArgumentDouble(4, NumberLimitation.any()), context.requireArgumentDouble(5, NumberLimitation.any()));
+                        if (context.hasArgumentAt(6)) {
+                            loc.setYaw(context.requireArgumentFloat(6, NumberLimitation.any()));
+                            loc.setPitch(context.requireArgumentFloat(7, NumberLimitation.any()));
+                        }
                     }
+
+                    tag = BukkitCodec.toNBT(loc);
                     entry.setCompoundTag(id, tag);
                     this.getLanguage().sendMessage(sender, "add-success", id);
+
+                    PlayerDataService.save(sender.getName());
+                    ModuleDataService.save(this.getModuleId());
                 }
                 case "remove", "remove-private" -> {
+                    var id = context.requireArgumentAt(1);
+                    var tag = entry.getCompoundTag(id);
+
                     if (!tag.hasKey("world")) {
                         this.getLanguage().sendMessage(sender, "not-exist", id);
                         return;
@@ -208,66 +210,43 @@ public final class Waypoint extends CommandModule {
                     this.getLanguage().sendMessage(sender, "remove-success", id);
                 }
             }
-
-            if (args[0].contains("-private")) {
-                PlayerDataService.save(sender.getName());
-            } else {
-                ModuleDataService.save(this.getModule().getId());
-            }
         }
 
         @Override
-        public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-            if (buffer.length == 1) {
-                if (sender.isOp()) {
-                    tabList.add("add");
-                    tabList.add("remove");
-                }
-                tabList.add("tp");
-                tabList.add("list");
-                tabList.add("tp-private");
-                tabList.add("list-private");
-                tabList.add("add-private");
-                tabList.add("remove-private");
-                return;
-            }
+        public void suggest(CommandSuggestion suggestion) {
+            suggestion.suggest(0, "tp", "tp-private", "list", "list-private", "add-private", "remove-private");
+            suggestion.requireAnyPermission((ctx) -> ctx.suggest(0, "add", "remove"), this.getModule().editPublicPermission);
 
-            if (buffer[0].equals("add") || buffer[0].equals("add-private")) {
-                if (buffer[0].equals("add-private") && buffer.length == 3) {
-                    if (this.getConfig().getBoolean("allow_coordinate_add")) {
-                        tabList.add("@self");
-                        return;
-                    }
-                }
-                switch (buffer.length) {
-                    case 2 -> tabList.add("[name]");
-                    case 3 -> {
-                        Bukkit.getWorlds().forEach((w) -> tabList.add(w.getName()));
-                        tabList.add("@self");
-                    }
-                    case 4 -> tabList.add("[x]");
-                    case 5 -> tabList.add("[y]");
-                    case 6 -> tabList.add("[z]");
-                    case 7 -> tabList.add("(yaw)");
-                    case 8 -> tabList.add("(pitch)");
-                }
-                return;
-            }
+            var player = suggestion.getSenderAsPlayer();
+            Consumer<CommandSuggestion> add = suggestion1 -> {
+                suggestion1.suggest(1, "[name]");
+                suggestion1.suggest(2, "@self");
+                suggestion1.requireAnyPermission((ctx) -> {
+                    suggestion1.suggest(2, Bukkit.getWorlds().stream().map(WorldInfo::getName).collect(Collectors.toSet()));
+                    suggestion1.suggest(3, String.valueOf(player.getLocation().getX()));
+                    suggestion1.suggest(4, String.valueOf(player.getLocation().getY()));
+                    suggestion1.suggest(5, String.valueOf(player.getLocation().getZ()));
+                    suggestion1.suggest(6, String.valueOf(player.getLocation().getYaw()));
+                    suggestion1.suggest(7, String.valueOf(player.getLocation().getPitch()));
+                }, getModule().bypassAddLimitPermission);
+            };
 
-            if (buffer.length == 2) {
-                if (buffer[0].equals("list") || buffer[0].equals("list-private")) {
-                    return;
-                }
+            suggestion.matchArgument(0, "add", add);
+            suggestion.matchArgument(0, "add-private", add);
 
-                Map<String, NBTBase> map;
+            Consumer<CommandSuggestion> privateList = (ctx) -> {
+                var map = PlayerDataService.getEntry(player.getName(), this.getModuleId()).getTagMap();
+                ctx.suggest(1, map.keySet());
+            };
+            Consumer<CommandSuggestion> pubList = (ctx) -> {
+                var map = ModuleDataService.getEntry(this.getModuleId()).getTagMap();
+                ctx.suggest(1, map.keySet());
+            };
 
-                if (buffer[0].contains("-private")) {
-                    map = PlayerDataService.getEntry(sender.getName(), this.getModule().getId()).getTagMap();
-                } else {
-                    map = ModuleDataService.getEntry(this.getModule().getId()).getTagMap();
-                }
-                tabList.addAll(map.keySet());
-            }
+            suggestion.matchArgument(0, "remove", pubList);
+            suggestion.matchArgument(0, "tp", pubList);
+            suggestion.matchArgument(0, "remove-private", privateList);
+            suggestion.matchArgument(0, "tp-private", privateList);
         }
     }
 
@@ -305,7 +284,7 @@ public final class Waypoint extends CommandModule {
                 return;
             }
             Location loc = BukkitCodec.fromNBT(entry.getCompoundTag("home"));
-            PlayerUtil.teleport(((Player) sender), loc);
+            Players.teleport(((Player) sender), loc);
             this.getLanguage().sendMessage(sender, "home-tp-success");
             BukkitSound.WARP.play((Player) sender);
         }
@@ -324,7 +303,7 @@ public final class Waypoint extends CommandModule {
                 this.getLanguage().sendMessage(sender, "back-not-set");
                 return;
             }
-            PlayerUtil.teleport(((Player) sender), this.getModule().deathPoints.get(sender.getName()));
+            Players.teleport(((Player) sender), this.getModule().deathPoints.get(sender.getName()));
             this.getLanguage().sendMessage(sender, "back-tp-success");
             BukkitSound.WARP.play(((Player) sender));
         }

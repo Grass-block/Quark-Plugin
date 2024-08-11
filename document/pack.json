@@ -1,0 +1,10 @@
+{
+  "id": "07-zh_meme", //你的语言包唯一ID
+  "display": {
+    "zh_cn": "梗体中文汉化包", //不同语言下你的语言包显示名称
+    "zh_meme": "tmd体中文"
+  },
+  "author": ["TWSFTS_07007"], //作者列表
+  "licence": "All Rights Reserved", //使用的协议
+  "url": "example.org" //网址
+}

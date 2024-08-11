@@ -9,7 +9,7 @@ language:
     permission-manager: 权限管理器
     account-activation: 账户验证
   advanced-permission-control:
-    no-perm: '{global#error}你没有权限这样做!(缺失权限节点{#var})'
+    no-perm: '{global/#error}你没有权限这样做!(缺失权限节点{#var})'
   explosion-defender:
     exploded: '{global#warning}在 {#var} 世界中的 {#var},{#var},{#var} 发生了 {#var} 爆炸。'
     region-list: '{global#sys-operation}以下是全部爆炸白名区域: '

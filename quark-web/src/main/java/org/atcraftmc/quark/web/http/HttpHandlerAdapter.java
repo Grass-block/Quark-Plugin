@@ -4,7 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.ModuleManager;
-import org.tbstcraft.quark.util.ObjectStatus;
+import me.gb2022.commons.TriState;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,7 +23,7 @@ public final class HttpHandlerAdapter implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) {
         if(this.handler instanceof AbstractModule module) {
-            if (ModuleManager.getModuleStatus(module.getFullId()) != ObjectStatus.ENABLED) {
+            if (ModuleManager.getModuleStatus(module.getFullId()) != TriState.FALSE) {
                 return;
             }
         }

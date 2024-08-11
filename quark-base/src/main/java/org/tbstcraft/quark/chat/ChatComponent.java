@@ -55,7 +55,7 @@ public final class ChatComponent extends PackageModule {
         msg = PlaceHolderService.format(msg);
         msg = processChar(msg);
         msg = processColorChars(msg);
-        event.setMessage(TextBuilder.build(msg).toString());
+        event.setMessage(TextBuilder.build(msg, true).toString());
     }
 
     @EventHandler
@@ -70,7 +70,7 @@ public final class ChatComponent extends PackageModule {
         msg = PlaceHolderService.format(msg);
         msg = processChar(msg);
         msg = processColorChars(msg);
-        event.setMessage(TextBuilder.build(msg).toString());
+        event.setMessage(TextBuilder.build(msg, false).toString());
     }
 
     public String processChar(String input) {
@@ -137,7 +137,7 @@ public final class ChatComponent extends PackageModule {
             msg = getParent().processColorChars(msg);
             msg = PlaceHolderService.format(msg);
             msg = this.getParent().processChar(msg);
-            event.message(TextBuilder.buildComponent(msg));
+            event.message(TextBuilder.buildComponent(msg, true));
         }
 
         @EventHandler
@@ -152,7 +152,7 @@ public final class ChatComponent extends PackageModule {
                 text = this.getParent().processColorChars(text);
                 text = this.getParent().processChar(text);
 
-                event.line(i, TextBuilder.buildComponent(text));
+                event.line(i, TextBuilder.buildComponent(text, false));
             }
         }
     }

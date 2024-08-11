@@ -38,7 +38,7 @@ public final class ItemCommand extends PackageModule implements CommandExecutor 
     }
 
     @Override
-    public void disable(){
+    public void disable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
     }
 
@@ -59,8 +59,16 @@ public final class ItemCommand extends PackageModule implements CommandExecutor 
         if (!CustomMeta.hasItemPDCProperty(hand, "cmd_bind")) {
             return;
         }
-        Bukkit.getServer().dispatchCommand(p, Objects.requireNonNull(CustomMeta.getItemPDCProperty(hand, "cmd_bind")));
+
+        String cmd = Objects.requireNonNull(CustomMeta.getItemPDCProperty(hand, "cmd_bind"));
+
         event.setCancelled(true);
+
+        if (cmd.contains("dm open")) {
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd + " " + event.getPlayer().getName());
+            return;
+        }
+        Bukkit.getServer().dispatchCommand(p, cmd);
     }
 
     @Override

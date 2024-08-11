@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.foundation.region.Region;
 import org.tbstcraft.quark.foundation.region.RegionDataManager;
 import org.tbstcraft.quark.foundation.region.RegionManager;
@@ -64,7 +64,7 @@ public class PlotManager extends PackageModule {
                 getLanguage().sendMessage(event.getPlayer(), "edit-p1");
             }
 
-            PlayerUtil.show3DBox(event.getPlayer(), edit.getPoint0(), edit.getPoint1());
+            Players.show3DBox(event.getPlayer(), edit.getPoint0(), edit.getPoint1());
             return;
         }
 

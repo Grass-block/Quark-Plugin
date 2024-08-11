@@ -48,20 +48,18 @@ public final class ServerQueries extends PackageModule {
 
     public void queryMotd(HttpHandlerContext context) {
         JsonObject object = context.createJsonReturn();
-        QueryPingEvent event = BukkitUtil.callEvent(new QueryPingEvent());
+        BukkitUtil.callEvent(new QueryPingEvent(), (event) -> {
+            object.addProperty("motd", event.getMotd());
+            object.addProperty("max-players", event.getMaxPlayers());
+            object.addProperty("players", event.getOnlinePlayers());
 
-        object.addProperty("motd", event.getMotd());
-        object.addProperty("max-players", event.getMaxPlayers());
-        object.addProperty("players", event.getOnlinePlayers());
 
+            CachedServerIcon icon = event.getServerIcon();
 
-        CachedServerIcon icon = event.getServerIcon();
-
-        if (icon == null) {
-            return;
-        }
-        object.addProperty("icon", icon.getData());
+            if (icon == null) {
+                return;
+            }
+            object.addProperty("icon", icon.getData());
+        });
     }
-
-
 }

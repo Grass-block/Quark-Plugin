@@ -3,12 +3,14 @@ package org.tbstcraft.quark.proxysupport;
 import com.google.gson.JsonParser;
 import me.gb2022.apm.remote.event.RemoteEventHandler;
 import me.gb2022.apm.remote.event.remote.RemoteQueryEvent;
+import me.gb2022.commons.http.HttpMethod;
+import me.gb2022.commons.http.HttpRequest;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
@@ -18,7 +20,6 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.ExceptionUtil;
-import org.tbstcraft.quark.util.NetworkUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -39,7 +40,7 @@ public final class MCSMDynamicInstance extends PackageModule {
     }
 
     @EventHandler
-    public void onPlayerJoin(final DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(final PlayerJoinEvent event) {
         if (!this.getConfig().getBoolean("instance")) {
             return;
         }
@@ -57,11 +58,11 @@ public final class MCSMDynamicInstance extends PackageModule {
         }
     }
 
-    public void scheduleStop(){
+    public void scheduleStop() {
         getLogger().info("starting stopping countdown");
         TaskService.laterTask("quark:ps:countdown", getConfig().getInt("shutdown-delay"), () -> {
             getLogger().info("stopping server as POWER_SAVING");
-            TaskService.runTask(()-> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "stop"));
+            TaskService.runTask(() -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "stop"));
         });
     }
 
@@ -69,34 +70,42 @@ public final class MCSMDynamicInstance extends PackageModule {
         String apiKey = getConfig().getString("api-key");
         String daemon = getConfig().getString("daemon");
 
-        TaskService.asyncTask(() -> NetworkUtil.request(daemon + "/api/instance", false)
-                .param("apikey", apiKey)
-                .param("daemonId", this.getConfig().getString("daemon-id"))
-                .param("uuid", name)
-                .get((response) -> {
-                    if (JsonParser.parseString(response).
-                            getAsJsonObject().get("data")
-                            .getAsJsonObject().get("status")
-                            .getAsInt() != 0) {
-                        handler.accept(1);
-                        return;
-                    }
-                    this.getLanguage().sendMessage(sender, "wakeup");
-                    NetworkUtil.request(daemon + "/api/protected_instance/open", false)
-                            .param("apikey", apiKey)
-                            .param("daemonId", this.getConfig().getString("daemon-id"))
-                            .param("uuid", name)
-                            .get((res) -> {
-                                getLogger().info("starting instance: " + name);
-                                if (JsonParser.parseString(res).getAsJsonObject().get("status").getAsInt() == 200) {
-                                    handler.accept(0);
-                                    return;
-                                } else {
-                                    getLogger().info("starting instance failed: " + response);
-                                }
-                                handler.accept(2);
-                            });
-                }));
+        TaskService.asyncTask(() -> {
+            var response = HttpRequest.http(HttpMethod.GET, daemon + "/api/instance")
+                    .param("apikey", apiKey)
+                    .param("daemonId", this.getConfig().getString("daemon-id"))
+                    .param("uuid", name)
+                    .browserBehavior(true)
+                    .build()
+                    .request();
+
+            if (JsonParser.parseString(response)
+                    .getAsJsonObject()
+                    .get("data")
+                    .getAsJsonObject()
+                    .get("status")
+                    .getAsInt() != 0) {
+                handler.accept(1);
+                return;
+            }
+            this.getLanguage().sendMessage(sender, "wakeup");
+
+            var res = HttpRequest.http(HttpMethod.GET, daemon + "/api/protected_instance/open")
+                    .param("apikey", apiKey)
+                    .param("daemonId", this.getConfig().getString("daemon-id"))
+                    .param("uuid", name)
+                    .build()
+                    .request();
+
+            getLogger().info("starting instance: " + name);
+            if (JsonParser.parseString(res).getAsJsonObject().get("status").getAsInt() == 200) {
+                handler.accept(0);
+                return;
+            } else {
+                getLogger().info("starting instance failed: " + response);
+            }
+            handler.accept(2);
+        });
     }
 
     @RemoteEventHandler("/quark/di/state")
@@ -136,7 +145,8 @@ public final class MCSMDynamicInstance extends PackageModule {
         @Override
         public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
             if (buffer.length == 1) {
-                tabList.addAll(Objects.requireNonNull(this.getConfig().getConfigurationSection("servers")).getKeys(false));
+                tabList.addAll(Objects.requireNonNull(this.getConfig().getConfigurationSection("servers"))
+                                       .getKeys(false));
             }
         }
     }

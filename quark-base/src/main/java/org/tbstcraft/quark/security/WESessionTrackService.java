@@ -108,7 +108,7 @@ public interface WESessionTrackService extends Service {
             if (!r.isComplete()) {
                 return;
             }
-            Bukkit.getPluginManager().callEvent(new WorldeditSectionUpdateEvent(p, r));
+            BukkitUtil.callEvent(new WorldeditSectionUpdateEvent(p, r));
         }
 
         @EventHandler(priority = EventPriority.HIGHEST)

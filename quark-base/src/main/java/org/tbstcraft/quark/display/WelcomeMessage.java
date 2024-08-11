@@ -2,10 +2,11 @@ package org.tbstcraft.quark.display;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
+import net.kyori.adventure.inventory.Book;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
@@ -23,7 +24,7 @@ import org.tbstcraft.quark.internal.task.TaskService;
 @QuarkModule(version = "0.1.0")
 public final class WelcomeMessage extends PackageModule {
     @EventHandler
-    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         String id = event.getPlayer().getName();
         NBTTagCompound tag = PlayerDataService.getEntry(id, this.getId());
         if (tag.hasKey("join")) {

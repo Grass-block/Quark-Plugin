@@ -2,32 +2,33 @@ package org.tbstcraft.quark.security;
 
 import com.google.gson.JsonObject;
 import me.gb2022.apm.local.PluginMessenger;
+import me.gb2022.commons.http.HttpMethod;
+import me.gb2022.commons.http.HttpRequest;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
-import net.kyori.adventure.util.TriState;
 import org.bukkit.BanList;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.tbstcraft.quark.data.language.LocaleMapping;
 import org.tbstcraft.quark.foundation.command.CommandExecutor;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
-import org.tbstcraft.quark.util.NetworkUtil;
+import me.gb2022.commons.TriState;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.*;
 
@@ -36,14 +37,15 @@ import java.util.*;
 @CommandProvider(IPDefender.IPQueryCommand.class)
 public final class IPDefender extends PackageModule implements CommandExecutor {
     @SuppressWarnings("HttpUrlsUsage")//yeah, because ip-api doesn't support https. fuck!!!!!
-    public static final String API = "http://ip-api.com/json/%s?lang=%s";
+    public static final String CSDN_API = "https://searchplugin.csdn.net/api/v1/ip/get?ip=%s";
 
     @Inject
     private LanguageEntry language;
 
 
     public static String defaultResult(Locale locale) {
-        if (List.of(Locale.CHINESE, Locale.SIMPLIFIED_CHINESE, Locale.TRADITIONAL_CHINESE, Locale.CHINA).contains(locale)) {
+        if (List.of(Locale.CHINESE, Locale.SIMPLIFIED_CHINESE, Locale.TRADITIONAL_CHINESE, Locale.CHINA)
+                .contains(locale)) {
             return "[未知]";
         }
         return "unknown";
@@ -56,18 +58,27 @@ public final class IPDefender extends PackageModule implements CommandExecutor {
 
         String ipString = address.toString().replace("/", "").split(":")[0];
 
-        String s;
-        try {
-            s = NetworkUtil.httpGet(API.formatted(ipString, locale.toString().replace("_", "-")), false);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        if (LocaleMapping.minecraft(Locale.getDefault()).contains("zh")) {
 
-        if (s.isEmpty()) {
-            return defaultResult(locale);
-        }
+            var s = HttpRequest.https(HttpMethod.GET, "https://searchplugin.csdn.net/api/v1/ip/get")
+                    .browserBehavior(false)
+                    .param("ip", ipString)
+                    .build()
+                    .request();
 
-        try {
+            JsonObject json = SharedObjects.JSON_PARSER.parse(s).getAsJsonObject();
+
+            return json.getAsJsonObject().getAsJsonObject("data").get("address").getAsString();
+
+        } else {
+            var loc = locale.toString().replace("_", "-");
+
+            var s = HttpRequest.http(HttpMethod.GET, "ip-api.com/json")
+                    .path(ipString)
+                    .param("lang", loc)
+                    .browserBehavior(false)
+                    .build()
+                    .request();
 
             JsonObject json = SharedObjects.JSON_PARSER.parse(s).getAsJsonObject();
 
@@ -80,9 +91,8 @@ public final class IPDefender extends PackageModule implements CommandExecutor {
                 return defaultResult(locale);
             }
             return result;
-        } catch (Exception ignored) {
-            return defaultResult(locale);
         }
+
     }
 
     public String query(Player player) {
@@ -90,7 +100,7 @@ public final class IPDefender extends PackageModule implements CommandExecutor {
     }
 
     @EventHandler
-    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         TaskService.asyncTask(() -> this.handle(event.getPlayer()));
     }
 
@@ -105,7 +115,7 @@ public final class IPDefender extends PackageModule implements CommandExecutor {
             previous = null;
             tag.setString("ip", current);
             PlayerDataService.save(player.getName());
-            state = TriState.NOT_SET;
+            state = TriState.UNKNOWN;
         } else {
             previous = tag.getString("ip");
             if (Objects.equals(previous, current)) {
@@ -122,17 +132,17 @@ public final class IPDefender extends PackageModule implements CommandExecutor {
         }
 
         String currentDisplay = query(player);
-        if (state == TriState.NOT_SET) {
+        if (state == TriState.UNKNOWN) {
             this.language.sendMessage(player, "detect", currentDisplay);
             return;
         }
 
         this.language.sendMessage(player, "warn", currentDisplay);
 
-        PluginMessenger.broadcastMapped("ip:change", (map) -> map
-                .put("player", player.getName())
-                .put("old-ip", previous)
-                .put("new-ip", currentDisplay));
+        PluginMessenger.broadcastMapped(
+                "ip:change",
+                (map) -> map.put("player", player.getName()).put("old-ip", previous).put("new-ip", currentDisplay)
+        );
 
         if (this.getConfig().getBoolean("auto_ban")) {
             String name = player.getName();
@@ -149,16 +159,11 @@ public final class IPDefender extends PackageModule implements CommandExecutor {
             calendar.add(Calendar.MINUTE, minute);
             calendar.add(Calendar.SECOND, second);
 
-            PlayerUtil.banPlayer(name, BanList.Type.NAME, reason, calendar.getTime(), Quark.PLUGIN_ID);
+            Players.banPlayer(name, BanList.Type.NAME, reason, calendar.getTime(), Quark.PLUGIN_ID);
         }
 
         if (this.getConfig().getBoolean("record")) {
-            this.getRecord().addLine(
-                    SharedObjects.DATE_FORMAT.format(new Date()),
-                    player.getName(),
-                    previous,
-                    current
-            );
+            this.getRecord().addLine(SharedObjects.DATE_FORMAT.format(new Date()), player.getName(), previous, current);
         }
     }
 

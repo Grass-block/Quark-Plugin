@@ -3,6 +3,7 @@ package org.tbstcraft.quark.internal.command;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.ProductInfo;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.foundation.command.CommandExecution;
 import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
@@ -20,13 +21,13 @@ import java.util.List;
 })
 public final class QuarkPluginCommand extends CoreCommand {
     @Override
-    public void onCommand(CommandSender sender, String[] args) {
-        switch (args[0]) {
-            case "info" -> ProductInfo.sendInfoDisplay(sender);
-            case "stats" -> ProductInfo.sendStatsDisplay(sender);
+    public void execute(CommandExecution context) {
+        switch (context.requireEnum(0, "info", "stats", "sync-commands")) {
+            case "info" -> ProductInfo.sendInfoDisplay(context.getSender());
+            case "stats" -> ProductInfo.sendStatsDisplay(context.getSender());
             case "sync-commands" -> {
                 CommandManager.sync();
-                Quark.LANGUAGE.sendMessage(sender, "command", "sync-commands");
+                Quark.LANGUAGE.sendMessage(context.getSender(), "command", "sync-commands");
             }
         }
     }
@@ -40,7 +41,7 @@ public final class QuarkPluginCommand extends CoreCommand {
         }
     }
 
-    @QuarkCommand(name = "reload",permission = "-quark.reload")
+    @QuarkCommand(name = "reload", permission = "-quark.reload")
     public static final class ReloadCommand extends CoreCommand {
         @Override
         public void onCommand(CommandSender sender, String[] args) {

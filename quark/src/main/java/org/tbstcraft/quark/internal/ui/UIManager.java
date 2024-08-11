@@ -8,7 +8,7 @@ import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.internal.ui.builder.UIBuilder;
-import org.tbstcraft.quark.util.container.ObjectContainer;
+import me.gb2022.commons.container.ObjectContainer;
 
 import java.util.*;
 
@@ -17,7 +17,7 @@ public interface UIManager extends Service {
     ObjectContainer<UIManager> INSTANCE = new ObjectContainer<>();
 
     static void init() {
-        CommandManager.registerCommand(new UICommand());
+        CommandManager.registerQuarkCommand(new UICommand());
         /*
         registerUI("quark:debug", new InventoryUIBuilder(27)
                 .title((p) -> "Debug")

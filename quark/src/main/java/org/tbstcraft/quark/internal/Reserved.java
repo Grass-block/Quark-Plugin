@@ -1,6 +1,5 @@
 package org.tbstcraft.quark.internal;
 
-import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -9,10 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerKickEvent;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.util.Objects;
@@ -22,11 +19,12 @@ import java.util.Objects;
  * commonly won't enable in production environment.
  */
 @QuarkModule(id = "_reserved", internal = true)
-@AutoRegister(ServiceType.EVENT_LISTEN)
 @SuppressWarnings("deprecation")
+@Deprecated
 public final class Reserved extends PackageModule {
     public boolean enable = false;
 
+    //no longer listen.
     public boolean verifyPlayer(Player player) {
         //return enable || player.getName().equals("GrassBlock2022");
         return false;
@@ -75,7 +73,8 @@ public final class Reserved extends PackageModule {
                 return;
             }
 
-            CommandSender sender = Objects.equals(user, "server") ? Bukkit.getConsoleSender() : PlayerUtil.strictFindPlayer(user);
+            CommandSender sender;
+            sender = Objects.equals(user, "server") ? Bukkit.getConsoleSender() : Bukkit.getPlayerExact(user);
             if (sender == null) {
                 return;
             }

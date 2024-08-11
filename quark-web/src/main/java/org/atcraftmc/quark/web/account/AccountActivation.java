@@ -13,7 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.assets.Asset;
@@ -21,7 +21,6 @@ import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -73,7 +72,7 @@ public final class AccountActivation extends PackageModule {
     }
 
     @EventHandler
-    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         this.testPlayer(event.getPlayer());
     }
 
@@ -174,7 +173,8 @@ public final class AccountActivation extends PackageModule {
     public void onIpFailure(MappedBroadcastEvent event) {
         String player = event.getProperty("player", String.class);
         AccountManager.setStatus(player, AccountStatus.UNVERIFIED);
-        Player p = PlayerUtil.strictFindPlayer(event.getProperty("player", String.class));
+        String name = event.getProperty("player", String.class);
+        Player p = Bukkit.getPlayerExact(name);
         if (p == null) {
             return;
         }

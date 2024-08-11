@@ -7,7 +7,7 @@ import org.tbstcraft.quark.foundation.command.CoreCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.util.ObjectOperationResult;
-import org.tbstcraft.quark.util.ObjectStatus;
+import me.gb2022.commons.TriState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,9 +63,9 @@ public final class PackageCommand extends CoreCommand {
         }
 
         if (Objects.equals(buffer[0], "reload") || Objects.equals(buffer[0], "disable")) {
-            tabList.addAll(PackageManager.getIdsByStatus(ObjectStatus.ENABLED));
+            tabList.addAll(PackageManager.getIdsByStatus(TriState.FALSE));
         } else {
-            tabList.addAll(PackageManager.getIdsByStatus(ObjectStatus.DISABLED));
+            tabList.addAll(PackageManager.getIdsByStatus(TriState.TRUE));
         }
         if (tabList.isEmpty()) {
             tabList.add("(not found)");
@@ -94,7 +94,7 @@ public final class PackageCommand extends CoreCommand {
                     .append("):\n");
             for (String id : list) {
                 sb.append(ChatColor.RESET).append(" - ");
-                if (PackageManager.getPackageStatus(id) == ObjectStatus.ENABLED) {
+                if (PackageManager.getPackageStatus(id) == TriState.FALSE) {
                     sb.append(ChatColor.GREEN);
                 } else {
                     sb.append(ChatColor.GRAY);

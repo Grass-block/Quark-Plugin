@@ -15,7 +15,7 @@ public final class LazyPermissionEntry implements PermissionEntry {
     private final HashMap<String, Boolean> attachmentMap;
 
     @SuppressWarnings("unchecked")
-    LazyPermissionEntry(Permissible target) {
+    public LazyPermissionEntry(Permissible target) {
         this.target = target;
         this.attachment = target.addAttachment(Quark.PLUGIN);
 

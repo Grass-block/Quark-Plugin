@@ -25,7 +25,7 @@ public interface InternalCommands {
         }
         for (Class<? extends AbstractCommand> clazz : COMMANDS) {
             try {
-                CommandManager.registerCommand(clazz.getDeclaredConstructor().newInstance());
+                CommandManager.registerQuarkCommand(clazz.getDeclaredConstructor().newInstance());
             } catch (Exception e) {
                 Quark.LOGGER.severe("failed to register internal command %s: %s".formatted(
                         clazz.getAnnotation(QuarkCommand.class).name(),
@@ -38,7 +38,7 @@ public interface InternalCommands {
     static void unregister() {
         for (Class<? extends AbstractCommand> clazz : COMMANDS) {
             try {
-                CommandManager.unregisterCommand(clazz.getAnnotation(QuarkCommand.class).name());
+                CommandManager.unregister(clazz.getAnnotation(QuarkCommand.class).name());
             } catch (Exception e) {
                 Quark.LOGGER.severe("failed to unregister internal command %s: %s".formatted(
                         clazz.getAnnotation(QuarkCommand.class).name(),

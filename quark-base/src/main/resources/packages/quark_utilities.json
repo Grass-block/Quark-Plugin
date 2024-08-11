@@ -17,7 +17,8 @@
     "camera-movement": ".CameraMovement",
     "surrounding-refresh": ".SurroundingRefresh",
     "force-sprint": ".ForceSprint",
-    "item-custom-name": ".ItemCustomName"
+    "item-custom-name": ".ItemCustomName",
+    "position-align": ".PositionAlign"
   },
   "languages": [
     "quark-utilities:zh_cn",

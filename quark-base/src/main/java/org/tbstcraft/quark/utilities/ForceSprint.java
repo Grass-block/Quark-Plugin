@@ -1,18 +1,18 @@
 package org.tbstcraft.quark.utilities;
 
 import me.gb2022.commons.reflect.Inject;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @QuarkCommand(name = "sprint", playerOnly = true)
@@ -29,7 +29,12 @@ public final class ForceSprint extends CommandModule {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
         TaskService.timerTask("sprint:tick", 10, 10, () -> {
             for (String player : this.players) {
-                Objects.requireNonNull(PlayerUtil.strictFindPlayer(player)).setSprinting(true);
+                Player p = Bukkit.getPlayerExact(player);
+                if (p == null) {
+                    continue;
+                }
+
+                p.setSprinting(true);
             }
         });
     }
@@ -44,10 +49,10 @@ public final class ForceSprint extends CommandModule {
     public void onCommand(CommandSender sender, String[] args) {
         if (this.players.contains(sender.getName())) {
             this.players.remove(sender.getName());
-            getLanguage().sendMessage(sender,"disable");
+            getLanguage().sendMessage(sender, "disable");
         } else {
             this.players.add(sender.getName());
-            getLanguage().sendMessage(sender,"enable");
+            getLanguage().sendMessage(sender, "enable");
         }
     }
 }

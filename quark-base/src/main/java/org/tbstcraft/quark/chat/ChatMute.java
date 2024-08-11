@@ -2,6 +2,7 @@ package org.tbstcraft.quark.chat;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -13,11 +14,10 @@ import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.container.CachedInfo;
+import org.tbstcraft.quark.util.CachedInfo;
 
 import java.util.List;
 import java.util.Objects;
@@ -70,7 +70,7 @@ public final class ChatMute extends PackageModule implements Listener {
             if (operation.equals("add")) {
                 ModuleDataService.getEntry(this.getModuleId()).hasKey(target);
                 this.getLanguage().sendMessage(sender, "add", target);
-                Player player = PlayerUtil.strictFindPlayer(target);
+                Player player = Bukkit.getPlayerExact(target);
                 NBTTagCompound tag = ModuleDataService.getEntry(this.getModuleId());
                 if (!tag.hasKey(target)) {
                     tag.setByte(target, (byte) 0);
@@ -87,7 +87,7 @@ public final class ChatMute extends PackageModule implements Listener {
                 }
                 ModuleDataService.save(this.getModuleId());
                 this.getLanguage().sendMessage(sender, "remove", target);
-                Player player = PlayerUtil.strictFindPlayer(target);
+                Player player = Bukkit.getPlayerExact(target);
                 if (player != null) {
                     this.getLanguage().sendMessage(player, "remove-target", sender.getName());
                 }

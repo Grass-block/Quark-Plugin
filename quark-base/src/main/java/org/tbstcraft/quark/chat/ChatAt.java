@@ -7,9 +7,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -26,17 +26,17 @@ import java.util.Set;
 public final class ChatAt extends PackageModule {
 
     @EventHandler
-    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            PlayerUtil.addChatTabOption(player, "@" + event.getPlayer().getName());
-            PlayerUtil.addChatTabOption(event.getPlayer(), "@" + player.getName());
+            Players.addChatTabOption(player, "@" + event.getPlayer().getName());
+            Players.addChatTabOption(event.getPlayer(), "@" + player.getName());
         }
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            PlayerUtil.removeChatTabOption(player, "@" + event.getPlayer().getName());
+            Players.removeChatTabOption(player, "@" + event.getPlayer().getName());
         }
     }
 
@@ -64,7 +64,7 @@ public final class ChatAt extends PackageModule {
                 }
                 continue;
             }
-            Player p = PlayerUtil.strictFindPlayer(column.replaceFirst("@", ""));
+            Player p = Bukkit.getPlayerExact(column.replaceFirst("@", ""));
             if (!Bukkit.getOnlinePlayers().contains(p)) {
                 continue;
             }
@@ -80,7 +80,7 @@ public final class ChatAt extends PackageModule {
         targets.remove(event.getPlayer().getName());
 
         for (String s : targets) {
-            Player p = PlayerUtil.strictFindPlayer(s);
+            Player p = Bukkit.getPlayerExact(s);
             if (p == null) {
                 continue;
             }

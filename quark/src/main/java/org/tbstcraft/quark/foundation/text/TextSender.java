@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
-import org.tbstcraft.quark.util.container.ObjectContainer;
+import me.gb2022.commons.container.ObjectContainer;
 
 import java.time.Duration;
 import java.util.Locale;
@@ -160,22 +160,22 @@ public interface TextSender {
     final class SpigotSender implements TextSender {
         @Override
         public void send(CommandSender sender, ComponentLike component) {
-            sender.spigot().sendMessage(ComponentParser.asBungee(component));
+            sender.spigot().sendMessage(ComponentSerializer.bungee(component));
         }
 
         @Override
         public void sendFullTitle(Player p, ComponentLike title, ComponentLike subtitle, int in, int stay, int out) {
-            p.sendTitle(ComponentParser.asString(title), ComponentParser.asString(subtitle), in, stay, out);
+            p.sendTitle(ComponentSerializer.legacy(title), ComponentSerializer.legacy(subtitle), in, stay, out);
         }
 
         @Override
         public void sendSubtitle(Player p, ComponentLike component, int in, int stay, int out) {
-            p.sendTitle("", ComponentParser.asString(component), in, stay, out);
+            p.sendTitle("", ComponentSerializer.legacy(component), in, stay, out);
         }
 
         @Override
         public void sendTitle(Player p, ComponentLike component, int in, int stay, int out) {
-            p.sendTitle(ComponentParser.asString(component), "", in, stay, out);
+            p.sendTitle(ComponentSerializer.legacy(component), "", in, stay, out);
         }
 
         @Override
@@ -184,29 +184,29 @@ public interface TextSender {
                 if (!p.isOp() && opOnly) {
                     continue;
                 }
-                p.sendMessage(ComponentParser.asBungee(component.apply(Language.locale(p))));
+                p.sendMessage(ComponentSerializer.bungee(component.apply(Language.locale(p))));
             }
             if (!toConsole) {
                 return;
             }
-            Bukkit.getConsoleSender().sendMessage(ComponentParser.asBungee(component.apply(Locale.ENGLISH)));
+            Bukkit.getConsoleSender().sendMessage(ComponentSerializer.bungee(component.apply(Locale.ENGLISH)));
         }
     }
 
     final class BukkitSender implements TextSender {
         @Override
         public void sendFullTitle(Player p, ComponentLike title, ComponentLike subtitle, int in, int stay, int out) {
-            p.sendTitle(ComponentParser.asString(title), ComponentParser.asString(subtitle), in, stay, out);
+            p.sendTitle(ComponentSerializer.legacy(title), ComponentSerializer.legacy(subtitle), in, stay, out);
         }
 
         @Override
         public void sendSubtitle(Player p, ComponentLike component, int in, int stay, int out) {
-            p.sendTitle("", ComponentParser.asString(component), in, stay, out);
+            p.sendTitle("", ComponentSerializer.legacy(component), in, stay, out);
         }
 
         @Override
         public void sendTitle(Player p, ComponentLike component, int in, int stay, int out) {
-            p.sendTitle(ComponentParser.asString(component), "", in, stay, out);
+            p.sendTitle(ComponentSerializer.legacy(component), "", in, stay, out);
         }
 
         @Override

@@ -112,7 +112,6 @@ public interface TaskService extends Service {
         INSTANCE.get().delay(UUID.randomUUID().toString(), delay, task);
     }
 
-
     void register(String id, Task task);
 
     void unregister(String id);

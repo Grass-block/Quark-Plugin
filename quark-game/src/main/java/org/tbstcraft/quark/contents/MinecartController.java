@@ -14,7 +14,7 @@ import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -151,7 +151,7 @@ public final class MinecartController extends PackageModule {
                 .replace("{level}", thrustLevelColumn);
 
         String ui = this.language.buildTemplate(locale, template);
-        PlayerUtil.sendActionBarTitle(p, ui);
+        Players.sendActionBarTitle(p, ui);
     }
 
     private Vector buildPlayerSpeedVector(Player p) {

@@ -98,7 +98,7 @@ public interface ModuleServices {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            CommandManager.registerCommand(cmd);
+            CommandManager.registerQuarkCommand(cmd);
             module.getCommands().add(cmd);
         }
     }
@@ -108,7 +108,7 @@ public interface ModuleServices {
 
         if (module.getClass().getDeclaredAnnotation(CommandProvider.class) != null) {
             for (AbstractCommand cmd : module.getCommands()) {
-                CommandManager.unregisterCommand(cmd);
+                CommandManager.unregister(cmd);
             }
         }
     }

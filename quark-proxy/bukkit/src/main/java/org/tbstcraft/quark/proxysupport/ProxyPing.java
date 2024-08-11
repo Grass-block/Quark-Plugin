@@ -7,9 +7,9 @@ import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -42,8 +42,8 @@ public final class ProxyPing extends PackageModule {
     @Override
     public void disable() {
         TaskService.cancelTask("quark:proxy-ping:update");
-        PlaceHolderService.PLAYER.register("ping", (StringObjectPlaceHolder<Player>) p -> BukkitUtil.formatPing(PlayerUtil.getPing(p)));
-        PlaceHolderService.PLAYER.register("ping-value", (StringObjectPlaceHolder<Player>) p -> String.valueOf(PlayerUtil.getPing(p)));
+        PlaceHolderService.PLAYER.register("ping", (StringObjectPlaceHolder<Player>) p -> BukkitUtil.formatPing(Players.getPing(p)));
+        PlaceHolderService.PLAYER.register("ping-value", (StringObjectPlaceHolder<Player>) p -> String.valueOf(Players.getPing(p)));
     }
 
     @PluginMessageHandler("proxy-ping:update")
@@ -53,7 +53,7 @@ public final class ProxyPing extends PackageModule {
 
 
     @EventHandler
-    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         ping(event.getPlayer());
     }
 
@@ -65,7 +65,7 @@ public final class ProxyPing extends PackageModule {
     }
 
     private int refreshPing(Player player) {
-        AtomicInteger ping1 = new AtomicInteger(PlayerUtil.getPing(player));
+        AtomicInteger ping1 = new AtomicInteger(Players.getPing(player));
 
         RemoteMessageService.query("proxy", "quark:query/player/ping", (b) -> BufferUtil.writeString(b, player.getName()))
                 .timeout(250, () -> getLogger().severe("failed to send remote query(%s) for ping!".formatted(player.getName())))

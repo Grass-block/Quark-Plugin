@@ -1,3 +1,13 @@
+### 0.63.15
+- fixed PermissionManager calculation error
+- adding command asserting and prompt
+- adding multi-instrument support(experimental) and power support to MusicPlayer
+- fix music-play stuttering issue
+- fix StopConfirm detect issue
+- added 'tpahere' command to TPA
+- when a player quit, all the TPARequest on him/her will be cleared
+- fixed tab-menu space problem(restore quark-display config)
+
 ### 3.62.23
 
 - 新增账户控制功能
@@ -8,7 +18,7 @@
 ### 3.62.18
 
 - 新增高级权限控制（交互权限）
-- [1.20+]新增@前缀的tab补全1
+- [1.20+]新增@前缀的tab补全
 
 ### 3.62.15
 

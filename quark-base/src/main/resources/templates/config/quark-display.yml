@@ -1,14 +1,14 @@
 config:
   tab-menu:
     header-ui:
-      - '{#yellow} '
-      - '{#yellow}　　　　>> {#white} {msg#welcome-header} {#yellow} <<{#white}　　　　'
+      - '{#dark-gray}一一一一一一一一一一一一一一一一一一一一一一'
+      - '{#yellow}>> {#white} {msg#welcome-header} {#yellow} <<{#white}'
       - '{msg#player}    {msg#max-player}'
     footer-ui:
       - ' '
       - '{msg#tps}   {msg#mspt}   {msg#ping}'
       - '{msg#date}'
-      - '{#yellow} '
+      - '{#dark-gray}一一一一一一一一一一一一一一一一一一一一一一'
   custom-ban-message:
     ui:
       - '{#yellow}>> {msg#header} {#yellow}<<'
@@ -69,3 +69,5 @@ config:
       - "{#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一"
   join-quit-message:
     proxy: /{$proxy}
+    sound: true
+    volume: 0.25

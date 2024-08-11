@@ -15,10 +15,9 @@ public abstract class ModuleCommand<M extends AbstractModule> extends AbstractCo
         this.init();
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes"})
     public final void initContext(M module) {
         this.module = module;
-
 
         for (AbstractCommand command : this.getSubCommands().values()) {
             if (command instanceof ModuleCommand moduleCommand) {

@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.foundation.region.SimpleRegion;
 import org.tbstcraft.quark.framework.event.WorldeditSectionUpdateEvent;
 import org.tbstcraft.quark.framework.module.CommandModule;
@@ -29,6 +29,6 @@ public final class WorldEditSelectionRenderer extends CommandModule {
 
     public void render(Player p) {
         SimpleRegion r = WESessionTrackService.getRegion(p);
-        PlayerUtil.show3DBox(p, r.getPoint0(), r.getPoint1());
+        Players.show3DBox(p, r.getPoint0(), r.getPoint1());
     }
 }

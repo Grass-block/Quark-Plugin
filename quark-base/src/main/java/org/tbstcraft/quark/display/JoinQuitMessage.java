@@ -10,10 +10,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.data.language.LanguageEntry;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -30,7 +28,7 @@ public final class JoinQuitMessage extends PackageModule {
 
     private void broadcast(String name, Consumer<Player> handler) {
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p == PlayerUtil.strictFindPlayer(name)) {
+            if (p == Bukkit.getPlayerExact(name)) {
                 continue;
             }
             handler.accept(p);
@@ -42,15 +40,17 @@ public final class JoinQuitMessage extends PackageModule {
         event.setJoinMessage(null);
 
         if (this.getConfig().getBoolean("proxy")) {
-            event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, 1, 1);
-            RemoteMessageService.message("proxy", "/transfer/join_server", buf -> {
-                BufferUtil.writeString(buf, event.getPlayer().getName());
-            });
+            if (this.getConfig().getBoolean("sound")) {
+                var volume = this.getConfig().getDouble("volume");
+                event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, (float) volume, 1);
+            }
+
+            RemoteMessageService.message("proxy", "/transfer/join_server", buf -> BufferUtil.writeString(buf, event.getPlayer().getName()));
             return;
         }
         String player = event.getPlayer().getName();
         this.broadcast(player, (p) -> this.language.sendMessage(p, "join", player));
-        this.language.sendMessage(PlayerUtil.strictFindPlayer(player), "welcome-message", player);
+        this.language.sendMessage(Bukkit.getPlayerExact(player), "welcome-message", player);
     }
 
     @EventHandler
@@ -68,8 +68,7 @@ public final class JoinQuitMessage extends PackageModule {
     public void onPlayerJoin(RemoteMessageEvent event) {
         String[] data = BufferUtil.readString(event.getData()).split(";");
         this.broadcast(data[0], (p) -> this.language.sendMessage(p, "proxy-join", data[0], data[1]));
-        this.language.sendMessage(PlayerUtil.strictFindPlayer(data[0]), "proxy-send", data[2]);
-        Player p = PlayerUtil.strictFindPlayer(data[0]);
+        this.language.sendMessage(Bukkit.getPlayerExact(data[0]), "proxy-send", data[2]);
     }
 
     @RemoteEventHandler("/transfer/leave")
@@ -82,7 +81,7 @@ public final class JoinQuitMessage extends PackageModule {
     public void onPlayerJoinProxy(RemoteMessageEvent event) {
         String data = BufferUtil.readString(event.getData());
         this.broadcast(data, (p) -> this.language.sendMessage(p, "join", data));
-        this.language.sendMessage(PlayerUtil.strictFindPlayer(data), "welcome-message", data);
+        this.language.sendMessage(Bukkit.getPlayerExact(data), "welcome-message", data);
     }
 
     @RemoteEventHandler("/transfer/quit_proxy")

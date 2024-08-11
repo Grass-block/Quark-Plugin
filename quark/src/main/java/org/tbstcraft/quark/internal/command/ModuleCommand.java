@@ -8,7 +8,7 @@ import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.util.ObjectOperationResult;
-import org.tbstcraft.quark.util.ObjectStatus;
+import me.gb2022.commons.TriState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,9 +71,9 @@ public final class ModuleCommand extends CoreCommand {
         }
 
         if (Objects.equals(buffer[0], "reload") || Objects.equals(buffer[0], "disable")) {
-            tabList.addAll(ModuleManager.getIdsByStatus(ObjectStatus.ENABLED));
+            tabList.addAll(ModuleManager.getIdsByStatus(TriState.FALSE));
         } else {
-            tabList.addAll(ModuleManager.getIdsByStatus(ObjectStatus.DISABLED));
+            tabList.addAll(ModuleManager.getIdsByStatus(TriState.TRUE));
         }
         if (tabList.isEmpty()) {
             tabList.add("(not found)");
@@ -97,7 +97,7 @@ public final class ModuleCommand extends CoreCommand {
             List<String> list = map.get(namespace);
             sb.append(ChatColor.GOLD).append(namespace).append("(").append(list.size()).append("):\n");
             for (String id : list) {
-                if (ModuleManager.getModuleStatus(namespace + ":" + id) == ObjectStatus.ENABLED) {
+                if (ModuleManager.getModuleStatus(namespace + ":" + id) == TriState.FALSE) {
                     sb.append(ChatColor.GREEN);
                 } else {
                     sb.append(ChatColor.GRAY);

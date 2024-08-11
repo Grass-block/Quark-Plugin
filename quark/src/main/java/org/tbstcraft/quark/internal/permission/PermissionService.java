@@ -99,7 +99,7 @@ public interface PermissionService extends Service {
                 try {
                     Bukkit.getPluginManager().addPermission(permission);
                 }catch (Exception ignored){
-                    Quark.LOGGER.warning("duplicated permission:" + perm);
+                    //Quark.LOGGER.warning("duplicated permission:" + perm);
                 }
             }
 

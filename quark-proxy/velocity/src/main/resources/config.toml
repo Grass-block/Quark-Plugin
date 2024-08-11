@@ -1,0 +1,17 @@
+[ping]
+provider = "lobby"
+max = 2024
+hide-players = false
+update-interval = 15
+
+[apm-messenger]
+enable = true
+role = 'exchange'
+host = '127.0.0.1'
+port = 25843
+identifier = 'proxy'
+key = 'test' # always change key after installed!
+
+[server]
+tbst-leacy = '原版城建'
+

@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -9,11 +10,10 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.container.CachedInfo;
+import org.tbstcraft.quark.util.CachedInfo;
 
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +37,7 @@ public final class PlayerPositionLock extends PackageModule {
     }
 
     private void toggle(String name) {
-        Player p = PlayerUtil.strictFindPlayer(name);
+        Player p = Bukkit.getPlayerExact(name);
         if (p == null) {
             return;
         }

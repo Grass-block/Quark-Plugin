@@ -2,6 +2,7 @@ package org.tbstcraft.quark.contents;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -24,7 +25,7 @@ import org.bukkit.util.Vector;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
-import org.tbstcraft.quark.foundation.platform.PlayerUtil;
+import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -96,7 +97,7 @@ public final class StairSeat extends PackageModule {
         pig.setInvisible(true);
         pig.setSilent(true);
         Objects.requireNonNull(pig.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(-1);
-        PlayerUtil.teleport(player, spawnLocation.add(0, 1, 0));
+        Players.teleport(player, spawnLocation.add(0, 1, 0));
         pig.addPassenger(player);
 
         this.entityMapping.put(player.getName(), pig);
@@ -139,11 +140,11 @@ public final class StairSeat extends PackageModule {
         this.handledBlocks.remove(loc);
 
         entity.remove();
-        Player p = PlayerUtil.strictFindPlayer(id);
+        Player p = Bukkit.getPlayerExact(id);
         if (p == null) {
             return;
         }
-        PlayerUtil.teleport(p, p.getLocation().add(0, 2, 0));
+        Players.teleport(p, p.getLocation().add(0, 2, 0));
     }
 
     private Vector getStairsFacing(Block stairsBlock) {

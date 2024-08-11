@@ -13,8 +13,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.tbstcraft.quark.api.DelayedPlayerJoinEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.tbstcraft.quark.api.ClientLocaleChangeEvent;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.data.language.LanguageEntry;
@@ -71,13 +72,19 @@ public final class BossbarAnnouncement extends PackageModule {
     }
 
     @EventHandler
-    public void onPlayerJoin(DelayedPlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         this.addBar(event.getPlayer());
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         this.removeBar(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onPlayerLocaleChange(ClientLocaleChangeEvent event) {
+        removeBar(event.getPlayer());
+        addBar(event.getPlayer());
     }
 
     public void addBar(Player p) {
