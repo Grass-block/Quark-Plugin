@@ -1,7 +1,6 @@
 package org.tbstcraft.quark.framework.module;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.FeatureAvailability;
 import org.tbstcraft.quark.data.language.ILanguageAccess;
@@ -9,7 +8,7 @@ import org.tbstcraft.quark.data.language.LanguageContainer;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.AbstractCommand;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
-import org.tbstcraft.quark.framework.module.compat.CompatContainer;
+import org.tbstcraft.quark.framework.module.component.ModuleComponent;
 import org.tbstcraft.quark.framework.module.services.ModuleServices;
 import org.tbstcraft.quark.framework.packages.IPackage;
 import org.tbstcraft.quark.framework.record.EmptyRecordEntry;
@@ -18,11 +17,12 @@ import org.tbstcraft.quark.framework.record.RecordEntry;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
-public abstract class AbstractModule implements Listener {
+public abstract class AbstractModule implements FunctionalComponent {
     private final Set<AbstractCommand> commands = new HashSet<>();
-    private final Map<Class<?>, CompatContainer<?>> compatContainers = new HashMap<>();
+    private final Map<Class<? extends ModuleComponent<?>>,ModuleComponent<?>> components = new HashMap<>();
 
     private RecordEntry record;
     private LanguageEntry language;
@@ -32,35 +32,31 @@ public abstract class AbstractModule implements Listener {
     public AbstractModule() {
     }
 
-    //api
-    public void enable() {
-    }
-
-    public void disable() {
-    }
-
-    @SuppressWarnings("RedundantThrows")
-    public void checkCompatibility() throws Throwable {
-    }
-
-
     public final void enableModule() {
         this.record = this.useRecord() ? createRecord() : new EmptyRecordEntry();
         this.language = this.useLanguage() ? createLanguage() : null;
         this.config = this.createConfig();
         this.logger = createLogger();
 
-        ModuleServices.init(this);
+        ModuleServices.onEnable(this);
 
         this.enable();
+
+        for (FunctionalComponent component : this.components.values()) {
+            component.enable();
+        }
     }
 
     public final void disableModule() {
+        for (FunctionalComponent component : this.components.values()) {
+            component.disable();
+        }
+
         this.disable();
         if (this.record != null) {
             this.record.close();
         }
-        ModuleServices.disable(this);
+        ModuleServices.onDisable(this);
     }
 
 
@@ -93,10 +89,6 @@ public abstract class AbstractModule implements Listener {
 
     public final Set<AbstractCommand> getCommands() {
         return this.commands;
-    }
-
-    public final Map<Class<?>, CompatContainer<?>> getCompatContainers() {
-        return this.compatContainers;
     }
 
 
@@ -154,7 +146,7 @@ public abstract class AbstractModule implements Listener {
                 this.getFullId(),
                 this.isBeta(),
                 Arrays.toString(this.getCompatBlacklist())
-        );
+                                                                            );
     }
 
     @Override
@@ -202,5 +194,14 @@ public abstract class AbstractModule implements Listener {
 
         String displayName = lang.getMessage(locale, "-module-name", this.getId());
         return "%s{#gray}({#white}%s{#gray})".formatted(getId(), displayName);
+    }
+
+
+    public Map<Class<? extends ModuleComponent<?>>, ModuleComponent<?>> getComponents() {
+        return components;
+    }
+
+    public <I extends ModuleComponent<?>> void getComponent(Class<I> clazz, Consumer<I> consumer) {
+
     }
 }

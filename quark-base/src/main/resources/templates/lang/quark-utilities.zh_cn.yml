@@ -61,3 +61,7 @@ language:
     sign-in: "{#yellow}|| {#red}签到 {#yellow}||"
   position-align:
     align: "{global#sys-success}已将您的坐标调整至 [{#var},{#var},{#var}] [{#var}|{#var}]。"
+  tick-manager:
+    freeze: "{global#warn}服务器已冻结。"
+    unfreeze: "{global#info}服务器已解冻。"
+    step: "{global#info}服务器已运行{#var}ticks。"

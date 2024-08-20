@@ -7,15 +7,15 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.CustomChatRenderer;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.compat.Compat;
-import org.tbstcraft.quark.framework.module.compat.CompatContainer;
-import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
+import org.tbstcraft.quark.framework.module.component.Components;
+import org.tbstcraft.quark.framework.module.component.ModuleComponent;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 import java.util.Date;
@@ -23,7 +23,7 @@ import java.util.Objects;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.2.0")
-@Compat(ChatFormat.PaperCompat.class)
+@Components(ChatFormat.PaperChatListener.class)
 public final class ChatFormat extends PackageModule {
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -37,11 +37,11 @@ public final class ChatFormat extends PackageModule {
         event.setFormat(LegacyComponentSerializer.legacySection().serialize(c));
     }
 
-    @CompatDelegate(APIProfile.PAPER)
     @AutoRegister(ServiceType.EVENT_LISTEN)
-    public static final class PaperCompat extends CompatContainer<ChatFormat> {
-        public PaperCompat(ChatFormat parent) {
-            super(parent);
+    public static final class PaperChatListener extends ModuleComponent<ChatFormat> {
+        @Override
+        public void checkCompatibility() throws APIIncompatibleException {
+            Compatibility.requireClass(() -> Class.forName("io.papermc.paper.event.player.AsyncChatEvent"));
         }
 
         @EventHandler(priority = EventPriority.HIGHEST)
@@ -50,8 +50,9 @@ public final class ChatFormat extends PackageModule {
                 return;
             }
 
-            String template = this.getParent().getConfig().getString("template");
-            String time = Objects.requireNonNull(this.getParent().getConfig().getString("time")).formatted(SharedObjects.TIME_FORMAT.format(new Date()));
+            String template = this.parent.getConfig().getString("template");
+            String time = Objects.requireNonNull(this.parent.getConfig().getString("time"))
+                    .formatted(SharedObjects.TIME_FORMAT.format(new Date()));
             CustomChatRenderer.renderer(event).template(template).postfix(TextBuilder.buildComponent(time));
         }
     }

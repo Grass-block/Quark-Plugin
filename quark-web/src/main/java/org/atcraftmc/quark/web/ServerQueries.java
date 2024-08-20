@@ -10,6 +10,7 @@ import org.bukkit.profile.PlayerProfile;
 import org.bukkit.util.CachedServerIcon;
 import org.tbstcraft.quark.api.QueryPingEvent;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 
@@ -17,8 +18,8 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 public final class ServerQueries extends PackageModule {
 
     @Override
-    public void checkCompatibility() throws Throwable {
-        Class.forName("org.bukkit.profile.PlayerProfile");
+    public void checkCompatibility() {
+        Compatibility.requireClass(() -> Class.forName("com.destroystokyo.paper.profile.PlayerProfile"));
         HttpService.registerHandler(this);
     }
 

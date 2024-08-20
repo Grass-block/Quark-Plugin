@@ -35,6 +35,7 @@ config:
     template: "[{#white}{header}{#white}] {player}"
     op-header: '{#dark-purple}管理'
     player-header: '{#dark-aqua}玩家'
+    below-name: " {msg#custom-scoreboard:play-time}  {msg#custom-scoreboard:ping}"
   welcome-message:
     ui:
       - "{#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一"

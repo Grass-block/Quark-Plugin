@@ -13,7 +13,8 @@
     "waypoint": ".Waypoint",
     "elytra-aeronautics": ".ElytraAeronautics",
     "music-player": ".music.MusicPlayer",
-    "hats": ".Hats"
+    "hats": ".Hats",
+    "sit-on-player": ".SitOnPlayer"
   },
   "languages": [
     "quark-contents:zh_cn"

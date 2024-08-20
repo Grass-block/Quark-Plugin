@@ -2,6 +2,7 @@ package org.tbstcraft.quark.security;
 
 import com.google.gson.JsonObject;
 import me.gb2022.apm.local.PluginMessenger;
+import me.gb2022.commons.TriState;
 import me.gb2022.commons.http.HttpMethod;
 import me.gb2022.commons.http.HttpRequest;
 import me.gb2022.commons.nbt.NBTTagCompound;
@@ -27,7 +28,6 @@ import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
-import me.gb2022.commons.TriState;
 
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -36,12 +36,9 @@ import java.util.*;
 @QuarkModule(version = "1.3.4", recordFormat = {"Time", "Player", "OldIP", "NewIP"})
 @CommandProvider(IPDefender.IPQueryCommand.class)
 public final class IPDefender extends PackageModule implements CommandExecutor {
-    @SuppressWarnings("HttpUrlsUsage")//yeah, because ip-api doesn't support https. fuck!!!!!
-    public static final String CSDN_API = "https://searchplugin.csdn.net/api/v1/ip/get?ip=%s";
 
     @Inject
     private LanguageEntry language;
-
 
     public static String defaultResult(Locale locale) {
         if (List.of(Locale.CHINESE, Locale.SIMPLIFIED_CHINESE, Locale.TRADITIONAL_CHINESE, Locale.CHINA)
@@ -60,7 +57,7 @@ public final class IPDefender extends PackageModule implements CommandExecutor {
 
         if (LocaleMapping.minecraft(Locale.getDefault()).contains("zh")) {
 
-            var s = HttpRequest.https(HttpMethod.GET, "https://searchplugin.csdn.net/api/v1/ip/get")
+            var s = HttpRequest.https(HttpMethod.GET, "searchplugin.csdn.net/api/v1/ip/get")
                     .browserBehavior(false)
                     .param("ip", ipString)
                     .build()

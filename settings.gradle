@@ -9,5 +9,8 @@ include 'quark-proxy'
 include 'quark-proxy:bukkit'
 include 'quark-proxy:waterfall'
 include 'quark-proxy:velocity'
+
 //include 'quark-minigame'
 include 'quark-atcraft'
+include 'quark-minigame'
+

@@ -25,6 +25,7 @@ public abstract class ServiceRegistry {
             try {
                 serviceManager.registerService(service);
             } catch (Exception e) {
+                e.printStackTrace();
                 this.getPackage().getLogger().severe("failed to register service %s: %s".formatted(
                         service.getName(), e.getMessage()));
             }

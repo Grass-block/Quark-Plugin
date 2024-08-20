@@ -16,6 +16,7 @@ import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.customcontent.CustomMeta;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -30,8 +31,8 @@ import java.util.Locale;
 public final class ItemCustomName extends PackageModule {
 
     @Override
-    public void checkCompatibility() throws Throwable {
-        Class.forName("org.bukkit.persistence.PersistentDataHolder");
+    public void checkCompatibility() {
+        Compatibility.requirePDC();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -59,7 +60,7 @@ public final class ItemCustomName extends PackageModule {
             if (stack == null) {
                 continue;
             }
-            if(stack.getItemMeta()==null){
+            if (stack.getItemMeta() == null) {
                 continue;
             }
             refreshItem(stack, locale);

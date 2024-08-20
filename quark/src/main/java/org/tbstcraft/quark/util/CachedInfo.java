@@ -28,12 +28,10 @@ public interface CachedInfo {
         CacheService.setItem("quark:online_players", Players.getAllOnlinePlayerNames());
     }
 
-    @SuppressWarnings("unchecked")
     static List<String> getOnlinePlayerNames() {
         return CacheService.getItem("quark:online_players", List.class);
     }
 
-    @SuppressWarnings("unchecked")
     static List<String> getAllPlayerNames() {
         CacheService.setItem("quark:players", Players.getAllPlayerNames());
         return CacheService.getItem("quark:players", List.class);

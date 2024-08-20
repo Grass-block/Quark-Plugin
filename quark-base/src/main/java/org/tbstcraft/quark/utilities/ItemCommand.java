@@ -16,6 +16,7 @@ import org.tbstcraft.quark.foundation.command.CommandExecutor;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.customcontent.CustomMeta;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -43,8 +44,8 @@ public final class ItemCommand extends PackageModule implements CommandExecutor 
     }
 
     @Override
-    public void checkCompatibility() throws Throwable {
-        Class.forName("org.bukkit.persistence.PersistentDataHolder");
+    public void checkCompatibility() {
+        Compatibility.requirePDC();
     }
 
     @EventHandler

@@ -122,7 +122,6 @@ public final class CustomScoreboard extends PackageModule {
         }
     }
 
-
     private void unsetScoreboard(Player p) {
         this.scoreboards.get(p).clearSlot(DisplaySlot.SIDEBAR);
         this.scoreboards.remove(p);

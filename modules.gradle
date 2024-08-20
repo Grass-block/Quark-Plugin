@@ -15,7 +15,7 @@ dependencies {
 
 //api
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
     compileOnly 'io.netty:netty-buffer:4.1.25.Final'
     compileOnly project(":quark")
 

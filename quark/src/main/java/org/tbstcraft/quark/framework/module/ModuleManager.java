@@ -2,6 +2,7 @@ package org.tbstcraft.quark.framework.module;
 
 import me.gb2022.commons.TriState;
 import org.bukkit.plugin.Plugin;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
@@ -315,7 +316,7 @@ public interface ModuleManager extends Service {
 
             try {
                 m.checkCompatibility();
-            } catch (Throwable e) {
+            } catch (APIIncompatibleException e) {
                 this.registerFailed.add(m.getFullId());
                 return;
             }

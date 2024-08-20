@@ -3,8 +3,8 @@ package org.tbstcraft.quark.contents.music;
 import javax.sound.midi.*;
 
 public interface MusicLoader {
-    static MusicData loadMidi(String name, Sequence sequence, int offset, boolean dispatchInstrument) {
-        MusicData music = new MusicData(name, offset, sequence.getTickLength(), sequence.getMicrosecondLength());
+    static MusicData loadMidi(String name, Sequence sequence, int offset, boolean dispatchInstrument, float speedMod) {
+        MusicData music = new MusicData(name, offset, sequence.getTickLength(), (long) (sequence.getMicrosecondLength() / speedMod));
 
         Track[] tracks = sequence.getTracks();
 
@@ -24,6 +24,7 @@ public interface MusicLoader {
                 if (sm.getCommand() == ShortMessage.NOTE_ON) {
                     var nodeInstrument = sm.getChannel() == 9 ? EnumInstrument.STD_DRUM : instrument;
                     music.addNode((int) event.getTick(), new MusicNode(sm.getData1(), sm.getData2() / 127f, nodeInstrument));
+
                     continue;
                 }
 

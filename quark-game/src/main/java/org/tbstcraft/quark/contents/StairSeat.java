@@ -88,7 +88,8 @@ public final class StairSeat extends PackageModule {
 
         spawnLocation.setDirection(direction.multiply(-1));
         Player player = event.getPlayer();
-        Pig pig = (Pig) world.spawnEntity(spawnLocation.add(0.5, -0.36, 0.5), EntityType.PIG);
+        var spawn=spawnLocation.add(0.5, -0.36, 0.5);
+        Pig pig = (Pig) world.spawnEntity(spawn, EntityType.PIG);
 
         pig.setInvulnerable(true);
         pig.addScoreboardTag(CHAIR_ENTITY_ID);
@@ -97,7 +98,6 @@ public final class StairSeat extends PackageModule {
         pig.setInvisible(true);
         pig.setSilent(true);
         Objects.requireNonNull(pig.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(-1);
-        Players.teleport(player, spawnLocation.add(0, 1, 0));
         pig.addPassenger(player);
 
         this.entityMapping.put(player.getName(), pig);

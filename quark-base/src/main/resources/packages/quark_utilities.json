@@ -9,7 +9,7 @@
     "player-ping-command": ".PlayerPingCommand",
     "custom-log-format": ".CustomLogFormat",
     "dynamic-view-distance": ".DynamicViewDistance",
-    "server-freeze": ".ServerFreeze",
+    "tick-manager": ".TickManager",
     "block-update-locker": ".BlockUpdateLocker",
     "item-command": ".ItemCommand",
     "console-command": ".ConsoleCommand",

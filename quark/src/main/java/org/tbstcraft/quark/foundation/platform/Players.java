@@ -1,6 +1,9 @@
 package org.tbstcraft.quark.foundation.platform;
 
-import net.kyori.adventure.audience.Audience;
+import me.gb2022.commons.reflect.method.MethodHandle;
+import me.gb2022.commons.reflect.method.MethodHandleO1;
+import me.gb2022.commons.reflect.method.MethodHandleO2;
+import me.gb2022.commons.reflect.method.MethodHandleRO0;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -12,51 +15,72 @@ import org.tbstcraft.quark.foundation.text.ComponentSerializer;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.event.BanMessageFetchEvent;
 import org.tbstcraft.quark.framework.module.ModuleManager;
-import me.gb2022.commons.reflect.method.MethodHandle;
-import me.gb2022.commons.reflect.method.MethodHandleO1;
-import me.gb2022.commons.reflect.method.MethodHandleO2;
-import me.gb2022.commons.reflect.method.MethodHandleRO0;
 
 import java.util.*;
 import java.util.function.Predicate;
 
+@SuppressWarnings("Convert2MethodRef")
 public interface Players {
     MethodHandleRO0<Player, Long> LAST_LOGIN = MethodHandle.select((ctx) -> {
-        ctx.attempt(() -> Player.class.getMethod("getLastLogin"), Player::getLastLogin);
+        ctx.attempt(() -> Player.class.getMethod("getLastLogin"), (p) -> p.getLastLogin());
         ctx.dummy((p) -> System.currentTimeMillis());
     });
     MethodHandleRO0<Player, Integer> PING = MethodHandle.select((ctx) -> {
-        ctx.attempt(() -> Player.class.getMethod("getPing"), Player::getPing);
+        ctx.attempt(() -> Player.class.getMethod("getPing"), (p) -> p.getPing());
         ctx.dummy((p) -> 0);
     });
     MethodHandleO1<Player, Collection<String>> ADD_CHAT_TAB = MethodHandle.select((ctx) -> {
-        ctx.attempt(() -> Player.class.getMethod("addCustomChatCompletions", Collection.class), Player::addCustomChatCompletions);
-        ctx.attempt(() -> Player.class.getMethod("addAdditionalChatCompletions", Collection.class), Player::addAdditionalChatCompletions);
+        ctx.attempt(
+                () -> Player.class.getMethod("addCustomChatCompletions", Collection.class),
+                (p, a) -> p.addCustomChatCompletions(a)
+        );
+        ctx.attempt(
+                () -> Player.class.getMethod("addAdditionalChatCompletions", Collection.class),
+                (p, a) -> p.removeCustomChatCompletions(a)
+        );
         ctx.dummy((p, a1) -> {
         });
     });
     MethodHandleO1<Player, Collection<String>> REMOVE_CHAT_TAB = MethodHandle.select((ctx) -> {
-        ctx.attempt(() -> Player.class.getMethod("removeCustomChatCompletions", Collection.class), Player::removeCustomChatCompletions);
-        ctx.attempt(() -> Player.class.getMethod("removeAdditionalChatCompletions", Collection.class), Player::removeAdditionalChatCompletions);
+        ctx.attempt(
+                () -> Player.class.getMethod("removeCustomChatCompletions", Collection.class),
+                (p, c) -> p.removeCustomChatCompletions(c)
+        );
+        ctx.attempt(
+                () -> Player.class.getMethod("removeAdditionalChatCompletions", Collection.class),
+                (p, c) -> p.removeAdditionalChatCompletions(c)
+        );
         ctx.dummy((p, a1) -> {
         });
     });
     MethodHandleO1<Player, Location> TELEPORT = MethodHandle.select((ctx) -> {
-        ctx.attempt(() -> Player.class.getMethod("teleportAsync", Location.class), Entity::teleportAsync);
+        ctx.attempt(() -> Player.class.getMethod("teleportAsync", Location.class), (p, l) -> p.teleportAsync(l));
         ctx.attempt(() -> Player.class.getMethod("teleport", Location.class), Entity::teleport);
     });
     MethodHandleO1<Player, Component> SEND_MESSAGE = MethodHandle.select((ctx) -> {
-        ctx.attempt(() -> Player.class.getMethod("sendMessage", Component.class), Player::sendMessage);
-        ctx.attempt(() -> Player.Spigot.class.getMethod("sendMessage", BaseComponent.class), (p, c) -> p.spigot().sendMessage(ComponentSerializer.bungee(c)));
-        ctx.attempt(() -> Player.class.getMethod("sendMessage", String.class), (p, c) -> p.sendMessage(ComponentSerializer.legacy(c)));
+        ctx.attempt(() -> Player.class.getMethod("sendMessage", Component.class), (p, c) -> p.sendMessage(c));
+        ctx.attempt(
+                () -> Player.Spigot.class.getMethod("sendMessage", BaseComponent.class),
+                (p, c) -> p.spigot().sendMessage(ComponentSerializer.bungee(c))
+        );
+        ctx.attempt(
+                () -> Player.class.getMethod("sendMessage", String.class),
+                (p, c) -> p.sendMessage(ComponentSerializer.legacy(c))
+        );
     });
     MethodHandleO2<Player, Component, Component> SET_TAB = MethodHandle.select((ctx) -> {
-        ctx.attempt(() -> Player.class.getMethod("sendPlayerListHeader", Component.class), Audience::sendPlayerListHeaderAndFooter);
-        ctx.attempt(() -> Player.class.getMethod("setPlayerListHeaderFooter", BaseComponent.class, BaseComponent.class), (p, c1, c2) -> {
-            var cc1 = ComponentSerializer.bungee(c1);
-            var cc2 = ComponentSerializer.bungee(c2);
-            p.setPlayerListHeaderFooter(cc1, cc2);
-        });
+        ctx.attempt(
+                () -> Player.class.getMethod("sendPlayerListHeader", Component.class),
+                (p, c1, c2) -> p.sendPlayerListHeaderAndFooter(c1, c2)
+        );
+        ctx.attempt(
+                () -> Player.class.getMethod("setPlayerListHeaderFooter", BaseComponent.class, BaseComponent.class),
+                (p, c1, c2) -> {
+                    var cc1 = ComponentSerializer.bungee(c1);
+                    var cc2 = ComponentSerializer.bungee(c2);
+                    p.setPlayerListHeaderFooter(cc1, cc2);
+                }
+        );
         ctx.attempt(() -> Player.class.getMethod("setPlayerListHeader", String.class), (p, c1, c2) -> {
             p.setPlayerListHeader(ComponentSerializer.legacy(c1));
             p.setPlayerListFooter(ComponentSerializer.legacy(c2));
@@ -171,20 +195,11 @@ public interface Players {
 
     //----[Query]----
     static List<String> getAllPlayerNames() {
-        List<String> names = new ArrayList<>();
-        for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-            names.add(player.getName());
-        }
-        return names;
+        return Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList();
     }
 
     static List<String> getAllOnlinePlayerNames() {
-        List<String> names = new ArrayList<>();
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            names.add(player.getName());
-        }
-        Collections.sort(names);
-        return names;
+        return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
     }
 
     static Set<Player> getOnlinePlayers(Predicate<Player> filter) {

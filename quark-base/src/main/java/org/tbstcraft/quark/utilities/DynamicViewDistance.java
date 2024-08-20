@@ -6,15 +6,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.Permission;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.*;
 import org.tbstcraft.quark.foundation.command.assertion.NumberLimitation;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -54,11 +55,10 @@ public final class DynamicViewDistance extends PackageModule implements CommandE
     }
 
     @Override
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void checkCompatibility() throws Throwable {
-        Player.class.getMethod("setSendViewDistance", int.class);
-        Player.class.getMethod("setViewDistance", int.class);
-        Player.class.getMethod("getLastLogin");
+    public void checkCompatibility() {
+        Compatibility.requireMethod(() -> Player.class.getMethod("setSendViewDistance", int.class));
+        Compatibility.requireMethod(() -> Player.class.getMethod("setViewDistance", int.class));
+        Compatibility.requireMethod(() -> Player.class.getMethod("getLastLogin"));
     }
 
     @Override

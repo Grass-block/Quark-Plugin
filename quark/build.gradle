@@ -8,6 +8,8 @@ apply from: "E:/Java/GradleScripts/build-base.gradle"
 
 applyGlobalScript("Publish/MinecraftServerTest.gradle")
 applyGlobalScript("Publish/ProjectOutput.gradle")
+applyGlobalScript("Publish/LocalStorage.gradle")
+
 applyGlobalScript("Repo/MinecraftPlugins.gradle")
 applyGlobalScript("/Dependencies.gradle")
 

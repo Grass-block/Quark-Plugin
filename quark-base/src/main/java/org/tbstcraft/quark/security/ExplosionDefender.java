@@ -11,31 +11,38 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
+import org.tbstcraft.quark.foundation.command.CommandSuggestion;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.region.SimpleRegion;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.compat.Compat;
-import org.tbstcraft.quark.framework.module.compat.CompatContainer;
-import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
+import org.tbstcraft.quark.framework.module.component.Components;
+import org.tbstcraft.quark.framework.module.component.ModuleComponent;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(ExplosionDefender.ExplosionWhitelistCommand.class)
 @QuarkModule(version = "1.3.3", recordFormat = {"Time", "World", "X", "Y", "Z", "Type"})
-@Compat(ExplosionDefender.LegacyCompat.class)
+@Components(ExplosionDefender.BlockExplosionListener.class)
 public final class ExplosionDefender extends PackageModule {
     private final HashMap<String, SimpleRegion> whiteListedRegions = new HashMap<>();
+    private Listener listener;
 
     @Override
     public void enable() {
@@ -88,13 +95,15 @@ public final class ExplosionDefender extends PackageModule {
     }
 
     public void handle(Location loc, String explodedId) {
-        System.out.println("awwa2");
         PluginMessenger.broadcastMapped("quark:explosion", (b) -> b.put("loc", loc));
         if (this.getConfig().getBoolean("override-explosion")) {
             Objects.requireNonNull(loc.getWorld()).createExplosion(loc, 4f, false, false);
         }
         if (this.getConfig().getBoolean("broadcast")) {
-            this.getLanguage().broadcastMessage(true, false, "exploded",
+            this.getLanguage().broadcastMessage(
+                    true,
+                    false,
+                    "exploded",
                     Objects.requireNonNull(loc.getWorld()).getName(),
                     loc.getBlockX(),
                     loc.getBlockY(),
@@ -109,10 +118,10 @@ public final class ExplosionDefender extends PackageModule {
                     loc.getBlockX(),
                     loc.getBlockY(),
                     loc.getBlockZ(),
-                    explodedId);
+                    explodedId
+            );
         }
     }
-
 
     @QuarkCommand(name = "explosion-whitelist", op = true)
     public static final class ExplosionWhitelistCommand extends ModuleCommand<ExplosionDefender> {
@@ -124,7 +133,11 @@ public final class ExplosionDefender extends PackageModule {
                 this.getLanguage().sendMessage(sender, "region-list");
                 Map<String, SimpleRegion> map = this.getModule().getWhiteListedRegions();
                 for (String s : map.keySet()) {
-                    sender.sendMessage(PlaceHolderService.format("{#gold}%s {#gray}-> {#white}%s".formatted(s, map.get(s).toString())));
+                    sender.sendMessage(PlaceHolderService.format("{#gold}%s {#gray}-> {#white}%s".formatted(
+                            s,
+                            map.get(s)
+                                    .toString()
+                    )));
                 }
                 return;
             }
@@ -135,7 +148,15 @@ public final class ExplosionDefender extends PackageModule {
                     this.getLanguage().sendMessage(sender, "region-add-failed", arg2);
                     return;
                 }
-                this.getModule().getWhiteListedRegions().put(arg2, new SimpleRegion(Bukkit.getWorld(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]), Integer.parseInt(args[8])));
+                this.getModule().getWhiteListedRegions().put(arg2, new SimpleRegion(
+                        Bukkit.getWorld(args[2]),
+                        Integer.parseInt(args[3]),
+                        Integer.parseInt(args[4]),
+                        Integer.parseInt(args[5]),
+                        Integer.parseInt(args[6]),
+                        Integer.parseInt(args[7]),
+                        Integer.parseInt(args[8])
+                ));
                 this.getLanguage().sendMessage(sender, "region-add", arg2);
                 this.getModule().saveRegions();
                 return;
@@ -152,62 +173,46 @@ public final class ExplosionDefender extends PackageModule {
         }
 
         @Override
-        public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-            if (buffer.length == 1) {
-                tabList.add("add");
-                tabList.add("remove");
-                tabList.add("list");
-                return;
-            }
+        public void suggest(CommandSuggestion suggestion) {
+            suggestion.suggest(0, "add", "remove", "list");
+            suggestion.matchArgument(0, "add", (s) -> s.suggest(1, "[name]"));
+            suggestion.matchArgument(0, "remove", (s) -> {
+                var c = this.getModule().getWhiteListedRegions().keySet();
+                s.suggest(1, c);
+            });
 
-            switch (buffer[0]) {
-                case "add" -> {
-                    switch (buffer.length) {
-                        case 3 -> {
-                            for (World world : Bukkit.getWorlds()) {
-                                tabList.add(world.getName().toLowerCase());
-                            }
-                        }
-                        case 4, 7 ->
-                                tabList.add(sender instanceof Player ? String.valueOf(((Player) sender).getLocation().getBlockX()) : "0");
-                        case 5, 8 ->
-                                tabList.add(sender instanceof Player ? String.valueOf(((Player) sender).getLocation().getBlockY()) : "0");
-                        case 6, 9 ->
-                                tabList.add(sender instanceof Player ? String.valueOf(((Player) sender).getLocation().getBlockZ()) : "0");
-                    }
-                }
-                case "remove" -> {
-                    if (buffer.length != 2) {
-                        return;
-                    }
-                    tabList.addAll(this.getModule().getWhiteListedRegions().keySet());
-                }
-                case "record" -> {
-                    if (buffer.length + 1 > 2) {
-                        return;
-                    }
-                    tabList.add("true");
-                    tabList.add("false");
-                }
-            }
+            var sender = suggestion.getSender();
+            var isPlayer = sender instanceof Player;
+
+            suggestion.matchArgument(0, "add", (s) -> {
+                s.suggest(2, Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toSet()));
+                s.suggest(3, isPlayer ? String.valueOf(suggestion.getSenderAsPlayer().getLocation().getBlockX()) : "0");
+                s.suggest(4, isPlayer ? String.valueOf(suggestion.getSenderAsPlayer().getLocation().getBlockY()) : "0");
+                s.suggest(5, isPlayer ? String.valueOf(suggestion.getSenderAsPlayer().getLocation().getBlockZ()) : "0");
+                s.suggest(6, isPlayer ? String.valueOf(suggestion.getSenderAsPlayer().getLocation().getBlockX()) : "3");
+                s.suggest(7, isPlayer ? String.valueOf(suggestion.getSenderAsPlayer().getLocation().getBlockY()) : "3");
+                s.suggest(8, isPlayer ? String.valueOf(suggestion.getSenderAsPlayer().getLocation().getBlockZ()) : "3");
+            });
         }
     }
 
-    @CompatDelegate(APIProfile.BUKKIT)
-    public static final class LegacyCompat extends CompatContainer<ExplosionDefender> {
-        public LegacyCompat(ExplosionDefender parent) {
-            super(parent);
+    @AutoRegister(ServiceType.EVENT_LISTEN)
+    public static final class BlockExplosionListener extends ModuleComponent<ExplosionDefender> {
+
+        @Override
+        public void checkCompatibility() throws APIIncompatibleException {
+            Compatibility.requireClass(() -> Class.forName("org.bukkit.event.block.BlockExplodeEvent"));
         }
 
         @EventHandler
         public void onBlockExplode(BlockExplodeEvent event) {
             Block b = event.getBlock();
 
-            if (getParent().matchRegion(b.getLocation())) {
+            if (this.parent.matchRegion(b.getLocation())) {
                 return;
             }
             event.setCancelled(true);
-            this.getParent().handle(b.getLocation(), "[?]");
+            this.parent.handle(b.getLocation(), "[?]");
         }
     }
 }

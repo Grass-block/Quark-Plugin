@@ -10,13 +10,17 @@ import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 @QuarkService(id = "task")
 public interface TaskService extends Service {
     ServiceHolder<TaskService> INSTANCE = new ServiceHolder<>();
+
+    Set<Runnable> FINALIZE_TASKS = new HashSet<>();
 
     @ServiceInject
     static void start() {
@@ -110,6 +114,17 @@ public interface TaskService extends Service {
 
     static void runDelayTask(Location location, int delay, Runnable task) {
         INSTANCE.get().delay(UUID.randomUUID().toString(), delay, task);
+    }
+
+    static void registerFinalizeTask(Runnable command) {
+        FINALIZE_TASKS.add(command);
+    }
+
+    static void runFinalizeTask() {
+        for (Runnable task : FINALIZE_TASKS) {
+            task.run();
+        }
+        FINALIZE_TASKS.clear();
     }
 
     void register(String id, Task task);

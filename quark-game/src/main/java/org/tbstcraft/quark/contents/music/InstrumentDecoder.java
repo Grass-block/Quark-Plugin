@@ -144,6 +144,7 @@ public interface InstrumentDecoder {
 
             //guitar
             range(24, 31, EnumInstrument.GUITAR);
+            item(26, EnumInstrument.PIANO);
 
             //bass
             range(32, 35, EnumInstrument.BASS_GUITAR);
@@ -176,6 +177,8 @@ public interface InstrumentDecoder {
 
             //item(108,EnumInstrument.BASS_DRUM);
             item(96, EnumInstrument.SNARE_DRUM);
+
+            item(102, EnumInstrument.BASS_GUITAR);
 
             item(112, EnumInstrument.BELL);
             item(113, EnumInstrument.CHIME);

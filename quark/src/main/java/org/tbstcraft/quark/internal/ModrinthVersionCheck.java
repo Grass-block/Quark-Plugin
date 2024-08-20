@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.internal;
 
+import me.gb2022.commons.TriState;
 import me.gb2022.commons.http.HTTPUtil;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
@@ -17,7 +18,6 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.ExceptionUtil;
-import me.gb2022.commons.TriState;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -59,8 +59,7 @@ public final class ModrinthVersionCheck extends PackageModule implements Command
         TaskService.asyncTask(() -> {
             try {
                 HttpURLConnection con = HTTPUtil.getHttpURLConnection(API, false);
-                var arr = SharedObjects.JSON_PARSER.parse(new String(con.getInputStream().readAllBytes()))
-                        .getAsJsonArray();
+                var arr = SharedObjects.JSON_PARSER.parse(new String(con.getInputStream().readAllBytes())).getAsJsonArray();
                 con.disconnect();
 
                 var latest = arr.get(0).getAsJsonObject();

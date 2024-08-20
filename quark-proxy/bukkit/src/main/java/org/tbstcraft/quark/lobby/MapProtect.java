@@ -1,7 +1,9 @@
 package org.tbstcraft.quark.lobby;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -28,6 +30,13 @@ public final class MapProtect extends PackageModule {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.getAction() == Action.PHYSICAL && event.getClickedBlock() != null) {
+            if (event.getClickedBlock().getType() == Material.FARMLAND) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         if (!event.hasBlock()) {
             return;
         }
@@ -37,6 +46,6 @@ public final class MapProtect extends PackageModule {
         if (event.getPlayer().hasPermission("quark.lobby.interact")) {
             return;
         }
-        event.setCancelled(true);
+        //event.setCancelled(true);
     }
 }

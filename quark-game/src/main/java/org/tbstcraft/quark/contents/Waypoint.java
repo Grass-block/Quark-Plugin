@@ -149,7 +149,7 @@ public final class Waypoint extends CommandModule {
             switch (mode) {
                 case "list", "list-private" -> {
                     StringBuilder sb = new StringBuilder(128);
-                    entry.getTagMap().forEach((name, data) -> sb.append(name).append(ChatColor.GRAY).append(" -> ").append(ChatColor.WHITE).append(BukkitCodec.toString(BukkitCodec.fromNBT(entry.getCompoundTag(name)))).append("\n"));
+                    entry.getTagMap().forEach((name, data) -> sb.append(name).append(ChatColor.GRAY).append(" -> ").append(ChatColor.WHITE).append(BukkitCodec.string(BukkitCodec.location(entry.getCompoundTag(name)))).append("\n"));
                     this.getLanguage().sendMessage(sender, "list", sb);
                 }
                 case "tp", "tp-private" -> {
@@ -161,7 +161,7 @@ public final class Waypoint extends CommandModule {
                         break;
                     }
 
-                    Players.teleport(sender, BukkitCodec.fromNBT(tag));
+                    Players.teleport(sender, BukkitCodec.location(tag));
                     BukkitSound.WARP.play(sender);
                     this.getLanguage().sendMessage(sender, "tp-success", id);
                 }
@@ -191,7 +191,7 @@ public final class Waypoint extends CommandModule {
                         }
                     }
 
-                    tag = BukkitCodec.toNBT(loc);
+                    tag = BukkitCodec.nbt(loc);
                     entry.setCompoundTag(id, tag);
                     this.getLanguage().sendMessage(sender, "add-success", id);
 
@@ -264,7 +264,7 @@ public final class Waypoint extends CommandModule {
                 this.getLanguage().sendMessage(sender, "home-exist-warn");
                 return;
             }
-            entry.setCompoundTag("home", BukkitCodec.toNBT(((Player) sender).getLocation()));
+            entry.setCompoundTag("home", BukkitCodec.nbt(((Player) sender).getLocation()));
             this.getLanguage().sendMessage(sender, "home-set-success");
         }
     }
@@ -283,7 +283,7 @@ public final class Waypoint extends CommandModule {
                 this.getLanguage().sendMessage(sender, "home-not-set");
                 return;
             }
-            Location loc = BukkitCodec.fromNBT(entry.getCompoundTag("home"));
+            Location loc = BukkitCodec.location(entry.getCompoundTag("home"));
             Players.teleport(((Player) sender), loc);
             this.getLanguage().sendMessage(sender, "home-tp-success");
             BukkitSound.WARP.play((Player) sender);

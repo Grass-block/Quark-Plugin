@@ -1,5 +1,7 @@
 package org.tbstcraft.quark.foundation.platform;
 
+import me.gb2022.commons.reflect.method.MethodHandle;
+import me.gb2022.commons.reflect.method.MethodHandleRS0;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
@@ -15,8 +17,6 @@ import org.bukkit.util.Vector;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.internal.task.TaskService;
-import me.gb2022.commons.reflect.method.MethodHandle;
-import me.gb2022.commons.reflect.method.MethodHandleRS0;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,15 +25,15 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.function.Consumer;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "Convert2MethodRef"})
 public interface BukkitUtil {
     MethodHandleRS0<double[]> TPS = MethodHandle.select((ctx) -> {
-        ctx.attempt(() -> Bukkit.class.getMethod("getTPS"), Bukkit::getTPS);
+        ctx.attempt(() -> Bukkit.class.getMethod("getTPS"), () -> Bukkit.getTPS());
         ctx.attempt(() -> Server.class.getMethod("getTPS"), () -> Bukkit.getServer().getTPS());
         ctx.dummy(() -> new double[]{20.0});
     });
     MethodHandleRS0<Double> MSPT = MethodHandle.select((ctx) -> {
-        ctx.attempt(() -> Bukkit.class.getMethod("getAverageTickTime"), Bukkit::getAverageTickTime);
+        ctx.attempt(() -> Bukkit.class.getMethod("getAverageTickTime"), () -> Bukkit.getAverageTickTime());
         ctx.attempt(() -> Server.class.getMethod("getAverageTickTime"), () -> Bukkit.getServer().getAverageTickTime());
         ctx.dummy(() -> 0.0);
     });

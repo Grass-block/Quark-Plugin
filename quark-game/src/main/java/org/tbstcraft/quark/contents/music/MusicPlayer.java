@@ -17,10 +17,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.tbstcraft.quark.SharedObjects;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.data.assets.AssetGroup;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
@@ -152,11 +152,17 @@ public final class MusicPlayer extends PackageModule {
         } catch (Exception ignored) {
         }
 
+        float speedMod = args.length > 3 ? Float.parseFloat(args[3]) : 1.0f;
+
+        if (speedMod == 0) {
+            speedMod = 1.0f;
+        }
+
         switch (args[0]) {
             case "cancel" -> cancelMusic(args[1]);
             case "pause" -> pauseMusic(args[1]);
             case "resume" -> resumeMusic(args[1]);
-            case "play" -> playMusic(args[1], args[2], Integer.parseInt(args[3]), b);
+            case "play" -> playMusic(args[1], args[2], Integer.parseInt(args[3]), b, speedMod);
         }
     }
 
@@ -175,8 +181,8 @@ public final class MusicPlayer extends PackageModule {
         this.globalSession.cancel();
     }
 
-    public void playMusic(String player, String music, int pitch, boolean dispatchInstrument) {
-        this.globalSession.play(select(music, pitch, dispatchInstrument));
+    public void playMusic(String player, String music, int pitch, boolean dispatchInstrument, float speedMod) {
+        this.globalSession.play(select(music, pitch, dispatchInstrument, speedMod));
         this.getLanguage().broadcastMessage(false, false, "play", player, music, pitch);
     }
 
@@ -235,7 +241,7 @@ public final class MusicPlayer extends PackageModule {
         }
     }
 
-    private MusicData select(String name, int pitch, boolean dispatchInstrument) {
+    private MusicData select(String name, int pitch, boolean dispatchInstrument, float speedMod) {
         File f = this.loader.load(name);
 
         if (!f.exists()) {
@@ -244,7 +250,13 @@ public final class MusicPlayer extends PackageModule {
 
         if (name.endsWith(".mid") || name.endsWith(".midi")) {
             try {
-                return MusicLoader.loadMidi(f.getName(), MidiSystem.getSequence(new FileInputStream(f)), pitch, dispatchInstrument);
+                return MusicLoader.loadMidi(
+                        f.getName(),
+                        MidiSystem.getSequence(new FileInputStream(f)),
+                        pitch,
+                        dispatchInstrument,
+                        speedMod
+                                           );
             } catch (InvalidMidiDataException | IOException e) {
                 throw new RuntimeException(RESOLVE_ERROR);
             }
@@ -281,6 +293,7 @@ public final class MusicPlayer extends PackageModule {
                 }
                 case "play" -> {
                     int pitch = 0;
+                    float speedMod = 1.0f;
 
                     ConfigurationSection pitchOffsets = this.getConfig().getConfigurationSection("pitch-offsets");
                     if (pitchOffsets != null && pitchOffsets.contains(args[1])) {
@@ -292,6 +305,9 @@ public final class MusicPlayer extends PackageModule {
                     for (String s : args) {
                         if (s.startsWith("-p:")) {
                             pitch = Integer.parseInt(s.replace("-p:", ""));
+                        }
+                        if (s.startsWith("-s:")) {
+                            speedMod = Float.parseFloat(s.replace("-s:", ""));
                         }
                     }
 
@@ -309,13 +325,15 @@ public final class MusicPlayer extends PackageModule {
                     }
 
 
-                    this.getModule().playMusic(operator, music, pitch, dispatchInstruments);
+                    this.getModule().playMusic(operator, music, pitch, dispatchInstruments, speedMod);
+
                     int finalPitch = pitch;
+                    float finalSpeedMod = speedMod;
 
                     service.sendBroadcast("/music/control", msg -> {
-                        String data = "play;%s;%s;%d".formatted(
-                                operator, music, finalPitch
-                        );
+                        String data = "play;%s;%s;%d;%f".formatted(
+                                operator, music, finalPitch, finalSpeedMod
+                                                                  );
                         BufferUtil.writeString(msg, data);
                         msg.writeBoolean(dispatchInstruments);
                     });
@@ -340,6 +358,9 @@ public final class MusicPlayer extends PackageModule {
                 tabList.add("-p:0");
                 tabList.add("-p:12");
                 tabList.add("-p:-12");
+                tabList.add("-s:1");
+                tabList.add("-s:1.5");
+                tabList.add("-s:0.5");
                 tabList.add("-legacy");
             }
         }

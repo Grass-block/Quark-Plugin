@@ -18,6 +18,8 @@ import java.util.logging.Logger;
 
 @QuarkService(id = "remote-message-service")
 public interface RemoteMessageService extends Service {
+
+    @RegisterAsGlobal
     @ServiceInject
     ServiceHolder<RemoteMessageService> INSTANCE = new ServiceHolder<>();
 

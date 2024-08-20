@@ -1,6 +1,9 @@
 package org.tbstcraft.quark.framework.service;
 
+import me.gb2022.commons.reflect.Annotations;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.plugin.ServicePriority;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.config.Configuration;
 import org.tbstcraft.quark.util.ExceptionUtil;
@@ -119,7 +122,17 @@ public interface ServiceManager {
 
                     try {
                         ServiceHolder<Service> holder = ((ServiceHolder<Service>) f.get(null));
-                        holder.set(createImplementation(service, this.config.getConfig(sid)));
+
+                        I instance = createImplementation(service, this.config.getConfig(sid));
+
+                        holder.set(instance);
+
+                        assert instance != null;
+
+                        if (Annotations.hasAnnotation(holder, RegisterAsGlobal.class)) {
+                            Bukkit.getServicesManager().register(service, instance, Quark.PLUGIN, ServicePriority.High);
+                        }
+
 
                         holder.get().onEnable();
                     } catch (Throwable e) {
@@ -173,6 +186,10 @@ public interface ServiceManager {
 
                 try {
                     ServiceHolder<Service> holder = ((ServiceHolder<Service>) f.get(null));
+
+                    if (Annotations.hasAnnotation(holder, RegisterAsGlobal.class)) {
+                        Bukkit.getServicesManager().unregister(service);
+                    }
 
                     holder.get().onDisable();
                 } catch (Throwable e) {

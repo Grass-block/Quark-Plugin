@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -24,8 +25,9 @@ public final class DispenserBlockPlacer extends PackageModule {
     private LanguageItem tip;
 
     @Override
-    public void checkCompatibility() throws Throwable {
-        Class.forName("io.papermc.paper.event.block.BlockPreDispenseEvent");
+    public void checkCompatibility() {
+        Compatibility.requireClass(() -> Class.forName("io.papermc.paper.event.block.BlockPreDispenseEvent"));
+        Compatibility.requirePDC();
     }
 
     @Override

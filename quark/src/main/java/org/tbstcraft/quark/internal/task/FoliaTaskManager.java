@@ -7,15 +7,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.foundation.platform.FoliaUtil;
+import org.tbstcraft.quark.foundation.platform.FoliaServer;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 @SuppressWarnings("ClassCanBeRecord")
 public final class FoliaTaskManager extends TaskManager {
-    private final RegionScheduler region = FoliaUtil.getRegionScheduler();
-    private final AsyncScheduler async = FoliaUtil.getAsyncScheduler();
+    private final RegionScheduler region = FoliaServer.getRegionScheduler();
+    private final AsyncScheduler async = FoliaServer.getAsyncScheduler();
 
     public FoliaTaskManager(Plugin plugin) {
         super(plugin);
@@ -65,19 +65,19 @@ public final class FoliaTaskManager extends TaskManager {
 
     @Override
     public void run(Entity entity, Runnable task) {
-        FoliaUtil.getEntityScheduler(entity).run(this.getPlugin(), scheduledTask -> task.run(), () -> {
+        FoliaServer.getEntityScheduler(entity).run(this.getPlugin(), scheduledTask -> task.run(), () -> {
         });
     }
 
     @Override
     public void delay(String id, Entity entity, long delay, Runnable task) {
-        ScheduledTask t = FoliaUtil.getEntityScheduler(entity).runDelayed(this.getPlugin(), scheduledTask -> task.run(), () -> unregister(id), delay);
+        ScheduledTask t = FoliaServer.getEntityScheduler(entity).runDelayed(this.getPlugin(), scheduledTask -> task.run(), () -> unregister(id), delay);
         this.register(id, new FoliaTask(t));
     }
 
     @Override
     public void timer(String id, Entity entity, long delay, long period, Runnable task) {
-        ScheduledTask t = FoliaUtil.getEntityScheduler(entity).runAtFixedRate(this.getPlugin(), scheduledTask -> task.run(), () -> unregister(id), delay, period);
+        ScheduledTask t = FoliaServer.getEntityScheduler(entity).runAtFixedRate(this.getPlugin(), scheduledTask -> task.run(), () -> unregister(id), delay, period);
         this.register(id, new FoliaTask(t));
     }
 

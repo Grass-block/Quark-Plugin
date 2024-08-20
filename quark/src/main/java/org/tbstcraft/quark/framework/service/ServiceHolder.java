@@ -1,6 +1,6 @@
 package org.tbstcraft.quark.framework.service;
 
-public final class ServiceHolder<I> {
+public final class ServiceHolder<I extends Service> {
     private I t;
 
     public ServiceHolder(I t) {

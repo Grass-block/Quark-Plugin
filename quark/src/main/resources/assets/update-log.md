@@ -1,4 +1,9 @@
+### 0.63.16
+
+- fixed surrounding-refresh radius check bypass
+
 ### 0.63.15
+
 - fixed PermissionManager calculation error
 - adding command asserting and prompt
 - adding multi-instrument support(experimental) and power support to MusicPlayer

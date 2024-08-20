@@ -47,6 +47,7 @@ public final class SurroundingRefresh extends CommandModule {
 
         if (rad > 9) {
             getLanguage().sendMessage(sender, "to-big", rad);
+            return;
         }
 
         Player player = (Player) sender;

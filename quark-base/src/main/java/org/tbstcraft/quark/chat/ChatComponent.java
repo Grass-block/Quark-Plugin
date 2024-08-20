@@ -13,14 +13,14 @@ import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandManager;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.compat.Compat;
-import org.tbstcraft.quark.framework.module.compat.CompatContainer;
-import org.tbstcraft.quark.framework.module.compat.CompatDelegate;
+import org.tbstcraft.quark.framework.module.component.Components;
+import org.tbstcraft.quark.framework.module.component.ModuleComponent;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolders;
@@ -28,7 +28,7 @@ import org.tbstcraft.quark.util.placeholder.GloballyPlaceHolder;
 
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
-@Compat(ChatComponent.PaperCompat.class)
+@Components({ChatComponent.PaperChatListener.class, ChatComponent.PaperSignChangeListener.class})
 @QuarkModule(id = "chat-component", version = "1.3.0")
 public final class ChatComponent extends PackageModule {
     GloballyPlaceHolder chat = PlaceHolders.chat();
@@ -53,6 +53,7 @@ public final class ChatComponent extends PackageModule {
         }
         String msg = event.getMessage();
         msg = PlaceHolderService.format(msg);
+        msg = PlaceHolderService.formatPlayer(event.getPlayer(), msg);
         msg = processChar(msg);
         msg = processColorChars(msg);
         event.setMessage(TextBuilder.build(msg, true).toString());
@@ -124,20 +125,11 @@ public final class ChatComponent extends PackageModule {
         return input;
     }
 
-    @CompatDelegate(APIProfile.PAPER)
     @AutoRegister(ServiceType.EVENT_LISTEN)
-    public static final class PaperCompat extends CompatContainer<ChatComponent> {
-        public PaperCompat(ChatComponent parent) {
-            super(parent);
-        }
-
-        @EventHandler
-        public void onChatting(AsyncChatEvent event) {
-            String msg = LegacyComponentSerializer.legacySection().serialize(event.message());
-            msg = getParent().processColorChars(msg);
-            msg = PlaceHolderService.format(msg);
-            msg = this.getParent().processChar(msg);
-            event.message(TextBuilder.buildComponent(msg, true));
+    public static final class PaperSignChangeListener extends ModuleComponent<ChatComponent> {
+        @Override
+        public void checkCompatibility() throws APIIncompatibleException {
+            Compatibility.requireClass(() -> Class.forName("org.bukkit.event.block.SignChangeEvent"));
         }
 
         @EventHandler
@@ -149,11 +141,29 @@ public final class ChatComponent extends PackageModule {
                 }
 
                 String text = LegacyComponentSerializer.legacySection().serialize(origin);
-                text = this.getParent().processColorChars(text);
-                text = this.getParent().processChar(text);
+                text = this.parent.processColorChars(text);
+                text = this.parent.processChar(text);
 
                 event.line(i, TextBuilder.buildComponent(text, false));
             }
+        }
+    }
+
+    @AutoRegister(ServiceType.EVENT_LISTEN)
+    public static final class PaperChatListener extends ModuleComponent<ChatComponent> {
+        @Override
+        public void checkCompatibility() throws APIIncompatibleException {
+            Compatibility.requireClass(() -> Class.forName("io.papermc.paper.event.player.AsyncChatEvent"));
+        }
+
+        @EventHandler
+        public void onChatting(AsyncChatEvent event) {
+            String msg = LegacyComponentSerializer.legacySection().serialize(event.message());
+            msg = this.parent.processColorChars(msg);
+            msg = PlaceHolderService.format(msg);
+            msg = PlaceHolderService.formatPlayer(event.getPlayer(), msg);
+            msg = this.parent.processChar(msg);
+            event.message(TextBuilder.buildComponent(msg, true));
         }
     }
 }

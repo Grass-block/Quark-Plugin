@@ -1,15 +1,18 @@
 package org.atcraftmc.quark.web.account;
 
+import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.*;
 import org.tbstcraft.quark.framework.module.component.ModuleComponent;
+import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@AutoRegister(ServiceType.EVENT_LISTEN)
 public final class PlayerFreezingManager extends ModuleComponent<AccountActivation> {
     private final Set<String> whiteListedPlayers = new HashSet<>();
 

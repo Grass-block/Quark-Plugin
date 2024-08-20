@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import java.util.Objects;
 
 public interface BukkitCodec {
-    static Location fromNBT(NBTTagCompound tag) {
+    static Location location(NBTTagCompound tag) {
 
         String wid = tag.getString("world");
 
@@ -21,7 +21,7 @@ public interface BukkitCodec {
         );
     }
 
-    static NBTTagCompound toNBT(Location loc) {
+    static NBTTagCompound nbt(Location loc) {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setString("world", Objects.requireNonNull(loc.getWorld()).getName());
         tag.setDouble("x", loc.getX());
@@ -32,7 +32,7 @@ public interface BukkitCodec {
         return tag;
     }
 
-    static String toString(Location loc) {
+    static String string(Location loc) {
         return "[%s: %f, %f, %f - %f, %f]".formatted(
                 Objects.requireNonNull(loc.getWorld()).getName(),
                 loc.getX(),

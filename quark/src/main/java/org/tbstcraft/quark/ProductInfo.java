@@ -99,9 +99,12 @@ public interface ProductInfo {
                                 
                  测试服务器: ATCraft Network
                  开发: GrassBlock2022
-                 多语言: ChatGPT by OpenAI
-                 特别感谢: Mipa[Folia平台测试] 以及所有的第三方库开发者
-                               
+
+                 {#red}[{#white}特别感谢{#red}]{#white}
+                  - Mipa: Folia平台测试
+                  - Modrinth: 提供更新服务
+                  - OpenAI: ChatGPT用于多语言翻译和API解读             
+                  
                  {#red}[{#white}第三方库{#red}]{#white}
                   - LevelDB: 数据存储
                   - AdventureAPI: 玩家界面实现
