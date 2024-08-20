@@ -1,8 +1,3 @@
-> #### These are my requirements (as is) to this project's users:
-> - never use code for business use.
-> - do not redistribute products.
-> - modifications are allowed
-
 # GNU GENERAL PUBLIC LICENSE
 
 Version 3, 29 June 2007
