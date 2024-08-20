@@ -1,7 +1,0 @@
-language:
-  potato-war:
-    title: 土豆战争排行榜
-    hint:
-     - "{#purple}土豆战争开始了!"
-     - "{#white}右键点击成熟的土豆进行收割，争夺土豆排行榜的首位。前三名将获得特殊奖励！"
-     - "{#white}时运和其他附魔均有效，使用 {#gold}/potato-war{#white}查询排行榜！"
