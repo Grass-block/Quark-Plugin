@@ -23,10 +23,9 @@ dependencies {
 
     implementation localStorage("me.gb2022.commons-nbt")
     implementation localStorage("me.gb2022.commons-math")
-    implementation localStorage('me.gb2022.commons-crypto')
     implementation localStorage('me.gb2022.commons-container')
-    implementation localStorage('me.gb2022.commons-general')
     implementation localStorage('me.gb2022.commons-event')
+    implementation localStorage('me.gb2022.commons-reflection')
 
     implementation localStorage('me.gb2022.apm-plugin')
     implementation localStorage('me.gb2022.apm-remote')

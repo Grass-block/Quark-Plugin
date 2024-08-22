@@ -4,7 +4,6 @@ import io.papermc.paper.event.block.BlockPreDispenseEvent;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.data.Directional;
 import org.bukkit.event.EventHandler;
@@ -12,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
+import org.tbstcraft.quark.foundation.platform.BukkitDataAccess;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -42,33 +42,31 @@ public final class DispenserBlockPlacer extends PackageModule {
 
     @EventHandler
     public void dispenserPlaceBlock(BlockPreDispenseEvent event) {
-        Material material = event.getItemStack().getType();
+        var block = event.getBlock();
+        var type = event.getItemStack().getType();
+        var data = BukkitDataAccess.blockData(block, Directional.class);
+        var face = block.getRelative(data.getFacing());
 
-        Directional data = (Directional) event.getBlock().getBlockData();
-
-        event.getBlock().getRelative(data.getFacing());
-        Block facing = event.getBlock().getRelative(data.getFacing());
-
-        if (material.isBlock() && facing.getType().isAir()) {
-            if (material == Material.TNT) {
+        if (type.isBlock() && face.getType().isAir()) {
+            if (type == Material.TNT) {
                 return;
             }
 
-            event.setCancelled(true);
+            var dispensed = BukkitDataAccess.blockState(block, Dispenser.class).getInventory().getItem(event.getSlot());
 
-            facing.setBlockData(event.getItemStack().getType().createBlockData());
-
-            ItemStack dispensed = ((Dispenser) event.getBlock().getState()).getInventory().getItem(event.getSlot());
             if (dispensed != null) {
                 dispensed.setAmount(dispensed.getAmount() - 1);
             }
+
+            face.setBlockData(event.getItemStack().getType().createBlockData());
+            event.setCancelled(true);
+
             return;
         }
 
-        if (facing.getType().isBlock() && facing.isValidTool(event.getItemStack())) {
+        if (face.getType().isBlock() && face.isValidTool(event.getItemStack())) {
             event.setCancelled(true);
-
-            facing.breakNaturally(event.getItemStack(), true);
+            face.breakNaturally(event.getItemStack(), true);
         }
     }
 }

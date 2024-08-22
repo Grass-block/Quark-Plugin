@@ -11,6 +11,8 @@ import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
+import org.tbstcraft.quark.foundation.command.execute.TabList;
 import org.tbstcraft.quark.internal.permission.PermissionService;
 import org.tbstcraft.quark.util.ExceptionUtil;
 

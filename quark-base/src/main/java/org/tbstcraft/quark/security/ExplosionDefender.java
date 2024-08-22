@@ -18,7 +18,7 @@ import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.CommandSuggestion;
+import org.tbstcraft.quark.foundation.command.execute.CommandSuggestion;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.region.SimpleRegion;

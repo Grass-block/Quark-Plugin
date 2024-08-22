@@ -12,7 +12,7 @@ import org.bukkit.util.CachedServerIcon;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.api.QueryPingEvent;
 import org.tbstcraft.quark.data.assets.Asset;
-import org.tbstcraft.quark.foundation.command.CommandExecutor;
+import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;

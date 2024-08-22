@@ -9,6 +9,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.tbstcraft.quark.foundation.command.*;
+import org.tbstcraft.quark.foundation.command.execute.CommandExecution;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.customcontent.CustomMeta;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -23,7 +24,7 @@ import java.util.Objects;
 @QuarkModule(version = "1.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(HoverDisplay.HoverDisplayCommand.class)
-public class HoverDisplay extends PackageModule implements CommandExecutor {
+public class HoverDisplay extends PackageModule implements org.tbstcraft.quark.foundation.command.execute.CommandExecutor {
     private final Map<String, ArmorStand> stands = new HashMap<>();
 
     @Override

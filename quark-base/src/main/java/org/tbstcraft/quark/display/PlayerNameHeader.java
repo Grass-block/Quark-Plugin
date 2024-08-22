@@ -4,14 +4,17 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
-import com.comphenix.protocol.wrappers.*;
+import com.comphenix.protocol.wrappers.PlayerInfoData;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.commons.reflect.method.MethodHandle;
+import me.gb2022.commons.reflect.method.MethodHandleO2;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -45,7 +48,10 @@ import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.CachedInfo;
 import org.tbstcraft.quark.util.placeholder.StringObjectPlaceHolder;
 
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 
 @SuppressWarnings("deprecation")
 @AutoRegister(ServiceType.EVENT_LISTEN)
@@ -181,7 +187,7 @@ public final class PlayerNameHeader extends CommandModule {
 
     public Component getPlayerSuffix(Player player) {
         var header = getHeader(player);
-        var template = this.getConfig().getString("template").split("\\{player}");
+        var template = Objects.requireNonNull(this.getConfig().getString("template")).split("\\{player}");
         if (template.length == 1) {
             return Component.text("");
         }
@@ -190,12 +196,24 @@ public final class PlayerNameHeader extends CommandModule {
 
     public Component getPlayerPrefix(Player player) {
         var header = getHeader(player);
-        var template = this.getConfig().getString("template").split("\\{player}");
+        var template = Objects.requireNonNull(this.getConfig().getString("template")).split("\\{player}");
         return TextBuilder.buildComponent(PlaceHolderService.format(template[0].replace("{header}", header)));
     }
 
 
     public static final class NameTags extends ModuleComponent<PlayerNameHeader> {
+        private final MethodHandleO2<Team, Component, Component> TEAM_PREFIX = MethodHandle.select((ctx) -> {
+            ctx.attempt(() -> Team.class.getMethod("prefix", Component.class), (t, c1, c2) -> {
+                t.prefix(c1);
+                t.suffix(c2);
+            });
+            ctx.dummy((t, c1, c2) -> {
+                t.setPrefix(ComponentSerializer.legacy(c1));
+                t.setSuffix(ComponentSerializer.legacy(c2));
+            });
+        });
+
+
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requireClass(() -> Class.forName("org.bukkit.scoreboard.Team"));
@@ -225,10 +243,7 @@ public final class PlayerNameHeader extends CommandModule {
                     }
 
                     t.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS);
-
-                    t.prefix(parent.getPlayerPrefix(player));
-                    t.suffix(parent.getPlayerSuffix(player));
-
+                    TEAM_PREFIX.invoke(t, parent.getPlayerPrefix(player), parent.getPlayerSuffix(player));
                     t.addPlayer(player);
                 }
             }

@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.foundation.command.driver;
+package org.tbstcraft.quark.deprecated.command_driver;
 
 public interface CommandIdentifiers {
 

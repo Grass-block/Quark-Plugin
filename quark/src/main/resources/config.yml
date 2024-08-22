@@ -1,7 +1,8 @@
 config:
-  startup:
+  plugin:
     fast-boot: false
-    update-check: false
+    debug: false
+    metrics: true
   default-status:
     module: true
     package: true

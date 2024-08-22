@@ -9,7 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.foundation.command.CommandExecutor;
+import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
 import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;

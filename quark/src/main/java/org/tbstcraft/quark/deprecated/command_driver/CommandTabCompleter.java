@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.foundation.command.driver;
+package org.tbstcraft.quark.deprecated.command_driver;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -3,7 +3,7 @@ package org.tbstcraft.quark.internal;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.ProductInfo;
-import org.tbstcraft.quark.foundation.command.CommandExecutor;
+import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
 import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;

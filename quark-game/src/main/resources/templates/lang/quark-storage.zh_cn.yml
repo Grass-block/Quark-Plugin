@@ -1,0 +1,8 @@
+language:
+  -module-name:
+    portable-shulker-box: 快速打开潜影盒
+    item-drop-secure: 物品防丢
+  item-drop-secure:
+    warn: "{global#warning}由于安全原因你无法丢掉这个物品, 使用{#gold}/unlock-drop{#gray} 或 {click(command,/unlock-drop)}{#white}[{#green}点击{#white}]{;} {#gray}来临时解锁。"
+    unlock: "{global#info}你已解除物品丢弃安全锁。锁定将于{#var}秒后恢复。"
+    unlock-end: "{global#info}物品丢弃安全锁已经恢复。"

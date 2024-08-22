@@ -1,0 +1,20 @@
+config:
+  item-drop-secure:
+    unlock-time: 60
+
+    list:
+      - "diamond_"
+      - "netherite_"
+      - "nether_star"
+      - "iron_boots"
+      - "iron_leggings"
+      - "iron_chestplate"
+      - "iron_helmet"
+      - "iron_pickaxe"
+      - "elytra"
+      - "iron_axe"
+      - "iron_shovel"
+      - "iron_sword"
+      - "iron_hoe"
+      - "golden_"
+      - "gold_"

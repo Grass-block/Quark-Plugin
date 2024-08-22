@@ -3,7 +3,7 @@ package org.tbstcraft.quark.internal.command;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.ProductInfo;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.foundation.command.CommandExecution;
+import org.tbstcraft.quark.foundation.command.execute.CommandExecution;
 import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;

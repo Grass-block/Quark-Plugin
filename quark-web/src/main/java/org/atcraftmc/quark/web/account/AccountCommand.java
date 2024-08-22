@@ -2,8 +2,8 @@ package org.atcraftmc.quark.web.account;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.foundation.command.CommandExecution;
-import org.tbstcraft.quark.foundation.command.CommandSuggestion;
+import org.tbstcraft.quark.foundation.command.execute.CommandExecution;
+import org.tbstcraft.quark.foundation.command.execute.CommandSuggestion;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
 

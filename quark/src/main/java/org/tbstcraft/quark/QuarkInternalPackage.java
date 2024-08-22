@@ -34,7 +34,6 @@ public interface QuarkInternalPackage {
                 .service(RemoteMessageService.class)
                 .service(UIManager.class)
 
-                //.module("reserved", Reserved.class) //remove module here
                 .module("demo-warning", DemoWarning.class)
                 .module("version-log-viewer", VersionLogViewer.class)
                 .module("counter-conflict-handler", CounterPluginConflictHandler.class)

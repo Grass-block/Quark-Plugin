@@ -23,6 +23,7 @@ import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.*;
 import org.tbstcraft.quark.foundation.command.assertion.NumberLimitation;
+import org.tbstcraft.quark.foundation.command.execute.CommandSuggestion;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.platform.BukkitCodec;
 import org.tbstcraft.quark.foundation.platform.Players;
@@ -130,7 +131,7 @@ public final class Waypoint extends CommandModule {
     public static final class WaypointCommand extends ModuleCommand<Waypoint> {
 
         @Override
-        public void execute(CommandExecution context) {
+        public void execute(org.tbstcraft.quark.foundation.command.execute.CommandExecution context) {
             var mode = context.requireEnum(0, "add-private", "remove-private", "tp-private", "list-private", "add", "remove", "tp", "list");
             var isPrivate = mode.contains("private");
             var sender = context.requireSenderAsPlayer();
@@ -213,12 +214,12 @@ public final class Waypoint extends CommandModule {
         }
 
         @Override
-        public void suggest(CommandSuggestion suggestion) {
+        public void suggest(org.tbstcraft.quark.foundation.command.execute.CommandSuggestion suggestion) {
             suggestion.suggest(0, "tp", "tp-private", "list", "list-private", "add-private", "remove-private");
             suggestion.requireAnyPermission((ctx) -> ctx.suggest(0, "add", "remove"), this.getModule().editPublicPermission);
 
             var player = suggestion.getSenderAsPlayer();
-            Consumer<CommandSuggestion> add = suggestion1 -> {
+            Consumer<org.tbstcraft.quark.foundation.command.execute.CommandSuggestion> add = suggestion1 -> {
                 suggestion1.suggest(1, "[name]");
                 suggestion1.suggest(2, "@self");
                 suggestion1.requireAnyPermission((ctx) -> {
@@ -234,7 +235,7 @@ public final class Waypoint extends CommandModule {
             suggestion.matchArgument(0, "add", add);
             suggestion.matchArgument(0, "add-private", add);
 
-            Consumer<CommandSuggestion> privateList = (ctx) -> {
+            Consumer<org.tbstcraft.quark.foundation.command.execute.CommandSuggestion> privateList = (ctx) -> {
                 var map = PlayerDataService.getEntry(player.getName(), this.getModuleId()).getTagMap();
                 ctx.suggest(1, map.keySet());
             };

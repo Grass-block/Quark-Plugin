@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.internal.audience;
+package org.tbstcraft.quark.deprecated.audience_service;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.tbstcraft.quark.Quark;

@@ -3,70 +3,39 @@ package org.tbstcraft.quark.tweaks;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.foundation.platform.BukkitDataAccess;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Random;
+import java.util.Map;
 
 @QuarkModule(version = "1.0.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class CropClickHarvest extends PackageModule {
-    @EventHandler
-    public void onInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
-            return;
-        }
-        Block block = event.getClickedBlock();
-        if (block == null) {
-            return;
-        }
-        Material type = block.getType();
-        if (isNotCrops(block.getType())) {
-            return;
-        }
+    public static final Map<Material, Material> CROPS = new HashMap<>();
+    public static final double X_RANGE = 0.15;
+    public static final double Y_RANGE = 0.35;
 
-        Collection<ItemStack> items = event.getItem() != null ? block.getDrops(event.getItem(), event.getPlayer()) : block.getDrops();
-
-        if (type == Material.WHEAT) {
-            this.handleSeeds(items, Material.WHEAT_SEEDS);
-        }
-        if (type == Material.BEETROOTS) {
-            this.handleSeeds(items, Material.BEETROOT_SEEDS);
-        }
-        if (type == Material.CARROTS) {
-            this.handleSeeds(items, Material.CARROT);
-        }
-        if (type == Material.POTATOES) {
-            this.handleSeeds(items, Material.POTATO);
-        }
-
-        Random r = new Random();
-        for (ItemStack stack : items) {
-            Location loc = block.getLocation();
-            loc.add(r.nextDouble(-0.15, 0.15), r.nextDouble(0.15, 0.35), r.nextDouble(-0.15, 0.15));
-            block.getWorld().spawn(loc, Item.class, (e) -> e.setItemStack(stack));
-        }
-
-
-        Ageable data = ((Ageable) block.getBlockData());
-        if (data.getAge() != data.getMaximumAge()) {
-            return;
-        }
-        data.setAge(0);
-        block.setBlockData(data);
+    static {
+        CROPS.put(Material.WHEAT, Material.WHEAT_SEEDS);
+        CROPS.put(Material.BEETROOTS, Material.BEETROOT);
+        CROPS.put(Material.POTATOES, Material.POTATO);
+        CROPS.put(Material.CARROTS, Material.CARROT);
     }
 
-    void handleSeeds(Collection<ItemStack> items, Material seed) {
+    static void processSeedReuses(Collection<ItemStack> items, Material seed) {
         Iterator<ItemStack> it = items.iterator();
 
         while (it.hasNext()) {
@@ -82,10 +51,40 @@ public final class CropClickHarvest extends PackageModule {
         }
     }
 
-    boolean isNotCrops(Material material) {
-        return material != Material.WHEAT
-                && material != Material.POTATOES
-                && material != Material.CARROTS
-                && material != Material.BEETROOTS;
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        if (!event.getAction().isRightClick()) {
+            return;
+        }
+        if (event.getClickedBlock() == null) {
+            return;
+        }
+
+        var block = event.getClickedBlock();
+        var type = block.getType();
+        var random = SharedObjects.RANDOM;
+
+        if (!CROPS.containsKey(type)) {
+            return;
+        }
+
+        var data = BukkitDataAccess.blockData(block, Ageable.class);
+
+        if (data.getAge() != data.getMaximumAge()) {
+            return;
+        }
+
+        data.setAge(0);
+        block.setBlockData(data);
+
+        Collection<ItemStack> items = event.getItem() != null ? block.getDrops(event.getItem(), event.getPlayer()) : block.getDrops();
+
+        processSeedReuses(items, CROPS.get(type));
+
+        for (ItemStack stack : items) {
+            Location loc = block.getLocation();
+            loc.add(random.nextDouble(-X_RANGE, X_RANGE), random.nextDouble(X_RANGE, Y_RANGE), random.nextDouble(-X_RANGE, X_RANGE));
+            ((Item) block.getWorld().spawnEntity(loc, EntityType.DROPPED_ITEM)).setItemStack(stack);
+        }
     }
 }

@@ -1,7 +1,10 @@
 package org.tbstcraft.quark;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.packages.PackageManager;
@@ -47,16 +50,16 @@ public interface ProductInfo {
         return "{color(purple)}Quark {color(gray)} - {color(white)}v%s".formatted(version());
     }
 
-    static String logo() {
-        return """
-                {color(purple)} ______   __  __   ______   ______   __  __
-                {color(purple)}/\\  __ \\ /\\ \\/\\ \\ /\\  __ \\ /\\  == \\ /\\ \\/ /
-                {color(purple)}\\ \\ \\/\\_\\\\ \\ \\_\\ \\\\ \\  __ \\\\ \\  __< \\ \\  _"-.
-                {color(purple)} \\ \\___\\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\ \\_\\\\ \\_\\ \\_\\
-                {color(purple)}  \\/___/_/ \\/_____/ \\/_/\\/_/ \\/_/ /_/ \\/_/\\/_/       {color(white)}v%s
-                {color(yellow)}------------------------------------------------------------
-                {color(gray)}Artifact by {color(white)}GrassBlock2022, {color(gray)}Copyright {color(white)}[C]TBSTMC 2024.
-                """.formatted(version());
+    static String logo(JavaPlugin p) {
+        return ChatColor.translateAlternateColorCodes('&', """
+                &d ______   __  __   ______   ______   __  __
+                &d/\\  __ \\ /\\ \\/\\ \\ /\\  __ \\ /\\  == \\ /\\ \\/ /
+                &d\\ \\ \\/\\_\\\\ \\ \\_\\ \\\\ \\  __ \\\\ \\  __< \\ \\  _"-.
+                &d \\ \\___\\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\ \\_\\\\ \\_\\ \\_\\
+                &d  \\/___/_/ \\/_____/ \\/_/\\/_/ \\/_/ /_/ \\/_/\\/_/     &fv%s
+                &e ------------------------------------------------------------
+                &7 Artifact by &fGrassBlock2022, &7Copyright &f[C]TBSTMC 2024.        
+                """.formatted(p.getDescription().getVersion()));
     }
 
     static void sendStatsDisplay(CommandSender sender) {
@@ -123,7 +126,7 @@ public interface ProductInfo {
 
             TextSender.sendBlock(sender, TextBuilder.build(prefix + s.replace("{logo}", textLogo())));
         } else {
-            TextSender.sendBlock(sender, TextBuilder.build(s.replace("{logo}", logo())));
+            TextSender.sendBlock(sender, TextBuilder.build(s.replace("{logo}", logo(Quark.PLUGIN))));
         }
     }
 }

@@ -3,6 +3,7 @@ package org.tbstcraft.quark.framework.module;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.foundation.command.*;
+import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
 
 
 public abstract class CommandModule extends PackageModule implements CommandExecutor {

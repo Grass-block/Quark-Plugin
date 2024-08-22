@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.foundation.command;
+package org.tbstcraft.quark.foundation.command.execute;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

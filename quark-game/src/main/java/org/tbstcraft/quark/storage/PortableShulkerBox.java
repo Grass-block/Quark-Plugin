@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.tweaks;
+package org.tbstcraft.quark.storage;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Bukkit;

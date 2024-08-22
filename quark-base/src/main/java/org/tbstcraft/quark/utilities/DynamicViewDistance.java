@@ -14,6 +14,7 @@ import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.*;
 import org.tbstcraft.quark.foundation.command.assertion.NumberLimitation;
+import org.tbstcraft.quark.foundation.command.execute.CommandSuggestion;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -30,7 +31,7 @@ import java.util.List;
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(DynamicViewDistance.ViewDistanceCommand.class)
 @QuarkModule(version = "1.0.0", compatBlackList = {APIProfile.BUKKIT, APIProfile.ARCLIGHT, APIProfile.SPIGOT})
-public final class DynamicViewDistance extends PackageModule implements CommandExecutor {
+public final class DynamicViewDistance extends PackageModule implements org.tbstcraft.quark.foundation.command.execute.CommandExecutor {
     private final List<ViewDistanceStrategy> pipeline = new ArrayList<>();
 
     @Inject("-quark.viewdistance.other")
@@ -108,7 +109,7 @@ public final class DynamicViewDistance extends PackageModule implements CommandE
 
 
     @Override
-    public void execute(CommandExecution context) {
+    public void execute(org.tbstcraft.quark.foundation.command.execute.CommandExecution context) {
         String[] args = context.getArgs();
         CommandSender sender = context.getSender();
 

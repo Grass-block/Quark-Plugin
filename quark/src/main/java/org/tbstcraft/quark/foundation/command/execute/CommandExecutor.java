@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.foundation.command;
+package org.tbstcraft.quark.foundation.command.execute;
 
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.ApiStatus;

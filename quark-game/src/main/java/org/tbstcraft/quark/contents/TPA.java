@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.foundation.command.*;
+import org.tbstcraft.quark.foundation.command.execute.CommandSuggestion;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -51,7 +52,7 @@ public final class TPA extends PackageModule {
         }
 
         @Override
-        public void execute(CommandExecution context) {
+        public void execute(org.tbstcraft.quark.foundation.command.execute.CommandExecution context) {
             Player sender = context.requireSenderAsPlayer();
             Player target = context.requirePlayer(1);
 

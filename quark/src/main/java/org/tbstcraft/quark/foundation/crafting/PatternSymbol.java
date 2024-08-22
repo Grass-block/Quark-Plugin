@@ -3,7 +3,7 @@ package org.tbstcraft.quark.foundation.crafting;
 import org.bukkit.Material;
 
 @SuppressWarnings("ClassCanBeRecord")
-public class PatternSymbol {
+public final class PatternSymbol {
     private final char id;
     private final Material require;
 

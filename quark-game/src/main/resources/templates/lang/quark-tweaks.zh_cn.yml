@@ -8,7 +8,6 @@ language:
     freecam: 自由视角
     vein-miner: 连锁采集
     realistic-sleep: 真实睡眠
-    portable-shulker-box: 快速打开潜影盒
   vein-miner:
     tip: "{#gray}潜行挖掘可以一次采集相连放置的矿石，木头和树叶，当然，这也会消耗更多耐久。"
   fly-speed-modifier:

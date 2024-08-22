@@ -4,12 +4,16 @@ import me.gb2022.commons.container.MultiMap;
 import me.gb2022.commons.math.MathHelper;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.commons.reflect.method.MethodHandle;
+import me.gb2022.commons.reflect.method.MethodHandleO2;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Rail;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,46 +30,35 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
 
-import java.text.DecimalFormat;
-import java.util.Locale;
-
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule
 public final class MinecartController extends PackageModule {
     private static final String TASK_ID = "quark:minecart:simulate";
     private static final double MAX_SAFE_SPEED = 0.6;
     private static final double SIMULATED_GRAVITY = 0.05;
-
-    private final MultiMap<Minecart, VirtualMinecartAgent> agents = new MultiMap<>();
+    private static final MethodHandleO2<Entity, Float, Float> SET_ROTATION = MethodHandle.select((ctx) -> {
+        ctx.attempt(() -> Entity.class.getMethod("setRotation", float.class, float.class), (e, y, p) -> {
+            try {
+                e.setRotation(y, p);
+            } catch (UnsupportedOperationException ignored) {
+            }
+        });
+        ctx.dummy((e, y, p) -> {
+        });
+    });
 
     @Inject
     private LanguageEntry language;
 
-    private static boolean isRail(Material material) {
-        return material == Material.RAIL || material == Material.ACTIVATOR_RAIL || material == Material.POWERED_RAIL || material == Material.DETECTOR_RAIL;
-    }
-
-
     @Override
     public void enable() {
-        TaskService.timerTask(TASK_ID, 1, 1, () -> {
-            for (World world : Bukkit.getWorlds()) {
-                for (Minecart entity : world.getEntitiesByClass(Minecart.class)) {
-                    this.agents.computeIfAbsent(entity, VirtualMinecartAgent::new).tick();
-                }
-
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    tickPlayerMinecart(p);
-                }
-            }
-        });
+        TaskService.timerTask(TASK_ID, 1, 1, this::tick);
     }
 
     @Override
     public void disable() {
         TaskService.cancelTask(TASK_ID);
     }
-
 
     @EventHandler
     public void onUseMinecart(VehicleEnterEvent event) {
@@ -75,7 +68,7 @@ public final class MinecartController extends PackageModule {
         if (event.getEntered() instanceof Player p) {
             p.getInventory().setHeldItemSlot(4);
 
-            var agent = this.agents.get(m);
+            var agent = VirtualMinecartAgent.AGENTS.get(m);
 
             agent.setExpectedMaxSpeed(0);
             agent.setSpeedLimit(0);
@@ -95,23 +88,18 @@ public final class MinecartController extends PackageModule {
         }
     }
 
-
     private void tickPlayerMinecart(Player p) {
-        Minecart minecart = (Minecart) p.getVehicle();
-        if (minecart == null) {
+        if (!(p.getVehicle() instanceof Minecart minecart)) {
             return;
         }
 
-        VirtualMinecartAgent agent = agents.get(minecart);
-
-
-        int thrustLevel = p.getInventory().getHeldItemSlot() - 4;
-        double acceleration = getConfig().getDouble("thrust-" + thrustLevel + "-acceleration");
+        var agent = VirtualMinecartAgent.get(minecart);
+        var thrustLevel = p.getInventory().getHeldItemSlot() - 4;
+        var acceleration = getConfig().getDouble("thrust-" + thrustLevel + "-acceleration");
+        var speed = minecart.getMaxSpeed();
 
         agent.setSpeedLimit(getConfig().getDouble("max-speed"));
         agent.setAcceleration(acceleration / 20f);
-
-        var speed = minecart.getMaxSpeed();
 
         if (agent.expectedMaxSpeed == 0 && thrustLevel <= 0) {
             minecart.setVelocity(new Vector(0, 0, 0));
@@ -120,20 +108,19 @@ public final class MinecartController extends PackageModule {
             minecart.setVelocity(this.buildPlayerSpeedVector(p));
         }
 
-        this.buildPlayerUI(p, speed, acceleration, thrustLevel);
+        this.renderUI(p, speed, acceleration, thrustLevel);
     }
 
-    private void buildPlayerUI(Player p, double speed, double acceleration, int thrustLevel) {
-        DecimalFormat fmt = SharedObjects.NUMBER_FORMAT;
-        String accelerationColumn = String.valueOf(fmt.format(acceleration * 20));
-        String speedColumn = "%sm/s(%skm/h)".formatted(fmt.format(speed * 20), fmt.format(speed * 72));
-        String thrustLevelColumn = String.valueOf(thrustLevel);
+    private void renderUI(Player p, double speed, double acceleration, int thrustLevel) {
+        var fmt = SharedObjects.NUMBER_FORMAT;
+        var locale = Language.locale(p);
+        var template = Language.generateTemplate(this.getConfig(), "ui");
 
-        Locale locale = Language.locale(p);
+        var accelerationColumn = String.valueOf(fmt.format(acceleration * 20));
+        var speedColumn = "%sm/s(%skm/h)".formatted(fmt.format(speed * 20), fmt.format(speed * 72));
+        var thrustLevelColumn = String.valueOf(thrustLevel);
 
-        String template = Language.generateTemplate(this.getConfig(), "ui");
-
-        String runMode;
+        var runMode = "";
         if (thrustLevel > 0) {
             runMode = this.language.getMessage(locale, "run-mode-boost");
         } else if (thrustLevel == 0) {
@@ -153,8 +140,7 @@ public final class MinecartController extends PackageModule {
                 .replace("{acceleration}", accelerationColumn)
                 .replace("{level}", thrustLevelColumn);
 
-        String ui = this.language.buildTemplate(locale, template);
-        Players.sendActionBarTitle(p, ui);
+        Players.sendActionBarTitle(p, this.language.buildTemplate(locale, template));
     }
 
     private Vector buildPlayerSpeedVector(Player p) {
@@ -173,19 +159,44 @@ public final class MinecartController extends PackageModule {
         return vector;
     }
 
+    private void tick() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            tickPlayerMinecart(p);
+        }
+
+        for (World world : Bukkit.getWorlds()) {
+            for (Minecart minecart : world.getEntitiesByClass(Minecart.class)) {
+                if (minecart.getType() != EntityType.MINECART) {
+                    continue;
+                }
+
+                VirtualMinecartAgent.get(minecart).tick();
+            }
+        }
+    }
+
 
     public static final class VirtualMinecartAgent {
+        public static final MultiMap<Minecart, VirtualMinecartAgent> AGENTS = new MultiMap<>();
+
         private final Minecart minecart;
         private Location lastLocation;
         private boolean lastRailed;
         private Vector lastRecordedVelocity;
-
         private double expectedMaxSpeed = 0f;
         private double acceleration = 0.15f;
         private double speedLimit = 0.4f;
 
         public VirtualMinecartAgent(Minecart minecart) {
             this.minecart = minecart;
+        }
+
+        static VirtualMinecartAgent get(Minecart minecart) {
+            return AGENTS.computeIfAbsent(minecart, VirtualMinecartAgent::new);
+        }
+
+        private static boolean isRail(Material material) {
+            return material == Material.RAIL || material == Material.ACTIVATOR_RAIL || material == Material.POWERED_RAIL || material == Material.DETECTOR_RAIL;
         }
 
         public void tick() {
@@ -207,6 +218,18 @@ public final class MinecartController extends PackageModule {
 
             var railed = isRail(b1.getType()) || isRail(b2.getType());
             var velocity = new Vector(dx, dy, dz);
+
+            if (velocity.length() > 0) {
+                var yaw = Math.atan2(-velocity.getX(), velocity.getZ()) * (180 / Math.PI);
+                var pitch = Math.atan2(
+                        -velocity.getY(),
+                        Math.sqrt(velocity.getX() * velocity.getX() + velocity.getZ() * velocity.getZ())
+                                      ) * (180 / Math.PI);
+
+                for (Entity e : minecart.getPassengers()) {
+                    SET_ROTATION.invoke(e, (float) yaw, (float) pitch);
+                }
+            }
 
             if (minecart.isOnGround()) {
                 return;

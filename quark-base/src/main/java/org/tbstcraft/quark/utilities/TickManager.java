@@ -2,7 +2,7 @@ package org.tbstcraft.quark.utilities;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.foundation.command.CommandExecution;
+import org.tbstcraft.quark.foundation.command.execute.CommandExecution;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.command.assertion.NumberLimitation;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;

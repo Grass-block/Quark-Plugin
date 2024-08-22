@@ -15,8 +15,9 @@ import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.RemoteMessageService;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 @QuarkModule(version = "1.1.0")
@@ -45,7 +46,9 @@ public final class JoinQuitMessage extends PackageModule {
                 event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, (float) volume, 1);
             }
 
+            /*
             RemoteMessageService.message("proxy", "/transfer/join_server", buf -> BufferUtil.writeString(buf, event.getPlayer().getName()));
+             */
             return;
         }
         String player = event.getPlayer().getName();

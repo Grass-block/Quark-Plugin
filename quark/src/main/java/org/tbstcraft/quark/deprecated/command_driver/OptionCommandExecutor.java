@@ -1,7 +1,7 @@
-package org.tbstcraft.quark.foundation.command.driver;
+package org.tbstcraft.quark.deprecated.command_driver;
 
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.foundation.command.CommandExecutor;
+import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
