@@ -1,6 +1,8 @@
 package org.tbstcraft.quark.framework.module.standalone;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.tbstcraft.quark.data.config.ConfigContainer;
+import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.data.config.Configuration;
 import org.tbstcraft.quark.data.language.LanguageContainer;
 import org.tbstcraft.quark.data.language.LanguageEntry;
@@ -31,8 +33,8 @@ public abstract class StandaloneModule extends AbstractModule {
     }
 
     @Override
-    public ConfigurationSection createConfig() {
-        return new Configuration(this.provider, Identifiers.external(this.getId())).getConfig(Identifiers.external(this.getId()));
+    public ConfigEntry createConfig() {
+        return ConfigContainer.getInstance().entry(this.provider.getId(), Identifiers.external(this.getId()));
     }
 
     @Override

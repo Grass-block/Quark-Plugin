@@ -20,7 +20,7 @@ public interface AudienceService extends Service {
 
 
     static void init() {
-        BACKEND.set(create(Quark.PLUGIN));
+        BACKEND.set(create(Quark.getInstance()));
     }
 
     static void stop() {

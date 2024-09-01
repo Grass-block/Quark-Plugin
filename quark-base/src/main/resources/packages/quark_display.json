@@ -15,10 +15,14 @@
     "welcome-message": ".WelcomeMessage",
     "custom-scoreboard": ".CustomScoreboard",
     "chat-announce": ".ChatAnnounce",
-    "hover-display": ".HoverDisplay"
+    "hover-display": ".HoverDisplay",
+    "nickname": ".Nickname"
   },
   "languages": [
     "quark-display:zh_cn",
     "quark-display:en_us"
+  ],
+  "configs": [
+    "quark-display"
   ]
 }

@@ -31,12 +31,12 @@ public final class GarbageCleaner extends PackageModule implements Runnable {
     @Override
     public void enable() {
         TaskService.cancelTask("cleaner::timer");
-        ConfigurationSection config = this.getConfig();
-        this.whitelistedWorlds = config.getStringList("world-whitelist");
+        var config = this.getConfig();
+        this.whitelistedWorlds = config.getList("world-whitelist");
         this.cleaners.clear();
         if (config.getBoolean("clean-drops")) {
             boolean b1 = config.getBoolean("ignore-enchant-item");
-            this.addCleaner(new DropCleaner(config.getStringList("item-whitelist"), b1));
+            this.addCleaner(new DropCleaner(config.getList("item-whitelist"), b1));
 
         }
         if (config.getBoolean("clean-dense-entity")) {

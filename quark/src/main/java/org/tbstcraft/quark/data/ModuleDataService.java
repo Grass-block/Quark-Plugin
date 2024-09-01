@@ -55,7 +55,7 @@ public interface ModuleDataService extends Service {
         private final DataService backend;
 
         public ServiceImplementation(File f) {
-            this.backend = new DataService(Quark.LOGGER, f);
+            this.backend = new DataService(Quark.getInstance().getLogger(), f);
         }
 
         @Override

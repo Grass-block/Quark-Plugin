@@ -45,7 +45,7 @@ public final class BossbarAnnouncement extends PackageModule {
 
     @Override
     public void enable() {
-        ConfigurationSection config = this.getConfig();
+        var config = this.getConfig();
 
         NBTTagCompound tag = ModuleDataService.getEntry(this.getId());
         if (tag.hasKey("custom")) {

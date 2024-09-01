@@ -12,5 +12,8 @@
   ],
   "languages": [
     "quark-web:zh_cn"
+  ],
+  "configs": [
+    "quark-web"
   ]
 }

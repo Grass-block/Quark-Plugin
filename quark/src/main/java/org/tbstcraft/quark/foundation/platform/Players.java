@@ -53,9 +53,9 @@ public interface Players {
         ctx.dummy((p, a1) -> {
         });
     });
-    MethodHandleO1<Player, Location> TELEPORT = MethodHandle.select((ctx) -> {
-        ctx.attempt(() -> Player.class.getMethod("teleportAsync", Location.class), (p, l) -> p.teleportAsync(l));
-        ctx.attempt(() -> Player.class.getMethod("teleport", Location.class), Entity::teleport);
+    MethodHandleO1<Entity, Location> TELEPORT = MethodHandle.select((ctx) -> {
+        ctx.attempt(() -> Entity.class.getMethod("teleportAsync", Location.class), (p, l) -> p.teleportAsync(l));
+        ctx.attempt(() -> Entity.class.getMethod("teleport", Location.class), Entity::teleport);
     });
     MethodHandleO1<Player, Component> SEND_MESSAGE = MethodHandle.select((ctx) -> {
         ctx.attempt(() -> Player.class.getMethod("sendMessage", Component.class), (p, c) -> p.sendMessage(c));
@@ -108,7 +108,7 @@ public interface Players {
         SEND_MESSAGE.invoke(p, msg);
     }
 
-    static void teleport(Player p, Location loc) {
+    static void teleport(Entity p, Location loc) {
         TELEPORT.invoke(p, loc);
     }
 

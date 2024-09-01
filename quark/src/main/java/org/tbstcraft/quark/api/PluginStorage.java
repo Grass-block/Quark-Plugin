@@ -30,7 +30,7 @@ public interface PluginStorage {
                 register(name, type.getConstructor().newInstance());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
-                Quark.LOGGER.warning("cannot create instance of " + type.getSimpleName());
+                Quark.getInstance().getLogger().warning("cannot create instance of " + type.getSimpleName());
             }
         }
 

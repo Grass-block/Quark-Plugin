@@ -15,7 +15,7 @@ public final class AutoRunCommand extends PackageModule {
 
     @Override
     public void enable() {
-        ConfigurationSection configs = Objects.requireNonNull(this.getConfig().getConfigurationSection("commands"));
+        ConfigurationSection configs = Objects.requireNonNull(this.getConfig().getSection("commands"));
         for (String name : configs.getKeys(false)) {
             ConfigurationSection command = configs.getConfigurationSection(name);
             if (command == null) {
@@ -32,7 +32,7 @@ public final class AutoRunCommand extends PackageModule {
 
     @Override
     public void disable() {
-        ConfigurationSection configs = Objects.requireNonNull(this.getConfig().getConfigurationSection("commands"));
+        ConfigurationSection configs = Objects.requireNonNull(this.getConfig().getSection("commands"));
         for (String name : configs.getKeys(false)) {
             String taskId = "quark://auto_run_command/" + name;
             TaskService.cancelTask(taskId);

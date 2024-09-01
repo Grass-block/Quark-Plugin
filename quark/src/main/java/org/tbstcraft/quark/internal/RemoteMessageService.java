@@ -6,6 +6,7 @@ import me.gb2022.apm.remote.RemoteMessenger;
 import me.gb2022.apm.remote.connector.RemoteConnector;
 import org.bukkit.configuration.ConfigurationSection;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.framework.service.*;
 
 import java.net.InetSocketAddress;
@@ -24,8 +25,8 @@ public interface RemoteMessageService extends Service {
     ServiceHolder<RemoteMessageService> INSTANCE = new ServiceHolder<>();
 
     @ServiceProvider
-    static RemoteMessageService create(ConfigurationSection config) {
-        if (!config.getBoolean("enable", true)) {
+    static RemoteMessageService create(ConfigEntry config) {
+        if (!config.getBoolean("enable")) {
             return new PHImpl();
         }
 
@@ -142,7 +143,7 @@ public interface RemoteMessageService extends Service {
             APMLoggerManager.setLoggerCreator((s) -> new Logger(s, null) {
                 @Override
                 public void log(LogRecord record) {
-                    Quark.LOGGER.log(record);
+                    Quark.getInstance().getLogger().log(record);
                 }
             });
             this.messenger = new RemoteMessenger(proxy, id, address, key);

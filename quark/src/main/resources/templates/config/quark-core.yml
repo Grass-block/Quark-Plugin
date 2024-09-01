@@ -1,26 +1,24 @@
 config:
-  task:
-    async: true
-    threads: 16
   disabled-service:
-    - http-service
-    - remote-message-service
-  smtp-service:
-    server: /{$smtp-server}
-    username: /{$smtp-user}
-    password: /{$smtp-password}
-  http-service:
-    host: 127.0.0.1
-    port: 8125
-    backlog: 10
+    values: #disable service(will be rejected)here
+      - http-service
+      - remote-message-service
+  smtp-service: #general SMTP configuration
+    server: smtp.example.com:465 #address and port
+    username: ExampleUser #user
+    password: ExamplePassword #password
+  http-service: #where holds all http services
+    host: 127.0.0.1 #bind address
+    port: 8125 #bind port
+    backlog: 10 #ref:sun.http.httpserver->backlog
     threads: 3
   remote-message-service:
-    enable: /{$proxy}
-    identifier: /{$proxy-id}
-    proxy: /{$proxy-exchange-mode}
-    host: /{$proxy-exchange-host}
-    port: /{$proxy-exchange-port}
-    key: /{$proxy-exchange-key}
+    enable: false
+    identifier: example_server #the unique id("address") in an APM network
+    proxy: false #is server join network as a exchanger(router)
+    host: apm.example.com #address for APM connection
+    port: 25639 #port for APM connection
+    key: 07007爱炉管07007爱炉管07007爱炉管07007爱炉管07007爱炉管07007爱炉管 #fill in data in quark-proxy velocity-end config.
   locale:
-    join-delay: 20
+    join-delay: 20 #time before recalculate player's locale
 

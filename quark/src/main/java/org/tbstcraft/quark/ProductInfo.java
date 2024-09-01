@@ -20,7 +20,7 @@ public interface ProductInfo {
 
 
     static String version() {
-        return Quark.PLUGIN.getDescription().getVersion();
+        return Quark.getInstance().getDescription().getVersion();
     }
 
 
@@ -87,7 +87,7 @@ public interface ProductInfo {
                   {#gray}instance_id: %s
                   {#gray}install_id: %s
                 {#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一
-                """.formatted(f, Quark.CORE_UA, Quark.PLUGIN.getInstanceUUID(), ProductService.getSystemIdentifier());
+                """.formatted(f, Quark.CORE_UA, Quark.getInstance().getInstanceUUID(), ProductService.getSystemIdentifier());
         TextSender.sendBlock(sender, TextBuilder.build(PlaceHolderService.format(s, PlaceHolders.quarkStats())));
     }
 
@@ -126,7 +126,7 @@ public interface ProductInfo {
 
             TextSender.sendBlock(sender, TextBuilder.build(prefix + s.replace("{logo}", textLogo())));
         } else {
-            TextSender.sendBlock(sender, TextBuilder.build(s.replace("{logo}", logo(Quark.PLUGIN))));
+            TextSender.sendBlock(sender, TextBuilder.build(s.replace("{logo}", logo(Quark.getInstance()))));
         }
     }
 }

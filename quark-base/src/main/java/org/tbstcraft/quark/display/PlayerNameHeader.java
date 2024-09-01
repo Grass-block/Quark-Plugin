@@ -221,7 +221,7 @@ public final class PlayerNameHeader extends CommandModule {
 
         @Override
         public void enable() {
-            TaskService.timerTask("render-name-tags", 0, 20, this::render);
+            TaskService.timerTask("render-name-tags", 1, 20, this::render);
         }
 
         @Override
@@ -298,7 +298,7 @@ public final class PlayerNameHeader extends CommandModule {
     public static final class ProtocolLibNameTags extends ModuleComponent<PlayerNameHeader> {
         private final ProtocolManager service = ProtocolLibrary.getProtocolManager();
 
-        private final PacketListener entityMeta = new PacketAdapter(Quark.PLUGIN, PacketType.Play.Server.ENTITY_METADATA) {
+        private final PacketListener entityMeta = new PacketAdapter(Quark.getInstance(), PacketType.Play.Server.ENTITY_METADATA) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 int entityId = event.getPacket().getIntegers().read(0);
@@ -324,7 +324,7 @@ public final class PlayerNameHeader extends CommandModule {
             }
         };
 
-        private final PacketListener playerData = new PacketAdapter(Quark.PLUGIN, PacketType.Play.Server.PLAYER_INFO) {
+        private final PacketListener playerData = new PacketAdapter(Quark.getInstance(), PacketType.Play.Server.PLAYER_INFO) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 var packet = event.getPacket();

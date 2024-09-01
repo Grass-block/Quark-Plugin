@@ -2,6 +2,7 @@ package org.tbstcraft.quark.data.language;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.internal.LocaleService;
 import org.tbstcraft.quark.util.Identifiers;
 
@@ -36,17 +37,26 @@ public interface Language {
         }
 
         List<String> list = section.getStringList(id);
-        StringBuilder sb = new StringBuilder();
-        int i = 0;
-        for (String s2 : list) {
-            i++;
-            sb.append(s2);
-            if (i < list.size()) {
-                sb.append("\n");
+        return buildList(list, preprocessors);
+    }
+
+    @SafeVarargs
+    static String generateTemplate(ConfigEntry entry, String id, Function<String, String>... preprocessors) {
+        id = Identifiers.external(id);
+        if (entry.isType(id, String.class)) {
+            var result = entry.getString(id);
+            for (Function<String, String> preprocessor : preprocessors) {
+                result = preprocessor.apply(result);
             }
+            return result;
         }
 
-        String result = sb.toString();
+        List<String> list = entry.getList(id);
+        return buildList(list, preprocessors);
+    }
+
+    static String buildList(List<String> list, Function<String, String>[] preprocessors) {
+        String result = list2string(list);
         for (Function<String, String> preprocessor : preprocessors) {
             result = preprocessor.apply(result);
         }
@@ -59,5 +69,18 @@ public interface Language {
             s = s.replace("{" + i + "}", format[i].toString());
         }
         return s.formatted(format);
+    }
+
+    static String list2string(List<String> list) {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for (String ss : list) {
+            i++;
+            sb.append(ss);
+            if (i < list.size()) {
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
     }
 }

@@ -1,3 +1,41 @@
+### 0.64.11
+
+[core]
+- fixed ChatRenderer render issue
+- 
+
+### 0.64.10
+[core]
+- adding new configurations API
+- unused config will no longer be auto created
+- packages should now provide config registry entry
+- plugin will now reload on main thread
+- adding finalize tasks API
+- fixed exception when loading Full jar on renamed core file.
+
+[minecart-controller]
+- adding minecart(only normal minecart) movement realistic simulation
+- minecart speed will be set to 0 when player entered
+- minecart will automatically detect environment and limit its speed when entering slips
+
+[player-name-header]
+- name prefix and postfixes will now appear in display name
+- name prefix and postfixes will now appear in every minecraft player component(death message...)
+
+[custom-scoreboard]
+- adding a BELOW_NAME column(for 1.20.4+ server)
+
+[+nickname] (require protocol lib)
+- adding a nickname module[beta]
+
+[hover-display]
+- display texts can now have [Space] inside
+- display texts can now be saved and reloaded.
+
+[version-check]
+- change version calculation method
+- fix announce format error when player join.
+
 ### 0.63.16
 
 - fixed surrounding-refresh radius check bypass

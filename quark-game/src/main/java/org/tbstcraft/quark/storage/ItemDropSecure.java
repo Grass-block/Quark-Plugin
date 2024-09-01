@@ -31,7 +31,7 @@ public final class ItemDropSecure extends PackageModule implements org.tbstcraft
             return;
         }
 
-        for (var s : getConfig().getStringList("list")) {
+        for (var s : getConfig().getList("list")) {
             if (!id.contains(s)) {
                 continue;
             }

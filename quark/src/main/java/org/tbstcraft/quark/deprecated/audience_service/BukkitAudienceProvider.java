@@ -6,6 +6,6 @@ import org.tbstcraft.quark.Quark;
 
 public class BukkitAudienceProvider extends WrappedAudienceProvider{
     public BukkitAudienceProvider() {
-        super(BukkitAudiences.create(Quark.PLUGIN));
+        super(BukkitAudiences.create(Quark.getInstance()));
     }
 }

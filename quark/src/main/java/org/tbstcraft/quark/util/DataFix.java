@@ -18,12 +18,12 @@ public interface DataFix {
                 return;
             }
 
-            Quark.LOGGER.info("fixing up folder %s -> %s".formatted(origin, dest));
+            Quark.getInstance().getLogger().info("fixing up folder %s -> %s".formatted(origin, dest));
 
             File folder = new File(base + dest);
             if (!folder.exists()) {
                 if (folder.mkdirs()) {
-                    Quark.LOGGER.info("created new folder %s".formatted(dest));
+                    Quark.getInstance().getLogger().info("created new folder %s".formatted(dest));
                 }
             }
 
@@ -32,15 +32,15 @@ public interface DataFix {
                 try {
                     Files.copy(f, moved);
                 } catch (IOException e) {
-                    Quark.LOGGER.warning("failed to move file %s".formatted(f.getName()));
+                    Quark.getInstance().getLogger().warning("failed to move file %s".formatted(f.getName()));
                 }
                 if (!f.delete()) {
-                    Quark.LOGGER.warning("failed to remove file %s".formatted(f.getName()));
+                    Quark.getInstance().getLogger().warning("failed to remove file %s".formatted(f.getName()));
                 }
             }
 
             if (legacyFolder.delete()) {
-                Quark.LOGGER.info("removed folder %s".formatted(origin));
+                Quark.getInstance().getLogger().info("removed folder %s".formatted(origin));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -55,18 +55,18 @@ public interface DataFix {
             return;
         }
 
-        Quark.LOGGER.info("fixing up folder %s -> %s".formatted(origin, dest));
+        Quark.getInstance().getLogger().info("fixing up folder %s -> %s".formatted(origin, dest));
 
         File des = new File(base + dest);
 
         try {
             Files.copy(org, des);
         } catch (IOException e) {
-            Quark.LOGGER.warning("failed to move file %s".formatted(origin));
+            Quark.getInstance().getLogger().warning("failed to move file %s".formatted(origin));
         }
 
         if (org.delete()) {
-            Quark.LOGGER.info("removed file %s".formatted(dest));
+            Quark.getInstance().getLogger().info("removed file %s".formatted(dest));
         }
     }
 }

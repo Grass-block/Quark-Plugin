@@ -127,5 +127,15 @@ public final class CustomLanguagePackLoader extends PackageModule {
         public String toString() {
             return super.toString() + "/" + this.uuid;
         }
+
+        @Override
+        public void createTemplateFile() {
+            //unsupported
+        }
+
+        @Override
+        public File createStorageFile(boolean enforce) {
+            return null;//unsupported
+        }
     }
 }

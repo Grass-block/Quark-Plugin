@@ -12,8 +12,9 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.tbstcraft.quark.data.language.Language;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -21,16 +22,15 @@ import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 import org.tbstcraft.quark.internal.task.TaskService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("deprecation")
 @AutoRegister(ServiceType.EVENT_LISTEN)
-@QuarkModule(version = "0.1", compatBlackList = {APIProfile.FOLIA})
+@QuarkModule(version = "0.1")
 public final class CustomScoreboard extends PackageModule {
     private final Map<Player, Scoreboard> scoreboards = new HashMap<>();
+
+    private Set<Player> sessions = new HashSet<>();
 
     static Objective saveGetObjective(String id, Scoreboard scoreboard) {
         Objective obj = scoreboard.getObjective(id);
@@ -41,9 +41,19 @@ public final class CustomScoreboard extends PackageModule {
     }
 
     @Override
+    public void checkCompatibility() throws APIIncompatibleException {
+        Compatibility.requireClass(() -> Class.forName("org.bukkit.scoreboard.Scoreboard"));
+    }
+
+    @Override
     public void enable() {
-        TaskService.timerTask("quark://scoreboard/update", 0, 20, () -> {
-            for (Player p : Bukkit.getOnlinePlayers()) {
+        this.sessions.addAll(Bukkit.getOnlinePlayers());
+
+        TaskService.timerTask("quark://scoreboard/update", 1, 20, () -> {
+            if (this.sessions == null) {
+                return;
+            }
+            for (Player p : new HashSet<>(this.sessions)) {
                 setScoreboard(p);
             }
         });
@@ -51,6 +61,7 @@ public final class CustomScoreboard extends PackageModule {
 
     @Override
     public void disable() {
+        this.sessions = null;
         TaskService.cancelTask("quark://scoreboard/update");
         for (Player p : Bukkit.getOnlinePlayers()) {
             unsetScoreboard(p);
@@ -59,11 +70,19 @@ public final class CustomScoreboard extends PackageModule {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        if (this.sessions == null) {
+            return;
+        }
+        this.sessions.remove(event.getPlayer());
         unsetScoreboard(event.getPlayer());
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        if (this.sessions == null) {
+            return;
+        }
+        this.sessions.add(event.getPlayer());
         setScoreboard(event.getPlayer());
     }
 
@@ -123,6 +142,9 @@ public final class CustomScoreboard extends PackageModule {
     }
 
     private void unsetScoreboard(Player p) {
+        if (!this.scoreboards.containsKey(p)) {
+            return;
+        }
         this.scoreboards.get(p).clearSlot(DisplaySlot.SIDEBAR);
         this.scoreboards.remove(p);
     }

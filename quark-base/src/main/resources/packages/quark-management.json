@@ -11,5 +11,8 @@
   },
   "languages": [
     "quark-management:zh_cn"
+  ],
+  "configs": [
+    "quark-management"
   ]
 }

@@ -20,9 +20,7 @@ public interface PackageInitializer {
         this.onInitialize(owner);
     }
 
-    default Configuration createConfig(AbstractPackage pkg) {
-        return new Configuration(pkg.getOwner(), pkg.getId());
-    }
+    Set<Configuration> createConfig(AbstractPackage pkg);
 
     Set<LanguagePack> createLanguagePack(AbstractPackage pkg);
 

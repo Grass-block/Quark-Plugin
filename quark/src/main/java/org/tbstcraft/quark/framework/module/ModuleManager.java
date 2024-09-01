@@ -31,7 +31,7 @@ public interface ModuleManager extends Service {
 
     @ServiceInject
     static void start() {
-        INSTANCE.set(new Impl(Quark.PLUGIN));
+        INSTANCE.set(new Impl(Quark.getInstance()));
         INSTANCE.get().onEnable();
     }
 
@@ -199,7 +199,7 @@ public interface ModuleManager extends Service {
         public void onDisable() {
             this.saveStatus();
             for (String id : new ArrayList<>(this.getModules().keySet())) {
-                this.unregister(id, Quark.LOGGER);
+                this.unregister(id, Quark.getInstance().getLogger());
             }
         }
 
@@ -326,7 +326,7 @@ public interface ModuleManager extends Service {
                 boolean status = false;
 
                 if (m.getDescriptor().defaultEnable()) {
-                    status = Quark.PLUGIN.getConfig().getBoolean("config.default-status.module");
+                    status = Quark.getInstance().getConfig().getBoolean("config.default-status.module");
                 }
 
                 this.statusMap.put(m.getFullId(), status ? "enabled" : "disabled");

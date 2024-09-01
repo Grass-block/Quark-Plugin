@@ -11,7 +11,7 @@ public abstract class SingledPackageProvider extends JavaPlugin implements Packa
 
     @Override
     public void onEnable() {
-        this.coreInstanceId = Quark.PLUGIN.getInstanceUUID();
+        this.coreInstanceId = Quark.getInstance().getInstanceUUID();
         if (!this.isCoreExist()) {
             return;
         }

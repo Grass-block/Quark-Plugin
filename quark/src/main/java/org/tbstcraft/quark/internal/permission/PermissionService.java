@@ -30,7 +30,7 @@ public interface PermissionService extends Service {
 
         if (permission == null) {
             if (codec.matches("^[+\\-!].*")) {
-                Quark.LOGGER.warning("created unregistered permission " + codec);
+                Quark.getInstance().getLogger().warning("created unregistered permission " + codec);
                 permission = createPermissionObject(codec);
             }
         }
@@ -99,7 +99,7 @@ public interface PermissionService extends Service {
                 try {
                     Bukkit.getPluginManager().addPermission(permission);
                 }catch (Exception ignored){
-                    //Quark.LOGGER.warning("duplicated permission:" + perm);
+                    //Quark.getInstance().getLogger().warning("duplicated permission:" + perm);
                 }
             }
 

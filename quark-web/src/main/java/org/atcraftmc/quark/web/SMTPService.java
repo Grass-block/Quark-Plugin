@@ -1,7 +1,7 @@
 package org.atcraftmc.quark.web;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.*;
 
@@ -16,7 +16,7 @@ public interface SMTPService extends Service {
     ServiceHolder<SMTPService> INSTANCE = new ServiceHolder<>();
 
     @ServiceProvider
-    static SMTPService create(ConfigurationSection section) {
+    static SMTPService create(ConfigEntry section) {
         return new ServiceImplementation(section);
     }
 
@@ -29,9 +29,9 @@ public interface SMTPService extends Service {
 
 
     final class ServiceImplementation implements SMTPService {
-        private final ConfigurationSection config;
+        private final ConfigEntry config;
 
-        public ServiceImplementation(ConfigurationSection config) {
+        public ServiceImplementation(ConfigEntry config) {
             this.config = config;
         }
 
@@ -73,7 +73,7 @@ public interface SMTPService extends Service {
                 return true;
             } catch (Throwable mex) {
                 mex.printStackTrace();
-                Quark.LOGGER.severe(mex.getMessage());
+                Quark.getInstance().getLogger().severe(mex.getMessage());
                 return false;
             }
         }

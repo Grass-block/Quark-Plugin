@@ -119,6 +119,9 @@ public final class Waypoint extends CommandModule {
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
+        if(!this.deathPoints.containsKey(event.getPlayer().getName())){
+            return;
+        }
         this.getLanguage().sendMessage(event.getPlayer(), "back-hint");
     }
 

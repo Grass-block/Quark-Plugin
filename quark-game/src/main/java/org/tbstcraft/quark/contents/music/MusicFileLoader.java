@@ -58,7 +58,7 @@ public interface MusicFileLoader {
                         }).result(b -> {
                             try {
                                 if (f.createNewFile()) {
-                                    Quark.LOGGER.info("cached music file %s.".formatted(f.getName()));
+                                    Quark.getInstance().getLogger().info("cached music file %s.".formatted(f.getName()));
                                 }
                                 FileOutputStream stream = new FileOutputStream(f);
                                 stream.write(BufferUtil.readArray(b));

@@ -2,6 +2,7 @@ package org.tbstcraft.quark.chat;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -13,12 +14,12 @@ import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.CachedInfo;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
@@ -26,12 +27,56 @@ import java.util.regex.Pattern;
 @QuarkCommand(name = "chat-filter", permission = "-quark.config.chatfilter")
 public final class ChatFilter extends CommandModule {
     private final Set<Pattern> patterns = new HashSet<>();
+    private final Set<String> flagged = new HashSet<>();
 
     @Inject
     private LanguageEntry language;
 
     @Inject("chat-filter;false")
     private AssetGroup rules;
+
+    public static CheckResult filter(String msg, boolean cover, char coverChar, Set<Pattern> pattern) {
+        var coverSource = String.valueOf(coverChar);
+
+        var buf = new StringBuilder();
+        var res = new StringBuilder();
+        var keywords = new HashSet<String>();
+
+        for (char c : msg.toCharArray()) {
+            if (c == '\ufffb') {
+                res.append(buf);
+                buf.delete(0, buf.length());
+                continue;
+            }
+            if (c != '\ufffa') {
+                buf.append(c);
+                continue;
+            }
+
+            var block = buf.toString();
+            buf.delete(0, buf.length());
+
+            for (var p : pattern) {
+                var m = p.matcher(block);
+
+                while (m.find()) {
+                    var match = m.group();
+
+                    keywords.add(match);
+
+                    if (!cover) {
+                        continue;
+                    }
+
+                    block = block.replace(match, coverSource.repeat(match.length()));
+                }
+            }
+
+            res.append(block);
+        }
+
+        return new CheckResult(keywords, msg.replace("\ufffa", "").replace("\ufffb", ""), res.toString());
+    }
 
     @Override
     public void enable() {
@@ -70,61 +115,44 @@ public final class ChatFilter extends CommandModule {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onChatting(AsyncPlayerChatEvent event) {
-        String msg = this.filter(event.getMessage());
-        event.setMessage(msg);
+    public void handle(AsyncPlayerChatEvent event) {
+        event.setMessage(this.process(event.getMessage()));
     }
 
     @EventHandler
-    public void detectCommand(PlayerCommandPreprocessEvent event) {
-        if (!(event.getMessage().contains("say") || event.getMessage().contains("tell"))) {
+    public void handle(PlayerCommandPreprocessEvent event) {
+        var commands = getConfig().getList("handled-commands");
+
+        var process = false;
+        for (var c : commands) {
+            if (event.getMessage().startsWith('/' + c)) {
+                process = true;
+                break;
+            }
+        }
+
+        if (!process) {
             return;
         }
-        event.setMessage(this.filter(event.getMessage()));
+
+        event.setMessage(this.process(event.getMessage()));
     }
 
-    public String filter(String msg) {
-        msg = msg.replace("\ufffa", "").replace("\ufffb", "");
+    @EventHandler
+    public void onChatReported(ChatReport.ChatReportedEvent event) {
+        if (this.flagged.contains(event.getUuid())) {
+            this.getLanguage().sendMessage(Bukkit.getPlayerExact(event.getSender()), "reported-warn", event.getShorted());
 
-        for (String name : CachedInfo.getAllPlayerNames()) {
-            msg = msg.replaceAll("(?<!\ufffa[^\ufffb])" + name + "+(?![^\ufffa]*?\ufffb)", "\ufffa" + name + "\ufffb");
-        }
-
-        msg = "\ufffb" + msg + "\ufffa";
-
-        var buffer = new StringBuilder();
-        var result = new StringBuilder();
-
-        for (char c : msg.toCharArray()) {
-
-            if (c == '\ufffa') {
-                var m = buffer.toString();
-                buffer.delete(0, buffer.length());
-
-                for (Pattern pattern : this.patterns) {
-                    Matcher matcher = pattern.matcher(m);
-
-                    while (matcher.find()) {
-                        String match = matcher.group();
-                        m = m.replace(match, "*".repeat(match.length()));
-                    }
-                }
-
-                result.append(m);
-
-                continue;
-            }
-            if (c == '\ufffb') {
-                result.append(buffer);
-                buffer.delete(0, buffer.length());
+            if (!this.getConfig().getBoolean("punish")) {
+                event.setOutcome(this.getLanguage().item("outcome-warn"));
+                return;
             }
 
-            buffer.append(c);
+            var command = getConfig().getString("punish-command").replace("{player}", event.getSender());
+            TaskService.runTask(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
 
-
+            event.setOutcome(this.getLanguage().item("outcome-punished"));
         }
-
-        return result.toString().replace("\ufffa","").replace("\ufffb","");
     }
 
     @Override
@@ -148,6 +176,39 @@ public final class ChatFilter extends CommandModule {
         if (buffer.length == 1) {
             tabList.add("reload");
             tabList.add("save");
+        }
+    }
+
+
+    public String process(String msg) {
+        var exceptPlayer = getConfig().getBoolean("except-player");
+        var cover = getConfig().getBoolean("cover");
+        var coverChar = getConfig().getString("cover-char").charAt(0);
+
+        msg = msg.replace("\ufffa", "").replace("\ufffb", "");
+
+        if (exceptPlayer) {
+            for (String name : CachedInfo.getAllPlayerNames()) {
+                msg = msg.replaceAll("(?<!\ufffa[^\ufffb])" + name + "+(?![^\ufffa]*?\ufffb)", "\ufffa" + name + "\ufffb");
+            }
+
+            msg = "\ufffb" + msg + "\ufffa";
+        }
+
+        var result = filter(msg, cover, coverChar, this.patterns);
+        var out = result.processed();
+
+        if (result.flagged()) {
+            this.flagged.add(ChatReport.hash(out));
+        }
+
+        return out;
+    }
+
+
+    public record CheckResult(Set<String> matched, String origin, String processed) {
+        public boolean flagged() {
+            return !this.matched.isEmpty();
         }
     }
 }

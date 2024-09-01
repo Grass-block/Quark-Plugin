@@ -49,7 +49,7 @@ public final class QuarkPluginCommand extends CoreCommand {
                 this.getLanguage().sendMessage(sender, "platform-unsupported");
                 return;
             }
-            if (Quark.PLUGIN.isFastBoot()) {
+            if (Quark.getInstance().isFastBoot()) {
                 this.getLanguage().sendMessage(sender, "fastboot-unsupported");
                 return;
             }

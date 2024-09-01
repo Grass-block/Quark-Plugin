@@ -16,8 +16,8 @@ public abstract class MultiPackageProvider extends JavaPlugin implements Package
 
     @Override
     public void onEnable() {
-        this.coreInstanceId = Quark.PLUGIN.getInstanceUUID();
-        if(!this.isCoreExist()){
+        this.coreInstanceId = Quark.getInstance().getInstanceUUID();
+        if (!this.isCoreExist()) {
             return;
         }
         this.packages = createPackages();
@@ -28,7 +28,7 @@ public abstract class MultiPackageProvider extends JavaPlugin implements Package
 
     @Override
     public void onDisable() {
-        if(!this.isCoreContextMatch()){
+        if (!this.isCoreContextMatch()) {
             return;
         }
         for (AbstractPackage pkg : this.packages) {

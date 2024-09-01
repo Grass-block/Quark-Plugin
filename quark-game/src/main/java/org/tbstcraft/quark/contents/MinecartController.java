@@ -95,10 +95,10 @@ public final class MinecartController extends PackageModule {
 
         var agent = VirtualMinecartAgent.get(minecart);
         var thrustLevel = p.getInventory().getHeldItemSlot() - 4;
-        var acceleration = getConfig().getDouble("thrust-" + thrustLevel + "-acceleration");
+        var acceleration = getConfig().getFloat("thrust-" + thrustLevel + "-acceleration");
         var speed = minecart.getMaxSpeed();
 
-        agent.setSpeedLimit(getConfig().getDouble("max-speed"));
+        agent.setSpeedLimit(getConfig().getFloat("max-speed"));
         agent.setAcceleration(acceleration / 20f);
 
         if (agent.expectedMaxSpeed == 0 && thrustLevel <= 0) {
@@ -131,7 +131,7 @@ public final class MinecartController extends PackageModule {
         if (speed == 0) {
             runMode = this.language.getMessage(locale, "run-mode-stop");
         }
-        if (speed == getConfig().getDouble("max-speed")) {
+        if (speed == getConfig().getFloat("max-speed")) {
             runMode = this.language.getMessage(locale, "run-mode-run");
         }
         template = template.replace("{run-mode}", runMode);

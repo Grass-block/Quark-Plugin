@@ -20,7 +20,7 @@ public final class BukkitTaskManager extends TaskManager {
         try {
             BukkitTaskWrapper.once(UUID.randomUUID().toString(), this, task).runTask(this.getPlugin());
         } catch (IllegalPluginAccessException e) {
-            task.run();
+            TaskService.registerFinalizeTask(task);
         }
     }
 

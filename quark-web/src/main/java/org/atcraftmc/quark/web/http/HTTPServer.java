@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 public final class HTTPServer {
-    private final Logger logger = Quark.PLUGIN.getLogger();
+    private final Logger logger = Quark.getInstance().getLogger();
     public ExecutorService threadPool;
     private HttpServer server;
     private boolean running = false;

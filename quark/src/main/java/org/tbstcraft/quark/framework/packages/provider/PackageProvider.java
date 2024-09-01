@@ -37,7 +37,7 @@ public interface PackageProvider {
             return false;
         }
 
-        return Quark.isCoreAvailable();
+        return Quark.getInstance().isInitialized();
     }
 
     Logger getLogger();

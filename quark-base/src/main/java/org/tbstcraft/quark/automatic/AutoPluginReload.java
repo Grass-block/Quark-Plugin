@@ -10,7 +10,7 @@ import org.tbstcraft.quark.internal.task.TaskService;
 public final class AutoPluginReload extends PackageModule {
     @Override
     public void enable() {
-        ConfigurationSection reloadItems = this.getConfig().getConfigurationSection("reload-items");
+        ConfigurationSection reloadItems = this.getConfig().getSection("reload-items");
         String template = this.getConfig().getString("reload-command");
         if (template == null) {
             return;

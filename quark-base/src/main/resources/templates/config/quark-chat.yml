@@ -16,3 +16,10 @@ config:
     template: "{#gray}[NPC]{#white}{name} {#gold}: {#gray}{text}"
     inactive-time: 8000
     sound: true
+  chat-filter:
+    except-player: true #player name will be excepted from process.
+    cover: false #detected keywords will not be replaced, but still be detected.
+    cover-char: '*' #using this char to replace keyword.
+    handled-commands: [ "say","tell","mail" ] #commands will be handled as they attempt to send message.
+    punish: true #will punish player.
+    punish-command: "mute {player} 3600 {#yellow}[quark]{#red}BadChatBehavior" #punish player using this command. support other plugins.

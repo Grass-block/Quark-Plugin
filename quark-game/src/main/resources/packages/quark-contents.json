@@ -18,5 +18,8 @@
   },
   "languages": [
     "quark-contents:zh_cn"
+  ],
+  "configs": [
+    "quark-contents"
   ]
 }

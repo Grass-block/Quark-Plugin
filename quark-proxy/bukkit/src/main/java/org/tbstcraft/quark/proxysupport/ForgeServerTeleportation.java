@@ -37,7 +37,7 @@ public final class ForgeServerTeleportation extends CommandModule {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        ConfigurationSection section = this.getConfig().getConfigurationSection("servers");
+        ConfigurationSection section = this.getConfig().getSection("servers");
 
         String host = args[0];
 
@@ -58,7 +58,7 @@ public final class ForgeServerTeleportation extends CommandModule {
 
     @Override
     public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-        ConfigurationSection section = this.getConfig().getConfigurationSection("servers");
+        ConfigurationSection section = this.getConfig().getSection("servers");
         if (buffer.length == 1) {
             tabList.addAll(Objects.requireNonNull(section).getKeys(false));
         }

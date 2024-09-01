@@ -18,5 +18,8 @@
   "languages": [
     "quark-chat:zh_cn",
     "quark-chat:en_us"
+  ],
+  "configs": [
+    "quark-chat"
   ]
 }

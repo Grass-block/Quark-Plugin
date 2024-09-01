@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.framework.module.component;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.FunctionalComponent;
@@ -23,7 +24,7 @@ public abstract class ModuleComponent<E extends AbstractModule> implements Funct
         return this.parent.getLanguage();
     }
 
-    protected ConfigurationSection getConfig() {
+    protected ConfigEntry getConfig() {
         return this.parent.getConfig();
     }
 }

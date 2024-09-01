@@ -2,6 +2,7 @@ package org.atcraftmc.quark.web;
 
 import org.atcraftmc.quark.web.http.HTTPServer;
 import org.bukkit.configuration.ConfigurationSection;
+import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.framework.service.*;
 
 @QuarkService(id = "http-service")
@@ -10,7 +11,7 @@ public interface HttpService extends Service {
     ServiceHolder<HttpService> INSTANCE = new ServiceHolder<>();
 
     @ServiceProvider
-    static HttpService create(ConfigurationSection config) {
+    static HttpService create(ConfigEntry config) {
         return new ServiceImplementation(config);
     }
 
@@ -22,9 +23,9 @@ public interface HttpService extends Service {
 
     final class ServiceImplementation implements HttpService, Service {
         private final HTTPServer server = new HTTPServer();
-        private final ConfigurationSection config;
+        private final ConfigEntry config;
 
-        public ServiceImplementation(ConfigurationSection config) {
+        public ServiceImplementation(ConfigEntry config) {
             this.config = config;
         }
 

@@ -9,10 +9,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
 import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -44,15 +44,7 @@ public final class ModrinthVersionCheck extends PackageModule implements Command
     }
 
     private int calculateVersion(String version) {
-        String[] subVersions = version.split("\\.");
-
-        int num = 0;
-
-        for (int i = subVersions.length - 1; i >= 0; i--) {
-            num += (int) (Integer.parseInt(subVersions[i]) * Math.pow(1000, i));
-        }
-
-        return num;
+        return Integer.parseInt(version.replaceAll("\\.", ""), 10);
     }
 
     public void check(BiConsumer<TriState, String> callback) {
@@ -90,7 +82,7 @@ public final class ModrinthVersionCheck extends PackageModule implements Command
         }
         if (this.cachedState == TriState.TRUE) {
             String page = VERSION_PAGE.formatted(this.cachedVersion);
-            getLanguage().sendMessage(event.getPlayer(), "require", page);
+            getLanguage().sendMessage(event.getPlayer(), "require", cachedVersion, page);
         }
     }
 

@@ -25,12 +25,6 @@ language:
     tip:
       - '{#gray}In chat, sign, and commands (partial supported), you can use rich text tags to add more effects to the text.'
       - '{#gray}Click {click(link,https://www.atforever.world/wiki.html#quark/template-engine.md)}[here]{;}{#gray} to learn more.'
-  chat-mute:
-    message-banned: '[{#yellow}System{#white}]{#gray}You are muted.'
-    add: '[{#light-purple}System{#white}]{#gray}Successfully added player {#var} to the list.'
-    add-target: '[{#yellow}System{#white}]{#gray}You have been muted by admin {#var}!'
-    remove: '[{#light-purple}System{#white}]{#gray}Successfully removed player {#var} from the list.'
-    remove-target: '[{green}System{#white}]{#gray}You have been unmuted by admin {#var}!'
   chat-format:
     op-header: '{#light-purple}Admin'
     player-header: '{#dark-aqua}Player'

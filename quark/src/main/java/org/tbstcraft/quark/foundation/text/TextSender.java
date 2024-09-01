@@ -22,7 +22,7 @@ public interface TextSender {
 
     static void initContext() {
         if (APIProfileTest.isSpigotServer() || APIProfileTest.isArclightBasedServer()) {
-            Quark.LOGGER.warning("using custom text backend. this will cause text interaction unavailable.");
+            Quark.getInstance().getLogger().warning("using custom text backend. this will cause text interaction unavailable.");
             BACKEND.set(new SpigotSender());
             return;
         }

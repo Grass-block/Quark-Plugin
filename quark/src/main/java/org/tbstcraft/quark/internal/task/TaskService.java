@@ -24,7 +24,7 @@ public interface TaskService extends Service {
 
     @ServiceInject
     static void start() {
-        INSTANCE.set(create(Quark.PLUGIN));
+        INSTANCE.set(create(Quark.getInstance()));
         INSTANCE.get().onEnable();
     }
 

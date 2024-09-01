@@ -32,7 +32,7 @@ public final class JsonModuleRegistry extends ModuleRegistry {
         try {
             InputStream stream = pkg.getClass().getResourceAsStream(path);
             if (stream == null) {
-                Quark.LOGGER.warning("failed to load package descriptor.");
+                Quark.getInstance().getLogger().warning("failed to load package descriptor.");
                 return null;
             }
             stream.close();
@@ -62,8 +62,10 @@ public final class JsonModuleRegistry extends ModuleRegistry {
                      IllegalAccessException | NoSuchMethodException e) {
                 ExceptionUtil.log(e);
                 this.getPackage().getLogger().warning("failed to construct module %s: %s".formatted(entry.getKey(), e.getMessage()));
+            }catch (NoClassDefFoundError e){
+                this.getPackage().getLogger().warning("failed to construct module %s: missing API class %s".formatted(entry.getKey(), e.getMessage()));
             }
         }
-        Quark.LOGGER.info("created modules from package %s(%s).".formatted(this.getPackage().getClass().getName(), this.getPackage().getId()));
+        Quark.getInstance().getLogger().info("created modules from package %s(%s).".formatted(this.getPackage().getClass().getName(), this.getPackage().getId()));
     }
 }

@@ -13,12 +13,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class MusicSession implements Runnable {
     private final MusicPlayer module;
     private final Set<Player> players = new HashSet<>();
+    private final AtomicInteger currentTick = new AtomicInteger(-1);
 
     private MusicData next;
     private boolean pause = false;
     private boolean cancel = false;
     private boolean active = false;
     private boolean killThread = false;
+
+    private MusicData currentMusic;
 
     public MusicSession(MusicPlayer module) {
         this.module = module;
@@ -39,6 +42,31 @@ public final class MusicSession implements Runnable {
     @Override
     public void run() {
 
+        String tid = "quark:midi:title@%s".formatted(hashCode());
+        TaskService.timerTask(tid, 1, 5, () -> {
+            if (this.currentMusic == null) {
+                return;
+            }
+            for (Player p : this.players) {
+                String template = Language.generateTemplate(this.module.getConfig(), "ui", (s) -> {
+                    if (this.pause) {
+                        s = s.replace("{msg#playing}", "{msg#paused}");
+                    }
+                    return s;
+                });
+                template = template.replace("{name}", currentMusic.getName().replace("_", " "))
+                        .replace(
+                                "{time}",
+                                formatTime(currentMusic.getMillsLength() * currentTick.get() / currentMusic.getTickLength() / 1000)
+                                )
+                        .replace("{total}", formatTime(currentMusic.getMillsLength() / 1000));
+
+                String ui = this.module.getLanguage().buildTemplate(Language.locale(p), template);
+                Players.sendActionBarTitle(p, ui);
+            }
+        });
+
+
         while (true) {
             if (this.next == null) {
                 try {
@@ -53,6 +81,7 @@ public final class MusicSession implements Runnable {
             this.next = null;
 
             if (this.killThread) {
+                this.currentMusic = null;
                 return;
             }
             this.playSelected(data);
@@ -61,37 +90,21 @@ public final class MusicSession implements Runnable {
 
     @SuppressWarnings("BusyWait")
     public void playSelected(MusicData current) {
-
-        AtomicInteger currentTick = new AtomicInteger(-1);
-        String tid = "quark:midi:title@%s".formatted(System.currentTimeMillis() + current.getName());
-        TaskService.timerTask(tid, 0, 5, () -> {
-            for (Player p : this.players) {
-                String template = Language.generateTemplate(this.module.getConfig(), "ui", (s) -> {
-                    if (this.pause) {
-                        s = s.replace("{msg#playing}", "{msg#paused}");
-                    }
-                    return s;
-                });
-                template = template.replace("{name}", current.getName().replace("_", " "))
-                        .replace("{time}", formatTime(current.getMillsLength() * currentTick.get() / current.getTickLength() / 1000))
-                        .replace("{total}", formatTime(current.getMillsLength() / 1000));
-
-                String ui = this.module.getLanguage().buildTemplate(Language.locale(p), template);
-                Players.sendActionBarTitle(p, ui);
-            }
-        });
+        this.currentMusic = current;
+        this.currentTick.set(0);
 
         try {
             this.active = true;
             int delayedTicks = 0;
             while (currentTick.get() < current.getTickLength() - 1) {
                 if (this.killThread) {
+                    this.currentMusic = null;
                     return;
                 }
 
                 if (this.cancel) {
                     this.cancel = false;
-                    TaskService.cancelTask(tid);
+                    this.currentMusic = null;
                     this.active = false;
                     return;
                 }
@@ -124,10 +137,9 @@ public final class MusicSession implements Runnable {
 
         } catch (Exception ignored) {
         } finally {
-            TaskService.cancelTask(tid);
+            this.currentMusic = null;
             this.active = false;
         }
-
     }
 
     public void startSession() {

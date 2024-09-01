@@ -18,25 +18,40 @@ public interface FilePath {
         return f;
     }
 
-    static void coverFile(String srcDir, String fileDir) {
+    static boolean coverFile(String srcDir, String fileDir) {
         File f = new File(fileDir);
         if (f.getParentFile().mkdirs()) {
-            Quark.LOGGER.info("created folder of file: " + fileDir);
+            Quark.getInstance().getLogger().info("created folder of file: " + fileDir);
         }
         try {
             InputStream is = getPluginResource(srcDir);
             OutputStream s = new FileOutputStream(f);
             if (is == null) {
-                if (f.createNewFile()) {
-                    Quark.LOGGER.info("created file:" + fileDir);
-                }
-                return;
+                return false;
             }
-            s.write(is.readAllBytes());
+
+            if (f.createNewFile()) {
+                Quark.getInstance().getLogger().info("created file:" + fileDir);
+            }
+
+            var b = is.readAllBytes();
+            is.close();
+
+            if (b.length == 0) {
+                return false;
+            }
+
+            s.write(b);
             s.close();
+
+            return true;
         } catch (Exception e) {
-            Quark.LOGGER.severe("failed to save resource(src: %s,dest: %s): %s".formatted(srcDir, fileDir, e.getMessage()));
+            Quark.getInstance()
+                    .getLogger()
+                    .severe("failed to save resource(src: %s,dest: %s): %s".formatted(srcDir, fileDir, e.getMessage()));
         }
+
+        return false;
     }
 
     static String server() {

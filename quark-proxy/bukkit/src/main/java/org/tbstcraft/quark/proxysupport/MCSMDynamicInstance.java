@@ -79,12 +79,7 @@ public final class MCSMDynamicInstance extends PackageModule {
                     .build()
                     .request();
 
-            if (JsonParser.parseString(response)
-                    .getAsJsonObject()
-                    .get("data")
-                    .getAsJsonObject()
-                    .get("status")
-                    .getAsInt() != 0) {
+            if (JsonParser.parseString(response).getAsJsonObject().get("data").getAsJsonObject().get("status").getAsInt() != 0) {
                 handler.accept(1);
                 return;
             }
@@ -120,7 +115,7 @@ public final class MCSMDynamicInstance extends PackageModule {
             if (getConfig().getBoolean("instance")) {
                 return;
             }
-            ConfigurationSection servers = this.getConfig().getConfigurationSection("servers");
+            ConfigurationSection servers = this.getConfig().getSection("servers");
             if (!Objects.requireNonNull(servers).contains(args[0])) {
                 this.getLanguage().sendMessage(sender, "not-found", args[0]);
                 return;
@@ -145,8 +140,7 @@ public final class MCSMDynamicInstance extends PackageModule {
         @Override
         public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
             if (buffer.length == 1) {
-                tabList.addAll(Objects.requireNonNull(this.getConfig().getConfigurationSection("servers"))
-                                       .getKeys(false));
+                tabList.addAll(Objects.requireNonNull(this.getConfig().getSection("servers")).getKeys(false));
             }
         }
     }

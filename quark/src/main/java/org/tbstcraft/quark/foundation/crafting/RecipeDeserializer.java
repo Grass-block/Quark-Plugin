@@ -72,7 +72,7 @@ public interface RecipeDeserializer {
                     var k = NamespacedKey.minecraft(s.replace("/", "."));
                     Attribute attribute = Registry.ATTRIBUTE.get(k);
                     if (attribute == null) {
-                        Quark.LOGGER.warning("skipped null attr %s".formatted(s));
+                        Quark.getInstance().getLogger().warning("skipped null attr %s".formatted(s));
                         continue;
                     }
 
@@ -88,7 +88,7 @@ public interface RecipeDeserializer {
 
     static Recipe deserialize1(String repeatType, String id, ConfigurationSection section) {
         String[] outs = Objects.requireNonNull(section.getString("output")).split("\\*");
-        NamespacedKey key = new NamespacedKey(Quark.PLUGIN, id + "/" + repeatType);
+        NamespacedKey key = new NamespacedKey(Quark.getInstance(), id + "/" + repeatType);
         String group = section.getString("group", "");
 
         Material out = RecipeBuilder.resolveMaterial(outs[0].replace("{#type}", repeatType));
@@ -156,7 +156,7 @@ public interface RecipeDeserializer {
 
     static Recipe deserialize(String repeatType, String id, ConfigurationSection section) {
 
-        NamespacedKey key = new NamespacedKey(Quark.PLUGIN, id + "/" + repeatType);
+        NamespacedKey key = new NamespacedKey(Quark.getInstance(), id + "/" + repeatType);
         String group = section.getString("group", "");
 
         ItemStack result = createItem(section, "output", repeatType);

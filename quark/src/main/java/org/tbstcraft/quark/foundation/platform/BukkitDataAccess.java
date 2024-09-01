@@ -3,6 +3,8 @@ package org.tbstcraft.quark.foundation.platform;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.function.Consumer;
 
@@ -21,5 +23,11 @@ public interface BukkitDataAccess {
         accepter.accept(data);
         block.setBlockData(data);
         return data;
+    }
+
+    static void itemMeta(ItemStack item, Consumer<ItemMeta> accepter) {
+        var itemMeta = item.getItemMeta();
+        accepter.accept(itemMeta);
+        item.setItemMeta(itemMeta);
     }
 }

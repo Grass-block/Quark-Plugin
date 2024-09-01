@@ -10,7 +10,7 @@ public final class DirectPermissionEntry implements PermissionEntry {
 
     DirectPermissionEntry(Permissible target) {
         this.target = target;
-        this.attachment = target.addAttachment(Quark.PLUGIN);
+        this.attachment = target.addAttachment(Quark.getInstance());
     }
 
     @Override

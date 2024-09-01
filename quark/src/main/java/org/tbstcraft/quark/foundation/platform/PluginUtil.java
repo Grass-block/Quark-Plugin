@@ -37,7 +37,7 @@ public interface PluginUtil {
                 }
 
             } catch (InvalidPluginException | InvalidDescriptionException e) {
-                Quark.LOGGER.severe(e.getMessage());
+                Quark.getInstance().getLogger().severe(e.getMessage());
                 return null;
             }
             if (p == null) {
@@ -96,11 +96,11 @@ public interface PluginUtil {
                     try {
                         ((URLClassLoader) cl).close();
                     } catch (IOException e) {
-                        Quark.LOGGER.warning("failed to close resource: " + e.getMessage());
+                        Quark.getInstance().getLogger().warning("failed to close resource: " + e.getMessage());
                     }
                 }
             } catch (Exception e) {
-                Quark.LOGGER.warning("failed to close pluginLoader: " + e.getMessage());
+                Quark.getInstance().getLogger().warning("failed to close pluginLoader: " + e.getMessage());
             }
         } catch (Throwable e) {
             e.printStackTrace();

@@ -124,7 +124,7 @@ public final class PermissionManager extends PackageModule implements CommandExe
 
     //attachment
     public void attach(Player player) {
-        PermissionAttachment attachment = player.addAttachment(Quark.PLUGIN);
+        PermissionAttachment attachment = player.addAttachment(Quark.getInstance());
         ATTACHMENTS.put(player.getName(), attachment);
         this.sync(player);
     }

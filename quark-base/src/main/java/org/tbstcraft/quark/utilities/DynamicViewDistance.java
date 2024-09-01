@@ -48,7 +48,7 @@ public final class DynamicViewDistance extends PackageModule implements org.tbst
         this.pipeline.add(new PlayerCountStrategy());
         this.pipeline.add(new CustomSettingStrategy());
 
-        TaskService.timerTask("view-distance:calc", 0, 20, () -> {
+        TaskService.timerTask("view-distance:calc", 1, 20, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 calculatePlayerViewDistance(p, false, false);
             }

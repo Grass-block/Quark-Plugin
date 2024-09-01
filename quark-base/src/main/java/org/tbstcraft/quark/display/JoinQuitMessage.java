@@ -42,8 +42,8 @@ public final class JoinQuitMessage extends PackageModule {
 
         if (this.getConfig().getBoolean("proxy")) {
             if (this.getConfig().getBoolean("sound")) {
-                var volume = this.getConfig().getDouble("volume");
-                event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, (float) volume, 1);
+                var volume = this.getConfig().getFloat("volume");
+                event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, volume, 1);
             }
 
             /*

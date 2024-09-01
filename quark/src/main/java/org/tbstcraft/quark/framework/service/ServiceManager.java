@@ -2,9 +2,10 @@ package org.tbstcraft.quark.framework.service;
 
 import me.gb2022.commons.reflect.Annotations;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.ServicePriority;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.data.config.ConfigContainer;
+import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.data.config.Configuration;
 import org.tbstcraft.quark.util.ExceptionUtil;
 
@@ -15,7 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public interface ServiceManager {
-    ServiceManager INSTANCE = new Impl(Quark.CONFIG);
+    ServiceManager INSTANCE = new Impl();
 
     static <I extends Service> Class<I> get(String id, Class<Class<I>> type) {
         return INSTANCE.getService(id, type);
@@ -33,7 +34,7 @@ public interface ServiceManager {
         INSTANCE.unregisterAllServices();
     }
 
-    static <T extends Service> T createImplementation(Class<T> clazz, ConfigurationSection config) {
+    static <T extends Service> T createImplementation(Class<T> clazz, ConfigEntry config) {
         for (Method m : clazz.getDeclaredMethods()) {
             if (m.getAnnotation(ServiceProvider.class) == null) {
                 continue;
@@ -52,7 +53,7 @@ public interface ServiceManager {
         }
 
         try {
-            return clazz.cast(implClass.getDeclaredConstructor(ConfigurationSection.class).newInstance(config));
+            return clazz.cast(implClass.getDeclaredConstructor(ConfigEntry.class).newInstance(config));
         } catch (NoSuchMethodException e) {
             try {
                 return clazz.cast(implClass.getDeclaredConstructor().newInstance());
@@ -86,12 +87,7 @@ public interface ServiceManager {
     void unregisterAllServices();
 
     final class Impl implements ServiceManager {
-        private final Configuration config;
         private final HashMap<String, Class<? extends Service>> services = new HashMap<>(16);
-
-        public Impl(Configuration config) {
-            this.config = config;
-        }
 
         @Override
         public <I extends Service> Class<I> getService(String id, Class<Class<I>> type) {
@@ -123,20 +119,20 @@ public interface ServiceManager {
                     try {
                         ServiceHolder<Service> holder = ((ServiceHolder<Service>) f.get(null));
 
-                        I instance = createImplementation(service, this.config.getConfig(sid));
+                        I instance = createImplementation(service, ConfigContainer.getInstance().entry("quark-core", sid));
 
                         holder.set(instance);
 
                         assert instance != null;
 
                         if (Annotations.hasAnnotation(holder, RegisterAsGlobal.class)) {
-                            Bukkit.getServicesManager().register(service, instance, Quark.PLUGIN, ServicePriority.High);
+                            Bukkit.getServicesManager().register(service, instance, Quark.getInstance(), ServicePriority.High);
                         }
 
 
                         holder.get().onEnable();
                     } catch (Throwable e) {
-                        Quark.LOGGER.severe("failed to set implementation for service [%s]".formatted(id));
+                        Quark.getInstance().getLogger().severe("failed to set implementation for service [%s]".formatted(id));
                         ExceptionUtil.log(e);
                     }
                 }
@@ -187,13 +183,17 @@ public interface ServiceManager {
                 try {
                     ServiceHolder<Service> holder = ((ServiceHolder<Service>) f.get(null));
 
+                    if (holder.get() == null) {
+                        continue;
+                    }
+
                     if (Annotations.hasAnnotation(holder, RegisterAsGlobal.class)) {
                         Bukkit.getServicesManager().unregister(service);
                     }
 
                     holder.get().onDisable();
                 } catch (Throwable e) {
-                    Quark.LOGGER.severe("failed to stop implementation for [%s]".formatted(id));
+                    Quark.getInstance().getLogger().severe("failed to stop implementation for [%s]".formatted(id));
                     ExceptionUtil.log(e);
                 }
             }

@@ -31,6 +31,6 @@ public interface ExceptionUtil {
     }
 
     static void log(Throwable throwable) {
-        log(Quark.LOGGER, throwable);
+        log(Quark.getInstance().getLogger(), throwable);
     }
 }

@@ -215,7 +215,7 @@ public interface PackageManager extends Service {
     final class Impl implements PackageManager {
         private final Map<String, AbstractPackage> packages = new HashMap<>();
         private final Properties statusMap = new Properties();
-        private final Logger logger = Quark.LOGGER;
+        private final Logger logger = Quark.getInstance().getLogger();
 
 
         @Override
@@ -236,7 +236,7 @@ public interface PackageManager extends Service {
                 if (getStatus(pkg.getId()) == TriState.UNKNOWN) {
                     boolean enable = false;
                     if (pkg.getInitializer().isEnableByDefault()) {
-                        enable = Quark.PLUGIN.getConfig().getBoolean("config.default-status.package");
+                        enable = Quark.getInstance().getConfig().getBoolean("config.default-status.package");
                     }
 
                     this.statusMap.put(pkg.getId(), enable ? "enabled" : "disabled");

@@ -34,7 +34,7 @@ public final class VeinMiner extends PackageModule {
     @Override
     public void enable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
-        this.pattern = Pattern.compile(Objects.requireNonNull(this.getConfig().getString("regex")));
+        this.pattern = this.getConfig().getRegex("regex");
     }
 
     @Override
@@ -65,7 +65,7 @@ public final class VeinMiner extends PackageModule {
     }
 
     private boolean canNotChainMine(String id) {
-        return !this.pattern.matcher(id).find();
+        return !this.pattern.matcher(id).find()||id.contains("stripped");
     }
 
 

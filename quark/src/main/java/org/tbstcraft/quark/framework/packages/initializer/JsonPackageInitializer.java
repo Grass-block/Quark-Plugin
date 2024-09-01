@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.FeatureAvailability;
+import org.tbstcraft.quark.data.config.Configuration;
 import org.tbstcraft.quark.data.language.LanguagePack;
 import org.tbstcraft.quark.framework.module.providing.JsonModuleRegistry;
 import org.tbstcraft.quark.framework.module.providing.ModuleRegistry;
@@ -57,6 +58,23 @@ public final class JsonPackageInitializer implements PackageInitializer {
         for (JsonElement element : languages) {
             String[] item = element.getAsString().split(":");
             packs.add(new LanguagePack(item[0], item[1], pkg.getOwner()));
+        }
+
+        return packs;
+    }
+
+    @Override
+    public Set<Configuration> createConfig(AbstractPackage pkg) {
+        Set<Configuration> packs = new HashSet<>();
+
+        JsonArray arr = this.obj.getAsJsonArray("configs");
+        if (arr == null) {
+            return packs;
+        }
+
+        for (JsonElement element : arr) {
+            String item = element.getAsString();
+            packs.add(new Configuration(pkg.getOwner(), item));
         }
 
         return packs;

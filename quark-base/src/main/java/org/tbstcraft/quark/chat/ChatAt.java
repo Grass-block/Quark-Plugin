@@ -3,7 +3,6 @@ package org.tbstcraft.quark.chat;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -42,7 +41,7 @@ public final class ChatAt extends PackageModule {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
-        ConfigurationSection cfg = this.getConfig();
+        var cfg = this.getConfig();
 
         String msg = event.getMessage();
 
@@ -95,14 +94,14 @@ public final class ChatAt extends PackageModule {
     }
 
     public String generateAtMessage(String column) {
-        ConfigurationSection cfg = this.getConfig();
+        var cfg = this.getConfig();
         String target = column.replaceFirst("@", "");
         String completedTemplate = Objects.requireNonNull(cfg.getString("at-template")).replace("{player}", target);
         return PlaceHolderService.format(completedTemplate);
     }
 
     public String generateTitleMessage(String msg, Player p) {
-        ConfigurationSection cfg = this.getConfig();
+        var cfg = this.getConfig();
         String template = Objects.requireNonNull(cfg.getString("at-title-template"));
         String completedTemplate = template.replace("{player}", p.getName()).replace("{message}", msg);
         return PlaceHolderService.format(completedTemplate);

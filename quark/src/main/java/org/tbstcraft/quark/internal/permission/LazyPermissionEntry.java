@@ -17,7 +17,7 @@ public final class LazyPermissionEntry implements PermissionEntry {
     @SuppressWarnings("unchecked")
     public LazyPermissionEntry(Permissible target) {
         this.target = target;
-        this.attachment = target.addAttachment(Quark.PLUGIN);
+        this.attachment = target.addAttachment(Quark.getInstance());
 
         try {
             Field f = this.attachment.getClass().getDeclaredField("permissions");

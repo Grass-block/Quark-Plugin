@@ -27,7 +27,7 @@ public interface InternalCommands {
             try {
                 CommandManager.registerQuarkCommand(clazz.getDeclaredConstructor().newInstance());
             } catch (Exception e) {
-                Quark.LOGGER.severe("failed to register internal command %s: %s".formatted(
+                Quark.getInstance().getLogger().severe("failed to register internal command %s: %s".formatted(
                         clazz.getAnnotation(QuarkCommand.class).name(),
                         ExceptionUtil.getMessage(e)
                 ));
@@ -40,7 +40,7 @@ public interface InternalCommands {
             try {
                 CommandManager.unregister(clazz.getAnnotation(QuarkCommand.class).name());
             } catch (Exception e) {
-                Quark.LOGGER.severe("failed to unregister internal command %s: %s".formatted(
+                Quark.getInstance().getLogger().severe("failed to unregister internal command %s: %s".formatted(
                         clazz.getAnnotation(QuarkCommand.class).name(),
                         ExceptionUtil.getMessage(e)
                 ));
@@ -54,7 +54,7 @@ public interface InternalCommands {
         public void onCommand(ServerCommandEvent event) {
             if (event.getCommand().startsWith("reload")) {
                 Quark.LANGUAGE.sendMessage(event.getSender(), "folia_compat", "reload_warn");
-                event.setCancelled(true);
+                //event.setCancelled(true);
             }
         }
 
@@ -62,7 +62,7 @@ public interface InternalCommands {
         public void onCommand(PlayerCommandPreprocessEvent event) {
             if (event.getMessage().startsWith("/reload")) {
                 Quark.LANGUAGE.sendMessage(event.getPlayer(), "folia_compat", "reload_warn");
-                event.setCancelled(true);
+                //event.setCancelled(true);
             }
         }
     }

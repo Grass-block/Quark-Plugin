@@ -9,5 +9,8 @@
   },
   "languages": [
     "quark-automatic:zh_cn"
+  ],
+  "configs": [
+    "quark-automatic"
   ]
 }

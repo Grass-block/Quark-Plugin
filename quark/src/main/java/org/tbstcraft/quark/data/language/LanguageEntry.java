@@ -90,4 +90,8 @@ public final class LanguageEntry{
     public void sendTemplate(CommandSender sender, String template) {
         this.parent.sendTemplate(sender, this.namespace, template);
     }
+
+    public LanguageItem item(String id){
+        return this.parent.item(this.namespace, id);
+    }
 }

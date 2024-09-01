@@ -22,7 +22,7 @@ public interface QuarkInternalPackage {
     }
 
     static PackageInitializer initializer() {
-        return new PackageBuilderInitializer("quark-core", FeatureAvailability.DEMO_AVAILABLE, false, false)
+        return new PackageBuilderInitializer("quark-core", FeatureAvailability.DEMO_AVAILABLE)
                 .service(TaskService.class)
                 .service(CacheService.class)
                 .service(CommandEventService.class)
@@ -41,6 +41,8 @@ public interface QuarkInternalPackage {
                 .module("custom-language-pack-loader", CustomLanguagePackLoader.class)
 
                 .language("quark-core", "zh_cn")
-                .language("quark-core", "en_us");
+                .language("quark-core", "en_us")
+
+                .config("quark-core");
     }
 }

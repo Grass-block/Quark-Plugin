@@ -23,5 +23,8 @@
   "languages": [
     "quark-utilities:zh_cn",
     "quark-utilities:en_us"
+  ],
+  "configs": [
+    "quark-utilities"
   ]
 }

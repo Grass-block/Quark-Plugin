@@ -23,18 +23,14 @@ public final class PackageBuilderInitializer implements PackageInitializer {
     private final Set<Class<? extends Service>> services = new HashSet<>();
     private final Set<Pair<String, String>> packs = new HashSet<>();
     private final Map<String, Class<? extends AbstractModule>> modules = new HashMap<>();
+    private final Set<String> configs = new HashSet<>();
 
     private final String id;
     private final FeatureAvailability availability;
 
-    private final boolean config;
-    private final boolean language;
-
-    public PackageBuilderInitializer(String id, FeatureAvailability availability, boolean config, boolean language) {
+    public PackageBuilderInitializer(String id, FeatureAvailability availability) {
         this.id = id;
         this.availability = availability;
-        this.config = config;
-        this.language = language;
     }
 
     @Override
@@ -43,11 +39,13 @@ public final class PackageBuilderInitializer implements PackageInitializer {
     }
 
     @Override
-    public Configuration createConfig(AbstractPackage pkg) {
-        if (!this.config) {
-            return Quark.CONFIG;
+    public Set<Configuration> createConfig(AbstractPackage pkg) {
+        Set<Configuration> configs = new HashSet<>();
+        for (var id : this.configs) {
+            configs.add(new Configuration(pkg.getOwner(), id));
         }
-        return PackageInitializer.super.createConfig(pkg);
+
+        return configs;
     }
 
     @Override
@@ -59,15 +57,6 @@ public final class PackageBuilderInitializer implements PackageInitializer {
 
         return packs;
     }
-
-    @Override
-    public ILanguageAccess createLanguage(AbstractPackage pkg) {
-        if (!this.language) {
-            return Quark.LANGUAGE;
-        }
-        return PackageInitializer.super.createLanguage(pkg);
-    }
-
 
     @Override
     public FeatureAvailability getAvailability(AbstractPackage pkg) {
@@ -96,6 +85,11 @@ public final class PackageBuilderInitializer implements PackageInitializer {
 
     public PackageBuilderInitializer language(String name, String lang) {
         this.packs.add(new Pair<>(name, lang));
+        return this;
+    }
+
+    public PackageBuilderInitializer config(String config) {
+        this.configs.add(config);
         return this;
     }
 }

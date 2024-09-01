@@ -2,6 +2,7 @@ package org.atcraftmc.quark.velocity;
 
 import org.atcraftmc.quark.velocity.features.HubCommand;
 import org.atcraftmc.quark.velocity.features.MotdSync;
+import org.atcraftmc.quark.velocity.features.STPCommand;
 import org.atcraftmc.quark.velocity.peer.*;
 
 public final class ModuleManager {
@@ -12,7 +13,8 @@ public final class ModuleManager {
             new ChatSync(),
             new BungeeConnectionProtect(),
             new ProxyPing(),
-            new ServerStatementObserver()
+            new ServerStatementObserver(),
+            new STPCommand()
     };
     private final QuarkVelocity plugin;
 

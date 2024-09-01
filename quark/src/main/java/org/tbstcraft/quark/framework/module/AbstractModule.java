@@ -3,6 +3,7 @@ package org.tbstcraft.quark.framework.module;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.FeatureAvailability;
+import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.data.language.ILanguageAccess;
 import org.tbstcraft.quark.data.language.LanguageContainer;
 import org.tbstcraft.quark.data.language.LanguageEntry;
@@ -26,7 +27,8 @@ public abstract class AbstractModule implements FunctionalComponent {
 
     private RecordEntry record;
     private LanguageEntry language;
-    private ConfigurationSection config;
+    private ConfigEntry config;
+
     private Logger logger;
 
     public AbstractModule() {
@@ -65,7 +67,7 @@ public abstract class AbstractModule implements FunctionalComponent {
 
     public abstract RecordEntry createRecord();
 
-    public abstract ConfigurationSection createConfig();
+    public abstract ConfigEntry createConfig();
 
     public abstract Logger createLogger();
 
@@ -79,7 +81,7 @@ public abstract class AbstractModule implements FunctionalComponent {
         return this.language;
     }
 
-    public final ConfigurationSection getConfig() {
+    public final ConfigEntry getConfig() {
         return this.config;
     }
 

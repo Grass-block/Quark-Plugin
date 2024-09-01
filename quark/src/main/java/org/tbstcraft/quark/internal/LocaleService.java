@@ -38,7 +38,7 @@ public interface LocaleService extends Service {
         CommandManager.registerQuarkCommand(LANGUAGE_COMMAND);
         BukkitUtil.registerEventListener(LISTENER);
 
-        Bukkit.getServicesManager().register(BukkitAdapter.class, new BukkitAdapter(), Quark.PLUGIN, ServicePriority.High);
+        Bukkit.getServicesManager().register(BukkitAdapter.class, new BukkitAdapter(), Quark.getInstance(), ServicePriority.High);
     }
 
     @ServiceInject
@@ -88,9 +88,7 @@ public interface LocaleService extends Service {
         @EventHandler
         public void onLocaleChange(PlayerLocaleChangeEvent event) {
             _check(event);
-            if (event.getLocale().equals("en_us")) {
-                TaskService.laterTask(60, () -> _check(new PlayerLocaleChangeEvent(event.getPlayer(), event.getPlayer().getLocale())));
-            }
+            TaskService.laterTask(60, () -> _check(new PlayerLocaleChangeEvent(event.getPlayer(), event.getPlayer().getLocale())));
         }
 
         private void _check(PlayerLocaleChangeEvent event) {

@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.data.language;
 
 import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.data.PackContainer;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 import org.tbstcraft.quark.util.Identifiers;
 
@@ -9,12 +10,10 @@ import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class LanguageContainer {
+public final class LanguageContainer extends PackContainer<LanguagePack> {
     public static final LanguageContainer INSTANCE = new LanguageContainer();
 
     private final Map<String, Map<String, Object>> items = new HashMap<>();
-    private final Map<String, LanguagePack> packs = new HashMap<>();
-
 
     public static LanguageContainer getInstance() {
         return INSTANCE;
@@ -22,19 +21,6 @@ public final class LanguageContainer {
 
     public static String key(String pack, String entry, String id) {
         return "%s:%s:%s".formatted(Identifiers.external(pack), Identifiers.external(entry), Identifiers.external(id));
-    }
-
-    static String list2string(List<String> list) {
-        StringBuilder sb = new StringBuilder();
-        int i = 0;
-        for (String ss : list) {
-            i++;
-            sb.append(ss);
-            if (i < list.size()) {
-                sb.append("\n");
-            }
-        }
-        return sb.toString();
     }
 
     public Map<String, Object> getItemEntry(String key) {
@@ -66,30 +52,7 @@ public final class LanguageContainer {
         if (clean) {
             this.items.clear();
         }
-        for (LanguagePack pack : this.packs.values()) {
-            this.inject(pack);
-        }
-    }
-
-    public void register(LanguagePack pack) {
-        this.packs.put(pack.toString(), pack);
-        this.inject(pack);
-    }
-
-    public void unregister(LanguagePack pack) {
-        this.packs.remove(pack.toString());
-    }
-
-    public Collection<LanguagePack> getPacks() {
-        return packs.values();
-    }
-
-    public LanguagePack getPack(String id) {
-        return this.packs.get(id);
-    }
-
-    public Map<String, LanguagePack> getPackStorage() {
-        return this.packs;
+        super.refresh(clean);
     }
 
     //----[Access]----
@@ -129,7 +92,7 @@ public final class LanguageContainer {
 
         @SuppressWarnings("unchecked") List<String> list = ((List<String>) obj);
 
-        return list2string(list);
+        return Language.list2string(list);
     }
 
     public List<String> getRawMessageList(Locale locale, String pack, String entry, String id) {
@@ -151,7 +114,7 @@ public final class LanguageContainer {
         List<String> lst = new ArrayList<>(list.size());
 
         for (List<String> item : l) {
-            lst.add(list2string(item));
+            lst.add(Language.list2string(item));
         }
         return lst;
     }
@@ -175,6 +138,11 @@ public final class LanguageContainer {
 
     public List<String> getInlineMessageList(Locale locale, String pack, String entry, String id) {
         List<String> msg = getRawMessageList(locale, pack, entry, id);
+
+
+        if (Collections.singletonList("").getClass().isInstance(msg)) {
+            msg = new ArrayList<>(msg);
+        }
 
         msg.replaceAll(src -> inline(src, locale, pack, entry));
         return msg;

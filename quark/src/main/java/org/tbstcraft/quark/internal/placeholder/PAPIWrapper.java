@@ -8,10 +8,10 @@ public interface PAPIWrapper {
     static PAPIWrapper getInstance() {
         try {
             Class.forName("me.clip.placeholderapi.PlaceholderAPI");
-            Quark.LOGGER.info("using PlaceholderAPI text formatter");
+            Quark.getInstance().getLogger().info("using PlaceholderAPI text formatter");
             return new Impl();
         } catch (Exception e) {
-            Quark.LOGGER.info("using no-PlaceholderAPI text formatter.");
+            Quark.getInstance().getLogger().info("using no-PlaceholderAPI text formatter.");
             return new FallbackImpl();
         }
     }
@@ -23,12 +23,20 @@ public interface PAPIWrapper {
     final class Impl implements PAPIWrapper {
         @Override
         public String handle(String input) {
-            return PlaceholderAPI.setPlaceholders(null, input);
+            try {
+                return PlaceholderAPI.setPlaceholders(null, input);
+            } catch (Exception ignored) {
+                return input;
+            }
         }
 
         @Override
         public String handlerPlayer(Player player, String input) {
-            return PlaceholderAPI.setPlaceholders(player, input);
+            try {
+                return PlaceholderAPI.setPlaceholders(player, input);
+            } catch (Exception ignored) {
+                return input;
+            }
         }
     }
 

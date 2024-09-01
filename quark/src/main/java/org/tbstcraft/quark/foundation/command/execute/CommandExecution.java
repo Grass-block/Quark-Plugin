@@ -5,6 +5,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+import org.tbstcraft.quark.foundation.command.AbstractCommand;
 import org.tbstcraft.quark.foundation.command.assertion.ArgumentAssertionException;
 import org.tbstcraft.quark.foundation.command.assertion.CommandAssertionException;
 import org.tbstcraft.quark.foundation.command.assertion.NumberLimitation;
@@ -18,10 +19,12 @@ import java.util.Set;
 public final class CommandExecution {
     private final String[] args;
     private final CommandSender sender;
+    private final CommandExecutor command;
 
-    public CommandExecution(CommandSender sender, String[] args) {
+    public CommandExecution(CommandSender sender, String[] args, CommandExecutor command) {
         this.sender = sender;
         this.args = args;
+        this.command = command;
     }
 
     public String requireArgumentAt(int position) {
@@ -78,10 +81,16 @@ public final class CommandExecution {
     public String requireEnum(int position, String... accept) {
         String arg = requireArgumentAt(position);
 
-        if (!List.of(accept).contains(arg)) {
+        var list = new java.util.ArrayList<>(List.of(accept));
+
+        if (this.command instanceof AbstractCommand cmd) {
+            list.addAll(cmd.getSubCommands().keySet());
+        }
+
+        if (!list.contains(arg)) {
             StringBuilder sb = new StringBuilder();
             sb.append("[");
-            for (String s : accept) {
+            for (String s : list) {
                 sb.append(s).append("|");
             }
             sb.append("]");
@@ -191,5 +200,15 @@ public final class CommandExecution {
         if (Objects.equals(requireArgumentAt(position), id)) {
             command.run();
         }
+    }
+
+    public String requireRemainAsParagraph(int position, boolean appendSpace) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(requireArgumentAt(position));
+
+        for (int i = position + 1; i < args.length; i++) {
+            sb.append(args[i]).append(appendSpace ? " " : "");
+        }
+        return sb.toString();
     }
 }

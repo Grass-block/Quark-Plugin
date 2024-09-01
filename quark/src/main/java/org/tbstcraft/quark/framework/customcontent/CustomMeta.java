@@ -39,12 +39,12 @@ public interface CustomMeta {
     }
 
     static void setPDCProperty(PersistentDataHolder holder, String id, String data) {
-        NamespacedKey key = new NamespacedKey(Quark.PLUGIN, id);
+        NamespacedKey key = new NamespacedKey(Quark.getInstance(), id);
         holder.getPersistentDataContainer().set(key, PersistentDataType.STRING, data);
     }
 
     static String getPDCProperty(PersistentDataHolder holder, String id) {
-        NamespacedKey key = new NamespacedKey(Quark.PLUGIN, id);
+        NamespacedKey key = new NamespacedKey(Quark.getInstance(), id);
         try {
             return holder.getPersistentDataContainer().get(key, PersistentDataType.STRING);
         } catch (Exception ignored) {
@@ -53,7 +53,7 @@ public interface CustomMeta {
     }
 
     static void removePDCProperty(PersistentDataHolder holder, String id) {
-        NamespacedKey key = new NamespacedKey(Quark.PLUGIN, id);
+        NamespacedKey key = new NamespacedKey(Quark.getInstance(), id);
         holder.getPersistentDataContainer().remove(key);
     }
 

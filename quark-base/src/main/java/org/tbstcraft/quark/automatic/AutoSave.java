@@ -26,9 +26,9 @@ public final class AutoSave extends PackageModule implements Runnable {
     @Override
     public void enable() {
         this.worlds.clear();
-        ConfigurationSection config = this.getConfig();
+        var config = this.getConfig();
 
-        for (String id : config.getStringList("worlds")) {
+        for (String id : config.getList("worlds")) {
             World world = Bukkit.getWorld(id);
             if (world == null) {
                 continue;

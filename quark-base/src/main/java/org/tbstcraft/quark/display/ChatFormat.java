@@ -51,7 +51,7 @@ public final class ChatFormat extends PackageModule {
             }
 
             String template = this.parent.getConfig().getString("template");
-            String time = Objects.requireNonNull(this.parent.getConfig().getString("time"))
+            String time = this.parent.getConfig().getString("time")
                     .formatted(SharedObjects.TIME_FORMAT.format(new Date()));
             CustomChatRenderer.renderer(event).template(template).postfix(TextBuilder.buildComponent(time));
         }

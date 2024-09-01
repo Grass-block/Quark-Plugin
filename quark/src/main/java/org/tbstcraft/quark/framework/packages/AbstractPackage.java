@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.framework.packages;
 
 import org.tbstcraft.quark.FeatureAvailability;
+import org.tbstcraft.quark.data.config.ConfigContainer;
 import org.tbstcraft.quark.data.config.Configuration;
 import org.tbstcraft.quark.data.language.LanguageContainer;
 import org.tbstcraft.quark.data.language.LanguagePack;
@@ -15,12 +16,12 @@ import java.util.Set;
 public abstract class AbstractPackage implements IPackage {
     private final PackageInitializer initializer;
     private String id;
-    private Configuration configFile;
     private FeatureAvailability availability;
     private ModuleRegistry moduleRegistry;
     private ServiceRegistry serviceRegistry;
 
     private Set<LanguagePack> languagePacks;
+    private Set<Configuration> configurations;
 
     protected AbstractPackage(PackageInitializer initializer) {
         this.initializer = initializer;
@@ -32,6 +33,11 @@ public abstract class AbstractPackage implements IPackage {
             pack.load();
             LanguageContainer.getInstance().register(pack);
         }
+        for (Configuration cfg : this.configurations) {
+            cfg.load();
+            ConfigContainer.getInstance().register(cfg);
+        }
+
         if (this.getServiceRegistry() != null) {
             getServiceRegistry().register(ServiceManager.INSTANCE);
         }
@@ -44,8 +50,12 @@ public abstract class AbstractPackage implements IPackage {
         if (this.getServiceRegistry() != null) {
             getServiceRegistry().unregister(ServiceManager.INSTANCE);
         }
+
         for (LanguagePack pack : this.languagePacks) {
             LanguageContainer.getInstance().unregister(pack);
+        }
+        for (Configuration cfg : this.configurations) {
+            ConfigContainer.getInstance().unregister(cfg);
         }
     }
 
@@ -57,11 +67,6 @@ public abstract class AbstractPackage implements IPackage {
     @Override
     public final String getId() {
         return id;
-    }
-
-    @Override
-    public final Configuration getConfigFile() {
-        return configFile;
     }
 
     @Override
@@ -84,7 +89,7 @@ public abstract class AbstractPackage implements IPackage {
         this.initializer.onInitialize(this.getOwner());
         this.availability = initializer.getAvailability(this);
         this.id = initializer.getId(this);
-        this.configFile = initializer.createConfig(this);
+        this.configurations = initializer.createConfig(this);
         this.moduleRegistry = initializer.getModuleRegistry(this);
         this.serviceRegistry = initializer.getServiceRegistry(this);
         this.languagePacks = initializer.createLanguagePack(this);

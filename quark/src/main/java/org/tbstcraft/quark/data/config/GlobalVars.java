@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public final class GlobalVars {
-    private Plugin holder = Quark.PLUGIN;
+    private Plugin holder = Quark.getInstance();
 
     public Map<String, String> loadMap() {
         Map<String, String> map = new HashMap<>();

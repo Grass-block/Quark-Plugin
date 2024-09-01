@@ -52,4 +52,14 @@ public abstract class TaskManager implements TaskService {
     public Task get(String id) {
         return this.tasks.get(id);
     }
+
+    @Override
+    public void onDisable() {
+        try {
+            for (Task t : this.getTasks().values()) {
+                t.cancel();
+            }
+        } catch (Exception ignored) {
+        }
+    }
 }

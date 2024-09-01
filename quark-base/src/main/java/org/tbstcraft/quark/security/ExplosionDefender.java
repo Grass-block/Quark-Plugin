@@ -123,7 +123,7 @@ public final class ExplosionDefender extends PackageModule {
         }
     }
 
-    @QuarkCommand(name = "explosion-whitelist", op = true)
+    @QuarkCommand(name = "explosion-whitelist", permission = "-quark.explosion.whitelist")
     public static final class ExplosionWhitelistCommand extends ModuleCommand<ExplosionDefender> {
 
         @Override

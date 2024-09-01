@@ -13,10 +13,11 @@ import org.tbstcraft.quark.foundation.text.TextBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("UnusedReturnValue")
 public final class CustomChatRenderer implements ChatRenderer {
     private final List<Component> prefixes = new ArrayList<>();
     private final List<Component> postFixes = new ArrayList<>();
-    private String template = "<%s> %s";
+    private String template = "<{0}> {1}";
 
     public static CustomChatRenderer renderer(AsyncChatEvent event) {
         if (event.renderer() instanceof CustomChatRenderer renderer) {

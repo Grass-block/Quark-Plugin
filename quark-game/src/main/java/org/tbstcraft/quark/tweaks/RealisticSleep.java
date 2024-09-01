@@ -40,13 +40,13 @@ public final class RealisticSleep extends PackageModule {
     @Override
     public void enable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
-        TaskService.timerTask("quark:rs:health", 0, this.getConfig().getInt("health-interval"), () -> {
+        TaskService.timerTask("quark:rs:health", 1, this.getConfig().getInt("health-interval"), () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (!this.whateverSleepingPlayers.contains(p)) {
                     continue;
                 }
                 double health = p.getHealth();
-                health = health + this.getConfig().getDouble("health-amount");
+                health = health + this.getConfig().getFloat("health-amount");
 
                 double max = Objects.requireNonNull(p.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
 
@@ -57,7 +57,7 @@ public final class RealisticSleep extends PackageModule {
             }
         });
 
-        TaskService.timerTask("quark:rs:daemon", 0, 1, () -> {
+        TaskService.timerTask("quark:rs:daemon", 1, 1, () -> {
             for (World w : Bukkit.getWorlds()) {
                 if (w.isDayTime()) {
                     continue;
@@ -66,7 +66,7 @@ public final class RealisticSleep extends PackageModule {
                     this.sleepingPlayers.put(w, new HashSet<>());
                 }
 
-                w.setTime((long) (w.getTime() + this.sleepingPlayers.get(w).size() * this.getConfig().getDouble("scale-per-player")));
+                w.setTime((long) (w.getTime() + this.sleepingPlayers.get(w).size() * this.getConfig().getFloat("scale-per-player")));
             }
         });
     }

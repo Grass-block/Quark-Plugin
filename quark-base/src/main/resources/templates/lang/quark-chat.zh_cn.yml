@@ -26,11 +26,11 @@ language:
       - '{#gray}在聊天，告示牌和命令（部分支持）中，您可以使用富文本标签对文字添加更多效果。'
       - '{#gray}点击{click(link,https://www.atforever.world/wiki.html#quark/template-engine.md)}[此处]{;}{#gray}了解更多。'
   chat-mute:
-    message-banned: '[{#yellow}系统{#white}]{#gray}你被禁言了.'
-    add: '[{#light-purple}系统{#white}]{#gray}成功将玩家 {#var} 加入列表。'
-    add-target: '[{#yellow}系统{#white}]{#gray}你被管理员 {#var} 禁言!'
-    remove: '[{#light-purple}系统{#white}]{#gray}成功将玩家 {#var} 移出列表。'
-    remove-target: '[{green}系统{#white}]{#gray}你被管理员 {#var} 解除禁言!'
+    message-banned: '{global#sys-info}你被禁言了, 您的禁言将在 {#var} 解除。'
+    add: '{global#sys-info}成功将玩家 {#var} 禁言至 {#var}, 原因是 {#var}。'
+    add-target: '{global#sys-info}你被 {#var} 因 {#var} 禁言至 {#var}!'
+    remove: '{global#sys-info}成功将玩家 {#var} 解除禁言。'
+    remove-target: '{global#sys-info}你被管理员 {#var} 解除禁言!'
   chat-format:
     op-header: '{#light-purple}管理'
     player-header: '{#dark-aqua}玩家'
@@ -43,10 +43,14 @@ language:
     tip: '{#gray}如果一个玩家不在线，你可以用{#gold}/mail [玩家] [内容]进行留言。'
   chat-report:
     not-exist: "{global#sys-error}您要举报的聊天记录条目不存在, 或许它已经被举报过了。"
+    not-self: "{global#sys-error}您不能举报自己的聊天信息。"
     success: "{global#sys-success}您已提交对 {#var} 的聊天举报 ({#var})。"
     tip: '{#gray}如果一位玩家发送的信息包含了不合适的内容，你可以点击聊天文本后面的"[!]"进行举报。'
   chat-filter:
     reload: "{global#sys-success}成功重载规则文件。"
     save: "{global#sys-success}成功保存默认规则文件。"
+    reported-warn: "{global#sys-warning}您的消息({#var})已被玩家举报并被系统认定为违规，请注意您的言行举止。"
+    outcome-warn: "{global#sys-success}您举报的玩家({#var})的消息({#var})已被系统认定为违规并警告处理。感谢您对社区秩序的维护。"
+    outcome-punished: "{global#sys-success}您举报的玩家({#var})的消息({#var})已被系统认定为违规并禁言处理。感谢您对社区秩序的维护。"
   hitokoto:
     sentence: "{hover(text,文字来自 {#red}[{#white}一言{#red}]{#gray}(https://hitokoto.cn/))}{#red}[{#white}每日一言{#red}] {#white}%s {#gray}——%s({#var})"

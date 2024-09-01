@@ -5,10 +5,12 @@ import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.foundation.platform.FoliaServer;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -23,7 +25,11 @@ public final class FoliaTaskManager extends TaskManager {
 
     @Override
     public void run(Location loc, Runnable task) {
-        this.region.execute(this.getPlugin(), loc, task);
+        try {
+            this.region.execute(this.getPlugin(), loc, task);
+        } catch (IllegalPluginAccessException e) {
+            TaskService.registerFinalizeTask(task);
+        }
     }
 
     @Override

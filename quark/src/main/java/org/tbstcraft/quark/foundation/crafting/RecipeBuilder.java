@@ -14,7 +14,7 @@ public interface RecipeBuilder {
     }
 
     static ShapedRecipe shaped(String group, String id, String map, ItemStack result, PatternSymbol... symbols) {
-        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(Quark.PLUGIN, id), result);
+        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(Quark.getInstance(), id), result);
         recipe.shape(map.split(";"));
         for (PatternSymbol symbol : symbols) {
             recipe.setIngredient(symbol.getId(), symbol.getRequire());
@@ -28,7 +28,7 @@ public interface RecipeBuilder {
     }
 
     static ShapelessRecipe shapeLess(String group, String id, ItemStack result, Material... require) {
-        ShapelessRecipe recipe = new ShapelessRecipe(new NamespacedKey(Quark.PLUGIN, id), result);
+        ShapelessRecipe recipe = new ShapelessRecipe(new NamespacedKey(Quark.getInstance(), id), result);
         recipe.setGroup(group);
         for (Material m : require) {
             recipe.addIngredient(m);
@@ -41,7 +41,7 @@ public interface RecipeBuilder {
     }
 
     static StonecuttingRecipe stoneCutter(String group, String id, Material in, ItemStack out) {
-        StonecuttingRecipe recipe = new StonecuttingRecipe(new NamespacedKey(Quark.PLUGIN, id), out, in);
+        StonecuttingRecipe recipe = new StonecuttingRecipe(new NamespacedKey(Quark.getInstance(), id), out, in);
         recipe.setGroup(group);
         return recipe;
     }

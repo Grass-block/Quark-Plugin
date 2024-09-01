@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.foundation.command;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 
@@ -46,7 +47,7 @@ public abstract class ModuleCommand<M extends AbstractModule> extends AbstractCo
         return this.getModule().getFullId();
     }
 
-    public final ConfigurationSection getConfig() {
+    public final ConfigEntry getConfig() {
         return this.module.getConfig();
     }
 }

@@ -16,5 +16,8 @@
   ],
   "languages": [
     "quark-security:zh_cn"
+  ],
+  "configs": [
+    "quark-security"
   ]
 }

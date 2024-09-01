@@ -72,5 +72,16 @@ language:
       - - '{#purple}{#server-name}{#white} prohibits all activities that violate laws and regulations.'
         - '{#white}Any violations will be directly reported, and serious cases will be handed over to the police.'
         - '{#white}We will retain your actions until the end of the evidence collection.'
-    npc-chat:
-      not-found: "{global#error}Cannot find {#var}'s NPC chat context."
+  npc-chat:
+    not-found: "{global#error}Cannot find {#var}'s NPC chat context."
+  nickname:
+    set-self: "{global#info}Set your({#var}) nickname to {#var}, reconnect to apply this change."
+    set-other: "{global#info}Set player {#var}'s nickname to {#var}, this will be applied after he/she reconnected."
+  hover-display:
+    exist: "{global#info}Exist hover text {#var}."
+    not-found: "{global#info}Cannot find hover text {#var}."
+    create: "{global#info}Created hover text {#var}."
+    delete: "{global#info}Deleted hover text {#var}."
+    delete-all: "{global#info}Deleted ALL hover texts."
+    edit: "{global#info}Successfully edited hover text {#var}."
+    teleport: "{global#info}hover text {#var} has been teleported to you."

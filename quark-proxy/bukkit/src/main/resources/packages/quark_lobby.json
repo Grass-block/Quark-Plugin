@@ -11,5 +11,8 @@
   },
   "languages": [
     "quark-lobby:zh_cn"
+  ],
+  "configs": [
+    "quark-lobby"
   ]
 }

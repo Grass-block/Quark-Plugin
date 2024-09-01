@@ -30,11 +30,11 @@ public final class SimpleRecordEntry implements RecordEntry {
 
         if (!f.exists() || f.length() == 0) {
             if (f.getParentFile().mkdirs()) {
-                Quark.LOGGER.info("created record folder of " + f.getName());
+                Quark.getInstance().getLogger().info("created record folder of " + f.getName());
             }
             try {
                 if (f.createNewFile()) {
-                    Quark.LOGGER.info("created record file " + f.getName());
+                    Quark.getInstance().getLogger().info("created record file " + f.getName());
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -86,7 +86,7 @@ public final class SimpleRecordEntry implements RecordEntry {
             this.writer.flush();
             this.writer.close();
         } catch (IOException e) {
-            Quark.LOGGER.info("failed to close record entry %s: %s".formatted(this.id, e.getMessage()));
+            Quark.getInstance().getLogger().info("failed to close record entry %s: %s".formatted(this.id, e.getMessage()));
         }
     }
 }

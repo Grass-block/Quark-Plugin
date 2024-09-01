@@ -70,14 +70,14 @@ public final class CropClickHarvest extends PackageModule {
 
         var data = BukkitDataAccess.blockData(block, Ageable.class);
 
+        Collection<ItemStack> items = event.getItem() != null ? block.getDrops(event.getItem(), event.getPlayer()) : block.getDrops();
+
         if (data.getAge() != data.getMaximumAge()) {
             return;
         }
 
         data.setAge(0);
         block.setBlockData(data);
-
-        Collection<ItemStack> items = event.getItem() != null ? block.getDrops(event.getItem(), event.getPlayer()) : block.getDrops();
 
         processSeedReuses(items, CROPS.get(type));
 

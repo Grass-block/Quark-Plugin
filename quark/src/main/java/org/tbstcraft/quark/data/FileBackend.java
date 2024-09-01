@@ -29,11 +29,11 @@ public final class FileBackend extends DataBackend {
     public void overrideFile(File f, String id) {
         try {
             if (f.getParentFile().mkdirs()) {
-                Quark.LOGGER.info("created data folder: " + this.getFolder().getName());
+                Quark.getInstance().getLogger().info("created data folder: " + this.getFolder().getName());
             }
 
             if (f.createNewFile()) {
-                Quark.LOGGER.info("created data file: %s/%s".formatted(this.getFolder().getName(), id));
+                Quark.getInstance().getLogger().info("created data file: %s/%s".formatted(this.getFolder().getName(), id));
             }
             FileOutputStream fileOutputStream = new FileOutputStream(this.getDataFile(id));
             NBT.writeZipped(new NBTTagCompound(), fileOutputStream);

@@ -30,7 +30,7 @@ public final class JsonServiceRegistry extends ServiceRegistry {
         try {
             InputStream stream = pkg.getClass().getResourceAsStream(path);
             if (stream == null) {
-                Quark.LOGGER.warning("failed to load package descriptor.");
+                Quark.getInstance().getLogger().warning("failed to load package descriptor.");
                 return null;
             }
             stream.close();
@@ -59,6 +59,6 @@ public final class JsonServiceRegistry extends ServiceRegistry {
                 this.getPackage().getLogger().warning("failed to construct module %s: %s".formatted(path, e.getMessage()));
             }
         }
-        Quark.LOGGER.info("created service from package %s(%s).".formatted(this.getPackage().getClass().getName(), this.getPackage().getId()));
+        Quark.getInstance().getLogger().info("created service from package %s(%s).".formatted(this.getPackage().getClass().getName(), this.getPackage().getId()));
     }
 }

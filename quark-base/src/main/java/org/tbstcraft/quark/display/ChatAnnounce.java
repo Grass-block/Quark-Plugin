@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.ModuleDataService;
@@ -29,6 +30,8 @@ import java.util.*;
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(ChatAnnounce.HintCommand.class)
 public final class ChatAnnounce extends PackageModule {
+    private Set<Player> sessions = new HashSet<>();
+
     private long index;
     private boolean freeze;
 
@@ -37,6 +40,8 @@ public final class ChatAnnounce extends PackageModule {
 
     @Override
     public void enable() {
+        this.sessions.addAll(Bukkit.getOnlinePlayers());
+
         this.tick();
         int p = this.getConfig().getInt("period");
         TaskService.timerTask("chat-announce:tick", p, p, this::tick);
@@ -44,6 +49,7 @@ public final class ChatAnnounce extends PackageModule {
 
     @Override
     public void disable() {
+        this.sessions = null;
         TaskService.cancelTask("chat-announce:tick");
     }
 
@@ -55,10 +61,15 @@ public final class ChatAnnounce extends PackageModule {
 
 
     public void tick() {
+        if (this.sessions == null) {
+            return;
+        }
         if (this.freeze) {
             return;
         }
         this.index++;
+
+
         for (Player p : Bukkit.getOnlinePlayers()) {
             sendHint(p);
         }
@@ -105,15 +116,30 @@ public final class ChatAnnounce extends PackageModule {
             String mode = this.language.getMessage(locale, "type-tip");
             String btn = this.language.getMessage(locale, "tip-append");
 
-            this.language.sendTemplate(sender, Language.generateTemplate(this.getConfig(), "ui", (ss) -> ss.formatted(mode + "  " + btn, msg)));
+            this.language.sendTemplate(
+                    sender,
+                    Language.generateTemplate(this.getConfig(), "ui", (ss) -> ss.formatted(mode + "  " + btn, msg))
+                                      );
         });
     }
 
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        if (this.sessions == null) {
+            return;
+        }
+        this.sessions.add(event.getPlayer());
         this.sendTip(event.getPlayer());
         this.sendAnnounce(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        if (this.sessions == null) {
+            return;
+        }
+        this.sessions.remove(event.getPlayer());
     }
 
 

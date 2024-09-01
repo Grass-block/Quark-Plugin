@@ -65,7 +65,7 @@ public interface BukkitUtil {
     }
 
     static void registerEventListener(Listener listener) {
-        Bukkit.getPluginManager().registerEvents(listener, Quark.PLUGIN);
+        Bukkit.getPluginManager().registerEvents(listener, Quark.getInstance());
     }
 
     static void unregisterEventListener(Listener listener) {
@@ -81,7 +81,7 @@ public interface BukkitUtil {
 
                     list = (HandlerList) clazz.getMethod("getHandlerList").invoke(null);
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    Quark.LOGGER.warning("failed to unregister listener %s: %s".formatted(m.getName(), e.getMessage()));
+                    Quark.getInstance().getLogger().warning("failed to unregister listener %s: %s".formatted(m.getName(), e.getMessage()));
                     continue;
                 }
                 list.unregister(listener);

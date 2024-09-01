@@ -12,6 +12,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.foundation.region.Region;
 import org.tbstcraft.quark.foundation.region.SimpleRegion;
@@ -43,7 +44,7 @@ public interface WESessionTrackService extends Service {
     }
 
     @ServiceProvider
-    static WESessionTrackService create(ConfigurationSection cfg) {
+    static WESessionTrackService create(ConfigEntry cfg) {
         return new ServiceImplementation();
     }
 

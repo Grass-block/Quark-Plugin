@@ -295,7 +295,7 @@ public final class MusicPlayer extends PackageModule {
                     int pitch = 0;
                     float speedMod = 1.0f;
 
-                    ConfigurationSection pitchOffsets = this.getConfig().getConfigurationSection("pitch-offsets");
+                    ConfigurationSection pitchOffsets = this.getConfig().getSection("pitch-offsets");
                     if (pitchOffsets != null && pitchOffsets.contains(args[1])) {
                         pitch = pitchOffsets.getInt(args[1]);
                     }

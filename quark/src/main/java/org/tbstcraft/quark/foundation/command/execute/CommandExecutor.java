@@ -14,7 +14,7 @@ public interface CommandExecutor {
     @ApiStatus.Obsolete
     default void onCommand(CommandSender sender, String[] args) {
         try {
-            this.execute(new CommandExecution(sender, args));
+            this.execute(new CommandExecution(sender, args,this));
         } catch (ArgumentAssertionException e) {
             List<Object> lst = new ArrayList<>(e.getInfo().length + 1);
             lst.add(e.getPosition());

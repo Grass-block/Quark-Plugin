@@ -4,61 +4,61 @@ import me.gb2022.apm.client.ClientMessenger;
 import me.gb2022.apm.client.backend.MessageBackend;
 import me.gb2022.commons.Timer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.tbstcraft.quark.data.config.Configuration;
+import org.tbstcraft.quark.data.config.ConfigAccess;
+import org.tbstcraft.quark.data.config.ConfigContainer;
 import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.data.config.YamlUtil;
 import org.tbstcraft.quark.data.language.ILanguageAccess;
 import org.tbstcraft.quark.data.language.LanguageContainer;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.foundation.platform.PluginUtil;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceManager;
+import org.tbstcraft.quark.internal.LocaleService;
+import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.metrics.Metrics;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 /**
- * <h3>江城子·程序员之歌</h3>
- * 十年生死两茫茫，写程序，到天亮。千万代码，Bug何处藏。纵使上线又何妨，朝令改，夕断肠。<br>
- * 用户每天新想法，天天改，日日忙。相顾无言，惟有泪千行。每晚灯火阑珊处，夜难寐，赶工狂。
+ * <h3>江城子·腐竹之歌</h3>
+ * 十年生死两茫茫，写程序，到天亮。千万插件，Bug何处藏。纵使上线又何妨，朝令改，夕断肠。<br>
+ * 玩家每天新想法，天天改，日日忙。相顾无言，惟有泪千行。每晚灯火阑珊处，夜难寐，赶工狂。
  */
 public final class Quark extends JavaPlugin {
-    public static final int API_VERSION = 33;
-    public static final int METRIC_PLUGIN_ID = 22683;
+    public static final int API_VERSION = 37;
+    public static final int BSTATS_ID = 22683;
     public static final String PLUGIN_ID = "quark";
-    public static final String CORE_UA = "quark/tm8.7[electron3.3]";
+    public static final String CORE_UA = "quark/tm8.73[electron3.4]";
 
     public static final ILanguageAccess LANGUAGE = LanguageContainer.getInstance().access("quark-core");
-    public static Configuration CONFIG;
+    public static final ConfigAccess CONFIG = ConfigContainer.getInstance().access("quark-core");
     public static Quark PLUGIN;
     public static Logger LOGGER;
-    public static Metrics METRICS;
 
-    private static boolean coreAvailable = false;
-    private final String instanceUUID = UUID.randomUUID().toString();
+    private String uuid;
+    private Metrics metrics;
     private boolean fastBoot;
+    private boolean initialized;
 
     public static void reload(CommandSender audience) {
         Runnable task = () -> {
             try {
-                Locale locale = org.tbstcraft.quark.data.language.Language.locale(audience);
+                Locale locale = LocaleService.locale(audience);
                 String msg = LANGUAGE.getMessage(locale, "packages", "load");
 
                 Class<?> commandManager = Class.forName("org.tbstcraft.quark.foundation.command.CommandManager");
@@ -75,32 +75,45 @@ public final class Quark extends JavaPlugin {
             }
         };
 
+        /* test - remove async reloading.
         if (APIProfileTest.isArclightBasedServer()) {
             task.run();
         } else {
             new Thread(task).start();
         }
+         */
+
+        task.run();
     }
 
-    public static boolean isCoreAvailable() {
-        return coreAvailable;
+    public static Quark getInstance() {
+        return (Quark) Bukkit.getPluginManager().getPlugin("quark");
     }
+
 
     //----[logging]----
     private void log(String msg, Object... format) {
         this.getLogger().info(msg.formatted(format));
     }
 
-    private void operation(String operation, Runnable task) {
-        log(operation);
+    private void info(String msg, String zh, Object... format) {
+        log(Locale.getDefault().getCountry().contains("CN") ? zh : msg, format);
+    }
+
+    private void warn(String msg, String zh, Object... format) {
+        log(Locale.getDefault().getCountry().equalsIgnoreCase("zh") ? zh : msg, format);
+    }
+
+    private void operation(String operation, String zh, Runnable task) {
+        info(operation, zh);
         task.run();
     }
 
-    private void operation(String operation, boolean condition, Runnable task) {
+    private void operation(String operation, String zh, boolean condition, Runnable task) {
         if (!condition) {
             return;
         }
-        operation(operation, task);
+        operation(operation, zh, task);
     }
 
 
@@ -113,20 +126,25 @@ public final class Quark extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(s);
         }
 
-        operation("loading bootstrap classes...", () -> {
+        info("starting(v%s@API%s)...", "正在启动(v%s@API%s)...", ProductInfo.version(), API_VERSION);
+
+        operation("loading bootstrap classes...", "加载启动类...", () -> {
             try {
                 Class.forName("me.gb2022.commons.Timer");
                 Class.forName("org.tbstcraft.quark.data.config.Queries");
                 Class.forName("org.tbstcraft.quark.foundation.platform.APIProfile");
                 Class.forName("org.tbstcraft.quark.foundation.text.TextSender");
                 Class.forName("org.tbstcraft.quark.foundation.text.TextBuilder");
+                Class.forName("org.tbstcraft.quark.foundation.platform.PluginUtil");
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         });
-        operation("loading plugin context...", () -> {
+        operation("loading plugin context...", "初始化插件上下文...", () -> {
+            this.uuid = UUID.randomUUID().toString();
+
+            LOGGER = getLogger();
             PLUGIN = this;
-            LOGGER = this.getLogger();
 
             PluginUtil.CORE_REF.set(this);
             APIProfileTest.test();
@@ -135,32 +153,37 @@ public final class Quark extends JavaPlugin {
 
             TextSender.initContext();
         });
-        operation("checking environment...", () -> {
-            if (APIProfileTest.isFoliaServer()) {
-                TextSender.sendToConsole(TextBuilder.build(ChatColor.translateAlternateColorCodes('&', """
-                        Quark核心检测到您正在使用Folia服务端!{color(white)}
-                          Folia兼容已自动启用。我们不保证任何功能的可用!
-                        {color(red)}Quark core detected you are using Folia Server!{color(white)}
-                          Folia compat are automatically enabled.We do NOT ensure any feature's availability!
-                        """)));
-            }
-            if (APIProfileTest.isArclightBasedServer()) {
-                TextSender.sendToConsole(TextBuilder.build("""
-                                                                   {color(red)}Quark核心检测到Arclight/Mohist服务端, 自动更新系统将不可用。若您需要更新，请重启。
-                                                                   {color(red)}Quark core detected Arclight/Mohist server, auto-update system will be unavailable. Please RESTART if you want to update!
-                                                                   """));
-            }
+        operation("checking environment...", "检查环境...", () -> {
+            var folia = APIProfileTest.isFoliaServer();
+            var arclight = APIProfileTest.isArclightBasedServer();
 
+            if (folia) {
+                warn(
+                        "detected Folia type(Threaded Regions API) environment. using folia task system.",
+                        "检测到类Folia环境(线程化), 已启用Folia任务系统。"
+                    );
+            }
+            if (arclight) {
+                warn(
+                        "detected Arclight type(Forge API) environment. try restart your server rather than /quark reload.",
+                        "检测到类Arclight环境(Forge混合端), 请不要使用/quark reload重载插件。"
+                    );
+            }
+            if (isFastBoot() && arclight) {
+                warn(
+                        "fastboot are not available on Arclight type(Forge API) platform! disabling fast-boot.",
+                        "快速启动在类Arclight平台(Forge混合端)不可用! 正在关闭快速启动..."
+                    );
+                this.fastBoot = false;
+            }
             if (isFastBoot()) {
-                if (APIProfileTest.isArclightBasedServer()) {
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "检测到Mohist/ArcLight平台，无法启用快速启动(FastBoot)");
-                    this.fastBoot = false;
-                } else {
-                    Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "快速启动(FastBoot)已开启。热重载功能将失效");
-                }
+                warn(
+                        "using Fast-Boot environment, hot-reload may not function well. RESTART your server if any error occurred.",
+                        "正在使用快速启动, 热重载可能表现不正常。如果遇到任何错误请重启服务器。"
+                    );
             }
         });
-        operation("loading core configuration...", () -> {
+        operation("loading core configuration...", "加载核心配置...", () -> {
             this.saveDefaultConfig();
             this.reloadConfig();
             try {
@@ -173,7 +196,7 @@ public final class Quark extends JavaPlugin {
 
             var fastBoot = config.getBoolean("config.plugin.fast-boot");
             var metrics = config.getBoolean("config.plugin.metrics");
-            var debug = config.getBoolean("config.plugin.debug");
+            //var debug = config.getBoolean("config.plugin.debug");
 
             this.fastBoot = fastBoot;
 
@@ -184,73 +207,111 @@ public final class Quark extends JavaPlugin {
 
             saveConfig();
 
-            Quark.CONFIG = new Configuration("quark-core");
             Queries.setEnvironmentVars(Objects.requireNonNull(config.getConfigurationSection("config.environment")));
 
-            operation("initializing metrics...", metrics, () -> METRICS = new Metrics(this, METRIC_PLUGIN_ID));
+            operation(
+                    "initializing metrics...",
+                    "初始化插件数据统计(Metrics)...",
+                    metrics,
+                    () -> this.metrics = new Metrics(this, BSTATS_ID)
+                     );
         });
-        operation("loading full jar...", !this.fastBoot, () -> {
-            try (JarFile jarFile = new JarFile(new File(System.getProperty("user.dir") + "/plugins/quark.jar"))) {
-                Enumeration<JarEntry> entries = jarFile.entries();
+        operation("loading full jar...", "加载全Jar...", !this.fastBoot, () -> {
+            var pluginsPath = System.getProperty("user.dir") + "/plugins/";
+            var pluginsDir = new File(pluginsPath);
+            var loader = Quark.class.getClassLoader();
+
+            File jar = null;
+            for (File f : Objects.requireNonNull(pluginsDir.listFiles())) {
+                if (f.isDirectory() || !f.getName().endsWith(".jar")) {
+                    continue;
+                }
+
+                try {
+                    if (PluginUtil.getPluginDescription(f).getName().equals(PLUGIN_ID)) {
+                        jar = f;
+                    }
+                } catch (InvalidDescriptionException ignored) {
+                }
+            }
+
+            if (jar == null) {
+                throw new RuntimeException("cannot find plugin!");
+            }
+
+            try (JarFile jarFile = new JarFile(jar)) {
+                var entries = jarFile.entries();
 
                 while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
+                    var entry = entries.nextElement();
+                    if (entry.isDirectory()) {
+                        continue;
+                    }
                     if (!entry.getName().endsWith(".class")) {
                         continue;
                     }
-                    String className = entry.getName().replace("/", ".").replaceAll("\\.class$", "");
-                    if (className.contains("internal")) {
-                        continue;
-                    }
-                    if (className.contains("META-INF")) {
-                        continue;
-                    }
+
+                    var className = entry.getName().replace("/", ".").replaceAll("\\.class$", "");
+
                     try {
-                        Quark.class.getClassLoader().loadClass(className);
+                        loader.loadClass(className);
                     } catch (Throwable ignored) {
                     }
                 }
             } catch (Exception ignored) {
             }
         });
-        operation("starting services...", () -> {
+        operation("starting services...", "启动服务组件...", () -> {
             Service.initBase();
             QuarkInternalPackage.register(PackageManager.INSTANCE.get());
 
-            ClientMessenger.setBackend(MessageBackend.bukkit(Quark.PLUGIN));
+            ClientMessenger.setBackend(MessageBackend.bukkit(Quark.getInstance()));
             ClientMessenger.getBackend().start();
         });
 
-        log("done (%d ms)".formatted(Timer.passedTime()));
-        coreAvailable = true;
+        info("done. (%d ms)", "完成! (%d ms)", Timer.passedTime());
+        this.initialized = true;
     }
 
     @Override
     public void onDisable() {
         Timer.restartTiming();
-        coreAvailable = false;
+        this.initialized = false;
+        info("stopping(v%s@API%s)...", "正在停止(v%s@API%s)...", ProductInfo.version(), API_VERSION);
 
-        operation("stopping services...", () -> {
+        operation("stopping services...", "停止服务组件...", () -> {
             ServiceManager.unregisterAll();
             Service.stopBase();
             ClientMessenger.getBackend().stop();
         });
-        operation("destroying context...", () -> {
-            Quark.PLUGIN = null;
-            Quark.METRICS = null;
-            Quark.LOGGER = null;
-        });
+        operation("destroying context...", "销毁插件上下文...", () -> {
+            try {
+                this.getMetrics().shutdown();
+            } catch (Exception ignored) {
+            }
 
-        log("done (%d ms)".formatted(Timer.passedTime()));
+            this.metrics = null;
+        });
+        operation("running finalize tasks...", "运行卸载任务...", TaskService::runFinalizeTask);
+
+        info("done (%d ms)", "完成! (%d ms)", Timer.passedTime());
     }
 
 
     //----[properties]----
     public String getInstanceUUID() {
-        return this.instanceUUID;
+        return this.uuid;
     }
 
     public boolean isFastBoot() {
         return this.fastBoot;
+    }
+
+    public Metrics getMetrics() {
+        return metrics;
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 }

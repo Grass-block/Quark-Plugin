@@ -66,7 +66,7 @@ public abstract class CustomBlock {
 
 
     public static void setBlockId(PersistentDataHolder holder, String id) {
-        NamespacedKey key = new NamespacedKey(Quark.PLUGIN, "block_usage");
+        NamespacedKey key = new NamespacedKey(Quark.getInstance(), "block_usage");
         holder.getPersistentDataContainer().set(key, PersistentDataType.STRING, id);
     }
 

@@ -9,8 +9,7 @@ import org.tbstcraft.quark.util.Comments;
 
 import java.util.List;
 
-@QuarkModule
-@Comments("FUCK YOU!!!!!!!!!")
+@QuarkModule(version = "1.0.3")
 public final class CounterPluginConflictHandler extends PackageModule {
     public static final String MAIN_CLASS = "org.kyoikumi.plugin.counter.Counter";
     public static final String PLUGIN_ID = "Counter";

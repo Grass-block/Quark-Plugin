@@ -36,7 +36,7 @@ public final class SurroundingRefresh extends CommandModule {
     }
 
     @Override
-    public void disable(){
+    public void disable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
         super.disable();
     }
@@ -93,6 +93,10 @@ public final class SurroundingRefresh extends CommandModule {
         Location loc = event.getProperty("loc", Location.class);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getWorld() != loc.getWorld()) {
+                continue;
+            }
+
             if (loc.distance(p.getLocation()) < 64) {
                 refreshArea(p, 7, true);
             }

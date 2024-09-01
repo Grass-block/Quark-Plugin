@@ -6,11 +6,11 @@ import org.tbstcraft.quark.framework.packages.initializer.PackageInitializer;
 
 public final class InternalPackage extends PluginPackage {
     public InternalPackage(PackageInitializer initializer) {
-        super(Quark.PLUGIN, initializer);
+        super(Quark.getInstance(), initializer);
     }
 
     @Override
     public Plugin getOwner() {
-        return Quark.PLUGIN;
+        return Quark.getInstance();
     }
 }

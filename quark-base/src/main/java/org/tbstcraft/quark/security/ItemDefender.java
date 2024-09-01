@@ -110,12 +110,12 @@ public final class ItemDefender extends PackageModule {
     }
 
     private boolean isItemIllegal(Material material) {
-        List<String> list = this.getConfig().getStringList("illegal-list");
+        List<String> list = this.getConfig().getList("illegal-list");
         return list.contains(material.getKey().getKey());
     }
 
     private boolean isItemWarning(Material material) {
-        List<String> list = this.getConfig().getStringList("warning-list");
+        List<String> list = this.getConfig().getList("warning-list");
         return list.contains(material.getKey().getKey());
     }
 }

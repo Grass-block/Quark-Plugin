@@ -204,11 +204,11 @@ public abstract class AbstractCommand extends Command implements CommandExecutor
         } catch (Exception e) {
             if ((e instanceof ArrayIndexOutOfBoundsException)) {
                 this.sendExceptionMessage(sender);
-                Quark.LOGGER.info("none-match arguments: " + Arrays.toString(args));
+                Quark.getInstance().getLogger().info("none-match arguments: " + Arrays.toString(args));
                 return false;
             }
             if (!Objects.equals(e.getMessage(), "FORMAT_ERROR")) {
-                Quark.LOGGER.severe(e.getMessage());
+                Quark.getInstance().getLogger().severe(e.getMessage());
             }
             ExceptionUtil.log(e);
             this.sendExceptionMessage(sender);
@@ -241,7 +241,7 @@ public abstract class AbstractCommand extends Command implements CommandExecutor
                 Permission perm = PermissionService.getPermission(str);
 
                 if (perm == null) {
-                    Quark.LOGGER.warning("skipped unknown permission: " + str);
+                    Quark.getInstance().getLogger().warning("skipped unknown permission: " + str);
                     continue;
                 }
 

@@ -2,7 +2,7 @@ plugins{
     id 'java'
 }
 
-project.setProperty("version","0.63.15")
+project.setProperty("version","0.64.10")
 
 apply from: "E:/Java/GradleScripts/build-base.gradle"
 
@@ -35,7 +35,7 @@ dependencies {
     compileOnly 'net.kyori:adventure-platform-bungeecord:4.0.0'
 }
 
-//quark libraries
+//quark libraries(integrated)
 dependencies {
     compileOnly 'org.iq80.leveldb:leveldb:0.12'
 

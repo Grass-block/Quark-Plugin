@@ -5,16 +5,21 @@ import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
+import org.tbstcraft.quark.foundation.platform.BukkitDataAccess;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -164,6 +169,31 @@ public final class ChatComponent extends PackageModule {
             msg = PlaceHolderService.formatPlayer(event.getPlayer(), msg);
             msg = this.parent.processChar(msg);
             event.message(TextBuilder.buildComponent(msg, true));
+        }
+
+        @EventHandler
+        public void onAnvilRename(PrepareAnvilEvent event) {
+            AnvilInventory anvilInventory = event.getInventory();
+            ItemStack resultItem = event.getResult();
+            if (resultItem == null) {
+                return;
+            }
+
+            var renameText = anvilInventory.getRenameText();
+
+            if (renameText == null || renameText.isEmpty()) {
+                return;
+            }
+
+            BukkitDataAccess.itemMeta(resultItem, (meta) -> {
+                var msg = renameText;
+                msg = this.parent.processColorChars(msg);
+                msg = PlaceHolderService.format(msg);
+                msg = PlaceHolderService.formatPlayer(((Player) event.getViewers().get(0)), msg);
+                msg = this.parent.processChar(msg);
+
+                meta.displayName(TextBuilder.buildComponent(msg, false));
+            });
         }
     }
 }

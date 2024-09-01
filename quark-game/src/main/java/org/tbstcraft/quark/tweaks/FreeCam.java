@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
@@ -80,6 +81,11 @@ public final class FreeCam extends CommandModule {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         this.reset(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        event.getPlayer().setGameMode(Bukkit.getDefaultGameMode());
     }
 
     @Override

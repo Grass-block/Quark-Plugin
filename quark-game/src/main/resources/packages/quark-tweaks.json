@@ -15,5 +15,8 @@
   },
   "languages": [
     "quark-tweaks:zh_cn"
+  ],
+  "configs": [
+    "quark-tweaks"
   ]
 }
