@@ -3,7 +3,7 @@ name: quark-proxy
 version: '${version}-${core_version}'
 
 #api
-main: org.tbstcraft.quark.QuarkProxy
+main: org.atcraftmc.quark.QuarkProxy
 api-version: 1.14
 folia-supported: true
 load: POSTWORLD

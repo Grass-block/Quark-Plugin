@@ -20,12 +20,12 @@ public interface TokenStorageService extends Service {
 
     @ServiceInject
     static void start() {
-        TaskService.asyncTimerTask("quark_core:web:token_update", 0, 20, UPDATE_TASK);
+        TaskService.async().timer("quark_core:web:token_update", 0, 20, UPDATE_TASK);
     }
 
     @ServiceInject
     static void stop() {
-        TaskService.cancelTask("quark_core:web:token_update");
+        TaskService.async().cancel("quark_core:web:token_update");
     }
 
     static String create() {

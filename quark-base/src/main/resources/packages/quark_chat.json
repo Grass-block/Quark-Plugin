@@ -1,7 +1,7 @@
 {
   "id": "quark-chat",
   "version": "0.12",
-  "package_namespace": "org.tbstcraft.quark.chat",
+  "package_namespace": "org.atcraftmc.quark.chat",
   "modules": {
     "chat-filter": ".ChatFilter",
     "chat-mute": ".ChatMute",
@@ -13,7 +13,8 @@
     "hitokoto": ".Hitokoto",
     "chatgpt": ".ChatGPT",
     "self-message": ".SelfMessage",
-    "npc-chat": ".NPCChat"
+    "npc-chat": ".NPCChat",
+    "qq-chat-sync": ".QQChatSync"
   },
   "languages": [
     "quark-chat:zh_cn",

@@ -1,0 +1,16 @@
+{
+  "id": "quark-warps",
+  "version": "0.10",
+  "package_namespace": "org.atcraftmc.quark.warps",
+  "modules": {
+    "tpa": ".TPA",
+    "waypoint": ".Waypoint",
+    "back-to-death": ".BackToDeath"
+  },
+  "languages": [
+    "quark-warps:zh_cn"
+  ],
+  "configs": [
+    "quark-warps"
+  ]
+}

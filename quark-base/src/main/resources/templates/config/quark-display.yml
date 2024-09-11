@@ -72,3 +72,6 @@ config:
     proxy: /{$proxy}
     sound: true
     volume: 0.25
+  custom-death-message:
+    prefix: "{#gray}[{#red}X{#gray}]{#reset}"
+    suffix: ""

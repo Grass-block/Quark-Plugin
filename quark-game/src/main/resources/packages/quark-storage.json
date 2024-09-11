@@ -1,7 +1,7 @@
 {
   "id": "quark-storage",
   "version": "0.3.10",
-  "package_namespace": "org.tbstcraft.quark.storage",
+  "package_namespace": "org.atcraftmc.quark.storage",
   "modules": {
     "portable-shulker-box": ".PortableShulkerBox",
     "item-drop-secure": ".ItemDropSecure"

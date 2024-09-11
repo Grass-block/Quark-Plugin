@@ -1,16 +1,14 @@
 {
   "id": "quark-contents",
   "version": "0.10",
-  "package_namespace": "org.tbstcraft.quark.contents",
+  "package_namespace": "org.atcraftmc.quark.contents",
   "modules": {
     "elevator": ".Elevator",
     "stair-seat": ".StairSeat",
-    "minecart-controller": ".MinecartController",
+    "realistic-minecart": ".RealisticMinecart",
     "custom-recipe": ".CustomRecipe",
     "114514": "._114514",
     "neko": ".Neko",
-    "tpa": ".TPA",
-    "waypoint": ".Waypoint",
     "elytra-aeronautics": ".ElytraAeronautics",
     "music-player": ".music.MusicPlayer",
     "hats": ".Hats",

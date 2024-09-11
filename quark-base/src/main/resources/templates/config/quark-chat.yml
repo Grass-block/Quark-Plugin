@@ -23,3 +23,12 @@ config:
     handled-commands: [ "say","tell","mail" ] #commands will be handled as they attempt to send message.
     punish: true #will punish player.
     punish-command: "mute {player} 3600 {#yellow}[quark]{#red}BadChatBehavior" #punish player using this command. support other plugins.
+  qq-chat-sync:
+    message: "大厅 | [{#rank}] %s > %s"
+    token: "114514"
+    address: 127.0.0.1:53234
+    targets:
+      - "733345889"
+      - "805950688"
+
+

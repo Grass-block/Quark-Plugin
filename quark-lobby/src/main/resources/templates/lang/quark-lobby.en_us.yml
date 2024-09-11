@@ -1,0 +1,5 @@
+language:
+  default-inventory:
+    edit-start: "{global#info}You opened default inventory editor。"
+    edit-complete: "{global#info}Default inventory has been updated。"
+    cover: "{global#info}Default inventory has been covered to your inventory。"

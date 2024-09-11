@@ -1,0 +1,27 @@
+plugins{
+    id 'java'
+}
+
+apply from: "E:/Java/GradleScripts/build-base.gradle"
+
+applyGlobalScript("Publish/ProjectOutput.gradle")
+applyGlobalScript("Repo/MinecraftPlugins.gradle")
+
+//libs
+dependencies {
+    implementation project(":quark-base")
+    implementation project(":quark-game")
+    implementation project(":quark-proxy:bukkit")
+    implementation project(":quark-web")
+}
+
+//core
+dependencies {
+    implementation project(":quark")
+}
+
+jar {
+    from sourceSets.main.output.filter { File file ->
+        (file.name != 'plugin.yml')
+    }
+}

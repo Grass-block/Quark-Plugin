@@ -24,6 +24,15 @@ public interface Compatibility {
         }
     }
 
+    static void blackListPlatform(APIProfile... platform) {
+        for (APIProfile profile : platform) {
+            if (APIProfileTest.getAPIProfile() == profile) {
+                throw new APIIncompatibleException("unsupported platform: " + profile.name);
+            }
+        }
+    }
+
+
     interface MethodAssertion {
         Method get() throws NoSuchMethodException;
     }

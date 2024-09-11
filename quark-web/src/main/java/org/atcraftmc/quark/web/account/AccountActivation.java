@@ -104,7 +104,7 @@ public final class AccountActivation extends PackageModule {
         String uuid = UUID.randomUUID().toString();
 
         Locale locale = Language.locale(player);
-        TaskService.timerTask(uuid, 0, 20, () -> {
+        TaskService.global().timer(uuid, 0, 20, () -> {
             if (status == AccountStatus.UNLINKED) {
                 TextSender.fullTitle(player,
                         this.language.getMessageComponent(locale, "link-title"),
@@ -118,7 +118,7 @@ public final class AccountActivation extends PackageModule {
             }
 
             if (!player.isOnline()) {
-                TaskService.cancelTask(uuid);
+                TaskService.global().cancel(uuid);
             }
         });
     }

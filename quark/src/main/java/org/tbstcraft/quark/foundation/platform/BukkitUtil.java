@@ -58,9 +58,9 @@ public interface BukkitUtil {
         };
 
         if (event.isAsynchronous()) {
-            TaskService.asyncTask(command);
+            TaskService.async().run(command);
         } else {
-            TaskService.runTask(command);
+            TaskService.global().run(command);
         }
     }
 

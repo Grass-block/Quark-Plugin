@@ -208,7 +208,9 @@ public abstract class AbstractCommand extends Command implements CommandExecutor
                 return false;
             }
             if (!Objects.equals(e.getMessage(), "FORMAT_ERROR")) {
-                Quark.getInstance().getLogger().severe(e.getMessage());
+                try {
+                    Quark.getInstance().getLogger().severe(e.getMessage());
+                }catch (Exception ignored){}
             }
             ExceptionUtil.log(e);
             this.sendExceptionMessage(sender);

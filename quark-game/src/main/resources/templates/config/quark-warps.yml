@@ -1,0 +1,4 @@
+config:
+  waypoint:
+    allow-coordinate-add: true
+    home: true

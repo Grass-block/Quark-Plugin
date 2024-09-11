@@ -52,7 +52,7 @@ public final class ConfigContainer extends PackContainer<Configuration> {
     }
 
     public String getString(String pack, String entry, String id) {
-        return get(pack, entry, id, String.class);
+        return get(pack, entry, id, Object.class).toString();
     }
 
     public List<String> getList(String pack, String entry, String id) {

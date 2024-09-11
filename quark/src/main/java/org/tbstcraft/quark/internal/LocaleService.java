@@ -88,7 +88,7 @@ public interface LocaleService extends Service {
         @EventHandler
         public void onLocaleChange(PlayerLocaleChangeEvent event) {
             _check(event);
-            TaskService.laterTask(60, () -> _check(new PlayerLocaleChangeEvent(event.getPlayer(), event.getPlayer().getLocale())));
+            TaskService.global().delay(60, () -> _check(new PlayerLocaleChangeEvent(event.getPlayer(), event.getPlayer().getLocale())));
         }
 
         private void _check(PlayerLocaleChangeEvent event) {

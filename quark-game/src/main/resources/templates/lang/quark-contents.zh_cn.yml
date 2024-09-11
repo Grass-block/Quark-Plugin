@@ -2,33 +2,14 @@ language:
   -module-name:
     custom-recipe: 自定义合成配方
     elevator: 电梯方块
-    minecart-controller: 矿车手动驾驶
+    realistic-minecart: 真实矿车
     music-player: 音乐播放器
     neko: 玩家变猫娘
     stair-seat: 楼梯座椅
-    tpa: 传送请求
-    waypoint: 导航点
     hats: 戴帽子
   stair-seat:
     tip: "{#gray}对着楼梯方块右键可以坐下。"
-  waypoint:
-    exist: '{global#sys-error}已存在导航点 {#var}。'
-    not-exist: '{global#sys-error}不存在导航点 {#var}。'
-    list: '{global#sys-info}以下是全部导航点：{#return}{#var}'
-    add-success: '{global#sys-operation}成功添加了导航点 {#var}。'
-    remove-success: '{global#sys-operation}成功移除了导航点 {#var}。'
-    tp-success: '{global#sys-success}已将你传送到导航点 {#var}。'
-    home-exist-warn: "{global#sys-warning}你已经设置了一个家。若要覆盖，请使用 {#gold}/sethome -f"
-    home-set-success: "{global#sys-operation}设置成功。"
-    home-not-set: "{global#sys-error}你还没有设置家,使用 {#gold}/sethome{#gray} 来设置一个!"
-    home-tp-success: "{global#sys-success}已将你传送回家。"
-    back-not-set: "{global#sys-error}你还没死亡过。"
-    back-tp-success: "{global#sys-success}已将你传送到上次死亡地点。"
-    back-hint: "{global#sys-info}你的死亡地点已经记录。使用 {#gold}/back{#gray} 或 {click(command,/back)}{#white}[{#aqua}点此传送{#white}]"
-    tip: "{#gray}使用{#gold}/waypoint{#gray}可以建立你自己的导航或者使用公共导航点。"
-    tip-back: "{#gray}使用{#gold}/back{#gray}可以快速回到死亡位置。"
-    tip-home: "{#gray}使用{#gold}/sethome{#gray}添加一个家，用{#gold}/home{#gray}可以快速回家。"
-  minecart-controller:
+  realistic-minecart:
     run-mode-run: "{#aqua}运行"
     run-mode-boost: "{#green}加速"
     run-mode-break: "{#purple}减速"
@@ -36,39 +17,6 @@ language:
     acceleration: "加速度: "
     speed: "速度: "
     level: "档位: "
-  tpa:
-    tpahere-accept-btn: '{color(white)}[{color(green);click(command,/tpahere accept %s)}接受{color(white)}]'
-    tpahere-deny-btn: '{color(white)}[{color(red);click(command,/tpahere deny %s)}拒绝{color(white)}]'
-    tpahere-request-sender: "{global#sys-info}你向玩家 {#var} 发送了传送到你的请求。"
-    tpahere-request-target: "{global#sys-info}玩家 {#var} 向你发送了传送到他/她的请求。{msg#tpahere-accept-btn} {msg#tpahere-deny-btn}"
-    tpahere-accept-sender: "{global#sys-info}你同意了传送到 {#var} 的请求, 正在传送..."
-    tpahere-accept-target: "{global#sys-info}{#var} 同意了他/她传送到你的请求。"
-    tpahere-deny-sender: "{global#sys-info}你拒绝了传送到 {#var} 的请求。"
-    tpahere-deny-target: "{global#sys-info}{#var} 拒绝了他/她传送到你的请求。"
-    tpahere-no-request: "{global#sys-info}{#var} 没有向你发送传送到他/她的请求。"
-
-    tpa-accept-btn: '{color(white)}[{color(green);click(command,/tpa accept %s)}接受{color(white)}]'
-    tpa-deny-btn: '{color(white)}[{color(red);click(command,/tpa deny %s)}拒绝{color(white)}]'
-    tpa-request-sender: "{global#sys-info}你向玩家 {#var} 发送了传送到他/她的请求。"
-    tpa-request-target: "{global#sys-info}玩家 {#var} 向你发送了传送到你的请求。{msg#tpa-accept-btn} {msg#tpa-deny-btn}"
-    tpa-accept-sender: "{global#sys-info}你同意了 {#var} 传送到你的请求。"
-    tpa-accept-target: "{global#sys-info}{#var} 同意了你传送到他/她的请求, 正在传送..."
-    tpa-deny-sender: "{global#sys-info}你拒绝了 {#var} 传送到你的请求。"
-    tpa-deny-target: "{global#sys-info}{#var} 拒绝了你传送到他/她的请求。"
-    tpa-no-request: "{global#sys-info}{#var} 没有向你发送他/她传送到你的请求。"
-
-
-    accept-btn: '{color(white)}[{color(green);click(command,/tpa accept %s)}接受{color(white)}]'
-    deny-btn: '{color(white)}[{color(red);click(command,/tpa deny %s)}拒绝{color(white)}]'
-    send: '{global#sys-info}你发送了向玩家 {#var} 的传送请求。'
-    undo: '{global#sys-info}你撤消了向玩家 {#var} 的传送请求。'
-    accept: '{global#sys-success}你已接受玩家 {#var} 的传送请求。'
-    deny: '{global#sys-info}你已拒绝玩家 {#var} 的传送请求。'
-    send-announce: '{global#sys-info}玩家 {#var} 向你发送了传送请求。 {msg#accept-btn} {msg#deny-btn}'
-    denied: '{global#sys-error}{#var} 拒绝了你的传送请求。'
-    accepted: '{global#sys-success}{#var} 同意了你的的传送请求, 正在传送...'
-    player-not-found: '{global#sys-error}玩家不存在...'
-    list: '{global#sys-info}以下是你未处理的传送请求: {#return} {#var}'
   114514:
     message:
       - '{#purple}已经到顶啦~'

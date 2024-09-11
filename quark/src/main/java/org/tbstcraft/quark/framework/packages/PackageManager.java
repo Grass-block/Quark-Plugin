@@ -71,7 +71,8 @@ public interface PackageManager extends Service {
         try {
             id = PluginUtil.getPluginDescription(f).getName();
         } catch (InvalidDescriptionException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return false;
         }
 
         if (!id.startsWith(Quark.PLUGIN_ID)) {
@@ -90,7 +91,8 @@ public interface PackageManager extends Service {
 
             return true;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return false;
         }
     }
 

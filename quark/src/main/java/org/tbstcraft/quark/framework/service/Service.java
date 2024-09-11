@@ -6,7 +6,7 @@ import org.tbstcraft.quark.internal.LocaleService;
 import org.tbstcraft.quark.internal.ProductService;
 import org.tbstcraft.quark.internal.permission.PermissionService;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes"})
 public interface Service {
     Class[] BASE_SERVICES = new Class[]{
             PermissionService.class,

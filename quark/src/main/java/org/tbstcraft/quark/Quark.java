@@ -43,17 +43,20 @@ public final class Quark extends JavaPlugin {
     public static final int API_VERSION = 37;
     public static final int BSTATS_ID = 22683;
     public static final String PLUGIN_ID = "quark";
-    public static final String CORE_UA = "quark/tm8.73[electron3.4]";
+    public static final String CORE_UA = "quark/tm8.77[electron3.5]";
 
     public static final ILanguageAccess LANGUAGE = LanguageContainer.getInstance().access("quark-core");
     public static final ConfigAccess CONFIG = ConfigContainer.getInstance().access("quark-core");
     public static Quark PLUGIN;
     public static Logger LOGGER;
 
+    private final BundledPackageLoader bundledPackageLoader = new BundledPackageLoader();
+
     private String uuid;
     private Metrics metrics;
     private boolean fastBoot;
     private boolean initialized;
+    private boolean hasBundler = false;
 
     public static void reload(CommandSender audience) {
         Runnable task = () -> {
@@ -89,7 +92,6 @@ public final class Quark extends JavaPlugin {
     public static Quark getInstance() {
         return (Quark) Bukkit.getPluginManager().getPlugin("quark");
     }
-
 
     //----[logging]----
     private void log(String msg, Object... format) {
@@ -127,6 +129,11 @@ public final class Quark extends JavaPlugin {
         }
 
         info("starting(v%s@API%s)...", "正在启动(v%s@API%s)...", ProductInfo.version(), API_VERSION);
+
+
+        this.bundledPackageLoader.init();
+        info("found bundler packages, constructing....", "找到绑定包，正在构造...");
+        this.hasBundler = this.bundledPackageLoader.isPresent();
 
         operation("loading bootstrap classes...", "加载启动类...", () -> {
             try {
@@ -269,6 +276,11 @@ public final class Quark extends JavaPlugin {
             ClientMessenger.getBackend().start();
         });
 
+        if (this.hasBundler) {
+            info("loading bundled packs...", "检测到绑定存在，正在加载...");
+            this.bundledPackageLoader.register();
+        }
+
         info("done. (%d ms)", "完成! (%d ms)", Timer.passedTime());
         this.initialized = true;
     }
@@ -278,6 +290,11 @@ public final class Quark extends JavaPlugin {
         Timer.restartTiming();
         this.initialized = false;
         info("stopping(v%s@API%s)...", "正在停止(v%s@API%s)...", ProductInfo.version(), API_VERSION);
+
+        if (this.hasBundler) {
+            info("unloading bundled packs...", "检测到绑定存在，正在卸载...");
+            this.bundledPackageLoader.unregister();
+        }
 
         operation("stopping services...", "停止服务组件...", () -> {
             ServiceManager.unregisterAll();

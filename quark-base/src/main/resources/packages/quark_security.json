@@ -1,7 +1,7 @@
 {
   "id": "quark-security",
   "version": "1.0.44",
-  "package_namespace": "org.tbstcraft.quark.security",
+  "package_namespace": "org.atcraftmc.quark.security",
   "modules": {
     "explosion-defender": ".ExplosionDefender",
     "permission-manager": ".PermissionManager",

@@ -3,7 +3,7 @@ name: quark-base
 version: '${version}-${core_version}'
 
 #api
-main: org.tbstcraft.quark.QuarkBase
+main: org.atcraftmc.quark.QuarkBase
 api-version: 1.16
 folia-supported: true
 load: POSTWORLD

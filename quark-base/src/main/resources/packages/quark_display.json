@@ -1,7 +1,7 @@
 {
   "id": "quark-display",
   "version": "0.12",
-  "package_namespace": "org.tbstcraft.quark.display",
+  "package_namespace": "org.atcraftmc.quark.display",
   "modules": {
     "custom-motd": ".CustomMotd",
     "custom-ban-message": ".CustomBanMessage",
@@ -16,7 +16,8 @@
     "custom-scoreboard": ".CustomScoreboard",
     "chat-announce": ".ChatAnnounce",
     "hover-display": ".HoverDisplay",
-    "nickname": ".Nickname"
+    "nickname": ".Nickname",
+    "custom-death-message": ".CustomDeathMessage"
   },
   "languages": [
     "quark-display:zh_cn",

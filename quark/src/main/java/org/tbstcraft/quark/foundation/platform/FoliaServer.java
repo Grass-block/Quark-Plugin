@@ -2,6 +2,7 @@ package org.tbstcraft.quark.foundation.platform;
 
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
 import io.papermc.paper.threadedregions.scheduler.EntityScheduler;
+import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -45,5 +46,15 @@ public interface FoliaServer {
             return;
         }
         throw new RuntimeException("NOT a Folia Server!");
+    }
+
+    static GlobalRegionScheduler getGlobalScheduler() {
+        validateFoliaServer();
+        Server server = Bukkit.getServer();
+        try {
+            return (GlobalRegionScheduler) server.getClass().getMethod("getGlobalRegionScheduler").invoke(server);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

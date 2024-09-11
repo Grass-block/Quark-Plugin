@@ -1,0 +1,3 @@
+config:
+  player-protect:
+    lowest-y: 70 #how low before player will be teleported to spawn.

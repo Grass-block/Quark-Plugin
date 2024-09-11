@@ -48,7 +48,7 @@ public final class ModrinthVersionCheck extends PackageModule implements Command
     }
 
     public void check(BiConsumer<TriState, String> callback) {
-        TaskService.asyncTask(() -> {
+        TaskService.async().run(() -> {
             try {
                 HttpURLConnection con = HTTPUtil.getHttpURLConnection(API, false);
                 var arr = SharedObjects.JSON_PARSER.parse(new String(con.getInputStream().readAllBytes())).getAsJsonArray();

@@ -5,6 +5,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.data.config.YamlUtil;
 import org.tbstcraft.quark.util.ExceptionUtil;
 import org.tbstcraft.quark.util.FilePath;
@@ -14,8 +15,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 public abstract class ConfigurationPack {
+    public static final Pattern REPLACE = Pattern.compile("\\$\\{[a-z-_]+}");
     public static final String FILE_EDIT_HEADER = """
             # This is real configuration/message file where you can do your modifications
             # Add ONLY items you modified here.full files are not  required.
@@ -154,14 +157,19 @@ public abstract class ConfigurationPack {
         }
     }
 
+    public String processDOM(String s) {
+        return Queries.applyEnvironmentVars(s);
+    }
+
     public void load() {
         var custom = new YamlConfiguration();
 
-        try (var template = provider.getClass().getResourceAsStream(getTemplateResource())) {
+        try (var template = provider.getClass()
+                .getResourceAsStream(getTemplateResource()); var mod = new FileInputStream(createStorageFile(false))) {
             assert template != null;
-            this.dom.load(new InputStreamReader(template));
 
-            custom.load(createStorageFile(false));
+            this.dom.loadFromString(processDOM(new String(template.readAllBytes(), StandardCharsets.UTF_8)));
+            custom.loadFromString(processDOM(new String(mod.readAllBytes(), StandardCharsets.UTF_8)));
 
             merge(this.dom, custom);
         } catch (IOException | InvalidConfigurationException e) {

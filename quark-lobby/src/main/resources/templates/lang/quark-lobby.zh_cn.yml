@@ -1,0 +1,10 @@
+language:
+  -module-name:
+    default-inventory: 默认物品栏
+    back-to-spawn: 自动回到重生点
+    map-protect: 地图保护
+    player-protect: 玩家保护
+  default-inventory:
+    edit-start: "{global#info}你打开了默认物品栏编辑器。"
+    edit-complete: "{global#info}默认物品栏已更新。"
+    cover: "{global#info}默认物品栏配置已覆盖到您的物品栏。"

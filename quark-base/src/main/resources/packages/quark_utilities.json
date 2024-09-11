@@ -1,7 +1,7 @@
 {
   "id": "quark-utilities",
   "version": "0.10",
-  "package_namespace": "org.tbstcraft.quark.utilities",
+  "package_namespace": "org.atcraftmc.quark.utilities",
   "modules": {
     "command-tab-fix": ".CommandTabFix",
     "calculator": ".Calculator",

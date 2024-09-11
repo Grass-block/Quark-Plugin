@@ -1,7 +1,7 @@
 {
   "id": "quark-tweaks",
   "version": "1.0.23",
-  "package_namespace": "org.tbstcraft.quark.tweaks",
+  "package_namespace": "org.atcraftmc.quark.tweaks",
   "modules": {
     "time-scale": ".TimeScale",
     "vein-miner": ".VeinMiner",

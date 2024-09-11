@@ -1,7 +1,7 @@
 {
   "id": "quark-automatic",
   "version": "0.10",
-  "package_namespace": "org.tbstcraft.quark.automatic",
+  "package_namespace": "org.atcraftmc.quark.automatic",
   "modules": {
     "vm-garbage-cleaner": ".VMGarbageCleaner",
     "auto-plugin-reload": ".AutoPluginReload",

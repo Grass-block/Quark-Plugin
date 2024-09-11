@@ -153,7 +153,8 @@ public interface PluginUtil {
             try {
                 pluginName = getPluginDescription(f).getName();
             } catch (InvalidDescriptionException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                continue;
             }
             CACHE.put(pluginName, f.getAbsolutePath());
         }

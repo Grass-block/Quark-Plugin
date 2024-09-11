@@ -1,0 +1,16 @@
+#identifier
+name: quark-lobby
+version: '${version}-${core_version}'
+
+#api
+main: org.atcraftmc.quark.lobby.QuarkLobby
+api-version: 1.14
+folia-supported: true
+load: POSTWORLD
+depend: ["quark"]
+
+#description
+authors: ["GrassBlock2022","TBSTMC"]
+website: https://quark.tbstmc.xyz
+description: lobby functions extension pack.
+prefix: QuarkLobby

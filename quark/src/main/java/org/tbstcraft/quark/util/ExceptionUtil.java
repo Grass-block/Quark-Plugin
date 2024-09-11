@@ -1,7 +1,5 @@
 package org.tbstcraft.quark.util;
 
-import org.tbstcraft.quark.Quark;
-
 import java.util.logging.Logger;
 
 public interface ExceptionUtil {
@@ -31,6 +29,6 @@ public interface ExceptionUtil {
     }
 
     static void log(Throwable throwable) {
-        log(Quark.getInstance().getLogger(), throwable);
+        throwable.printStackTrace(System.out);
     }
 }

@@ -8,7 +8,7 @@ import org.tbstcraft.quark.internal.task.TaskService;
 
 public interface RecipeManager {
     static void register(Recipe... recipes) {
-        TaskService.runTask(() -> {
+        TaskService.global().run(() -> {
             for (Recipe r : recipes) {
                 if (Bukkit.getRecipe(((Keyed) r).getKey()) != null) {
                     return;
@@ -19,7 +19,7 @@ public interface RecipeManager {
     }
 
     static void unregister(Recipe... recipes) {
-        TaskService.runTask(() -> {
+        TaskService.global().run(() -> {
             if (APIProfileTest.isArclightBasedServer()) {
                 return;
             }
