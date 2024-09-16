@@ -3,7 +3,7 @@ name: quark-lobby
 version: '${version}-${core_version}'
 
 #api
-main: org.atcraftmc.quark.lobby.QuarkLobby
+main: org.atcraftmc.quark.QuarkLobby
 api-version: 1.14
 folia-supported: true
 load: POSTWORLD

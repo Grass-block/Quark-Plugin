@@ -1,9 +1,9 @@
 package org.tbstcraft.quark.internal.command;
 
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 
 import java.util.List;

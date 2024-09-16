@@ -10,7 +10,7 @@ import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.module.PackageModule;

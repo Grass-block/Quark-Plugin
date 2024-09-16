@@ -1,10 +1,10 @@
 package org.atcraftmc.quark.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import org.atcraftmc.qlib.command.LegacyCommandManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.TabCompleteEvent;
-import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -21,7 +21,7 @@ import java.util.Objects;
 public final class CommandTabFix extends PackageModule {
     @Override
     public void enable() {
-        TaskService.global().delay(1000, CommandManager::sync);
+        TaskService.global().delay(1000, LegacyCommandManager::sync);
     }
 
     @EventHandler
@@ -69,6 +69,6 @@ public final class CommandTabFix extends PackageModule {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        CommandManager.sync();
+        LegacyCommandManager.sync();
     }
 }

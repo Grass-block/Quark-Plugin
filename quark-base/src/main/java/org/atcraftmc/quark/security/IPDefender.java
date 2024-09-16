@@ -19,10 +19,10 @@ import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.data.language.LocaleMapping;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
 import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -35,7 +35,7 @@ import java.util.*;
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.3.4", recordFormat = {"Time", "Player", "OldIP", "NewIP"})
 @CommandProvider(IPDefender.IPQueryCommand.class)
-public final class IPDefender extends PackageModule implements CommandExecutor {
+public final class IPDefender extends PackageModule implements QuarkCommandExecutor {
 
     @Inject
     private LanguageEntry language;

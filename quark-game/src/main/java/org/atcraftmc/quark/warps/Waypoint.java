@@ -6,6 +6,10 @@ import me.gb2022.apm.client.event.driver.ClientEventHandler;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.command.assertion.NumberLimitation;
+import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -18,12 +22,9 @@ import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.LanguageItem;
-import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.command.assertion.NumberLimitation;
-import org.tbstcraft.quark.foundation.command.execute.CommandSuggestion;
+import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.platform.BukkitCodec;
 import org.tbstcraft.quark.foundation.platform.Players;
@@ -41,6 +42,8 @@ import java.util.stream.Collectors;
 @CommandProvider({Waypoint.WaypointCommand.class})
 @AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.CLIENT_MESSAGE})
 public final class Waypoint extends CommandModule {
+    private final SetHomeCommand setHomeCommand = new SetHomeCommand(this);
+    private final WarpHomeCommand warpHomeCommand = new WarpHomeCommand(this);
 
     @Inject("-quark.waypoint.public")
     private Permission editPublicPermission;
@@ -82,8 +85,8 @@ public final class Waypoint extends CommandModule {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
 
         if (this.getConfig().getBoolean("home")) {
-            CommandManager.registerQuarkCommand(new SetHomeCommand(this));
-            CommandManager.registerQuarkCommand(new WarpHomeCommand(this));
+            QuarkCommandManager.getInstance().register(this.setHomeCommand);
+            QuarkCommandManager.getInstance().register(this.warpHomeCommand);
 
             PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tipHome));
         }
@@ -94,8 +97,8 @@ public final class Waypoint extends CommandModule {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
 
         if (this.getConfig().getBoolean("home")) {
-            CommandManager.unregister("sethome");
-            CommandManager.unregister("home");
+            QuarkCommandManager.getInstance().unregister(this.setHomeCommand);
+            QuarkCommandManager.getInstance().unregister(this.warpHomeCommand);
 
             PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tipHome));
         }
@@ -105,7 +108,7 @@ public final class Waypoint extends CommandModule {
     public static final class WaypointCommand extends ModuleCommand<Waypoint> {
 
         @Override
-        public void execute(org.tbstcraft.quark.foundation.command.execute.CommandExecution context) {
+        public void execute(CommandExecution context) {
             var mode = context.requireEnum(0, "add-private", "remove-private", "tp-private", "list-private", "add", "remove", "tp", "list");
             var isPrivate = mode.contains("private");
             var sender = context.requireSenderAsPlayer();
@@ -124,7 +127,13 @@ public final class Waypoint extends CommandModule {
             switch (mode) {
                 case "list", "list-private" -> {
                     StringBuilder sb = new StringBuilder(128);
-                    entry.getTagMap().forEach((name, data) -> sb.append(name).append(ChatColor.GRAY).append(" -> ").append(ChatColor.WHITE).append(BukkitCodec.string(BukkitCodec.location(entry.getCompoundTag(name)))).append("\n"));
+                    entry.getTagMap()
+                            .forEach((name, data) -> sb.append(name)
+                                    .append(ChatColor.GRAY)
+                                    .append(" -> ")
+                                    .append(ChatColor.WHITE)
+                                    .append(BukkitCodec.string(BukkitCodec.location(entry.getCompoundTag(name))))
+                                    .append("\n"));
                     this.getLanguage().sendMessage(sender, "list", sb);
                 }
                 case "tp", "tp-private" -> {
@@ -159,7 +168,16 @@ public final class Waypoint extends CommandModule {
                             context.requirePermission(this.getModule().bypassAddLimitPermission);
                         }
 
-                        loc = new Location(Bukkit.getWorld(context.requireEnum(2, Bukkit.getWorlds().stream().map(WorldInfo::getName).collect(Collectors.toSet()))), context.requireArgumentDouble(3, NumberLimitation.any()), context.requireArgumentDouble(4, NumberLimitation.any()), context.requireArgumentDouble(5, NumberLimitation.any()));
+                        loc = new Location(Bukkit.getWorld(context.requireEnum(2,
+                                                                               Bukkit.getWorlds()
+                                                                                       .stream()
+                                                                                       .map(WorldInfo::getName)
+                                                                                       .collect(Collectors.toSet())
+                                                                              )),
+                                           context.requireArgumentDouble(3, NumberLimitation.any()),
+                                           context.requireArgumentDouble(4, NumberLimitation.any()),
+                                           context.requireArgumentDouble(5, NumberLimitation.any())
+                        );
                         if (context.hasArgumentAt(6)) {
                             loc.setYaw(context.requireArgumentFloat(6, NumberLimitation.any()));
                             loc.setPitch(context.requireArgumentFloat(7, NumberLimitation.any()));

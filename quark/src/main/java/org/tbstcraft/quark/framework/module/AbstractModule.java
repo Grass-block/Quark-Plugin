@@ -1,13 +1,12 @@
 package org.tbstcraft.quark.framework.module;
 
-import org.bukkit.configuration.ConfigurationSection;
+import org.atcraftmc.qlib.command.AbstractCommand;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.FeatureAvailability;
 import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.data.language.ILanguageAccess;
 import org.tbstcraft.quark.data.language.LanguageContainer;
 import org.tbstcraft.quark.data.language.LanguageEntry;
-import org.tbstcraft.quark.foundation.command.AbstractCommand;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.framework.module.component.ModuleComponent;
 import org.tbstcraft.quark.framework.module.services.ModuleServices;
@@ -23,7 +22,7 @@ import java.util.logging.Logger;
 
 public abstract class AbstractModule implements FunctionalComponent {
     private final Set<AbstractCommand> commands = new HashSet<>();
-    private final Map<Class<? extends ModuleComponent<?>>,ModuleComponent<?>> components = new HashMap<>();
+    private final Map<Class<? extends ModuleComponent<?>>, ModuleComponent<?>> components = new HashMap<>();
 
     private RecordEntry record;
     private LanguageEntry language;

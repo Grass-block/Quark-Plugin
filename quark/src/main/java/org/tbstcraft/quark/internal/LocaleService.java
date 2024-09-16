@@ -1,6 +1,7 @@
 package org.tbstcraft.quark.internal;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
+import org.atcraftmc.qlib.command.AbstractCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -13,15 +14,15 @@ import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.api.ClientLocaleChangeEvent;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.LocaleMapping;
-import org.tbstcraft.quark.foundation.command.AbstractCommand;
-import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceInject;
+import org.tbstcraft.quark.internal.command.QuarkPluginCommand;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public interface LocaleService extends Service {
 
     @ServiceInject
     static void start() {
-        CommandManager.registerQuarkCommand(LANGUAGE_COMMAND);
+        QuarkCommandManager.getInstance().register(LANGUAGE_COMMAND);
         BukkitUtil.registerEventListener(LISTENER);
 
         Bukkit.getServicesManager().register(BukkitAdapter.class, new BukkitAdapter(), Quark.getInstance(), ServicePriority.High);
@@ -43,7 +44,7 @@ public interface LocaleService extends Service {
 
     @ServiceInject
     static void stop() {
-        CommandManager.unregister(LANGUAGE_COMMAND);
+        QuarkCommandManager.getInstance().unregister(LANGUAGE_COMMAND);
         BukkitUtil.unregisterEventListener(LISTENER);
 
         Bukkit.getServicesManager().unregister(BukkitAdapter.class);

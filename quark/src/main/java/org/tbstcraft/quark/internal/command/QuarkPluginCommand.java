@@ -1,12 +1,12 @@
 package org.tbstcraft.quark.internal.command;
 
+import org.atcraftmc.qlib.command.LegacyCommandManager;
+import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.ProductInfo;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecution;
-import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public final class QuarkPluginCommand extends CoreCommand {
             case "info" -> ProductInfo.sendInfoDisplay(context.getSender());
             case "stats" -> ProductInfo.sendStatsDisplay(context.getSender());
             case "sync-commands" -> {
-                CommandManager.sync();
+                LegacyCommandManager.sync();
                 Quark.LANGUAGE.sendMessage(context.getSender(), "command", "sync-commands");
             }
         }

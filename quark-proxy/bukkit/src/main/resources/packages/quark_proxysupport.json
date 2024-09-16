@@ -1,7 +1,7 @@
 {
   "id": "quark-proxysupport",
   "version": "0.10",
-  "package_namespace": "org.tbstcraft.quark.proxysupport",
+  "package_namespace": "org.atcraftmc.quark.proxysupport",
   "modules": {
     "chat-sync": ".ChatSync",
     "bungee-connection-protect": ".BungeeConnectionProtect",

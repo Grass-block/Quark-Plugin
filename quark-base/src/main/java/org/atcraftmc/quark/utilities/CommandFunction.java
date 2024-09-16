@@ -2,15 +2,15 @@ package org.atcraftmc.quark.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.qlib.command.AbstractCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.tbstcraft.quark.data.assets.AssetGroup;
-import org.tbstcraft.quark.foundation.command.AbstractCommand;
-import org.tbstcraft.quark.foundation.command.CommandManager;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -41,7 +41,7 @@ public final class CommandFunction extends PackageModule {
             for (String tagName : dom.getKeys(false)) {
                 AdapterCommand adapter = new AdapterCommand(tagName, dom.getStringList(tagName));
                 this.commands.add(adapter);
-                CommandManager.registerQuarkCommand(adapter);
+                QuarkCommandManager.getInstance().register(adapter);
             }
 
             getLogger().info("loaded function provider file %s.".formatted(cfg));
@@ -51,7 +51,7 @@ public final class CommandFunction extends PackageModule {
     @Override
     public void disable() {
         for (AdapterCommand command : this.commands) {
-            CommandManager.unregister(command);
+            QuarkCommandManager.getInstance().unregister(command);
         }
     }
 

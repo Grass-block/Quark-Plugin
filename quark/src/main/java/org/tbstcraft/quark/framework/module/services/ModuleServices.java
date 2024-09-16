@@ -5,17 +5,18 @@ import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.reflect.Annotations;
 import me.gb2022.commons.reflect.AutoRegisterManager;
 import me.gb2022.commons.reflect.DependencyInjector;
+import org.atcraftmc.qlib.command.AbstractCommand;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
+import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.assets.Asset;
 import org.tbstcraft.quark.data.assets.AssetGroup;
 import org.tbstcraft.quark.data.language.LanguageContainer;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.data.language.LanguageItem;
-import org.tbstcraft.quark.foundation.command.AbstractCommand;
-import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.framework.module.AbstractModule;
@@ -58,7 +59,7 @@ public interface ModuleServices {
 
         if (module.getClass().getDeclaredAnnotation(CommandProvider.class) != null) {
             for (AbstractCommand cmd : module.getCommands()) {
-                CommandManager.unregister(cmd);
+                Quark.getInstance().getCommandManager().unregister(cmd);
             }
         }
     }
@@ -110,7 +111,7 @@ public interface ModuleServices {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            CommandManager.registerQuarkCommand(cmd);
+            QuarkCommandManager.getInstance().register(cmd);
             module.getCommands().add(cmd);
         }
     }

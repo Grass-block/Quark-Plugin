@@ -1,13 +1,12 @@
 package org.tbstcraft.quark.internal.command;
 
+import org.atcraftmc.qlib.command.AbstractCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.foundation.command.AbstractCommand;
-import org.tbstcraft.quark.foundation.command.CommandManager;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.util.ExceptionUtil;
@@ -15,35 +14,37 @@ import org.tbstcraft.quark.util.ExceptionUtil;
 public interface InternalCommands {
     Listener INVALID_COMMAND_WARN = new InvalidCommandWarn();
     @SuppressWarnings("unchecked")
-    Class<? extends AbstractCommand>[] COMMANDS = new Class[]{
-            QuarkPluginCommand.class
-    };
+    AbstractCommand[] COMMANDS = new AbstractCommand[]{new QuarkPluginCommand()};
 
     static void register() {
         if (APIProfileTest.isFoliaServer()) {
             BukkitUtil.registerEventListener(INVALID_COMMAND_WARN);
         }
-        for (Class<? extends AbstractCommand> clazz : COMMANDS) {
+
+        for (AbstractCommand cmd : COMMANDS) {
             try {
-                CommandManager.registerQuarkCommand(clazz.getDeclaredConstructor().newInstance());
+                Quark.getInstance().getCommandManager().register(cmd);
             } catch (Exception e) {
-                Quark.getInstance().getLogger().severe("failed to register internal command %s: %s".formatted(
-                        clazz.getAnnotation(QuarkCommand.class).name(),
-                        ExceptionUtil.getMessage(e)
-                ));
+                Quark.getInstance()
+                        .getLogger()
+                        .severe("failed to register internal command %s: %s".formatted(cmd.getClass()
+                                                                                               .getAnnotation(QuarkCommand.class)
+                                                                                               .name(), ExceptionUtil.getMessage(e)));
             }
         }
+
     }
 
     static void unregister() {
-        for (Class<? extends AbstractCommand> clazz : COMMANDS) {
+        for (AbstractCommand command : COMMANDS) {
             try {
-                CommandManager.unregister(clazz.getAnnotation(QuarkCommand.class).name());
+                Quark.getInstance().getCommandManager().unregister(command);
             } catch (Exception e) {
-                Quark.getInstance().getLogger().severe("failed to unregister internal command %s: %s".formatted(
-                        clazz.getAnnotation(QuarkCommand.class).name(),
-                        ExceptionUtil.getMessage(e)
-                ));
+                Quark.getInstance()
+                        .getLogger()
+                        .severe("failed to unregister internal command %s: %s".formatted(command.getClass()
+                                                                                                 .getAnnotation(QuarkCommand.class)
+                                                                                                 .name(), ExceptionUtil.getMessage(e)));
             }
         }
     }

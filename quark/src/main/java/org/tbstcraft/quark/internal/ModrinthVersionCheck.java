@@ -4,15 +4,14 @@ import me.gb2022.commons.TriState;
 import me.gb2022.commons.http.HTTPUtil;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
+import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -25,7 +24,7 @@ import java.util.function.BiConsumer;
 
 @QuarkModule(version = "1.0", internal = true)
 @AutoRegister(ServiceType.EVENT_LISTEN)
-public final class ModrinthVersionCheck extends PackageModule implements CommandExecutor {
+public final class ModrinthVersionCheck extends PackageModule implements QuarkCommandExecutor {
     public static final String API = "https://api.modrinth.com/v2/project/quark-plugin/version";
     public static final String VERSION_PAGE = "https://modrinth.com/plugin/quark-plugin/version/%s";
 
@@ -37,7 +36,7 @@ public final class ModrinthVersionCheck extends PackageModule implements Command
 
     @Override
     public void enable() {
-        CommandManager.getQuarkCommand("quark").registerSubCommand(new CheckVersionCommand(this));
+        getHandle().getCommand("quark").registerSubCommand(new CheckVersionCommand(this));
 
         check((state, version) -> {
         });

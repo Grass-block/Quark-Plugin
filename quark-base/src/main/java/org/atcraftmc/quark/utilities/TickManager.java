@@ -1,10 +1,10 @@
 package org.atcraftmc.quark.utilities;
 
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.command.assertion.NumberLimitation;
+import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecution;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.command.assertion.NumberLimitation;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.CommandModule;

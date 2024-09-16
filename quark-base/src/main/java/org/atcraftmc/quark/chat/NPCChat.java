@@ -7,7 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.data.assets.AssetGroup;
 import org.tbstcraft.quark.data.language.Language;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.module.CommandModule;

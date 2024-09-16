@@ -1,12 +1,13 @@
 package org.tbstcraft.quark.internal.permission;
 
+import org.atcraftmc.qlib.command.LegacyCommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
-import org.tbstcraft.quark.foundation.command.CommandManager;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,7 +21,7 @@ public interface PermissionEntry {
         for (Permission p : Bukkit.getPluginManager().getPermissions()) {
             set.addAll(List.of(p.getName().split(";")));
         }
-        for (Command c : CommandManager.getCommandEntries().values()) {
+        for (Command c : LegacyCommandManager.getCommandEntries().values()) {
             if (c.getPermission() == null || c.getPermission().isEmpty()) {
                 continue;
             }

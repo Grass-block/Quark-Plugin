@@ -2,7 +2,7 @@ package org.atcraftmc.quark.utilities;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 

@@ -19,7 +19,7 @@ import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.region.Region;
 import org.tbstcraft.quark.foundation.region.SimpleRegion;
 import org.tbstcraft.quark.framework.module.PackageModule;

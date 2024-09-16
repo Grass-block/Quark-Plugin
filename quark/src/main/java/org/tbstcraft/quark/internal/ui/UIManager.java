@@ -2,9 +2,9 @@ package org.tbstcraft.quark.internal.ui;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.internal.ui.builder.UIBuilder;
@@ -17,7 +17,7 @@ public interface UIManager extends Service {
     ObjectContainer<UIManager> INSTANCE = new ObjectContainer<>();
 
     static void init() {
-        CommandManager.registerQuarkCommand(new UICommand());
+        QuarkCommandManager.getInstance().register(new UICommand());
         /*
         registerUI("quark:debug", new InventoryUIBuilder(27)
                 .title((p) -> "Debug")

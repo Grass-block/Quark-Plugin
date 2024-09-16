@@ -1,12 +1,14 @@
 package org.atcraftmc.quark.warps;
 
 import me.gb2022.commons.container.RequestStorage;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.foundation.command.*;
-import org.tbstcraft.quark.foundation.command.execute.CommandSuggestion;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -21,8 +23,8 @@ public final class TPA extends PackageModule {
         this.tpa.initContext(this);
         this.tpaHere.initContext(this);
 
-        CommandManager.register(this.tpa);
-        CommandManager.register(this.tpaHere);
+        QuarkCommandManager.getInstance().register(this.tpa);
+        QuarkCommandManager.getInstance().register(this.tpaHere);
 
         BukkitUtil.registerEventListener(this.tpa);
         BukkitUtil.registerEventListener(this.tpaHere);
@@ -30,8 +32,8 @@ public final class TPA extends PackageModule {
 
     @Override
     public void disable() {
-        CommandManager.unregister(this.tpa);
-        CommandManager.unregister(this.tpaHere);
+        QuarkCommandManager.getInstance().unregister(this.tpa);
+        QuarkCommandManager.getInstance().unregister(this.tpaHere);
 
         BukkitUtil.unregisterEventListener(this.tpa);
         BukkitUtil.unregisterEventListener(this.tpaHere);
@@ -52,7 +54,7 @@ public final class TPA extends PackageModule {
         }
 
         @Override
-        public void execute(org.tbstcraft.quark.foundation.command.execute.CommandExecution context) {
+        public void execute(CommandExecution context) {
             Player sender = context.requireSenderAsPlayer();
             Player target = context.requirePlayer(1);
 

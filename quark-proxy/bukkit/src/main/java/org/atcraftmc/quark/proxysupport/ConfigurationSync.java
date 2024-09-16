@@ -2,7 +2,7 @@ package org.atcraftmc.quark.proxysupport;
 
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.util.FilePath;
 

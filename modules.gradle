@@ -27,6 +27,9 @@ dependencies {
     compileOnly localStorage('me.gb2022.apm-plugin')
     compileOnly localStorage('me.gb2022.apm-remote')
     compileOnly localStorage('me.gb2022.apm-client')
+
+    compileOnly projectLocal("qlib-task")
+    compileOnly projectLocal("qlib-command")
 }
 
 apply from: rootDir.getAbsolutePath()+"/info.gradle"

@@ -5,6 +5,7 @@ import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.atcraftmc.qlib.command.LegacyCommandManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.SignChangeEvent;
@@ -16,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
-import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.foundation.platform.BukkitDataAccess;
@@ -66,7 +66,7 @@ public final class ChatComponent extends PackageModule {
 
     @EventHandler
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        if (CommandManager.isQuarkCommand(event.getMessage().split(" ")[0].replace("/", ""))) {
+        if (LegacyCommandManager.isQLibCommand(event.getMessage().split(" ")[0].replace("/", ""))) {
             return;
         }
         if (event.getMessage().contains("self-msg")) {

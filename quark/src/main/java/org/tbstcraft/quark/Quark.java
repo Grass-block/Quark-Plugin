@@ -3,17 +3,20 @@ package org.tbstcraft.quark;
 import me.gb2022.apm.client.ClientMessenger;
 import me.gb2022.apm.client.backend.MessageBackend;
 import me.gb2022.commons.Timer;
+import org.atcraftmc.qlib.command.CommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.tbstcraft.quark.data.config.ConfigAccess;
 import org.tbstcraft.quark.data.config.ConfigContainer;
 import org.tbstcraft.quark.data.config.Queries;
 import org.tbstcraft.quark.data.config.YamlUtil;
 import org.tbstcraft.quark.data.language.ILanguageAccess;
 import org.tbstcraft.quark.data.language.LanguageContainer;
+import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.foundation.platform.PluginUtil;
 import org.tbstcraft.quark.foundation.text.TextSender;
@@ -51,6 +54,7 @@ public final class Quark extends JavaPlugin {
     public static Logger LOGGER;
 
     private final BundledPackageLoader bundledPackageLoader = new BundledPackageLoader();
+    private final CommandManager commandManager = new QuarkCommandManager(this);
 
     private String uuid;
     private Metrics metrics;
@@ -64,7 +68,7 @@ public final class Quark extends JavaPlugin {
                 Locale locale = LocaleService.locale(audience);
                 String msg = LANGUAGE.getMessage(locale, "packages", "load");
 
-                Class<?> commandManager = Class.forName("org.tbstcraft.quark.foundation.command.CommandManager");
+                Class<?> commandManager = Class.forName("org.atcraftmc.qlib.command.LegacyCommandManager");
                 Class<?> packageManager = Class.forName("org.tbstcraft.quark.framework.packages.PackageManager");
                 Class<?> pluginLoader = Class.forName("org.tbstcraft.quark.foundation.platform.PluginUtil");
 
@@ -330,5 +334,14 @@ public final class Quark extends JavaPlugin {
 
     public boolean isInitialized() {
         return initialized;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    @Override
+    public @NotNull File getFile() {
+        return super.getFile();
     }
 }

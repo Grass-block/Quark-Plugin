@@ -9,7 +9,9 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public interface ComponentGenerator {
@@ -67,7 +69,7 @@ public interface ComponentGenerator {
             }
             sb.delete(sb.length() - 1, sb.length());
             sb.append(">").append(content).append("</gradient>");
-            return ((TextComponent) MINI_MESSAGE_DISPATCHER.deserialize(sb.toString().replaceAll("§[0-9/a-z]",""))).toBuilder();
+            return ((TextComponent) MINI_MESSAGE_DISPATCHER.deserialize(sb.toString().replaceAll("§[0-9/a-z]", ""))).toBuilder();
         }
 
         String colorArg = col[0];
@@ -170,8 +172,25 @@ public interface ComponentGenerator {
             append = ((TextComponent) MINI_MESSAGE_DISPATCHER.deserialize(content)).toBuilder();
         } else if (tag.contains("keybind")) {
             append = Component.keybind(content).toBuilder();
-        } else if (tag.contains("translatable")) {
-            append = Component.translatable(content).toBuilder();
+        } else if (tag.contains("translate")) {
+            var id = content.split("#")[0];
+            var b = Component.translatable(Objects.requireNonNull(id)).toBuilder();
+            System.out.println(content);
+            if (content.contains("#")) {
+                var c = content.split("#")[1];
+
+                var l = new ArrayList<TextComponent>();
+
+
+
+                for (String s : c.split(";;")) {
+                    l.add(Component.text(s));
+                }
+
+                b.arguments(l);
+            }
+
+            append = b;
         } else if (tag.contains("selector")) {
             append = Component.selector(content).toBuilder();
         } else {

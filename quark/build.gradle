@@ -50,6 +50,9 @@ dependencies {
     implementation localStorage('me.gb2022.apm-plugin')
     implementation localStorage('me.gb2022.apm-remote')
     implementation localStorage('me.gb2022.apm-client')
+
+    implementation projectLocal("qlib-task")
+    implementation projectLocal("qlib-command")
 }
 
 //platform api reference

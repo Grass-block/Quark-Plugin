@@ -1,11 +1,11 @@
 package org.atcraftmc.quark.web.account;
 
+import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecution;
-import org.tbstcraft.quark.foundation.command.execute.CommandSuggestion;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
 
 @QuarkCommand(name = "account", playerOnly = true)
 public final class AccountCommand extends ModuleCommand<AccountActivation> {

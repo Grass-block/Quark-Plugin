@@ -1,22 +1,23 @@
 package org.tbstcraft.quark.framework.module;
 
+import org.atcraftmc.qlib.command.AbstractCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.foundation.command.*;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
+import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
 
-
-public abstract class CommandModule extends PackageModule implements CommandExecutor {
+public abstract class CommandModule extends PackageModule implements QuarkCommandExecutor {
     private final AbstractCommand commandAdapter = new AdapterCommand<>(this);
 
     @Override
     public void enable() {
-        CommandManager.registerQuarkCommand(this.commandAdapter);
+        this.getHandle().register(this.commandAdapter);
     }
 
     @Override
     public void disable() {
-        CommandManager.unregister(this.commandAdapter);
+        this.getHandle().unregister(this.commandAdapter);
     }
 
     public Command getCoveredCommand() {
@@ -35,14 +36,14 @@ public abstract class CommandModule extends PackageModule implements CommandExec
         this.commandAdapter.sendPermissionMessage(sender, "(ServerOperator)");
     }
 
-    public void sendPlayerOnlyMessage(CommandSender sender){
+    public void sendPlayerOnlyMessage(CommandSender sender) {
         this.commandAdapter.sendPlayerOnlyMessage(sender);
     }
 
     public static final class AdapterCommand<T extends CommandModule> extends ModuleCommand<T> {
         public AdapterCommand(T module) {
             super(module);
-            this.init();
+            this.init(module.getHandle());
             this.setExecutor(module);
         }
 

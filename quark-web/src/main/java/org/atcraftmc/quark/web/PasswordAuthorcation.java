@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
 
 import java.util.List;
 import java.util.Objects;

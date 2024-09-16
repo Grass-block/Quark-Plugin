@@ -1,9 +1,9 @@
 package org.tbstcraft.quark.internal.command;
 
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.data.PackContainer;
 import org.tbstcraft.quark.data.language.LanguageContainer;
 import org.tbstcraft.quark.data.language.LanguageEntry;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
 
 @QuarkCommand(name = "language", permission = "-quark.language")
 public final class LanguageCommand extends PackConfigureCommand {

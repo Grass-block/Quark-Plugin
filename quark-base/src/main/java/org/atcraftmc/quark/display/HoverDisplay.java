@@ -3,6 +3,8 @@ package org.atcraftmc.quark.display;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import net.kyori.adventure.text.Component;
+import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -12,10 +14,8 @@ import org.bukkit.entity.EntityType;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecution;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
-import org.tbstcraft.quark.foundation.command.execute.CommandSuggestion;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
 import org.tbstcraft.quark.foundation.platform.BukkitCodec;
 import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.foundation.text.ComponentSerializer;
@@ -33,7 +33,7 @@ import java.util.Objects;
 @QuarkModule(version = "1.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(HoverDisplay.HoverDisplayCommand.class)
-public final class HoverDisplay extends PackageModule implements CommandExecutor {
+public final class HoverDisplay extends PackageModule implements QuarkCommandExecutor {
     private final Map<String, ArmorStand> stands = new HashMap<>();
 
     @Override

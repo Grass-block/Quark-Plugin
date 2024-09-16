@@ -4,7 +4,7 @@ import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.foundation.region.SimpleRegion;
 import org.tbstcraft.quark.framework.event.WorldeditSectionUpdateEvent;

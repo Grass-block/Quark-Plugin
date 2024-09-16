@@ -12,10 +12,10 @@ import org.bukkit.util.CachedServerIcon;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.api.QueryPingEvent;
 import org.tbstcraft.quark.data.assets.Asset;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
 import org.tbstcraft.quark.foundation.text.ComponentBlock;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 @QuarkModule(version = "1.0.2")
 @CommandProvider({CustomMotd.MotdCommand.class})
 @AutoRegister(ServiceType.EVENT_LISTEN)
-public final class CustomMotd extends PackageModule implements CommandExecutor {
+public final class CustomMotd extends PackageModule implements QuarkCommandExecutor {
     public static final Pattern PATTERN = Pattern.compile("\\{[a-z]+}");
 
     private CachedServerIcon cachedServerIcon;

@@ -1,9 +1,9 @@
 package org.tbstcraft.quark;
 
 import net.kyori.adventure.text.Component;
+import org.atcraftmc.qlib.task.Task;
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.foundation.platform.Players;
-import org.tbstcraft.quark.internal.task.Task;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.util.HashMap;

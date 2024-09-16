@@ -1,7 +1,7 @@
 {
   "id": "quark-clientsupport",
   "version": "0.12",
-  "package_namespace": "org.tbstcraft.quark.clientsupport",
+  "package_namespace": "org.atcraftmc.quark.clientsupport",
   "modules": {
     "player-protocol-display": ".PlayerProtocolDisplay"
   },

@@ -1,12 +1,12 @@
 package org.tbstcraft.quark.internal;
 
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.ProductInfo;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
-import org.tbstcraft.quark.foundation.command.CommandManager;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
+import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 
@@ -19,12 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 @QuarkModule(id = "version-log-viewer")
-public final class VersionLogViewer extends PackageModule implements CommandExecutor {
+public final class VersionLogViewer extends PackageModule implements QuarkCommandExecutor {
     private final Map<String, List<String>> versions = new HashMap<>();
 
     @Override
     public void enable() {
-        CommandManager.getQuarkCommand("quark").registerSubCommand(new VersionLogCommand(this));
+        QuarkCommandManager.getInstance().getCommand("quark").registerSubCommand(new VersionLogCommand(this));
 
         String v = "_";
         try (InputStream stream = this.getResource("/update-log.md")) {

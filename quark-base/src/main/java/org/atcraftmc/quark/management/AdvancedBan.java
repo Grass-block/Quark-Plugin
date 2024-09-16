@@ -1,11 +1,11 @@
 package org.atcraftmc.quark.management;
 
+import org.atcraftmc.qlib.command.LegacyCommandManager;
 import org.bukkit.BanList;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.foundation.command.CommandManager;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -95,6 +95,6 @@ public final class AdvancedBan extends CommandModule {
 
     @Override
     public Command getCoveredCommand() {
-        return CommandManager.getCommandMap().getCommand("minecraft:ban");
+        return LegacyCommandManager.getCommandMap().getCommand("minecraft:ban");
     }
 }

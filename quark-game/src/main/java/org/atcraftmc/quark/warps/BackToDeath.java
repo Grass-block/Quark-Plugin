@@ -2,6 +2,7 @@ package org.atcraftmc.quark.warps;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,9 +13,8 @@ import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecution;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
 import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -28,7 +28,7 @@ import java.util.Map;
 @QuarkModule(version = "1.3.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(BackToDeath.BackCommand.class)
-public final class BackToDeath extends PackageModule implements CommandExecutor {
+public final class BackToDeath extends PackageModule implements QuarkCommandExecutor {
     private final Map<String, Location> deathPoints = new HashMap<>();
 
     @Inject("tip-back")

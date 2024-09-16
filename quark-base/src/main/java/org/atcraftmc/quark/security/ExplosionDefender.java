@@ -3,6 +3,8 @@ package org.atcraftmc.quark.security;
 import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -14,15 +16,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.execute.CommandSuggestion;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.region.SimpleRegion;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
+import org.tbstcraft.quark.foundation.region.SimpleRegion;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.component.Components;
@@ -109,7 +109,7 @@ public final class ExplosionDefender extends PackageModule {
                     loc.getBlockY(),
                     loc.getBlockZ(),
                     explodedId
-            );
+                                               );
         }
         if (this.getConfig().getBoolean("record")) {
             this.getRecord().addLine(
@@ -119,7 +119,7 @@ public final class ExplosionDefender extends PackageModule {
                     loc.getBlockY(),
                     loc.getBlockZ(),
                     explodedId
-            );
+                                    );
         }
     }
 
@@ -137,7 +137,7 @@ public final class ExplosionDefender extends PackageModule {
                             s,
                             map.get(s)
                                     .toString()
-                    )));
+                                                                                                           )));
                 }
                 return;
             }

@@ -2,6 +2,7 @@ package org.atcraftmc.quark.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -12,10 +13,9 @@ import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.customcontent.CustomMeta;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -28,7 +28,7 @@ import java.util.Objects;
 @QuarkModule(version = "0.3")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({ItemCommand.ItemCommandCommand.class})
-public final class ItemCommand extends PackageModule implements CommandExecutor {
+public final class ItemCommand extends PackageModule implements QuarkCommandExecutor {
 
     @Inject("tip")
     private LanguageItem tip;

@@ -1,12 +1,12 @@
 package org.tbstcraft.quark.internal.command;
 
+import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.data.ConfigurationPack;
 import org.tbstcraft.quark.data.PackContainer;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecution;
-import org.tbstcraft.quark.foundation.command.execute.CommandSuggestion;
 
 import java.util.List;
 import java.util.function.Consumer;

@@ -10,16 +10,16 @@ import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecution;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
-import org.tbstcraft.quark.foundation.command.execute.CommandSuggestion;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -27,7 +27,7 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 
 @QuarkModule(version = "1.0-beta", beta = true)
 @CommandProvider(Nickname.NickNameCommand.class)
-public final class Nickname extends PackageModule implements CommandExecutor {
+public final class Nickname extends PackageModule implements QuarkCommandExecutor {
     private final ProtocolManager service = ProtocolLibrary.getProtocolManager();
 
     private final PacketListener playerData = new PacketAdapter(Quark.getInstance(), PacketType.Play.Server.PLAYER_INFO) {

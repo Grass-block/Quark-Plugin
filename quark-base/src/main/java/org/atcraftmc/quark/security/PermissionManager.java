@@ -3,6 +3,8 @@ package org.atcraftmc.quark.security;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.qlib.command.LegacyCommandManager;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,8 +18,9 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.assets.AssetGroup;
-import org.tbstcraft.quark.foundation.command.*;
-import org.tbstcraft.quark.foundation.command.execute.CommandExecutor;
+import org.tbstcraft.quark.foundation.command.CommandProvider;
+import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -31,7 +34,7 @@ import java.util.*;
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({PermissionManager.PermissionCommand.class})
 @QuarkModule(version = "1.0.3")
-public final class PermissionManager extends PackageModule implements CommandExecutor {
+public final class PermissionManager extends PackageModule implements QuarkCommandExecutor {
     public static final HashMap<Permissible, PermissionEntry> CACHE = new HashMap<>();
     public static final HashMap<String, PermissionAttachment> ATTACHMENTS = new HashMap<>();
     private final Map<String, List<String>> tags = new HashMap<>();
@@ -183,7 +186,7 @@ public final class PermissionManager extends PackageModule implements CommandExe
         }
 
         setPermission(entry, permissions);
-        CommandManager.sync();
+        LegacyCommandManager.sync();
         p.recalculatePermissions();
     }
 
@@ -267,7 +270,7 @@ public final class PermissionManager extends PackageModule implements CommandExe
             return;
         }
         this.sync(target);
-        CommandManager.sync();
+        LegacyCommandManager.sync();
     }
 
     @Override

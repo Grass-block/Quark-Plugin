@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class ComponentBlockBuilder {
-    public static final Pattern TAG_FILTER = Pattern.compile("\\{(color|click|underline|magic|reset|hover|none|[0-9]|;)[^}]*}");
+    public static final Pattern TAG_FILTER = Pattern.compile("\\{(color|click|underline|magic|reset|hover|none|[0-9]|translate|;)[^}]*}");
     public static final Pattern URL_BASE_FILTER = Pattern.compile("https?://([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?");
     public static final Pattern URL_FILTER = Pattern.compile("(https?://)(([0-9a-z.]+\\.[a-z]+)|(([0-9]{1,3}\\.){3}[0-9]{1,3}))(:[0-9]+)?(/[0-9a-z%/.\\-_]*)?(\\?[0-9a-z=&%_\\-]*)?(#[0-9a-z=&%_\\-]*)?");
 
