@@ -28,8 +28,8 @@ public interface PackageManager extends Service {
     @ServiceInject
     ServiceHolder<PackageManager> INSTANCE = new ServiceHolder<>();
 
-    static ModuleManager getInstance() {
-        return ModuleManager.INSTANCE.get();
+    static PackageManager getInstance() {
+        return INSTANCE.get();
     }
 
     static List<String> getSubPacksFromServer() {
@@ -112,10 +112,6 @@ public interface PackageManager extends Service {
 
     static void unregisterPackage(AbstractPackage pkg) {
         INSTANCE.get().removePackage(pkg.getId());
-    }
-
-    static ModuleManager create(Plugin p) {
-        return new ModuleManager.Impl(p);
     }
 
     static AbstractPackage getModule(String id) {

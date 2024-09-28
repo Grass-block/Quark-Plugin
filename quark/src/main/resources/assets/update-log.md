@@ -1,8 +1,20 @@
-### 0.64.11
+### 0.64.12
 
-[core]
-- fixed ChatRenderer render issue
-- 
+[fix]
+- fixed ChatRenderer default rendering format issue.
+- fixed Worldedit selection tracking when not holding wooden_axe as sel-wand tool.
+- fixed Tasks auto-finalize issue on Folia/Leaves platform.
+- fixed ItemDropSecure lost item when inventory full
+
+[features]
+- WESessionRenderer can now use multi render mode(update/off/persistent) and change by player.
+- All 3d-box HUD now using Flame particle.
+- Using natively Worldedit API for WESessionTracking.
+- WESessionSizeLimit can now limit size and stack length.
+- WESessionSizeLimit can now record out-bound selecting.
+- Added permission(quark.we.size.bypass) for WESessionLimit bypass check.
+- ItemDropSecure will no longer work if player inventory is full.
+- ChatComponents can now use {translate}key#format1;;format2{;}to build a translatable component.
 
 ### 0.64.10
 [core]

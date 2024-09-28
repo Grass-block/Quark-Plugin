@@ -17,7 +17,8 @@ import java.util.List;
         ModuleCommand.class,
         GlobalVarsCommand.class,
         PackageCommand.class,
-        QuarkPluginCommand.ReloadCommand.class
+        QuarkPluginCommand.ReloadCommand.class,
+        TestCommand.class
 })
 public final class QuarkPluginCommand extends CoreCommand {
     @Override

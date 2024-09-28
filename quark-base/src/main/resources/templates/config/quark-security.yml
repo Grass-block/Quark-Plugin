@@ -21,10 +21,9 @@ config:
       - "water_bucket"
       - "respawn_anchor"
       - "end_crystal"
-  we-size-defender:
-    selection-size: 128
-    operation-size: 16
-    total-size: 1024
+  we-session-size-limit:
+    max-selection-size: 128
+    max-edit-size: 384
   ip-defender:
     record: true
     auto-ban: false

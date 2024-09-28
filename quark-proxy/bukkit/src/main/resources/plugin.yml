@@ -1,6 +1,6 @@
 #identifier
 name: quark-proxy
-version: '${version}-${core_version}'
+version: '${core_version}'
 
 #api
 main: org.atcraftmc.quark.QuarkProxy

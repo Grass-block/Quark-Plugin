@@ -21,16 +21,14 @@ public abstract class StandaloneModuleProvider extends JavaPlugin implements IPa
 
     public abstract StandaloneModule get();
 
-
-    // TODO: 2024/3/14 impl
     @Override
     public String getId() {
-        return null;
+        return this.module.getId();
     }
 
     @Override
     public QuarkPackage getDescriptor() {
-        return null;
+        return this.module.getClass().getAnnotation(QuarkPackage.class);
     }
 
 }

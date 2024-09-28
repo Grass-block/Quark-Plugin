@@ -1,6 +1,6 @@
 #identifier
 name: quark-lobby
-version: '${version}-${core_version}'
+version: '${core_version}'
 
 #api
 main: org.atcraftmc.quark.QuarkLobby

@@ -1,3 +1,5 @@
 config:
   account-activation:
     verify-link-delegation: 'http://service.tbstmc.xyz/api'
+  token-storage:
+    expire: 1800

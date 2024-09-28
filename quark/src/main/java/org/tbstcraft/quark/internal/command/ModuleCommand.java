@@ -1,22 +1,32 @@
 package org.tbstcraft.quark.internal.command;
 
+import me.gb2022.commons.TriState;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.platform.Players;
+import org.tbstcraft.quark.framework.FunctionalComponentStatus;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.ModuleManager;
+import org.tbstcraft.quark.framework.module.ModuleMeta;
+import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.util.ObjectOperationResult;
-import me.gb2022.commons.TriState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Locale;
 
 @QuarkCommand(name = "module", permission = "-quark.module")
 public final class ModuleCommand extends CoreCommand {
+    private final ModuleManager handle = ModuleManager.getInstance();
+
     static String messageId(ObjectOperationResult result, String success) {
         return switch (result) {
             case SUCCESS -> success;
@@ -28,89 +38,103 @@ public final class ModuleCommand extends CoreCommand {
     }
 
     private void sendMessage(CommandSender sender, String id, String mid) {
-        AbstractModule module = ModuleManager.getModule(mid);
+        AbstractModule module = this.handle.get(mid);
         this.getLanguage().sendMessage(sender, id, module.getDisplayName(Language.locale(sender)));
     }
 
     @Override
-    public void onCommand(CommandSender sender, String[] args) {
-        switch (args[0]) {
-            case "list" -> this.listModules(sender);
-            case "enable-all" -> {
-                ModuleManager.enableAllModules();
-                this.getLanguage().sendMessage(sender, "enable-all");
-            }
-            case "disable-all" -> {
-                ModuleManager.disableAllModules();
-                this.getLanguage().sendMessage(sender, "disable-all");
-            }
-            case "reload-all" -> {
-                ModuleManager.reloadAllModules();
-                this.getLanguage().sendMessage(sender, "reload-all");
-            }
-            case "enable" -> sendMessage(sender, messageId(ModuleManager.enableModule(args[1]), "enable"), args[1]);
-            case "disable" -> sendMessage(sender, messageId(ModuleManager.disableModule(args[1]), "disable"), args[1]);
-            case "reload" -> sendMessage(sender, messageId(ModuleManager.reloadModule(args[1]), "reload"), args[1]);
-        }
+    public void suggest(CommandSuggestion suggestion) {
+        suggestion.suggest(0, "list", "enable", "disable", "reload", "info");
+        suggestion.matchArgument(0, "list", (c) -> c.suggest(1, "<search meta>"));
+        suggestion.matchArgument(0, "list", (c) -> c.suggest(1, PackageManager.getInstance().getPackages().keySet()));
+        suggestion.matchArgument(0, "enable", (c) -> c.suggest(1, this.handle.getIdsByStatus(TriState.TRUE)));
+        suggestion.matchArgument(0, "disable", (c) -> c.suggest(1, this.handle.getIdsByStatus(TriState.FALSE)));
+        suggestion.matchArgument(0, "reload", (c) -> c.suggest(1, this.handle.getIdsByStatus(TriState.FALSE)));
     }
 
     @Override
-    public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-        if (buffer.length == 1) {
-            tabList.add("list");
-            tabList.add("enable");
-            tabList.add("disable");
-            tabList.add("reload");
-            tabList.add("enable-all");
-            tabList.add("disable-all");
-            tabList.add("reload-all");
-            return;
-        }
-        if (buffer.length != 2 || buffer[0].contains("-all") || buffer[0].equals("list")) {
-            return;
-        }
+    public void execute(CommandExecution context) {
+        var sender = context.getSender();
+        var id = !context.hasArgumentAt(1) ? null : context.requireArgumentAt(1);
 
-        if (Objects.equals(buffer[0], "reload") || Objects.equals(buffer[0], "disable")) {
-            tabList.addAll(ModuleManager.getIdsByStatus(TriState.FALSE));
-        } else {
-            tabList.addAll(ModuleManager.getIdsByStatus(TriState.TRUE));
-        }
-        if (tabList.isEmpty()) {
-            tabList.add("(not found)");
+        switch (context.requireEnum(0, "list", "info", "enable", "disable", "reload", "enable-all", "disable-all", "reload-all")) {
+            case "list" -> list(sender, !context.hasArgumentAt(1) ? "" : context.requireArgumentAt(1));
+            case "enable-all" -> {
+                this.handle.enableAll();
+                this.getLanguage().sendMessage(sender, "enable-all");
+            }
+            case "disable-all" -> {
+                this.handle.disableAll();
+                this.getLanguage().sendMessage(sender, "disable-all");
+            }
+            case "reload-all" -> {
+                this.handle.reloadAll();
+                this.getLanguage().sendMessage(sender, "reload-all");
+            }
+            case "enable" -> sendMessage(sender, messageId(this.handle.enable(id), "enable"), id);
+            case "disable" -> sendMessage(sender, messageId(this.handle.disable(id), "disable"), id);
+            case "reload" -> sendMessage(sender, messageId(this.handle.reload(id), "reload"), id);
         }
     }
 
-    private void listModules(CommandSender sender) {
-        StringBuilder sb = new StringBuilder();
-        sb.append('\n');
+    private Component buildModuleHoverInfo(ModuleMeta m) {
+        var statusColor = switch (m.status()) {
+            case UNKNOWN -> "&7";
+            case REGISTER_FAILED, CONSTRUCT_FAILED, ENABLE_FAILED -> "&c";
+            case REGISTER, DISABLED, CONSTRUCT -> "&f";
+            case ENABLE -> "&a";
+        };
 
-        HashMap<String, List<String>> map = new HashMap<>();
-        for (String s : ModuleManager.getAllModules().keySet().stream().sorted().toList()) {
-            String namespace = s.split(":")[0];
-            if (!map.containsKey(namespace)) {
-                map.put(namespace, new ArrayList<>());
-            }
-            map.get(namespace).add(s.split(":")[1]);
-        }
 
-        for (String namespace : map.keySet()) {
-            List<String> list = map.get(namespace);
-            sb.append(ChatColor.GOLD).append(namespace).append("(").append(list.size()).append("):\n");
-            for (String id : list) {
-                if (ModuleManager.getModuleStatus(namespace + ":" + id) == TriState.FALSE) {
-                    sb.append(ChatColor.GREEN);
-                } else {
-                    sb.append(ChatColor.GRAY);
-                }
-                AbstractModule module = ModuleManager.getModule(namespace + ":" + id);
-                sb.append("   ").append(module.getDisplayName(Language.locale(sender))).append(ChatColor.WHITE).append(" -> ");
-                sb.append(module.getVersion());
-                sb.append('\n');
-            }
-        }
-        this.getLanguage().sendMessage(sender, "list", sb.toString());
+        var hover = """
+                &7ID: &b%s
+                &7Status: %s%s
+                &7Version: &d%s
+                &7Info: &f%s
+                """.formatted(m.fullId(), statusColor, m.status().name(), m.version(), m.additional());
+
+        return Component.text(ChatColor.translateAlternateColorCodes('&', hover));
     }
 
+    private Component buildModuleInfo(ModuleMeta m, Locale locale) {
+        var prefix = "&f[%s&f]".formatted(switch (m.status()) {
+            case UNKNOWN -> "&7U";
+            case REGISTER_FAILED, CONSTRUCT_FAILED, ENABLE_FAILED -> "&cF";
+            case REGISTER, DISABLED, CONSTRUCT -> "&7D";
+            case ENABLE -> "&aE";
+        });
+
+        var info = Component.text(ChatColor.translateAlternateColorCodes('&', prefix + m.displayName(locale)));
+
+        return info.hoverEvent(HoverEvent.showText(buildModuleHoverInfo(m)));
+    }
+
+    private void list(CommandSender sender, String prefix) {
+        var nodes = ModuleManager.getInstance().getKnownModuleMetas().values().stream().filter((m) -> m.fullId().contains(prefix)).toList();
+
+        getLanguage().sendMessage(sender, "list", "");
+
+        var groups = new HashMap<String, List<ModuleMeta>>();
+
+        for (var meta : nodes) {
+            groups.computeIfAbsent(meta.fullId().split(":")[0], (k) -> new ArrayList<>()).add(meta);
+        }
+
+        for (var gid : groups.keySet()) {
+            var exampleMeta = groups.get(gid).get(0);
+            var group = groups.get(gid);
+
+            var all = group.size();
+            var enable = group.stream().filter((m) -> m.status().equals(FunctionalComponentStatus.ENABLE)).count();
+            var pack = "&6> &b%s&7[%s] (%d/%d)".formatted(gid, exampleMeta.parent().getOwner().getName(), enable, all);
+
+            Players.sendMessage(sender, Component.text(ChatColor.translateAlternateColorCodes('&', pack)));
+
+            for (var meta : groups.get(gid)) {
+                Players.sendMessage(sender, Component.text("  ").append(buildModuleInfo(meta, Language.locale(sender))));
+            }
+        }
+    }
 
     @Override
     public String getLanguageNamespace() {

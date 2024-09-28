@@ -3,6 +3,8 @@ package org.tbstcraft.quark.data;
 import me.gb2022.commons.math.SHA;
 import me.gb2022.commons.nbt.NBT;
 import me.gb2022.commons.nbt.NBTTagCompound;
+import org.tbstcraft.quark.data.storage.DataEntry;
+import org.tbstcraft.quark.data.storage.StorageContext;
 import org.tbstcraft.quark.util.Identifiers;
 
 import java.io.ByteArrayOutputStream;
@@ -13,9 +15,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-public final class DataService {
+public class DataService implements StorageContext {
     private final ArrayDeque<String> saveRequest = new ArrayDeque<>();
     private final HashMap<String, NBTTagCompound> cache = new HashMap<>();
+    private final HashMap<String, DataEntry> entries = new HashMap<>();
     private final Logger logger;
     private final File folder;
     private DataBackend backend;
@@ -24,6 +27,16 @@ public final class DataService {
     public DataService(Logger logger, File folder) {
         this.logger = logger;
         this.folder = folder;
+    }
+
+
+    @Override
+    public void save(DataEntry entry) {
+        this.saveEntry(entry.getId());
+    }
+
+    public DataEntry get(String id) {
+        return this.entries.computeIfAbsent(id, k -> new DataEntry(this.getEntry(id), this, k));
     }
 
     //convert

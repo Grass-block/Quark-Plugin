@@ -1,18 +1,20 @@
 package org.tbstcraft.quark.internal.command;
 
+import me.gb2022.commons.TriState;
+import net.kyori.adventure.text.Component;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.platform.Players;
+import org.tbstcraft.quark.framework.packages.IPackage;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.util.ObjectOperationResult;
-import me.gb2022.commons.TriState;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @QuarkCommand(name = "package", permission = "-quark.packages")
 public final class PackageCommand extends CoreCommand {
@@ -30,10 +32,23 @@ public final class PackageCommand extends CoreCommand {
         this.getLanguage().sendMessage(sender, id, fmt);
     }
 
+
     @Override
-    public void onCommand(CommandSender sender, String[] args) {
-        switch (args[0]) {
-            case "list" -> this.listPackages(sender);
+    public void suggest(CommandSuggestion suggestion) {
+        suggestion.suggest(0, "enable", "disable", "list");
+        suggestion.matchArgument(0, "list", (c) -> c.suggest(1, "<search meta>"));
+        suggestion.matchArgument(0, "list", (c) -> c.suggest(1, PackageManager.getInstance().getPackages().keySet()));
+        suggestion.matchArgument(0, "enable", (c) -> c.suggest(1, PackageManager.getIdsByStatus(TriState.FALSE)));
+        suggestion.matchArgument(0, "disable", (c) -> c.suggest(1, PackageManager.getIdsByStatus(TriState.TRUE)));
+    }
+
+    @Override
+    public void execute(CommandExecution context) {
+        var sender = context.getSender();
+        var id = !context.hasArgumentAt(1) ? null : context.requireArgumentAt(1);
+
+        switch (context.requireEnum(0, "list", "info", "enable", "disable", "reload", "enable-all", "disable-all", "reload-all")) {
+            case "list" -> list(sender, !context.hasArgumentAt(1) ? "" : context.requireArgumentAt(1));
             case "enable-all" -> {
                 PackageManager.enableAllPackages();
                 this.getLanguage().sendMessage(sender, "enable-all");
@@ -42,33 +57,8 @@ public final class PackageCommand extends CoreCommand {
                 PackageManager.disableAllPackages();
                 this.getLanguage().sendMessage(sender, "disable-all");
             }
-            case "enable" -> sendMessage(sender, messageId(PackageManager.enablePackage(args[1]), "enable"), args[1]);
-            case "disable" ->
-                    sendMessage(sender, messageId(PackageManager.disablePackage(args[1]), "disable"), args[1]);
-        }
-    }
-
-    @Override
-    public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-        if (buffer.length == 1) {
-            tabList.add("enable");
-            tabList.add("disable");
-            tabList.add("enable-all");
-            tabList.add("disable-all");
-            tabList.add("list");
-            return;
-        }
-        if (buffer.length != 2 || buffer[0].contains("-all") || buffer[0].equals("list")) {
-            return;
-        }
-
-        if (Objects.equals(buffer[0], "reload") || Objects.equals(buffer[0], "disable")) {
-            tabList.addAll(PackageManager.getIdsByStatus(TriState.FALSE));
-        } else {
-            tabList.addAll(PackageManager.getIdsByStatus(TriState.TRUE));
-        }
-        if (tabList.isEmpty()) {
-            tabList.add("(not found)");
+            case "enable" -> sendMessage(sender, messageId(PackageManager.enablePackage(id), "enable"), id);
+            case "disable" -> sendMessage(sender, messageId(PackageManager.disablePackage(id), "disable"), id);
         }
     }
 
@@ -107,6 +97,28 @@ public final class PackageCommand extends CoreCommand {
         this.getLanguage().sendMessage(sender, "list", sb.toString());
     }
 
+    private Component buildModuleInfo(IPackage m) {
+        var state = PackageManager.isPackageEnabled(m.getId()) ? "&aE" : "&cD";
+        var owner = m.getOwner().getName();
+        var ownerVer = m.getOwner().getDescription().getVersion();
+        var line = "&f[%s&f]%s &7[%s]".formatted(state, m.getId(), owner + ":" + ownerVer);
+
+        return Component.text(ChatColor.translateAlternateColorCodes('&', line));
+    }
+
+    private void list(CommandSender sender, String prefix) {
+        var nodes = PackageManager.getInstance()
+                .getPackages()
+                .values()
+                .stream()
+                .sorted(Comparator.comparing(m -> m.getOwner().getName()))
+                .filter((m) -> m.getId().contains(prefix))
+                .toList();
+        getLanguage().sendMessage(sender, "list", "");
+        for (var meta : nodes) {
+            Players.sendMessage(sender, buildModuleInfo(meta));
+        }
+    }
 
     @Override
     public String getLanguageNamespace() {

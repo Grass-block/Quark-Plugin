@@ -5,8 +5,9 @@ import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import org.atcraftmc.qlib.command.LegacyCommandManager;
 import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -27,7 +28,6 @@ import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.permission.LazyPermissionEntry;
 import org.tbstcraft.quark.internal.permission.PermissionEntry;
 import org.tbstcraft.quark.internal.permission.PermissionValue;
-import org.tbstcraft.quark.util.CachedInfo;
 
 import java.util.*;
 
@@ -165,12 +165,18 @@ public final class PermissionManager extends PackageModule implements QuarkComma
         }
 
         tags.addAll(getPermissionTags(p.getName()).getTagMap().keySet());
-        Set<String> keys = new HashSet<>(data.getTagMap().keySet());
+
+        var keys = new HashSet<>(data.getTagMap().keySet());
+
         keys.remove("group");
         keys.remove("tags");
 
         for (String key : keys) {
-            permissions.add(data.getBoolean(key) ? "+" : "-" + key);
+            try {
+                permissions.add(data.getBoolean(key) ? "+" : "-" + key);
+            } catch (ClassCastException ignored) {
+                //getLogger().warning("attempt to fetch invalid permission data %s for %s".formatted(key, p.getName()));;
+            }
         }
 
         entry.clear();
@@ -213,59 +219,49 @@ public final class PermissionManager extends PackageModule implements QuarkComma
         return tag.getCompoundTag("tags");
     }
 
-    public void addPermissionTag(String name, String tag) {
-        getPermissionTags(name).setString(tag, tag);
-        PlayerDataService.save(name);
-    }
-
-    public void removePermissionTag(String name, String tag) {
-        getPermissionTags(name).remove(tag);
-        PlayerDataService.save(name);
-    }
-
-    public void addOverridePermissionValue(String name, String permission, String value) {
-        NBTTagCompound tag = PlayerDataService.getEntry(name, this.getId());
-        if (Objects.equals(value, "unset")) {
-            tag.remove(permission);
-        } else {
-            tag.setBoolean(permission, Boolean.parseBoolean(value));
-        }
-        Player p = Bukkit.getPlayerExact(name);
-
-        if (p == null) {
-            return;
-        }
-        PermissionEntry entry = get(p);
-        entry.setPermission(permission, PermissionValue.parse(value));
-        PlayerDataService.save(p.getName());
-    }
-
 
     //command
     @Override
-    public void onCommand(CommandSender sender, String[] args) {
-        Player target = Bukkit.getPlayerExact(args[1]);
+    public void execute(CommandExecution context) {
+        var playerName = context.requireArgumentAt(1);
+        var target = context.requireOfflinePlayer(1).getPlayer();
+        var name = context.requireArgumentAt(2);
+        var sender = context.getSender();
 
-        switch (args[0]) {
+        var data = PlayerDataService.get(playerName).getTable(this.getId());
+
+        switch (context.requireEnum(0, "set", "add-tag", "remove-tag", "group")) {
             case "set" -> {
-                this.addOverridePermissionValue(args[1], args[2], args[3]);
-                this.getLanguage().sendMessage(sender, "cmd-perm-set", args[1], "{;}" + args[2], args[3]);
+                var value = context.requireArgumentAt(3);
+
+                if (Objects.equals(value, "unset")) {
+                    data.remove(name);
+                } else {
+                    data.setBoolean(name, Boolean.parseBoolean(value));
+                }
+
+                if (target != null) {
+                    PermissionEntry entry = get(target);
+                    entry.setPermission(name, PermissionValue.parse(value));
+                }
+
+                this.getLanguage().sendMessage(sender, "cmd-perm-set", playerName, "{;}" + name, value);
             }
             case "add-tag" -> {
-                this.addPermissionTag(args[1], args[2]);
-                this.getLanguage().sendMessage(sender, "cmd-tag-add", args[1], args[2]);
+                getPermissionTags(playerName).setString(name, name);
+                this.getLanguage().sendMessage(sender, "cmd-tag-add", playerName, name);
             }
             case "remove-tag" -> {
-                this.removePermissionTag(args[1], args[2]);
-                this.getLanguage().sendMessage(sender, "cmd-tag-remove", args[1], args[2]);
+                getPermissionTags(playerName).remove(name);
+                this.getLanguage().sendMessage(sender, "cmd-tag-remove", playerName, name);
             }
             case "group" -> {
-                NBTTagCompound tag = PlayerDataService.getEntry(args[1], this.getId());
-                tag.setString("group", args[2]);
-                this.getLanguage().sendMessage(sender, "cmd-group-set", args[1], args[2]);
+                data.setString("group", name);
+                this.getLanguage().sendMessage(sender, "cmd-group-set", playerName, name);
             }
         }
 
+        PlayerDataService.save(playerName);
         if (target == null) {
             return;
         }
@@ -274,31 +270,14 @@ public final class PermissionManager extends PackageModule implements QuarkComma
     }
 
     @Override
-    public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-        switch (buffer.length) {
-            case 1 -> {
-                tabList.add("set");
-                tabList.add("add-tag");
-                tabList.add("remove-tag");
-            }
-            case 3 -> {
-                switch (buffer[0]) {
-                    case "set" -> tabList.addAll(PermissionEntry.getAllPermissions());
-                    case "add-tag" -> tabList.addAll(this.tags.keySet());
-                    case "group" -> tabList.addAll(this.groups.keySet());
-                    case "remove-tag" -> tabList.addAll(getPermissionTags(sender.getName()).getTagMap().keySet());
-                }
-            }
-            case 2 -> tabList.addAll(CachedInfo.getAllPlayerNames());
-            case 4 -> {
-                if (!Objects.equals(buffer[0], "set")) {
-                    return;
-                }
-                tabList.add("true");
-                tabList.add("false");
-                tabList.add("unset");
-            }
-        }
+    public void suggest(CommandSuggestion suggestion) {
+        suggestion.suggest(0, "set", "add-tag", "remove-tag", "group");
+        suggestion.matchArgument(0, "set", (c) -> c.suggest(2, PermissionEntry.getAllPermissions()));
+        suggestion.matchArgument(0, "add-tag", (c) -> c.suggest(2, this.tags.keySet()));
+        suggestion.matchArgument(0, "group", (c) -> c.suggest(2, this.groups.keySet()));
+        suggestion.matchArgument(0, "remove-tag", (c) -> c.suggest(2, "<tag-name>"));
+        suggestion.suggestPlayers(1);
+        suggestion.matchArgument(0, "set", (c) -> c.suggest(3, "true", "false", "unset"));
     }
 
     @QuarkCommand(name = "permission", permission = "-quark.permission.command")

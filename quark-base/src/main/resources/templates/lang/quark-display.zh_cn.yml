@@ -87,3 +87,8 @@ language:
     delete-all: "{global#info}已清除全部悬浮文本。"
     edit: "{global#info}成功编辑悬浮文本 {#var}。"
     teleport: "{global#info}悬浮文本 {#var} 已被传送到您的位置。"
+  we-session-renderer:
+    mode-persistent: "{global#sys-info}WorldEdit选区渲染模式已设为 [{#white}持久{#gray}]"
+    mode-update: "{global#sys-info}WorldEdit选区渲染模式已设为 [{#white}更新时{#gray}]"
+    mode-off: "{global#sys-info}WorldEdit选区渲染模式已设为 [{#white}关{#gray}]"
+    render: "{global#sys-success}您的WorldEdit选区已渲染（高亮）。"

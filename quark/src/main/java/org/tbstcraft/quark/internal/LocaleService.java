@@ -2,6 +2,7 @@ package org.tbstcraft.quark.internal;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
 import org.atcraftmc.qlib.command.AbstractCommand;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -15,14 +16,12 @@ import org.tbstcraft.quark.api.ClientLocaleChangeEvent;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.LocaleMapping;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceInject;
-import org.tbstcraft.quark.internal.command.QuarkPluginCommand;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.util.List;
@@ -62,7 +61,7 @@ public interface LocaleService extends Service {
     static void setCustomLanguage(String name, String value) {
         NBTTagCompound tag = PlayerDataService.getEntry(name, "locale");
 
-        if (tag.getString("custom").equals(value)) {
+        if (tag.hasKey("custom") && tag.getString("custom").equals(value)) {
             return;
         }
 
@@ -71,14 +70,14 @@ public interface LocaleService extends Service {
     }
 
     static String getUserLocale(Player user) {
-        NBTTagCompound tag = PlayerDataService.getEntry(user.getName(), "locale");
+        var entry = PlayerDataService.get(user).getTable("locale");
 
-        if (tag.hasKey("custom") && !tag.getString("custom").equals("none")) {
-            return tag.getString("custom");
+        if (entry.hasKey("custom") && !entry.getString("custom").equals("none")) {
+            return entry.getString("custom");
         }
 
-        if (tag.hasKey("cache")) {
-            return tag.getString("cache");
+        if (entry.hasKey("cache")) {
+            return entry.getString("cache");
         }
 
         return user.getLocale();
@@ -98,12 +97,13 @@ public interface LocaleService extends Service {
             var locale = event.getPlayer().getLocale();
 
             if (!tag.hasKey("custom") || tag.getString("custom").equals("none")) {
-
                 tag.setString("custom", "none");
                 tag.setString("cache", locale);
                 TextSender.sendTo(event.getPlayer(), preset.getMessageComponent(locale(event.getPlayer()), locale));
             } else {
-                locale = tag.getString("cache");
+                if (tag.hasKey("cache")) {
+                    locale = tag.getString("cache");
+                }
             }
 
             Locale loc = LocaleMapping.locale(locale);

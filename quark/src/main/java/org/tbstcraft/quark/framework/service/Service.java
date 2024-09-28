@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.framework.service;
 
+import org.tbstcraft.quark.framework.module.FunctionalComponent;
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.internal.LocaleService;
@@ -7,7 +8,7 @@ import org.tbstcraft.quark.internal.ProductService;
 import org.tbstcraft.quark.internal.permission.PermissionService;
 
 @SuppressWarnings({"rawtypes"})
-public interface Service {
+public interface Service extends FunctionalComponent {
     Class[] BASE_SERVICES = new Class[]{
             PermissionService.class,
             ProductService.class,
@@ -34,9 +35,10 @@ public interface Service {
 
 
     default void onEnable() {
-
+        this.enable();
     }
 
     default void onDisable() {
+        this.disable();
     }
 }

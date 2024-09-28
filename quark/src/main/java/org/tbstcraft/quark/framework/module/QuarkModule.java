@@ -15,7 +15,7 @@ public @interface QuarkModule {
     /**
      * recommended to fill but acceptable if empty
      */
-    String version() default "unspecified";
+    String version() default "1.0";
 
     /**
      * dont care it unless using record.
@@ -38,4 +38,6 @@ public @interface QuarkModule {
     boolean internal() default false;
 
     boolean defaultEnable() default true;
+
+    String description() default "no info";
 }

@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.foundation.platform;
 
+import me.gb2022.commons.TriState;
 import me.gb2022.commons.reflect.method.MethodHandle;
 import me.gb2022.commons.reflect.method.MethodHandleO1;
 import me.gb2022.commons.reflect.method.MethodHandleO2;
@@ -9,6 +10,7 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.foundation.text.ComponentSerializer;
@@ -33,11 +35,11 @@ public interface Players {
         ctx.attempt(
                 () -> Player.class.getMethod("addCustomChatCompletions", Collection.class),
                 (p, a) -> p.addCustomChatCompletions(a)
-        );
+                   );
         ctx.attempt(
                 () -> Player.class.getMethod("addAdditionalChatCompletions", Collection.class),
                 (p, a) -> p.removeCustomChatCompletions(a)
-        );
+                   );
         ctx.dummy((p, a1) -> {
         });
     });
@@ -45,11 +47,11 @@ public interface Players {
         ctx.attempt(
                 () -> Player.class.getMethod("removeCustomChatCompletions", Collection.class),
                 (p, c) -> p.removeCustomChatCompletions(c)
-        );
+                   );
         ctx.attempt(
                 () -> Player.class.getMethod("removeAdditionalChatCompletions", Collection.class),
                 (p, c) -> p.removeAdditionalChatCompletions(c)
-        );
+                   );
         ctx.dummy((p, a1) -> {
         });
     });
@@ -57,22 +59,22 @@ public interface Players {
         ctx.attempt(() -> Entity.class.getMethod("teleportAsync", Location.class), (p, l) -> p.teleportAsync(l));
         ctx.attempt(() -> Entity.class.getMethod("teleport", Location.class), Entity::teleport);
     });
-    MethodHandleO1<Player, Component> SEND_MESSAGE = MethodHandle.select((ctx) -> {
+    MethodHandleO1<CommandSender, Component> SEND_MESSAGE = MethodHandle.select((ctx) -> {
         ctx.attempt(() -> Player.class.getMethod("sendMessage", Component.class), (p, c) -> p.sendMessage(c));
         ctx.attempt(
-                () -> Player.Spigot.class.getMethod("sendMessage", BaseComponent.class),
+                () -> CommandSender.Spigot.class.getMethod("sendMessage", BaseComponent.class),
                 (p, c) -> p.spigot().sendMessage(ComponentSerializer.bungee(c))
-        );
+                   );
         ctx.attempt(
-                () -> Player.class.getMethod("sendMessage", String.class),
+                () -> CommandSender.class.getMethod("sendMessage", String.class),
                 (p, c) -> p.sendMessage(ComponentSerializer.legacy(c))
-        );
+                   );
     });
     MethodHandleO2<Player, Component, Component> SET_TAB = MethodHandle.select((ctx) -> {
         ctx.attempt(
                 () -> Player.class.getMethod("sendPlayerListHeader", Component.class),
                 (p, c1, c2) -> p.sendPlayerListHeaderAndFooter(c1, c2)
-        );
+                   );
         ctx.attempt(
                 () -> Player.class.getMethod("setPlayerListHeaderFooter", BaseComponent.class, BaseComponent.class),
                 (p, c1, c2) -> {
@@ -80,7 +82,7 @@ public interface Players {
                     var cc2 = ComponentSerializer.bungee(c2);
                     p.setPlayerListHeaderFooter(cc1, cc2);
                 }
-        );
+                   );
         ctx.attempt(() -> Player.class.getMethod("setPlayerListHeader", String.class), (p, c1, c2) -> {
             p.setPlayerListHeader(ComponentSerializer.legacy(c1));
             p.setPlayerListFooter(ComponentSerializer.legacy(c2));
@@ -104,7 +106,7 @@ public interface Players {
         REMOVE_CHAT_TAB.invoke(player, Set.of(opt));
     }
 
-    static void sendMessage(Player p, Component msg) {
+    static void sendMessage(CommandSender p, Component msg) {
         SEND_MESSAGE.invoke(p, msg);
     }
 
@@ -127,7 +129,7 @@ public interface Players {
             }
             BanMessageFetchEvent e = new BanMessageFetchEvent(entry, BanList.Type.NAME, p.getLocale(), reason);
             BukkitUtil.callEvent(e);
-            if (ModuleManager.isEnabled("quark-display:custom-kick-message")) {
+            if (ModuleManager.getInstance().getStatus("quark-display:custom-kick-message") == TriState.FALSE) {
                 p.kickPlayer("\u0002" + e.getMessage());
             } else {
                 p.kickPlayer(e.getMessage());
@@ -135,7 +137,7 @@ public interface Players {
         }
     }
 
-    static void show3DBox(Player player, Location point0, Location point1) {
+    static void renderBox(Player player, Location point0, Location point1, double density) {
         double x0 = Math.min(point0.getX(), point1.getX());
         double y0 = Math.min(point0.getY(), point1.getY());
         double z0 = Math.min(point0.getZ(), point1.getZ());
@@ -143,36 +145,40 @@ public interface Players {
         double y1 = Math.max(point0.getY(), point1.getY()) + 1;
         double z1 = Math.max(point0.getZ(), point1.getZ()) + 1;
 
-        if ((x1 - x0) / 0.25 > 512) {
+        if ((x1 - x0) / density > 512) {
             return;
         }
-        if ((y1 - y0) / 0.25 > 512) {
+        if ((y1 - y0) / density > 512) {
             return;
         }
-        if ((z1 - z0) / 0.25 > 512) {
+        if ((z1 - z0) / density > 512) {
             return;
         }
 
-        for (double i = x0; i <= x1; i += 0.25) {
-            player.spawnParticle(Particle.END_ROD, i, y0, z0, 0, 0, 0, 0, 1);
-            player.spawnParticle(Particle.END_ROD, i, y1, z0, 0, 0, 0, 0, 1);
-            player.spawnParticle(Particle.END_ROD, i, y0, z1, 0, 0, 0, 0, 1);
-            player.spawnParticle(Particle.END_ROD, i, y1, z1, 0, 0, 0, 0, 1);
+        for (double i = x0; i <= x1; i += density) {
+            player.spawnParticle(Particle.FLAME, i, y0, z0, 0, 0, 0, 0, 1);
+            player.spawnParticle(Particle.FLAME, i, y1, z0, 0, 0, 0, 0, 1);
+            player.spawnParticle(Particle.FLAME, i, y0, z1, 0, 0, 0, 0, 1);
+            player.spawnParticle(Particle.FLAME, i, y1, z1, 0, 0, 0, 0, 1);
         }
 
-        for (double i = y0; i <= y1; i += 0.25) {
-            player.spawnParticle(Particle.END_ROD, x0, i, z0, 0, 0, 0, 0, 1);
-            player.spawnParticle(Particle.END_ROD, x1, i, z0, 0, 0, 0, 0, 1);
-            player.spawnParticle(Particle.END_ROD, x0, i, z1, 0, 0, 0, 0, 1);
-            player.spawnParticle(Particle.END_ROD, x1, i, z1, 0, 0, 0, 0, 1);
+        for (double i = y0; i <= y1; i += density) {
+            player.spawnParticle(Particle.FLAME, x0, i, z0, 0, 0, 0, 0, 1);
+            player.spawnParticle(Particle.FLAME, x1, i, z0, 0, 0, 0, 0, 1);
+            player.spawnParticle(Particle.FLAME, x0, i, z1, 0, 0, 0, 0, 1);
+            player.spawnParticle(Particle.FLAME, x1, i, z1, 0, 0, 0, 0, 1);
         }
 
-        for (double i = z0; i <= z1; i += 0.25) {
-            player.spawnParticle(Particle.END_ROD, x0, y0, i, 0, 0, 0, 0, 1);
-            player.spawnParticle(Particle.END_ROD, x1, y0, i, 0, 0, 0, 0, 1);
-            player.spawnParticle(Particle.END_ROD, x0, y1, i, 0, 0, 0, 0, 1);
-            player.spawnParticle(Particle.END_ROD, x1, y1, i, 0, 0, 0, 0, 1);
+        for (double i = z0; i <= z1; i += density) {
+            player.spawnParticle(Particle.FLAME, x0, y0, i, 0, 0, 0, 0, 0);
+            player.spawnParticle(Particle.FLAME, x1, y0, i, 0, 0, 0, 0, 0);
+            player.spawnParticle(Particle.FLAME, x0, y1, i, 0, 0, 0, 0, 0);
+            player.spawnParticle(Particle.FLAME, x1, y1, i, 0, 0, 0, 0, 0);
         }
+    }
+
+    static void show3DBox(Player player, Location point0, Location point1) {
+        renderBox(player, point0, point1, 0.25);
     }
 
     static void sendActionBarTitle(Player player, String message) {

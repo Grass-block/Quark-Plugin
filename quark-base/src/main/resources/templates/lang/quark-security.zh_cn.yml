@@ -22,8 +22,11 @@ language:
     warning-item: '{global#warning}您所持有的物品 {#var} 属于危险品，已被服务器记录!'
     illegal-item-broadcast: '{global#warning}玩家 {#var} 持有的物品 {#var} 属于非法物品。'
     warning-item-broadcast: '{global#warning}玩家 {#var} 持有的物品 {#var} 属于危险品。'
-  we-size-defender:
-    interact-blocked-we: '{global#warning}您的操作超出了最大大小限制，请重试。'
+  we-session-size-limit:
+    edit-limited-warn: "{global#sys-warning}您正在编辑的区域已超出限制(半径{#var}), 请注意您的操作。"
+    edit-limited: "{global#sys-error}您正在编辑的区域已超出限制(半径{#var}), 超出部分已被自动截断。"
+    select-limited-warn: "{global#sys-warning}您正在选择的区域(大小{#var}/{#var}/{#var})已超出限制({#var}), 请注意您的操作。"
+    select-limited: "{global#sys-error}您正在选择的区域(大小{#var}/{#var}/{#var})已超出限制({#var})并被取消。"
   protection-area:
     region-list: '{global#sys-operation}以下是全部保护区域: '
     region-add: '{global#sys-operation}已添加保护区域{#var}。'

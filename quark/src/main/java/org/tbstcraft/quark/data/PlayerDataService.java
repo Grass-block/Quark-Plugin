@@ -1,14 +1,17 @@
 package org.tbstcraft.quark.data;
 
-import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.nbt.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.data.storage.DataEntry;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.framework.service.QuarkService;
-import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
 import org.tbstcraft.quark.util.DataFix;
@@ -17,7 +20,7 @@ import org.tbstcraft.quark.util.FilePath;
 import java.io.File;
 
 @QuarkService(id = "player-data")
-public interface PlayerDataService extends Service {
+public interface PlayerDataService extends IDataService {
 
     @ServiceInject
     ServiceHolder<PlayerDataService> INSTANCE = new ServiceHolder<>();
@@ -43,77 +46,92 @@ public interface PlayerDataService extends Service {
     }
 
     static PlayerDataService create(String folder) {
-        return new ServiceImplementation(new File(folder));
+        return new Impl(new File(folder));
     }
 
-    static int getEntryCount() {
-        return INSTANCE.get().entryCount();
+    static int entryCount() {
+        return INSTANCE.get().getEntryCount();
     }
 
+    static DataEntry get(Player player) {
+        return INSTANCE.get().getData(player.getName());
+    }
 
-    int entryCount();
+    static DataEntry get(String player) {
+        return INSTANCE.get().getData(player);
+    }
+
+    static void save(Player player) {
+        INSTANCE.get().saveData(player.getName());
+    }
+
 
     NBTTagCompound getDataEntry(String id, String moduleId);
 
-    void saveData(String id);
+    DataEntry getData(Player player);
 
-    DataService getBackend();
+    void saveData(Player player);
 
-    final class ServiceImplementation implements PlayerDataService, Listener {
-        private final DataService backend;
 
-        public ServiceImplementation(File f) {
-            this.backend = new DataService(Quark.getInstance().getLogger(), f);
+    final class Impl extends DataService implements PlayerDataService {
+        private final Listener listener = new Listener() {
+            @EventHandler
+            public void onPlayerJoin(PlayerJoinEvent event) {
+                Impl.this.getEntry(event.getPlayer().getName());
+            }
+
+            @EventHandler
+            public void onPlayerLeave(PlayerQuitEvent event) {
+                Impl.this.saveEntry(event.getPlayer().getName());
+            }
+        };
+
+        public Impl(File f) {
+            super(Quark.getInstance().getLogger(), f);
+        }
+
+        @Override
+        public DataEntry getData(Player player) {
+            return getData(player.getName());
+        }
+
+        @Override
+        public void saveData(Player player) {
+            saveData(player.getName());
+        }
+
+        @Override
+        public DataEntry getData(String player) {
+            return this.get(player);
+        }
+
+        @Override
+        public void saveData(String player) {
+            this.saveEntry(player);
         }
 
         @Override
         public void onEnable() {
             DataFix.moveFolder("/player_data", "/data/player");
-            BukkitUtil.registerEventListener(this);
-            this.backend.open();
+            BukkitUtil.registerEventListener(this.listener);
+            this.open();
         }
 
         @Override
         public void onDisable() {
-            BukkitUtil.unregisterEventListener(this);
-            this.backend.close();
-        }
-
-        @EventHandler
-        public void onPlayerJoin(PlayerJoinEvent event) {
-            this.backend.getEntry(event.getPlayer().getName());
-        }
-
-        @EventHandler
-        public void onPlayerLeave(PlayerQuitEvent event) {
-            this.backend.saveEntry(event.getPlayer().getName());
-        }
-
-        @Override
-        public int entryCount() {
-            return this.backend.getEntryCount();
+            BukkitUtil.unregisterEventListener(this.listener);
+            this.close();
         }
 
         @Override
         public NBTTagCompound getDataEntry(String id, String namespace) {
-            NBTTagCompound root = this.backend.getEntry(id);
-            if (root.hasKey(namespace)) {
-                return root.getCompoundTag(namespace);
+            var entry = get(id);
+
+            if (!entry.hasKey(namespace)) {
+                entry.setCompoundTag(namespace, new NBTTagCompound());
             }
-            NBTTagCompound tag = new NBTTagCompound();
-            root.setCompoundTag(namespace, tag);
-            saveData(id);
-            return tag;
-        }
 
-        @Override
-        public void saveData(String id) {
-            this.backend.saveEntry(id);
-        }
-
-        @Override
-        public DataService getBackend() {
-            return this.backend;
+            return entry.getTable(namespace);
         }
     }
 }

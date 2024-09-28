@@ -1,18 +1,21 @@
 package org.atcraftmc.quark.utilities.viewdistance;
 
-import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.math.MathHelper;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.data.PlayerDataService;
+import org.tbstcraft.quark.data.storage.access.PlayerDataAccess;
 
 public final class CustomSettingStrategy implements ViewDistanceStrategy {
+    public static final PlayerDataAccess<Byte> STORAGE_ACCESS = PlayerDataAccess.byteElement("view_distance_custom");
+
     public static boolean has(Player player) {
         return get(player) != -1;
     }
 
     public static int set(Player player, int value) {
-        NBTTagCompound tag = PlayerDataService.getEntry(player.getName(), "view-distance");
-        tag.setByte("custom", (byte) value);
-        PlayerDataService.save(player.getName());
+        value = (int) MathHelper.clamp(value, 2, 32);
+
+        STORAGE_ACCESS.setAndSave(player, (byte) value);
+
         return value;
     }
 
@@ -21,13 +24,11 @@ public final class CustomSettingStrategy implements ViewDistanceStrategy {
     }
 
     public static int get(Player player) {
-        NBTTagCompound tag = PlayerDataService.getEntry(player.getName(), "view-distance");
-
-        if (!tag.hasKey("custom")) {
+        if (!STORAGE_ACCESS.contains(player)) {
             return -1;
         }
 
-        return tag.getByte("custom");
+        return STORAGE_ACCESS.get(player);
     }
 
     @Override

@@ -35,7 +35,7 @@ public abstract class AbstractModule implements FunctionalComponent {
 
     public final void enableModule() {
         this.record = this.useRecord() ? createRecord() : new EmptyRecordEntry();
-        this.language = this.useLanguage() ? createLanguage() : null;
+        this.language = this.createLanguage();
         this.config = this.createConfig();
         this.logger = createLogger();
 
@@ -119,10 +119,6 @@ public abstract class AbstractModule implements FunctionalComponent {
 
     public final boolean useRecord() {
         return this.getDescriptor().recordFormat().length != 0;
-    }
-
-    public final boolean useLanguage() {
-        return this.getDescriptor().useLanguage();
     }
 
     public final APIProfile[] getCompatBlacklist() {

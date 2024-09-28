@@ -182,7 +182,6 @@ public interface ComponentGenerator {
                 var l = new ArrayList<TextComponent>();
 
 
-
                 for (String s : c.split(";;")) {
                     l.add(Component.text(s));
                 }

@@ -2,14 +2,18 @@ package org.tbstcraft.quark.framework.module.providing;
 
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.ModuleManager;
+import org.tbstcraft.quark.framework.module.ModuleMeta;
 import org.tbstcraft.quark.framework.packages.IPackage;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 public abstract class ModuleRegistry {
     private final HashSet<AbstractModule> modules = new HashSet<>();
     private final IPackage pkg;
+
+    protected final Collection<ModuleMeta> metas = new HashSet<>();
 
     protected ModuleRegistry(IPackage pkg) {
         this.pkg = pkg;
@@ -20,32 +24,33 @@ public abstract class ModuleRegistry {
     }
 
     public final void register(ModuleManager moduleManager) {
+        for (var meta : this.metas) {
+            moduleManager.registerMeta(meta);
+        }
+
+
+        /*
         for (AbstractModule module : this.modules) {
             try {
                 if (!module.getAvailability().load()) {
                     continue;
                 }
-                moduleManager.register(module, this.pkg.getLogger());
+                moduleManager.register(module);
             } catch (Exception e) {
                 this.getPackage().getLogger().severe("failed to register module %s: %s".formatted(
                         module.getClass().getName(), e.getMessage()));
             }
         }
+
+         */
     }
 
     public final void unregister(ModuleManager moduleManager) {
-        for (AbstractModule module : this.modules) {
-            try {
-                if (!module.getAvailability().load()) {
-                    continue;
-                }
-                moduleManager.unregister(module.getFullId(), this.pkg.getLogger());
-            } catch (Exception e) {
-                this.getPackage().getLogger().severe("failed to unregister module %s: %s".formatted(
-                        module.getClass().getName(), e.getMessage()));
-            }
+        for (var meta : this.metas) {
+            moduleManager.unregister(meta.fullId());
         }
     }
+
 
     protected final ClassLoader getLoader() {
         return this.getPackage().getClass().getClassLoader();
@@ -60,4 +65,6 @@ public abstract class ModuleRegistry {
     }
 
     public abstract void create(Set<AbstractModule> moduleList);
+
+    public abstract void create(Collection<ModuleMeta> list);
 }

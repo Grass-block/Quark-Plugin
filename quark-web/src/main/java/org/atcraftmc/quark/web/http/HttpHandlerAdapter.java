@@ -23,7 +23,7 @@ public final class HttpHandlerAdapter implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) {
         if(this.handler instanceof AbstractModule module) {
-            if (ModuleManager.getModuleStatus(module.getFullId()) != TriState.FALSE) {
+            if (ModuleManager.getInstance().getModuleStatus(module.getFullId()) != TriState.FALSE) {
                 return;
             }
         }

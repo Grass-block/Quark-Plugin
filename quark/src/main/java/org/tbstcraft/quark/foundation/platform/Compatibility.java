@@ -1,5 +1,7 @@
 package org.tbstcraft.quark.foundation.platform;
 
+import org.bukkit.Bukkit;
+
 import java.lang.reflect.Method;
 
 public interface Compatibility {
@@ -29,6 +31,12 @@ public interface Compatibility {
             if (APIProfileTest.getAPIProfile() == profile) {
                 throw new APIIncompatibleException("unsupported platform: " + profile.name);
             }
+        }
+    }
+
+    static void requirePlugin(String name) {
+        if (Bukkit.getPluginManager().getPlugin(name) == null) {
+            throw new APIIncompatibleException("plugin not found: " + name);
         }
     }
 

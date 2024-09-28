@@ -6,7 +6,7 @@ import org.bukkit.plugin.ServicePriority;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.config.ConfigContainer;
 import org.tbstcraft.quark.data.config.ConfigEntry;
-import org.tbstcraft.quark.data.config.Configuration;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.util.ExceptionUtil;
 
 import java.lang.reflect.Field;
@@ -39,9 +39,18 @@ public interface ServiceManager {
             if (m.getAnnotation(ServiceProvider.class) == null) {
                 continue;
             }
+
             try {
                 return clazz.cast(m.invoke(null, config));
+            } catch (NoClassDefFoundError ignored) {
             } catch (IllegalAccessException | InvocationTargetException e) {
+                if (e.getCause() instanceof APIIncompatibleException) {
+                    return null;
+                }
+                if (e.getCause() instanceof NoClassDefFoundError) {
+                    return null;
+                }
+
                 throw new RuntimeException(e);
             }
         }
@@ -57,11 +66,22 @@ public interface ServiceManager {
         } catch (NoSuchMethodException e) {
             try {
                 return clazz.cast(implClass.getDeclaredConstructor().newInstance());
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                     NoSuchMethodException ex) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+                if (e.getCause() instanceof APIIncompatibleException) {
+                    return null;
+                }
+                if (e.getCause() instanceof NoClassDefFoundError) {
+                    return null;
+                }
                 throw new RuntimeException(ex);
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+            if (ex.getCause() instanceof APIIncompatibleException) {
+                return null;
+            }
+            if (ex.getCause() instanceof NoClassDefFoundError) {
+                return null;
+            }
             throw new RuntimeException(ex);
         }
     }
@@ -129,6 +149,15 @@ public interface ServiceManager {
                             Bukkit.getServicesManager().register(service, instance, Quark.getInstance(), ServicePriority.High);
                         }
 
+                        if(holder.get()==null){
+                            continue;
+                        }
+
+                        try {
+                            holder.get().checkCompatibility();
+                        } catch (APIIncompatibleException ignored) {
+                            continue;
+                        }
 
                         holder.get().onEnable();
                     } catch (Throwable e) {
@@ -184,6 +213,12 @@ public interface ServiceManager {
                     ServiceHolder<Service> holder = ((ServiceHolder<Service>) f.get(null));
 
                     if (holder.get() == null) {
+                        continue;
+                    }
+
+                    try {
+                        holder.get().checkCompatibility();
+                    } catch (APIIncompatibleException ignored) {
                         continue;
                     }
 

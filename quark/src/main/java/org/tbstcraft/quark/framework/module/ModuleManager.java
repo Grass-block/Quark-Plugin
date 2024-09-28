@@ -2,15 +2,19 @@ package org.tbstcraft.quark.framework.module;
 
 import me.gb2022.commons.TriState;
 import org.bukkit.plugin.Plugin;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
+import org.tbstcraft.quark.framework.FunctionalComponentStatus;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
 import org.tbstcraft.quark.framework.service.ServiceInject;
-import org.tbstcraft.quark.util.*;
+import org.tbstcraft.quark.util.DataFix;
+import org.tbstcraft.quark.util.ExceptionUtil;
+import org.tbstcraft.quark.util.FilePath;
+import org.tbstcraft.quark.util.ObjectOperationResult;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,138 +24,70 @@ import java.util.*;
 import java.util.logging.Logger;
 
 @QuarkService(id = "module")
-public interface ModuleManager extends Service {
-    String DATA_FILE = "%s/data/modules.properties";
+public final class ModuleManager implements Service {
+    public static final ServiceHolder<ModuleManager> INSTANCE = new ServiceHolder<>();
+    public static final String DATA_FILE = "%s/data/modules.properties";
 
-    ServiceHolder<ModuleManager> INSTANCE = new ServiceHolder<>();
+    private final String parentName;
+    private final Logger logger;
+    private final Map<String, AbstractModule> moduleMap = new HashMap<>();
+    private final Properties statusMap = new Properties();
+    private final Map<String, ModuleMeta> metas = new HashMap<>();
 
-    static ModuleManager getInstance() {
+    public ModuleManager(Plugin parent) {
+        this.parentName = parent.getName();
+        this.logger = parent.getLogger();
+    }
+
+    public static ModuleManager getInstance() {
         return ModuleManager.INSTANCE.get();
     }
 
     @ServiceInject
-    static void start() {
-        INSTANCE.set(new Impl(Quark.getInstance()));
+    public static void start() {
+        INSTANCE.set(new ModuleManager(Quark.PLUGIN));
         INSTANCE.get().onEnable();
     }
 
     @ServiceInject
-    static void stop() {
+    public static void stop() {
         INSTANCE.get().onDisable();
     }
 
-    static ModuleManager create(Plugin p) {
-        return new Impl(p);
-    }
 
-    static AbstractModule getModule(String id) {
-        return INSTANCE.get().get(id);
-    }
-
-    //operation
-    static ObjectOperationResult enableModule(String id) {
-        return INSTANCE.get().enable(id);
-    }
-
-    static ObjectOperationResult disableModule(String id) {
-        return INSTANCE.get().disable(id);
-    }
-
-    static ObjectOperationResult reloadModule(String id) {
-        return INSTANCE.get().reload(id);
-    }
-
-    static void enableAllModules() {
-        INSTANCE.get().enableAll();
-    }
-
-    static void disableAllModules() {
-        INSTANCE.get().disableAll();
-    }
-
-    static void reloadAllModules() {
-        INSTANCE.get().reloadAll();
-    }
-
-    static Set<AbstractModule> getByStatus(TriState status) {
-        Set<AbstractModule> result = new HashSet<>();
-        for (String id : INSTANCE.get().getModules().keySet()) {
-            if (getModuleStatus(id) != status) {
-                continue;
-            }
-            result.add(getModule(id));
+    @Override
+    public void onEnable() {
+        try {
+            DataFix.moveFile("/config/modules.properties", "/data/modules.properties");
+            this.statusMap.load(new FileInputStream(this.getStatusFile()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return result;
     }
 
-    static Set<String> getIdsByStatus(TriState status) {
-        Set<String> result = new HashSet<>();
-        for (String id : INSTANCE.get().getModules().keySet()) {
-            if (getModuleStatus(id) != status) {
-                continue;
-            }
-            result.add(id);
+    @Override
+    public void onDisable() {
+        this.saveStatus();
+        for (String id : new ArrayList<>(this.getModules().keySet())) {
+            this.unregister(id);
         }
-        return result;
     }
 
 
-    //register
-    static void registerModule(PackageModule m, Logger logger) {
-        INSTANCE.get().register(m, logger);
-    }
-
-    static void unregisterModule(String id, Logger logger) {
-        INSTANCE.get().unregister(id, logger);
-    }
-
-    //status
-    static boolean isEnabled(String id) {
-        return getModuleStatus(id) == TriState.FALSE;
-    }
-
-    static TriState getModuleStatus(String id) {
-        return INSTANCE.get().getStatus(id);
-    }
-
-    static Map<String, AbstractModule> getAllModules() {
-        return INSTANCE.get().getModules();
-    }
-
-    //query
-    AbstractModule get(String id);
-
-    Map<String, AbstractModule> getModules();
-
-    TriState getStatus(String id);
-
-
-    //operation
-    ObjectOperationResult enable(String id);
-
-    ObjectOperationResult disable(String id);
-
-    default ObjectOperationResult reload(String id) {
-        ObjectOperationResult result = this.disable(id);
-        if (result != ObjectOperationResult.SUCCESS) {
-            return result;
-        }
-        return enable(id);
-    }
-
-    default void enableAll() {
+    //----[batch]----
+    public void enableAll() {
         for (String id : this.getModules().keySet()) {
             this.enable(id);
         }
     }
 
-    default void disableAll() {
+    public void disableAll() {
         for (String id : this.getModules().keySet()) {
             this.disable(id);
         }
     }
 
-    default void reloadAll() {
+    public void reloadAll() {
         List<String> list = new ArrayList<>();
         for (String id : this.getModules().keySet()) {
             if (this.disable(id) != ObjectOperationResult.SUCCESS) {
@@ -165,217 +101,276 @@ public interface ModuleManager extends Service {
     }
 
 
-    //register
-    void register(AbstractModule m, Logger callback);
+    //----[query]----
+    public TriState getModuleStatus(String id) {
+        return this.getStatus(id);
+    }
 
-    void unregister(String id, Logger callback);
+    public Set<String> getIdsByStatus(TriState status) {
+        Set<String> result = new HashSet<>();
+        for (String id : this.getKnownModuleMetas().keySet()) {
+            if (getModuleStatus(id) != status) {
+                continue;
+            }
+            result.add(id);
+        }
+        return result;
+    }
 
-    Set<String> getRegisterFailed();
-
-    class Impl implements ModuleManager {
-        private final String parentName;
-        private final Logger logger;
-        private final Map<String, AbstractModule> moduleMap = new HashMap<>();
-        private final Properties statusMap = new Properties();
-        private final Set<String> registerFailed = new HashSet<>();
-        private final Map<String, AbstractModule> internals = new HashMap<>();
-
-        public Impl(Plugin parent) {
-            this.parentName = parent.getName();
-            this.logger = parent.getLogger();
+    public ModuleMeta getMeta(String id) {
+        if (!this.metas.containsKey(id)) {
+            return ModuleMeta.dummy(id);
         }
 
-        @Override
-        public void onEnable() {
+        return this.metas.get(id);
+    }
+
+    public TriState getStatus(String id) {
+        if (!this.statusMap.containsKey(id)) {
+            return TriState.UNKNOWN;
+        }
+        return Objects.equals(this.statusMap.get(id), "enabled") ? TriState.FALSE : TriState.TRUE;
+    }
+
+    public AbstractModule get(String id) {
+        return this.moduleMap.get(id);
+    }
+
+    public Map<String, AbstractModule> getModules() {
+        return this.moduleMap;
+    }
+
+    public Map<String, ModuleMeta> getKnownModuleMetas() {
+        return this.metas;
+    }
+
+
+    private void saveStatus() {
+        try {
+            this.statusMap.store(new FileOutputStream(this.getStatusFile()), "auto generated file,please don't edit it.");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private File getStatusFile() {
+        String path = DATA_FILE.formatted(FilePath.pluginFolder(this.parentName));
+        File file = new File(path);
+        if (!file.exists() || file.length() == 0) {
+            if (file.getParentFile().mkdirs()) {
+                this.logger.info("created module status file folder.");
+            }
             try {
-                DataFix.moveFile("/config/modules.properties", "/data/modules.properties");
-                this.statusMap.load(new FileInputStream(this.getStatusFile()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        @Override
-        public void onDisable() {
-            this.saveStatus();
-            for (String id : new ArrayList<>(this.getModules().keySet())) {
-                this.unregister(id, Quark.getInstance().getLogger());
-            }
-        }
-
-        private void saveStatus() {
-            try {
-                this.statusMap.store(new FileOutputStream(this.getStatusFile()), "auto generated file,please don't edit it.");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        private File getStatusFile() {
-            String path = DATA_FILE.formatted(FilePath.pluginFolder(this.parentName));
-            File file = new File(path);
-            if (!file.exists() || file.length() == 0) {
-                if (file.getParentFile().mkdirs()) {
-                    this.logger.info("created module status file folder.");
+                if (file.createNewFile()) {
+                    this.logger.info("created module status file.");
                 }
-                try {
-                    if (file.createNewFile()) {
-                        this.logger.info("created module status file.");
-                    }
-                } catch (IOException e) {
-                    this.logger.severe("failed to create status file");
-                    return file;
-                }
+            } catch (IOException e) {
+                this.logger.severe("failed to create status file");
                 return file;
             }
             return file;
         }
+        return file;
+    }
 
-        private ObjectOperationResult enable0(String id) {
-            if (getStatus(id) == TriState.UNKNOWN) {
-                return ObjectOperationResult.NOT_FOUND;
-            }
-            if (getStatus(id) == TriState.FALSE) {
-                return ObjectOperationResult.ALREADY_OPERATED;
-            }
-            try {
-                this.get(id).enableModule();
-            } catch (Exception ex) {
-                ExceptionUtil.log(ex);
-                return ObjectOperationResult.INTERNAL_ERROR;
-            }
-            this.statusMap.put(id, "enabled");
-            return ObjectOperationResult.SUCCESS;
+    private ObjectOperationResult enable0(String id) {
+        if (getStatus(id) == TriState.UNKNOWN) {
+            return ObjectOperationResult.NOT_FOUND;
         }
-
-        private ObjectOperationResult disable0(String id) {
-            if (getStatus(id) == TriState.UNKNOWN) {
-                return ObjectOperationResult.NOT_FOUND;
-            }
-            if (getStatus(id) == TriState.TRUE) {
-                return ObjectOperationResult.ALREADY_OPERATED;
-            }
-            try {
-                this.get(id).disableModule();
-            } catch (Exception ex) {
-                ExceptionUtil.log(ex);
-                return ObjectOperationResult.INTERNAL_ERROR;
-            }
-            this.statusMap.put(id, "disabled");
-            return ObjectOperationResult.SUCCESS;
+        if (getStatus(id) == TriState.FALSE) {
+            return ObjectOperationResult.ALREADY_OPERATED;
         }
+        try {
+            this.get(id).enableModule();
+        } catch (Exception ex) {
+            ExceptionUtil.log(ex);
+            return ObjectOperationResult.INTERNAL_ERROR;
+        }
+        this.statusMap.put(id, "enabled");
+        this.getMeta(id).status(FunctionalComponentStatus.ENABLE);
+        return ObjectOperationResult.SUCCESS;
+    }
+
+    private ObjectOperationResult disable0(String id) {
+        if (getStatus(id) == TriState.UNKNOWN) {
+            return ObjectOperationResult.NOT_FOUND;
+        }
+        if (getStatus(id) == TriState.TRUE) {
+            return ObjectOperationResult.ALREADY_OPERATED;
+        }
+        try {
+            this.get(id).disableModule();
+        } catch (Exception ex) {
+            ExceptionUtil.log(ex);
+            return ObjectOperationResult.INTERNAL_ERROR;
+        }
+        this.statusMap.put(id, "disabled");
+        this.getMeta(id).status(FunctionalComponentStatus.DISABLED);
+        return ObjectOperationResult.SUCCESS;
+    }
 
 
-        @Override
-        public ObjectOperationResult enable(String id) {
-            if (get(id).getDescriptor().internal()) {
-                return ObjectOperationResult.BLOCKED_INTERNAL;
-            }
-            ObjectOperationResult result = enable0(id);
-            if (result == ObjectOperationResult.SUCCESS) {
-                this.logger.info("enabled module %s.".formatted(id));
-            }
-            this.saveStatus();
+    public ObjectOperationResult enable(String id) {
+        if (get(id).getDescriptor().internal()) {
+            return ObjectOperationResult.BLOCKED_INTERNAL;
+        }
+        ObjectOperationResult result = enable0(id);
+        if (result == ObjectOperationResult.SUCCESS) {
+            this.logger.info("enabled module %s.".formatted(id));
+        }
+        this.saveStatus();
+        return result;
+    }
+
+    public ObjectOperationResult disable(String id) {
+        if (get(id).getDescriptor().internal()) {
+            return ObjectOperationResult.BLOCKED_INTERNAL;
+        }
+        ObjectOperationResult result = disable0(id);
+        if (result == ObjectOperationResult.SUCCESS) {
+            this.logger.info("disabled module %s.".formatted(id));
+        }
+        this.saveStatus();
+        return result;
+    }
+
+    public ObjectOperationResult reload(String id) {
+        ObjectOperationResult result = this.disable(id);
+        if (result != ObjectOperationResult.SUCCESS) {
             return result;
         }
+        return enable(id);
+    }
 
-        @Override
-        public ObjectOperationResult disable(String id) {
-            if (get(id).getDescriptor().internal()) {
-                return ObjectOperationResult.BLOCKED_INTERNAL;
+
+    //----[register]----
+    private boolean validPlatform(ModuleMeta meta) {
+        for (APIProfile profile : meta.compatBlackList()) {
+            if (APIProfileTest.getAPIProfile() != profile) {
+                continue;
             }
-            ObjectOperationResult result = disable0(id);
-            if (result == ObjectOperationResult.SUCCESS) {
-                this.logger.info("disabled module %s.".formatted(id));
-            }
-            this.saveStatus();
-            return result;
+            meta.status(FunctionalComponentStatus.REGISTER_FAILED);
+            meta.additional("ERROR_INCOMPATIBLE_PLATFORM");
+            return true;
         }
 
-        @Override
-        public TriState getStatus(String id) {
-            if (!this.statusMap.containsKey(id)) {
-                return TriState.UNKNOWN;
-            }
-            return Objects.equals(this.statusMap.get(id), "enabled") ? TriState.FALSE : TriState.TRUE;
+        return false;
+    }
+
+    private boolean validFeature(ModuleMeta meta) {
+        if (meta.available().load()) {
+            return false;
         }
 
+        meta.status(FunctionalComponentStatus.REGISTER_FAILED);
+        meta.additional("NOT_IN_CURRENT_PRODUCT_SETTING");
+        return true;
+    }
 
-        @Override
-        public void register(AbstractModule m, Logger callback) {
-            if (m == null) {
-                return;
+    private boolean construct(ModuleMeta meta) {
+        var clazz = meta.reference();
+
+        try {
+            var m = (PackageModule) clazz.getDeclaredConstructor().newInstance();
+            m.init(meta.id(), meta.parent());
+            meta.handle(m);
+            meta.status(FunctionalComponentStatus.CONSTRUCT);
+        } catch (Exception e) {
+            ExceptionUtil.log(e);
+            meta.status(FunctionalComponentStatus.CONSTRUCT_FAILED);
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean validAPI(ModuleMeta meta) {
+        try {
+            meta.handle().checkCompatibility();
+        } catch (APIIncompatibleException e) {
+            meta.status(FunctionalComponentStatus.REGISTER_FAILED);
+            meta.additional("ERROR_INCOMPATIBLE_API: " + e.getMessage());
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public void registerMeta(ModuleMeta meta) {
+        this.metas.put(meta.fullId(), meta);
+
+        if (meta.unknown()) {
+            return;
+        }
+        if (validFeature(meta)) {
+            return;
+        }
+        if (validPlatform(meta)) {
+            return;
+        }
+        if (meta.handle() == null && construct(meta)) {
+            return;
+        }
+        if (validAPI(meta)) {
+            return;
+        }
+
+        var m = meta.handle();
+
+        this.moduleMap.put(m.getFullId(), m);
+        meta.status(FunctionalComponentStatus.REGISTER);
+
+        if (getModuleStatus(m.getFullId()) == TriState.UNKNOWN) {
+            boolean status = false;
+
+            if (m.getDescriptor().defaultEnable()) {
+                status = Quark.getInstance().getConfig().getBoolean("config.default-status.module");
             }
 
-            for (APIProfile profile : m.getCompatBlacklist()) {
-                if (APIProfileTest.getAPIProfile() == profile) {
-                    this.registerFailed.add(m.getFullId());
-                    return;
-                }
-            }
+            this.statusMap.put(m.getFullId(), status ? "enabled" : "disabled");
+        }
+        if (m.getDescriptor().internal()) {
+            this.statusMap.put(m.getFullId(), "enabled");
+        }
 
+        this.saveStatus();
+        if (getModuleStatus(m.getFullId()) == TriState.FALSE && !m.isBeta()) {
             try {
-                m.checkCompatibility();
-            } catch (APIIncompatibleException e) {
-                this.registerFailed.add(m.getFullId());
-                return;
+                this.get(m.getFullId()).enableModule();
+                meta.status(FunctionalComponentStatus.ENABLE);
+            } catch (Exception ex) {
+                meta.status(FunctionalComponentStatus.ENABLE_FAILED);
+                meta.additional(ex.getMessage());
+                ExceptionUtil.log(ex);
             }
+        }
+    }
 
-            this.moduleMap.put(m.getFullId(), m);
-            if (getModuleStatus(m.getFullId()) == TriState.UNKNOWN) {
-                boolean status = false;
+    public void register(AbstractModule m) {
+        if (m == null) {
+            return;
+        }
 
-                if (m.getDescriptor().defaultEnable()) {
-                    status = Quark.getInstance().getConfig().getBoolean("config.default-status.module");
-                }
+        var meta = ModuleMeta.wrap(m);
+        this.metas.put(m.getFullId(), meta);
 
-                this.statusMap.put(m.getFullId(), status ? "enabled" : "disabled");
-                this.saveStatus();
-            }
-            if (m.getDescriptor().internal()) {
-                this.statusMap.put(m.getFullId(), "enabled");
-            }
-            if (getModuleStatus(m.getFullId()) == TriState.FALSE && !m.isBeta()) {
+        registerMeta(meta);
+    }
+
+    public void unregister(String id) {
+        if (this.getStatus(id) == TriState.FALSE) {
+            AbstractModule m = this.get(id);
+            if (m != null) {
                 try {
-                    this.get(m.getFullId()).enableModule();
+                    m.disableModule();
                 } catch (Exception ex) {
                     ExceptionUtil.log(ex);
                 }
             }
-            //callback.info("registered module %s.".formatted(m.locale()));
         }
-
-        @Override
-        public void unregister(String id, Logger callback) {
-            if (this.getStatus(id) == TriState.FALSE) {
-                AbstractModule m = this.get(id);
-                if (m != null) {
-                    try {
-                        m.disableModule();
-                    } catch (Exception ex) {
-                        ExceptionUtil.log(ex);
-                    }
-                }
-            }
-            this.moduleMap.remove(id);
-            this.registerFailed.remove(id);
-            //callback.info("unregistered module %s.".formatted(id));
-        }
-
-
-        @Override
-        public AbstractModule get(String id) {
-            return this.moduleMap.get(id);
-        }
-
-        @Override
-        public Map<String, AbstractModule> getModules() {
-            return this.moduleMap;
-        }
-
-        @Override
-        public Set<String> getRegisterFailed() {
-            return registerFailed;
-        }
+        this.moduleMap.remove(id);
+        this.getKnownModuleMetas().remove(id);
+        //callback.info("unregistered module %s.".formatted(id));
     }
 }

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.framework.module.AbstractModule;
+import org.tbstcraft.quark.framework.module.ModuleMeta;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.packages.IPackage;
 import org.tbstcraft.quark.util.ExceptionUtil;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,10 +24,10 @@ public final class JsonModuleRegistry extends ModuleRegistry {
     public JsonModuleRegistry(IPackage pkg, JsonObject json) {
         super(pkg);
         this.json = json;
-        if(this.json==null){
+        if (this.json == null) {
             throw new RuntimeException("illegal package registry!");
         }
-        this.create(this.getModules());
+        this.create(this.metas);
     }
 
     public static JsonModuleRegistry create(IPackage pkg, String path) {
@@ -40,6 +42,34 @@ public final class JsonModuleRegistry extends ModuleRegistry {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void create(Collection<ModuleMeta> list) {
+        var modules = this.json.get("modules").getAsJsonObject();
+        var logger = this.getPackage().getLogger();
+        var classPath = this.json.get("package_namespace").getAsString();
+
+        for (var id : modules.keySet()) {
+            var path = modules.get(id).getAsString();
+
+            if (path.startsWith(".")) {
+                path = classPath + path;
+            }
+
+            try {
+                var clazz = this.getLoader().loadClass(path);
+                var meta = ModuleMeta.create((Class<AbstractModule>) clazz, this.getPackage(), id);
+
+                list.add(meta);
+            } catch (ClassNotFoundException e) {
+                logger.warning("failed to load class: %s -> %s".formatted(id, e.getMessage()));
+            } catch (NoClassDefFoundError e) {
+                logger.warning("failed to load class %s: missing API class %s".formatted(id, e.getMessage()));
+            }
+        }
+
+        logger.info("created modules metas from package %s.".formatted(this.getPackage().getId()));
     }
 
     @Override
@@ -58,14 +88,20 @@ public final class JsonModuleRegistry extends ModuleRegistry {
                 PackageModule m = (PackageModule) clazz.getDeclaredConstructor().newInstance();
                 m.init(entry.getKey(), this.getPackage());
                 moduleList.add(m);
-            } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
-                     IllegalAccessException | NoSuchMethodException e) {
+            } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException |
+                     NoSuchMethodException e) {
                 ExceptionUtil.log(e);
                 this.getPackage().getLogger().warning("failed to construct module %s: %s".formatted(entry.getKey(), e.getMessage()));
-            }catch (NoClassDefFoundError e){
-                this.getPackage().getLogger().warning("failed to construct module %s: missing API class %s".formatted(entry.getKey(), e.getMessage()));
+            } catch (NoClassDefFoundError e) {
+                this.getPackage()
+                        .getLogger()
+                        .warning("failed to construct module %s: missing API class %s".formatted(entry.getKey(), e.getMessage()));
             }
         }
-        Quark.getInstance().getLogger().info("created modules from package %s(%s).".formatted(this.getPackage().getClass().getName(), this.getPackage().getId()));
+        Quark.getInstance()
+                .getLogger()
+                .info("created modules from package %s(%s).".formatted(this.getPackage().getClass().getName(), this.getPackage().getId()));
     }
+
+
 }

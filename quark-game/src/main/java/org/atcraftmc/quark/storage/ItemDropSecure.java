@@ -1,19 +1,21 @@
 package org.atcraftmc.quark.storage;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @QuarkModule(version = "1.0")
@@ -29,6 +31,10 @@ public final class ItemDropSecure extends PackageModule implements QuarkCommandE
         var id = drop.getItemStack().getType().getKey().toString();
 
         if (this.unlocks.contains(player.getName())) {
+            return;
+        }
+
+        if (Arrays.stream(player.getInventory().getStorageContents()).allMatch(Objects::nonNull)) {
             return;
         }
 

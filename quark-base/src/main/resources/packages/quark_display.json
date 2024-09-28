@@ -11,7 +11,7 @@
     "tab-menu": ".TabMenu",
     "chat-format": ".ChatFormat",
     "player-name-header": ".PlayerNameHeader",
-    "we-selection-renderer": ".WorldEditSelectionRenderer",
+    "we-session-renderer": ".WESessionRenderer",
     "welcome-message": ".WelcomeMessage",
     "custom-scoreboard": ".CustomScoreboard",
     "chat-announce": ".ChatAnnounce",

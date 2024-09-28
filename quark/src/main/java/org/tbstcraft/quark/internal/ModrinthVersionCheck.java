@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.function.BiConsumer;
 
-@QuarkModule(version = "1.0", internal = true)
+@QuarkModule(internal = true)
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class ModrinthVersionCheck extends PackageModule implements QuarkCommandExecutor {
     public static final String API = "https://api.modrinth.com/v2/project/quark-plugin/version";

@@ -98,9 +98,9 @@ public interface PlaceHolders {
     static GloballyPlaceHolder quarkStats() {
         GloballyPlaceHolder holder = new GloballyPlaceHolder();
 
-        holder.register("module-installed", GlobalPlaceHolder.object(() -> ModuleManager.getAllModules().size()));
-        holder.register("module-enabled", GlobalPlaceHolder.object(() -> ModuleManager.getByStatus(TriState.FALSE).size()));
-        holder.register("player-data-count", GlobalPlaceHolder.object(PlayerDataService::getEntryCount));
+        holder.register("module-installed", GlobalPlaceHolder.object(() -> ModuleManager.getInstance().getModules().size()));
+        holder.register("module-enabled", GlobalPlaceHolder.object(() -> ModuleManager.getInstance().getIdsByStatus(TriState.FALSE).size()));
+        holder.register("player-data-count", GlobalPlaceHolder.object(PlayerDataService::entryCount));
         holder.register("module-data-count", GlobalPlaceHolder.object(ModuleDataService::getEntryCount));
         holder.register("quark-version", (StringPlaceHolder) ProductInfo::version);
         holder.register("quark-framework_version", GlobalPlaceHolder.object(ProductInfo::apiVersion));

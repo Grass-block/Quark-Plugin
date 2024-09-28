@@ -1,12 +1,18 @@
-plugins{
+plugins {
     id 'java'
 }
 
-project.setProperty("version","1.9.3")
+project.setProperty("version", "1.9.3")
 
-apply from:"E:/Java/Projects/Quark/modules.gradle"
+apply from: "E:/Java/Projects/Quark/modules.gradle"
+
+repositories {
+    maven { url = 'https://maven.enginehub.org/repo/' }
+}
 
 dependencies {
     compileOnly "org.apache.logging.log4j:log4j-core:2.8.1"
     compileOnly projectLocal("ProtocolLib")
+    compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT'
+    compileOnly 'com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT'
 }

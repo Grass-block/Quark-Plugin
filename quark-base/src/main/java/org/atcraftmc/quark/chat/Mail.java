@@ -3,6 +3,7 @@ package org.atcraftmc.quark.chat;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,7 +12,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.LanguageEntry;
-import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @QuarkCommand(name = "mail", playerOnly = true)
-@QuarkModule(id = "mail",version = "1.0.0")
+@QuarkModule(id = "mail", version = "1.0.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class Mail extends CommandModule {
 
@@ -50,13 +50,14 @@ public final class Mail extends CommandModule {
     public void onCommand(CommandSender sender, String[] args) {
         if (Objects.equals(args[0], "view")) {
             TaskService.async().run(() -> {
-                    NBTTagCompound entry = PlayerDataService.getEntry(sender.getName(), this.getFullId());
-                    StringBuilder sb = new StringBuilder();
-                    Set<String> keys = new HashSet<>(entry.getTagMap().keySet());
-                    if (keys.isEmpty()) {
-                        this.language.sendMessage(sender, "view-none", sb.toString());
-                        return;
-                    }
+                NBTTagCompound entry = PlayerDataService.getEntry(sender.getName(), this.getFullId());
+                StringBuilder sb = new StringBuilder();
+                Set<String> keys = new HashSet<>(entry.getTagMap().keySet());
+                if (keys.isEmpty()) {
+                    this.language.sendMessage(sender, "view-none", sb.toString());
+                    return;
+                }
+                try {
                     for (String s : keys) {
                         String from = s.split("@")[0];
                         String time = SharedObjects.DATE_FORMAT.format(Long.parseLong(s.split("@")[1]));
@@ -68,9 +69,12 @@ public final class Mail extends CommandModule {
                         sb.append(template.formatted(time, from, entry.getString(s))).append("\n");
                         entry.remove(s);
                     }
-                    PlayerDataService.save(sender.getName());
-                    this.language.sendMessage(sender, "view", sb.toString());
-                });
+                } catch (ArrayIndexOutOfBoundsException ignored) {
+                }
+                PlayerDataService.save(sender.getName());
+                this.language.sendMessage(sender, "view", sb.toString());
+            });
+            return;
         }
 
 
@@ -101,7 +105,7 @@ public final class Mail extends CommandModule {
         if (buffer.length == 1) {
             tabList.addAll(CachedInfo.getAllPlayerNames());
             tabList.add("view");
-        }else{
+        } else {
             tabList.add("message");
         }
     }

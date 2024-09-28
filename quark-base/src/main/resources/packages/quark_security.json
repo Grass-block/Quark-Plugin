@@ -5,7 +5,7 @@
   "modules": {
     "explosion-defender": ".ExplosionDefender",
     "permission-manager": ".PermissionManager",
-    "we-size-defender": ".WorldEditSectionSizeDefender",
+    "we-session-size-limit": ".WESessionSizeLimit",
     "item-defender": ".ItemDefender",
     "protection-area": ".ProtectionArea",
     "advanced-permission-control": ".AdvancedPermissionControl",
