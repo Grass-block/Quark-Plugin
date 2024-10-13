@@ -168,7 +168,7 @@ public abstract class ConfigurationPack {
                 .getResourceAsStream(getTemplateResource()); var mod = new FileInputStream(createStorageFile(false))) {
             assert template != null;
 
-            this.dom.loadFromString(processDOM(new String(template.readAllBytes(), StandardCharsets.UTF_8)));
+            this.dom.loadFromString(processDOM(new String(template.readAllBytes(), StandardCharsets.UTF_8)).replace("\ud83c\udf10", ""));
             custom.loadFromString(processDOM(new String(mod.readAllBytes(), StandardCharsets.UTF_8)));
 
             merge(this.dom, custom);

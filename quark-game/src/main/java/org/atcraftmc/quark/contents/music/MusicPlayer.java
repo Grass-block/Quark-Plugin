@@ -10,21 +10,26 @@ import me.gb2022.apm.remote.event.remote.RemoteQueryEvent;
 import me.gb2022.apm.remote.protocol.BufferUtil;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.commons.reflect.method.MethodHandle;
+import me.gb2022.commons.reflect.method.MethodHandleO3;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.Note;
+import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.assets.AssetGroup;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -49,12 +54,22 @@ public final class MusicPlayer extends PackageModule {
     public static final String RESOLVE_ERROR = "error-resolving";
     public static final String NOT_FOUND = "not-found";
     public static final String TIMEOUT = "timeout";
+    private static final MethodHandleO3<Player, Sound, Float, Float> PLAY_NOTE = MethodHandle.select((ctx) -> {
+        ctx.attempt(() -> {
+            Class.forName("org.bukkit.SoundCategory");
+            return null;
+        }, (p, s, power, pitch) -> p.playSound(p.getLocation(), s, SoundCategory.RECORDS, power, pitch));
+        ctx.dummy((p, s, power, pitch) -> p.playSound(p.getLocation(), s, power, pitch));
+    });
 
     private final MusicSession globalSession = new MusicSession(this);
     private MusicFileLoader loader;
 
     @Inject("music")
     private AssetGroup musicGroup;
+
+    @Inject
+    private LanguageEntry language;
 
     @Override
     public void enable() {
@@ -63,7 +78,10 @@ public final class MusicPlayer extends PackageModule {
         }
 
         this.globalSession.startSession();
-        this.globalSession.getPlayers().addAll(Bukkit.getOnlinePlayers());
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            this.globalSession.addPlayer(player);
+        }
 
         if (this.getConfig().getBoolean("remote")) {
             this.loader = new MusicFileLoader.RemoteLoader(this.musicGroup, this.getConfig().getString("cdn-server"));
@@ -92,17 +110,22 @@ public final class MusicPlayer extends PackageModule {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        this.globalSession.getPlayers().add(event.getPlayer());
+        this.globalSession.addPlayer(event.getPlayer());
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerQuitEvent event) {
-        this.globalSession.getPlayers().remove(event.getPlayer());
+        this.globalSession.removePlayer(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        this.globalSession.removePlayer(event.getPlayer());
     }
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        this.globalSession.getPlayers().add(event.getPlayer());
+        this.globalSession.addPlayer(event.getPlayer());
     }
 
 
@@ -167,23 +190,23 @@ public final class MusicPlayer extends PackageModule {
     }
 
     public void pauseMusic(String player) {
-        this.getLanguage().broadcastMessage(false, false, "pause", player);
+        this.language.broadcastMessage(false, false, "pause", player);
         this.globalSession.pause();
     }
 
     public void resumeMusic(String player) {
-        this.getLanguage().broadcastMessage(false, false, "resume", player);
+        this.language.broadcastMessage(false, false, "resume", player);
         this.globalSession.resume();
     }
 
     public void cancelMusic(String player) {
-        this.getLanguage().broadcastMessage(false, false, "cancel", player);
+        this.language.broadcastMessage(false, false, "cancel", player);
         this.globalSession.cancel();
     }
 
     public void playMusic(String player, String music, int pitch, boolean dispatchInstrument, float speedMod) {
         this.globalSession.play(select(music, pitch, dispatchInstrument, speedMod));
-        this.getLanguage().broadcastMessage(false, false, "play", player, music, pitch);
+        this.language.broadcastMessage(false, false, "play", player, music, pitch);
     }
 
 
@@ -237,7 +260,7 @@ public final class MusicPlayer extends PackageModule {
         float pitch = (float) Math.pow(2.0, (n.getId() - 12) / 12.0);
 
         for (Player p : audience) {
-            p.playSound(p.getLocation(), remapped.bukkit(), SoundCategory.RECORDS, power, pitch);
+            PLAY_NOTE.invoke(p, remapped.bukkit(), power, pitch);
         }
     }
 
@@ -331,9 +354,7 @@ public final class MusicPlayer extends PackageModule {
                     float finalSpeedMod = speedMod;
 
                     service.sendBroadcast("/music/control", msg -> {
-                        String data = "play;%s;%s;%d;%f".formatted(
-                                operator, music, finalPitch, finalSpeedMod
-                                                                  );
+                        String data = "play;%s;%s;%d;%f".formatted(operator, music, finalPitch, finalSpeedMod);
                         BufferUtil.writeString(msg, data);
                         msg.writeBoolean(dispatchInstruments);
                     });

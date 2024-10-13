@@ -24,7 +24,7 @@ public final class ComponentBlock extends ArrayList<Component> implements Compon
 
     public void send(CommandSender sender) {
         for (Component line : this) {
-            TextSender.sendLine(sender, line);
+            TextSender.sendMessage(sender, line);
         }
     }
 

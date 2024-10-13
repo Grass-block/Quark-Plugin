@@ -16,16 +16,20 @@ import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.framework.record.RecordEntry;
 
 import java.util.Date;
 import java.util.List;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
-@QuarkModule(version = "1.2.2", recordFormat = {"Time", "Level", "Player", "World", "X", "Y", "Z", "Type", "Action"})
+@QuarkModule(version = "1.2.2", recordFormat = {})
 public final class ItemDefender extends PackageModule {
 
     @Inject
     private LanguageEntry language;
+
+    @Inject("item-defender;Time,Level,Player,World,X,Y,Z,Type,Action")
+    private RecordEntry record;
 
     @EventHandler
     public void onItemHeld(PlayerItemHeldEvent event) {
@@ -82,7 +86,7 @@ public final class ItemDefender extends PackageModule {
         }
 
         if (this.getConfig().getBoolean("record")) {
-            this.getRecord().addLine(
+            this.record.addLine(
                     SharedObjects.DATE_FORMAT.format(new Date()),
                     b2 ? "Warning" : "Illegal",
                     p.getName(),

@@ -1,8 +1,10 @@
 package org.atcraftmc.quark.contents.music;
 
 import org.bukkit.entity.Player;
+import org.tbstcraft.quark.PlayerView;
 import org.tbstcraft.quark.data.language.Language;
-import org.tbstcraft.quark.foundation.platform.Players;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.text.DecimalFormat;
@@ -33,40 +35,18 @@ public final class MusicSession implements Runnable {
         long minutes = (mss / (1000 * 60));
         long seconds = (mss % (1000 * 60)) / 1000;
 
-        return fmt.format(minutes) + ":"
-                + fmt.format(seconds);
+        return fmt.format(minutes) + ":" + fmt.format(seconds);
     }
+
+    private String rendererID() {
+        return "quark:music-player:ui@" + this.hashCode();
+    }
+
 
     //thread
     @SuppressWarnings("BusyWait")
     @Override
     public void run() {
-
-        String tid = "quark:midi:title@%s".formatted(hashCode());
-        TaskService.async().timer(tid, 1, 5, () -> {
-            if (this.currentMusic == null) {
-                return;
-            }
-            for (Player p : this.players) {
-                String template = Language.generateTemplate(this.module.getConfig(), "ui", (s) -> {
-                    if (this.pause) {
-                        s = s.replace("{msg#playing}", "{msg#paused}");
-                    }
-                    return s;
-                });
-                template = template.replace("{name}", currentMusic.getName().replace("_", " "))
-                        .replace(
-                                "{time}",
-                                formatTime(currentMusic.getMillsLength() * currentTick.get() / currentMusic.getTickLength() / 1000)
-                                )
-                        .replace("{total}", formatTime(currentMusic.getMillsLength() / 1000));
-
-                String ui = this.module.getLanguage().buildTemplate(Language.locale(p), template);
-                Players.sendActionBarTitle(p, ui);
-            }
-        });
-
-
         while (true) {
             if (this.next == null) {
                 try {
@@ -84,12 +64,49 @@ public final class MusicSession implements Runnable {
                 this.currentMusic = null;
                 return;
             }
+
             this.playSelected(data);
         }
     }
 
+    public void render(Player player) {
+        PlayerView.getInstance(player).getActionbar().addChannel(this.rendererID(), 5, 3, TaskService.async(), (a, t) -> {
+            if (!this.active) {
+                PlayerView.getInstance(a).getActionbar().removeChannel(this.rendererID());
+                return;
+            }
+            if (this.currentMusic == null) {
+                PlayerView.getInstance(a).getActionbar().removeChannel(this.rendererID());
+                return;
+            }
+            renderUI(a);
+        });
+    }
+
+    private void renderUI(Player player) {
+        String template = Language.generateTemplate(this.module.getConfig(), "ui", (s) -> {
+            if (this.pause) {
+                s = s.replace("{msg#playing}", "{msg#paused}");
+            }
+            return s;
+        });
+        template = template.replace("{name}", currentMusic.getName().replace("_", " "))
+                .replace("{time}", formatTime(currentMusic.getMillsLength() * currentTick.get() / currentMusic.getTickLength() / 1000))
+                .replace("{total}", formatTime(currentMusic.getMillsLength() / 1000));
+
+        String ui = this.module.getLanguage().buildTemplate(Language.locale(player), template);
+        TextSender.sendActionbarTitle(player, TextBuilder.build(ui));
+    }
+
+
     @SuppressWarnings("BusyWait")
     public void playSelected(MusicData current) {
+        var isFirstMusicPlayed = false;
+
+        for (Player p : this.players) {
+            render(p);
+        }
+
         this.currentMusic = current;
         this.currentTick.set(0);
 
@@ -125,13 +142,18 @@ public final class MusicSession implements Runnable {
 
                 long delayMilliseconds = current.getMillsLength() * delayedTicks / current.getTickLength() / 1000;
                 try {
-                    Thread.sleep(delayMilliseconds);
+                    if (isFirstMusicPlayed) {
+                        Thread.sleep(delayMilliseconds);
+                    } else {
+                        Thread.sleep(100);
+                    }
                 } catch (InterruptedException ignored) {
                 }
                 delayedTicks = 0;
                 for (MusicNode node : current.getNodes().get(currentTick.get())) {
                     float power = node.getPower();
                     this.module.playNode(this.players, node.getNode(), current.getOffset(), node.getInstrument(), power);
+                    isFirstMusicPlayed = true;
                 }
             }
 
@@ -172,7 +194,19 @@ public final class MusicSession implements Runnable {
         this.cancel = true;
     }
 
-    public Set<Player> getPlayers() {
-        return this.players;
+    public void addPlayer(Player player) {
+        this.players.add(player);
+        if (!this.active) {
+            return;
+        }
+        this.render(player);
+    }
+
+    public void removePlayer(Player player) {
+        this.players.remove(player);
+        if (!this.active) {
+            return;
+        }
+        PlayerView.getInstance(player).getActionbar().removeChannel(this.rendererID());
     }
 }

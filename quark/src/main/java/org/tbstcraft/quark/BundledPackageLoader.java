@@ -11,8 +11,8 @@ public final class BundledPackageLoader {
     private final Map<String, JavaPlugin> integrated = new HashMap<>();
 
     public void init() {
-        for (String s:new String[]{"quark-base","quark-game","quark-web","quark-proxy"}) {
-            if(Bukkit.getPluginManager().getPlugin(s)!=null){
+        for (String s : new String[]{"quark-base", "quark-game", "quark-web", "quark-proxy"}) {
+            if (Bukkit.getPluginManager().getPlugin(s) != null) {
                 return;
             }
         }
@@ -34,7 +34,8 @@ public final class BundledPackageLoader {
             var p = (JavaPlugin) type.getConstructor().newInstance();
             var instance = Quark.getInstance();
 
-            //whatever its legal, screw it!
+            /*
+            //whatever its legal or not, screw it!
             p.init(
                     null,
                     Bukkit.getServer(),
@@ -43,6 +44,8 @@ public final class BundledPackageLoader {
                     instance.getFile(),
                     instance.getClass().getClassLoader()
                   );
+
+             */
 
             this.integrated.put(type.getName(), p);
         } catch (ClassNotFoundException ignored) {

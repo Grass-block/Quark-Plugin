@@ -90,11 +90,12 @@ public abstract class ILanguageAccess {
     //send
     public void sendMessage(CommandSender sender, String namespace, String id, Object... format) {
         ComponentBlock c = getMessageComponent(Language.locale(sender), namespace, id, format);
-        TextSender.sendTo(sender, c);
+        TextSender.sendBlock(sender, c);
     }
 
     public void sendRandomMessage(CommandSender sender, String namespace, String id, Object... format) {
-        TextSender.sendTo(sender, getRandomMessageComponent(Language.locale(sender), namespace, id, format));
+        ComponentBlock block = getRandomMessageComponent(Language.locale(sender), namespace, id, format);
+        TextSender.sendBlock(sender, block);
     }
 
     public void broadcastMessage(boolean op, boolean console, String namespace, String id, Object... format) {

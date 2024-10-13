@@ -1,6 +1,8 @@
 package org.tbstcraft.quark.internal;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.commons.reflect.method.MethodHandle;
+import me.gb2022.commons.reflect.method.MethodHandleRO0;
 import org.atcraftmc.qlib.command.AbstractCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.Bukkit;
@@ -18,6 +20,7 @@ import org.tbstcraft.quark.data.language.LocaleMapping;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
+import org.tbstcraft.quark.foundation.text.ComponentBlock;
 import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
@@ -30,6 +33,11 @@ import java.util.Objects;
 
 @QuarkService(id = "locale")
 public interface LocaleService extends Service {
+    @SuppressWarnings("Convert2MethodRef")
+    MethodHandleRO0<Player, String> GET_LOCALE = MethodHandle.select((ctx) -> {
+        ctx.attempt(() -> Player.class.getMethod("getLocale"), (p) -> p.getLocale());
+        ctx.dummy((p) -> LocaleMapping.minecraft(Locale.getDefault()));
+    });
     AbstractCommand LANGUAGE_COMMAND = new LanguageDecideCommand();
     Listener LISTENER = new BukkitListener();
 
@@ -80,26 +88,55 @@ public interface LocaleService extends Service {
             return entry.getString("cache");
         }
 
-        return user.getLocale();
+        return saveGetMCPlayerLocale(user);
     }
+
+    static String saveGetMCPlayerLocale(Player player) {
+        return GET_LOCALE.invoke(player);
+    }
+
 
     final class BukkitListener implements Listener {
 
         @EventHandler
         public void onLocaleChange(PlayerLocaleChangeEvent event) {
             _check(event);
-            TaskService.global().delay(60, () -> _check(new PlayerLocaleChangeEvent(event.getPlayer(), event.getPlayer().getLocale())));
+            TaskService.global()
+                    .delay(60, () -> _check(new PlayerLocaleChangeEvent(event.getPlayer(), saveGetMCPlayerLocale(event.getPlayer()))));
         }
 
         private void _check(PlayerLocaleChangeEvent event) {
             var preset = Quark.LANGUAGE.item("locale", "preset");
             var tag = PlayerDataService.getEntry(event.getPlayer().getName(), "locale");
-            var locale = event.getPlayer().getLocale();
+            var locale = "zh_cn";
+            try {
+                locale = saveGetMCPlayerLocale(event.getPlayer());
+            } catch (Exception e) {
+                locale = LocaleMapping.minecraft(Locale.getDefault());
+            }
+
+            boolean isValidChange = true;
+
+            if (Objects.equals(locale, "en_us")) {
+                if (tag.hasKey("cache")) {
+                    locale = tag.getString("cache");
+                    isValidChange = false;
+                }
+
+                if (tag.hasKey("custom") && !tag.getString("custom").equals("none")) {
+                    locale = tag.getString("custom");
+                    isValidChange = false;
+                }
+            }
 
             if (!tag.hasKey("custom") || tag.getString("custom").equals("none")) {
                 tag.setString("custom", "none");
                 tag.setString("cache", locale);
-                TextSender.sendTo(event.getPlayer(), preset.getMessageComponent(locale(event.getPlayer()), locale));
+
+                if (isValidChange) {
+                    ComponentBlock block = preset.getMessageComponent(locale(event.getPlayer()), locale);
+                    TextSender.sendBlock(event.getPlayer(), block);
+                }
             } else {
                 if (tag.hasKey("cache")) {
                     locale = tag.getString("cache");
@@ -131,7 +168,7 @@ public interface LocaleService extends Service {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
             if (Objects.equals(args[0], "auto")) {
-                args[0] = ((Player) sender).getLocale();
+                args[0] = saveGetMCPlayerLocale((Player) sender);
             }
             setCustomLanguage(sender.getName(), args[0]);
             Quark.LANGUAGE.sendMessage(sender, "locale", "set", args[0]);

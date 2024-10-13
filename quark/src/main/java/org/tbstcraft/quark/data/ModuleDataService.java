@@ -2,6 +2,7 @@ package org.tbstcraft.quark.data;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.data.storage.DataEntry;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceHolder;
@@ -42,50 +43,53 @@ public interface ModuleDataService extends Service {
         return INSTANCE.get().entryCount();
     }
 
+    static DataEntry get(String id) {
+        return INSTANCE.get().getData(id);
+    }
+
 
     int entryCount();
 
     NBTTagCompound getDataEntry(String id);
 
+    DataEntry getData(String id);
+
     void saveData(String id);
 
-    DataService getBackend();
-
-    final class ServiceImplementation implements ModuleDataService {
-        private final DataService backend;
-
+    final class ServiceImplementation extends DataService implements ModuleDataService {
         public ServiceImplementation(File f) {
-            this.backend = new DataService(Quark.getInstance().getLogger(), f);
+            super(Quark.getInstance().getLogger(), f);
         }
 
         @Override
         public void onEnable() {
-            DataFix.moveFolder("/module_data","/data/module");
-            this.backend.open();
+            DataFix.moveFolder("/module_data", "/data/module");
+            this.open();
         }
 
         @Override
         public void onDisable() {
-            this.backend.close();
+            this.close();
         }
 
         @Override
         public NBTTagCompound getDataEntry(String id) {
-            return this.backend.getEntry(id);
+            return getEntry(id);
+        }
+
+        @Override
+        public DataEntry getData(String id) {
+            return this.get(id);
         }
 
         @Override
         public void saveData(String id) {
-            this.backend.saveEntry(id);
+            this.saveEntry(id);
         }
 
         @Override
         public int entryCount() {
-            return this.backend.getEntryCount();
-        }
-
-        public DataService getBackend() {
-            return backend;
+            return this.getEntryCount();
         }
     }
 }

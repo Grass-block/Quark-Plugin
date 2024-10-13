@@ -4,19 +4,20 @@ import me.gb2022.commons.TriState;
 import me.gb2022.commons.http.HTTPUtil;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.permissions.Permission;
 import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
-import org.tbstcraft.quark.util.ExceptionUtil;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -30,6 +31,12 @@ public final class ModrinthVersionCheck extends PackageModule implements QuarkCo
 
     @Inject("-quark.version.announce")
     private Permission updateAnnounce;
+    
+    @Inject
+    private LanguageEntry language;
+
+    @Inject
+    private Logger logger;
 
     private TriState cachedState;
     private String cachedVersion;
@@ -69,7 +76,7 @@ public final class ModrinthVersionCheck extends PackageModule implements QuarkCo
                 this.cachedState = TriState.FALSE;
             } catch (IOException e) {
                 callback.accept(TriState.UNKNOWN, null);
-                ExceptionUtil.log(getLogger(), e);
+                this.logger.error("failed to check version", e);
             }
         });
     }
@@ -81,21 +88,21 @@ public final class ModrinthVersionCheck extends PackageModule implements QuarkCo
         }
         if (this.cachedState == TriState.TRUE) {
             String page = VERSION_PAGE.formatted(this.cachedVersion);
-            getLanguage().sendMessage(event.getPlayer(), "require", cachedVersion, page);
+            this.language.sendMessage(event.getPlayer(), "require", cachedVersion, page);
         }
     }
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        this.getLanguage().sendMessage(sender, "checking");
+        this.language.sendMessage(sender, "checking");
         this.check((state, version) -> {
             switch (state) {
                 case TRUE -> {
                     String page = VERSION_PAGE.formatted(this.cachedVersion);
-                    getLanguage().sendMessage(sender, "require", version, page);
+                    language.sendMessage(sender, "require", version, page);
                 }
-                case FALSE -> getLanguage().sendMessage(sender, "no-require", version);
-                case UNKNOWN -> getLanguage().sendMessage(sender, "exception");
+                case FALSE -> language.sendMessage(sender, "no-require", version);
+                case UNKNOWN -> language.sendMessage(sender, "exception");
             }
         });
     }

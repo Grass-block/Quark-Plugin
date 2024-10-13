@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.platform.Players;
@@ -21,11 +22,14 @@ import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.util.List;
 
-@QuarkModule(version = "1.0")
+@QuarkModule
 @QuarkCommand(name = "refresh-area", permission = "-quark.refresh.command", playerOnly = true)
 @AutoRegister(ServiceType.PLUGIN_MESSAGE)
 public final class SurroundingRefresh extends CommandModule {
 
+    @Inject
+    private LanguageEntry language;
+    
     @Inject("tip")
     private LanguageItem tip;
 
@@ -46,7 +50,7 @@ public final class SurroundingRefresh extends CommandModule {
         int rad = Integer.parseInt(args[0]);
 
         if (rad > 9) {
-            getLanguage().sendMessage(sender, "to-big", rad);
+            this.language.sendMessage(sender, "to-big", rad);
             return;
         }
 
@@ -63,10 +67,10 @@ public final class SurroundingRefresh extends CommandModule {
             }
             target = Bukkit.getPlayerExact(args[1]);
             if (target == null) {
-                getLanguage().sendMessage(sender, "not-found");
+                this.language.sendMessage(sender, "not-found");
                 return;
             }
-            getLanguage().sendMessage(sender, "success", rad);
+            this.language.sendMessage(sender, "success", rad);
         }
 
         refreshArea(target, rad, false);
@@ -109,7 +113,7 @@ public final class SurroundingRefresh extends CommandModule {
         int z = p.getLocation().getBlockZ();
 
         if (!silent) {
-            getLanguage().sendMessage(p, "refresh-target", radius);
+            this.language.sendMessage(p, "refresh-target", radius);
         }
 
         int delay = 0;
@@ -119,13 +123,9 @@ public final class SurroundingRefresh extends CommandModule {
                 for (int zz = z - radius; zz <= z + radius; zz++) {
                     Location loc = new Location(p.getWorld(), xx, yy, zz);
                     if (!silent) {
-                        TaskService.global().delay(delay, () -> {
-                                            p.sendBlockChange(loc, Material.AIR.createBlockData());
-                                        });
+                        TaskService.global().delay(delay, () -> p.sendBlockChange(loc, Material.AIR.createBlockData()));
 
-                        TaskService.global().delay(delay + 5, () -> {
-                                            p.sendBlockChange(loc, loc.getBlock().getBlockData());
-                                        });
+                        TaskService.global().delay(delay + 5, () -> p.sendBlockChange(loc, loc.getBlock().getBlockData()));
                     } else {
                         p.sendBlockChange(loc, Material.AIR.createBlockData());
                         p.sendBlockChange(loc, loc.getBlock().getBlockData());
@@ -136,7 +136,7 @@ public final class SurroundingRefresh extends CommandModule {
         }
 
         if (!silent) {
-            getLanguage().sendMessage(p, "refresh-complete");
+            this.language.sendMessage(p, "refresh-complete");
         }
     }
 }

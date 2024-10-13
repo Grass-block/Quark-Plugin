@@ -40,6 +40,12 @@ public interface Compatibility {
         }
     }
 
+    static void assertion(boolean complete) {
+        if (!complete) {
+            throw new APIIncompatibleException("assertion failed");
+        }
+    }
+
 
     interface MethodAssertion {
         Method get() throws NoSuchMethodException;

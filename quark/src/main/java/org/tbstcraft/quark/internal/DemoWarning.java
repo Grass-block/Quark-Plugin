@@ -4,6 +4,7 @@ import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.FeatureAvailability;
+import org.tbstcraft.quark.foundation.text.ComponentBlock;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -29,9 +30,11 @@ public final class DemoWarning extends PackageModule {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (event.getPlayer().isOp()) {
-            TextSender.sendTo(event.getPlayer(), TextBuilder.build(WARN_OP));
+            ComponentBlock block = TextBuilder.build(WARN_OP);
+            TextSender.sendBlock(event.getPlayer(), block);
         } else {
-            TextSender.sendTo(event.getPlayer(), TextBuilder.build(WARN_PLAYER));
+            ComponentBlock block = TextBuilder.build(WARN_PLAYER);
+            TextSender.sendBlock(event.getPlayer(), block);
         }
     }
 }

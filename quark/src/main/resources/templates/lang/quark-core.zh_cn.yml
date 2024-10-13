@@ -10,6 +10,7 @@ language:
     info: "{#gray}[{#aqua}!{#gray}]{#gray}"
     warning: "{#gray}[{#yellow}!{#gray}]{#gray}"
     error: "{#gray}[{#red}!{#gray}]{#gray}"
+    operation: "{#gray}[{#light-purple}!{#gray}]{#gray}"
   command:
     exception: "{global#sys-error}语法有误，或执行该命令时出现了内部错误。"
     lack-permission: "{global#sys-error}很抱歉，你没有执行该命令的权限({#var})。"

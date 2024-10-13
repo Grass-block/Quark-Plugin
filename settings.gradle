@@ -17,3 +17,5 @@ include 'quark-bundler'
 //include 'quark-atcraft'
 //include 'quark-minigame'
 //include 'quark-platform'
+include 'quark-expiremental'
+

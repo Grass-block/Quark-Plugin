@@ -11,7 +11,10 @@ public @interface QuarkPackage {
 
     FeatureAvailability available() default FeatureAvailability.PREMIUM;
 
-    boolean config() default true;
+    //
+    String description() default "";
 
-    boolean lang() default true;
+    String version() default "";
+
+    String author() default "";
 }

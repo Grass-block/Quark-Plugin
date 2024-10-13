@@ -6,17 +6,15 @@ import me.gb2022.commons.reflect.method.MethodHandleO1;
 import me.gb2022.commons.reflect.method.MethodHandleO2;
 import me.gb2022.commons.reflect.method.MethodHandleRO0;
 import net.kyori.adventure.text.Component;
-import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.foundation.text.ComponentSerializer;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.event.BanMessageFetchEvent;
 import org.tbstcraft.quark.framework.module.ModuleManager;
+import org.tbstcraft.quark.internal.LocaleService;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -59,17 +57,6 @@ public interface Players {
         ctx.attempt(() -> Entity.class.getMethod("teleportAsync", Location.class), (p, l) -> p.teleportAsync(l));
         ctx.attempt(() -> Entity.class.getMethod("teleport", Location.class), Entity::teleport);
     });
-    MethodHandleO1<CommandSender, Component> SEND_MESSAGE = MethodHandle.select((ctx) -> {
-        ctx.attempt(() -> Player.class.getMethod("sendMessage", Component.class), (p, c) -> p.sendMessage(c));
-        ctx.attempt(
-                () -> CommandSender.Spigot.class.getMethod("sendMessage", BaseComponent.class),
-                (p, c) -> p.spigot().sendMessage(ComponentSerializer.bungee(c))
-                   );
-        ctx.attempt(
-                () -> CommandSender.class.getMethod("sendMessage", String.class),
-                (p, c) -> p.sendMessage(ComponentSerializer.legacy(c))
-                   );
-    });
     MethodHandleO2<Player, Component, Component> SET_TAB = MethodHandle.select((ctx) -> {
         ctx.attempt(
                 () -> Player.class.getMethod("sendPlayerListHeader", Component.class),
@@ -106,10 +93,6 @@ public interface Players {
         REMOVE_CHAT_TAB.invoke(player, Set.of(opt));
     }
 
-    static void sendMessage(CommandSender p, Component msg) {
-        SEND_MESSAGE.invoke(p, msg);
-    }
-
     static void teleport(Entity p, Location loc) {
         TELEPORT.invoke(p, loc);
     }
@@ -127,7 +110,7 @@ public interface Players {
             if (p == null) {
                 return;
             }
-            BanMessageFetchEvent e = new BanMessageFetchEvent(entry, BanList.Type.NAME, p.getLocale(), reason);
+            BanMessageFetchEvent e = new BanMessageFetchEvent(entry, BanList.Type.NAME, LocaleService.saveGetMCPlayerLocale(p), reason);
             BukkitUtil.callEvent(e);
             if (ModuleManager.getInstance().getStatus("quark-display:custom-kick-message") == TriState.FALSE) {
                 p.kickPlayer("\u0002" + e.getMessage());
@@ -179,13 +162,6 @@ public interface Players {
 
     static void show3DBox(Player player, Location point0, Location point1) {
         renderBox(player, point0, point1, 0.25);
-    }
-
-    static void sendActionBarTitle(Player player, String message) {
-        if (APIProfileTest.isPaperCompat()) {
-            player.sendActionBar(Component.text(message));
-        }
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
     }
 
     static void setPlayerTab(Player player, String header, String footer) {

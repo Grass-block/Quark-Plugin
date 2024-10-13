@@ -1,6 +1,7 @@
 package org.atcraftmc.quark.chat;
 
 import me.gb2022.commons.reflect.Inject;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,6 +30,9 @@ public final class NPCChat extends CommandModule {
     @Inject("npc-conversation;false")
     private AssetGroup conversations;
 
+    @Inject
+    private Logger logger;
+
     @Override
     public void enable() {
         super.enable();
@@ -42,7 +46,7 @@ public final class NPCChat extends CommandModule {
 
             this.contexts.put(name, dom.getConfigurationSection("conversation"));
 
-            getLogger().info("loaded conversation %s".formatted(k));
+            this.logger.info("loaded conversation %s".formatted(k));
         }
     }
 

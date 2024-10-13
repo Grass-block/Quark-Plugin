@@ -2,6 +2,8 @@ package org.atcraftmc.quark.security;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,12 +21,12 @@ import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.region.Region;
 import org.tbstcraft.quark.foundation.region.SimpleRegion;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.framework.record.RecordEntry;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -33,9 +35,12 @@ import java.util.Objects;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({LimitedArea.LimitedAreaCommand.class})
-@QuarkModule(version = "1.3.0",recordFormat = {"Time","Player", "World", "X", "Y", "Z", "Region"})
+@QuarkModule(version = "1.3.0")
 public final class LimitedArea extends PackageModule {
     private final HashMap<String, SimpleRegion> regions = new HashMap<>();
+
+    @Inject("limited-area;Time,Player,World,X,Y,Z,Region")
+    private RecordEntry record;
 
     @Override
     public void enable() {
@@ -113,7 +118,7 @@ public final class LimitedArea extends PackageModule {
             if (!this.getConfig().getBoolean("record")) {
                 return;
             }
-            this.getRecord().addLine(
+            this.record.addLine(
                     SharedObjects.DATE_FORMAT.format(new Date()),
                     p.getName(),
                     p.getLocation().getWorld().getName(),
@@ -121,7 +126,7 @@ public final class LimitedArea extends PackageModule {
                     p.getLocation().getBlockY(),
                     p.getLocation().getBlockZ(),
                     r.toString()
-            );
+                                    );
         }
     }
 
@@ -139,7 +144,7 @@ public final class LimitedArea extends PackageModule {
         if (!this.getConfig().getBoolean("record")) {
             return;
         }
-        this.getRecord().addLine(
+        this.record.addLine(
                 SharedObjects.DATE_FORMAT.format(new Date()),
                 p.getName(),
                 p.getLocation().getWorld().getName(),
@@ -147,14 +152,14 @@ public final class LimitedArea extends PackageModule {
                 loc.getBlockY(),
                 loc.getBlockZ(),
                 ""
-        );
+                                );
     }
 
     public HashMap<String, SimpleRegion> getRegions() {
         return regions;
     }
 
-    @QuarkCommand(name = "limitarea", op = true)
+    @QuarkCommand(name = "limit-area", op = true)
     public static final class LimitedAreaCommand extends ModuleCommand<LimitedArea> {
 
         @Override
@@ -209,11 +214,11 @@ public final class LimitedArea extends PackageModule {
                             }
                         }
                         case 4, 7 -> tabList.add(sender instanceof Player ?
-                                String.valueOf(((Player) sender).getLocation().getBlockX()) : "0");
+                                                         String.valueOf(((Player) sender).getLocation().getBlockX()) : "0");
                         case 5, 8 -> tabList.add(sender instanceof Player ?
-                                String.valueOf(((Player) sender).getLocation().getBlockY()) : "0");
+                                                         String.valueOf(((Player) sender).getLocation().getBlockY()) : "0");
                         case 6, 9 -> tabList.add(sender instanceof Player ?
-                                String.valueOf(((Player) sender).getLocation().getBlockZ()) : "0");
+                                                         String.valueOf(((Player) sender).getLocation().getBlockZ()) : "0");
                     }
                 }
                 case "remove" -> {

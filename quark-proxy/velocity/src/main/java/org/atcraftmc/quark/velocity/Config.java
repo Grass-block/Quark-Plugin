@@ -16,7 +16,6 @@ public final class Config {
     public void load() {
         try {
             File file = new File(this.plugin.getDataDirectory() + ("/config.toml"));
-            System.out.println(file.getAbsolutePath());
             if (!file.exists() || file.length() == 0) {
                 if (file.getParentFile().mkdirs()) {
                     this.plugin.getLogger().info("created config folder.");

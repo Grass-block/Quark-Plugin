@@ -10,7 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.tbstcraft.quark.foundation.platform.Players;
+import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.FunctionalComponentStatus;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.ModuleManager;
@@ -128,10 +128,12 @@ public final class ModuleCommand extends CoreCommand {
             var enable = group.stream().filter((m) -> m.status().equals(FunctionalComponentStatus.ENABLE)).count();
             var pack = "&6> &b%s&7[%s] (%d/%d)".formatted(gid, exampleMeta.parent().getOwner().getName(), enable, all);
 
-            Players.sendMessage(sender, Component.text(ChatColor.translateAlternateColorCodes('&', pack)));
+            Component msg1 = Component.text(ChatColor.translateAlternateColorCodes('&', pack));
+            TextSender.sendMessage(sender, msg1);
 
             for (var meta : groups.get(gid)) {
-                Players.sendMessage(sender, Component.text("  ").append(buildModuleInfo(meta, Language.locale(sender))));
+                Component msg = Component.text("  ").append(buildModuleInfo(meta, Language.locale(sender)));
+                TextSender.sendMessage(sender, msg);
             }
         }
     }

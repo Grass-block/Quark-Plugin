@@ -3,7 +3,9 @@ package org.atcraftmc.quark.display;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.nbt.NBTTagList;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import net.kyori.adventure.text.Component;
+import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
@@ -14,6 +16,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.tbstcraft.quark.data.ModuleDataService;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
@@ -28,11 +31,17 @@ import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.util.*;
 
-@QuarkModule(version = "1.0")
+@QuarkModule
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(HoverDisplay.HoverDisplayCommand.class)
 public final class HoverDisplay extends PackageModule implements QuarkCommandExecutor {
     private final Map<String, ArmorStandGroup> stands = new HashMap<>();
+
+    @Inject
+    private Logger logger;
+
+    @Inject
+    private LanguageEntry language;
 
     @Override
     public void enable() {
@@ -57,7 +66,7 @@ public final class HoverDisplay extends PackageModule implements QuarkCommandExe
             this.stands.put(k, group);
         });
 
-        getLogger().info("created %s texts".formatted(stands.size()));
+        this.logger.info("created %s texts".formatted(stands.size()));
     }
 
     @Override
@@ -124,7 +133,7 @@ public final class HoverDisplay extends PackageModule implements QuarkCommandExe
 
         if (Objects.equals(op, "delete-all")) {
             TaskService.global().run(this::clearAll);
-            getLanguage().sendMessage(sender, "delete-all");
+            this.language.sendMessage(sender, "delete-all");
             return;
         }
 
@@ -132,11 +141,11 @@ public final class HoverDisplay extends PackageModule implements QuarkCommandExe
 
         if (Objects.equals(op, "create")) {
             if (stands.containsKey(name)) {
-                getLanguage().sendMessage(sender, "exist", name);
+                this.language.sendMessage(sender, "exist", name);
                 return;
             }
         } else if (!stands.containsKey(name)) {
-            getLanguage().sendMessage(sender, "not-found", name);
+            this.language.sendMessage(sender, "not-found", name);
             return;
         }
 
@@ -144,19 +153,19 @@ public final class HoverDisplay extends PackageModule implements QuarkCommandExe
         switch (op) {
             case "create" -> {
                 create(name, sender.getLocation().add(0, 1.37, 0), buildText(context));
-                getLanguage().sendMessage(sender, "create", name);
+                this.language.sendMessage(sender, "create", name);
             }
             case "delete" -> {
                 TaskService.global().run(() -> stands.remove(name).destroy());
-                getLanguage().sendMessage(sender, "delete", name);
+                this.language.sendMessage(sender, "delete", name);
             }
             case "edit" -> {
                 this.stands.get(name).edit(buildText(context));
-                getLanguage().sendMessage(sender, "edit", name);
+                this.language.sendMessage(sender, "edit", name);
             }
             case "tp" -> {
                 stands.get(name).teleport(sender.getLocation().add(0, 1.37, 0));
-                getLanguage().sendMessage(sender, "teleport", name);
+                this.language.sendMessage(sender, "teleport", name);
             }
         }
     }

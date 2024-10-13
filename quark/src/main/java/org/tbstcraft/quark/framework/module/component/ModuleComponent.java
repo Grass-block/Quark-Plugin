@@ -1,10 +1,9 @@
 package org.tbstcraft.quark.framework.module.component;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.AbstractModule;
-import org.tbstcraft.quark.framework.module.FunctionalComponent;
+import org.tbstcraft.quark.framework.FunctionalComponent;
 
 public abstract class ModuleComponent<E extends AbstractModule> implements FunctionalComponent {
     protected E parent;

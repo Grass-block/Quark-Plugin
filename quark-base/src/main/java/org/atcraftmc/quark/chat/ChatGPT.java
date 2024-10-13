@@ -7,12 +7,14 @@ import com.google.gson.JsonObject;
 import me.gb2022.commons.http.HttpMethod;
 import me.gb2022.commons.http.HttpRequest;
 import me.gb2022.commons.reflect.Inject;
+import org.apache.logging.log4j.Logger;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.data.language.LanguageItem;
-import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.task.TaskService;
@@ -35,6 +37,12 @@ public final class ChatGPT extends CommandModule {
 
     @Inject("tip")
     private LanguageItem tip;
+
+    @Inject
+    private Logger logger;
+
+    @Inject
+    private LanguageEntry language;
 
     public static void chatgpt(String model, String content, Consumer<String> out, Consumer<String> badLine) {
         var s = HttpRequest.https(HttpMethod.GET, model)
@@ -93,7 +101,7 @@ public final class ChatGPT extends CommandModule {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (this.cooldown.contains(sender.getName())) {
-            getLanguage().sendMessage(sender, "cooldown", 10);
+            this.language.sendMessage(sender, "cooldown", 10);
             return;
         }
 
@@ -116,16 +124,17 @@ public final class ChatGPT extends CommandModule {
             String request = sb.toString().trim();
 
             if (model.equals(GPT40)) {
-                getLanguage().sendMessage(sender, "request-gpt4", "{;}" + request);
+                this.language.sendMessage(sender, "request-gpt4", "{;}" + request);
             } else {
-                getLanguage().sendMessage(sender, "request", "{;}" + request);
+                this.language.sendMessage(sender, "request", "{;}" + request);
             }
 
-            chatgpt(model,
+            chatgpt(
+                    model,
                     request,
-                    (s) -> getLanguage().sendMessage(sender, "response", s),
-                    (line) -> this.getLogger().warning("pared bad response flow: " + line)
-            );
+                    (s) -> this.language.sendMessage(sender, "response", s),
+                    (line) -> this.logger.warn("pared bad response flow: " + line)
+                   );
         });
     }
 

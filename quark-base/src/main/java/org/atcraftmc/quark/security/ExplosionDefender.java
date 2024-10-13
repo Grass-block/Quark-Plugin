@@ -3,6 +3,7 @@ package org.atcraftmc.quark.security;
 import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.Bukkit;
@@ -13,7 +14,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.tbstcraft.quark.SharedObjects;
@@ -28,6 +28,7 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.component.Components;
 import org.tbstcraft.quark.framework.module.component.ModuleComponent;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.framework.record.RecordEntry;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 
 import java.util.Date;
@@ -38,21 +39,25 @@ import java.util.stream.Collectors;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(ExplosionDefender.ExplosionWhitelistCommand.class)
-@QuarkModule(version = "1.3.3", recordFormat = {"Time", "World", "X", "Y", "Z", "Type"})
+@QuarkModule(version = "1.3.3")
 @Components(ExplosionDefender.BlockExplosionListener.class)
 public final class ExplosionDefender extends PackageModule {
     private final HashMap<String, SimpleRegion> whiteListedRegions = new HashMap<>();
-    private Listener listener;
+
+    @Inject("explosion-defender;Time,World,X,Y,Z,Type")
+    private RecordEntry record;
 
     @Override
     public void enable() {
         this.loadRegions();
+        this.record.open();
     }
 
     @Override
     public void disable() {
         this.saveRegions();
         this.whiteListedRegions.clear();
+        this.record.close();
     }
 
     public void loadRegions() {
@@ -112,14 +117,14 @@ public final class ExplosionDefender extends PackageModule {
                                                );
         }
         if (this.getConfig().getBoolean("record")) {
-            this.getRecord().addLine(
+            this.record.addLine(
                     SharedObjects.DATE_FORMAT.format(new Date()),
                     Objects.requireNonNull(loc.getWorld()).getName(),
                     loc.getBlockX(),
                     loc.getBlockY(),
                     loc.getBlockZ(),
                     explodedId
-                                    );
+                               );
         }
     }
 

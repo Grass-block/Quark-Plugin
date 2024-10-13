@@ -18,11 +18,6 @@ public @interface QuarkModule {
     String version() default "1.0";
 
     /**
-     * dont care it unless using record.
-     */
-    String[] recordFormat() default {};
-
-    /**
      * not required except using {@link StandaloneModuleProvider}
      */
     String id() default "null";
@@ -40,4 +35,12 @@ public @interface QuarkModule {
     boolean defaultEnable() default true;
 
     String description() default "no info";
+
+
+    /**
+     * do not care it unless using record.<br>
+     * deprecated, please use @Inject("Name;Format(,)") instead.
+     */
+    @Deprecated
+    String[] recordFormat() default {};
 }

@@ -22,7 +22,7 @@ public interface QuarkInternalPackage {
     }
 
     static PackageInitializer initializer() {
-        return new PackageBuilderInitializer("quark-core", FeatureAvailability.DEMO_AVAILABLE)
+        return new PackageBuilderInitializer("quark-core", FeatureAvailability.BOTH)
                 .service(TaskService.class)
                 .service(CacheService.class)
                 .service(CommandEventService.class)
@@ -33,12 +33,15 @@ public interface QuarkInternalPackage {
                 .service(InternalCommandsProvider.class)
                 .service(RemoteMessageService.class)
                 .service(UIManager.class)
+                .service(PlayerIdentificationService.class)
 
                 .module("demo-warning", DemoWarning.class)
                 .module("version-log-viewer", VersionLogViewer.class)
                 .module("counter-conflict-handler", CounterPluginConflictHandler.class)
                 .module("modrinth-version-check", ModrinthVersionCheck.class)
                 .module("custom-language-pack-loader", CustomLanguagePackLoader.class)
+                .module("papi-global-vars-injector", PAPIGlobalVarsInjector.class)
+                .module("legacy-command-timings-patch", LegacyCommandTimingsPatch.class)
 
                 .language("quark-core", "zh_cn")
                 .language("quark-core", "en_us")

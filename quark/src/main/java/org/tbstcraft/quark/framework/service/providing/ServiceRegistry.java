@@ -28,6 +28,7 @@ public abstract class ServiceRegistry {
                 e.printStackTrace();
                 this.getPackage().getLogger().severe("failed to register service %s: %s".formatted(
                         service.getName(), e.getMessage()));
+                throw new RuntimeException(e);
             }
         }
     }

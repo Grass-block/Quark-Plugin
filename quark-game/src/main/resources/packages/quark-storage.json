@@ -4,7 +4,8 @@
   "package_namespace": "org.atcraftmc.quark.storage",
   "modules": {
     "portable-shulker-box": ".PortableShulkerBox",
-    "item-drop-secure": ".ItemDropSecure"
+    "item-drop-secure": ".ItemDropSecure",
+    "portable-functional-blocks": ".PortableFunctionalBlocks"
   },
   "languages": [
     "quark-storage:zh_cn"

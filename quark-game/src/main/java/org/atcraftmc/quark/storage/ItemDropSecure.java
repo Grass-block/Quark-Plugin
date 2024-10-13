@@ -1,10 +1,12 @@
 package org.atcraftmc.quark.storage;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
@@ -18,12 +20,15 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@QuarkModule(version = "1.0")
+@QuarkModule
 @CommandProvider(ItemDropSecure.DropInsecureUnlockCommand.class)
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class ItemDropSecure extends PackageModule implements QuarkCommandExecutor {
     private final Set<String> unlocks = new HashSet<>();
 
+    @Inject
+    private LanguageEntry language;
+    
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
         var drop = event.getItemDrop();
@@ -43,7 +48,7 @@ public final class ItemDropSecure extends PackageModule implements QuarkCommandE
                 continue;
             }
             event.setCancelled(true);
-            getLanguage().sendMessage(player, "warn");
+            this.language.sendMessage(player, "warn");
             return;
         }
     }
@@ -54,10 +59,10 @@ public final class ItemDropSecure extends PackageModule implements QuarkCommandE
         var ticks = getConfig().getInt("unlock-time");
 
         this.unlocks.add(player.getName());
-        getLanguage().sendMessage(player, "unlock", ticks / 20);
+        this.language.sendMessage(player, "unlock", ticks / 20);
         TaskService.global().delay(ticks, () -> {
             this.unlocks.remove(player.getName());
-            getLanguage().sendMessage(player, "unlock-end");
+            this.language.sendMessage(player, "unlock-end");
         });
     }
 

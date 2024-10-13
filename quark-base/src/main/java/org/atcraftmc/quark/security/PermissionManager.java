@@ -3,6 +3,7 @@ package org.atcraftmc.quark.security;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.LegacyCommandManager;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
@@ -19,6 +20,7 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.assets.AssetGroup;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
@@ -40,6 +42,11 @@ public final class PermissionManager extends PackageModule implements QuarkComma
     private final Map<String, List<String>> tags = new HashMap<>();
     private final Map<String, ConfigurationSection> groups = new HashMap<>();
 
+    @Inject
+    private Logger logger;
+
+    @Inject
+    private LanguageEntry language;
 
     @Inject("permission;false")
     private AssetGroup permissionConfigs;
@@ -77,7 +84,7 @@ public final class PermissionManager extends PackageModule implements QuarkComma
                     }
                 }
 
-                getLogger().info("loaded configuration file %s as tag provider.".formatted(cfg));
+                this.logger.info("loaded configuration file %s as tag provider.".formatted(cfg));
                 continue;
             }
             if (dom.contains("groups")) {
@@ -89,11 +96,11 @@ public final class PermissionManager extends PackageModule implements QuarkComma
                     this.groups.put(groupName, group.getConfigurationSection(groupName));
                 }
 
-                getLogger().info("loaded configuration file %s as group provider.".formatted(cfg));
+                this.logger.info("loaded configuration file %s as group provider.".formatted(cfg));
                 continue;
             }
 
-            getLogger().info("skipped unknown config file %s".formatted(cfg));
+            this.logger.info("skipped unknown config file %s".formatted(cfg));
         }
 
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -151,7 +158,7 @@ public final class PermissionManager extends PackageModule implements QuarkComma
 
         if (!data.hasKey("group")) {
             data.setString("group", p.isOp() ? "--operator" : "--player");
-            getLogger().info("set default permission group %s to %s".formatted(data.getString("group"), p.getName()));
+            this.logger.info("set default permission group %s to %s".formatted(data.getString("group"), p.getName()));
             PlayerDataService.save(p.getName());
         }
         String group = data.getString("group");
@@ -161,7 +168,7 @@ public final class PermissionManager extends PackageModule implements QuarkComma
             permissions.addAll(section.getStringList("permissions"));
             tags.addAll(section.getStringList("tags"));
         } else {
-            getLogger().warning("detected unknown permission group of player %s : %s".formatted(p.getName(), group));
+            this.logger.warn("detected unknown permission group of player %s : %s".formatted(p.getName(), group));
         }
 
         tags.addAll(getPermissionTags(p.getName()).getTagMap().keySet());
@@ -175,7 +182,7 @@ public final class PermissionManager extends PackageModule implements QuarkComma
             try {
                 permissions.add(data.getBoolean(key) ? "+" : "-" + key);
             } catch (ClassCastException ignored) {
-                //getLogger().warning("attempt to fetch invalid permission data %s for %s".formatted(key, p.getName()));;
+                //this.logger.warning("attempt to fetch invalid permission data %s for %s".formatted(key, p.getName()));;
             }
         }
 
@@ -184,7 +191,7 @@ public final class PermissionManager extends PackageModule implements QuarkComma
         for (String tag : tags) {
             List<String> tagPermissions = this.tags.get(tag);
             if (tagPermissions == null) {
-                getLogger().warning("find an unknown permission tag of player %s : %s".formatted(p.getName(), tag));
+                this.logger.warn("find an unknown permission tag of player %s : %s".formatted(p.getName(), tag));
                 continue;
             }
 
@@ -245,19 +252,19 @@ public final class PermissionManager extends PackageModule implements QuarkComma
                     entry.setPermission(name, PermissionValue.parse(value));
                 }
 
-                this.getLanguage().sendMessage(sender, "cmd-perm-set", playerName, "{;}" + name, value);
+                this.language.sendMessage(sender, "cmd-perm-set", playerName, "{;}" + name, value);
             }
             case "add-tag" -> {
                 getPermissionTags(playerName).setString(name, name);
-                this.getLanguage().sendMessage(sender, "cmd-tag-add", playerName, name);
+                this.language.sendMessage(sender, "cmd-tag-add", playerName, name);
             }
             case "remove-tag" -> {
                 getPermissionTags(playerName).remove(name);
-                this.getLanguage().sendMessage(sender, "cmd-tag-remove", playerName, name);
+                this.language.sendMessage(sender, "cmd-tag-remove", playerName, name);
             }
             case "group" -> {
                 data.setString("group", name);
-                this.getLanguage().sendMessage(sender, "cmd-group-set", playerName, name);
+                this.language.sendMessage(sender, "cmd-group-set", playerName, name);
             }
         }
 

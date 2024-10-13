@@ -14,11 +14,6 @@ language:
       - '维护需要一段时间,请您耐心等待,我们对此十分抱歉。'
   advanced-plugin-command:
     list: "{global#sys-operation}以下是所有插件: {#return}{#var}"
-    enable: "{global#sys-operation}启用插件 {#var}。"
-    disable: "{global#sys-operation}停用插件 {#var}。"
-    load: "{global#sys-operation}加载插件 {#var}。"
-    unload: "{global#sys-operation}卸载插件 {#var}。"
-    reload: "{global#sys-operation}重载插件 {#var}。"
     info: "{global#sys-operation}以下是关于 {#var} 插件的信息:{#return}%s"
     info-name: "{#gold}名称{#white}: %s[%s]"
     info-version: "{#gold}版本{#white}: %s"
@@ -29,6 +24,17 @@ language:
     info-soft-depend: "{#gold}软前置{#white}: %s"
     info-main: "{#gold}启动类{#white}: %s"
     info-libs: "{#gold}依赖库{#white}:"
+
+    file-not-found: "{global#error}未找到插件文件 {#var}。"
+    plugin-not-found: "{global#error}未找到插件 {#var}。"
+    load-failed: "{global#error}未能成功加载插件 {#var}。"
+    unload-failed: "{global#error}未能成功卸载插件 {#var}。"
+    enable: "{global#operation}成功启用插件 {#var}。"
+    disable: "{global#operation}成功停用插件 {#var}。"
+    restart: "{global#operation}成功重启插件 {#var}。"
+    load: "{global#operation}成功加载插件 {#var}。"
+    unload: "{global#operation}成功卸载插件 {#var}。"
+    reload: "{global#operation}成功重载插件 {#var}。"
   advanced-ban-command:
     msg-ban-complete: "{global#sys-success}已封禁玩家 {#var} 至 {#var},原因: {#var}。"
     broadcast: "{global#sys-info}玩家{#var} 因 {#var} 被操作者 {#var} 封禁至 {#var}。"

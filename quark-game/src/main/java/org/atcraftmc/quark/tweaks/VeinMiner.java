@@ -14,6 +14,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -30,6 +32,11 @@ public final class VeinMiner extends PackageModule {
     private LanguageItem tip;
 
     private Pattern pattern;
+
+    @Override
+    public void checkCompatibility() throws APIIncompatibleException {
+        Compatibility.requireMethod(() -> Material.class.getMethod("getKey"));
+    }
 
     @Override
     public void enable() {

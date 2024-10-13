@@ -23,6 +23,10 @@ public abstract class ModuleRegistry {
         return modules;
     }
 
+    public Collection<ModuleMeta> getMetas() {
+        return metas;
+    }
+
     public final void register(ModuleManager moduleManager) {
         for (var meta : this.metas) {
             moduleManager.registerMeta(meta);

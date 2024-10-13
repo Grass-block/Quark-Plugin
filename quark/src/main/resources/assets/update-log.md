@@ -1,12 +1,55 @@
+### 0.64.15
+
+- [Core] hot reload on all platforms are sync now.
+- [Core] Language Detection will use cache as first in first time. this will cause lag for detection but reduce chance of
+  detecting wrong language.
+- [Core] PlayerData will now use UUID to identify player, legacy files will be updated.
+- [Core] All Modules are now using Log4j as logger.
+- [MusicPlayer] Always attempt to ignore delay before any first node being played.
+- [TabMenu] Default splitLine is longer now.
+- [PlayerNameHeader] now use PlayerDataService to store header,legacy file will be auto-updated.
+- [AdvancePluginCommands] Injected aliases to /plugins commands like /pl.
+- [AdvancePluginCommands] Added hover and clicking infos when listing plugins.
+- [AdvancePluginCommands] Plugin manager can now fully remove a plugin and its ref when unloading it. [1.20.1]
+- [WESessionSizeLimit] Player Edit operation will be recorded.
+
+### 0.64.14
+
+- fix AsyncScheduler using wrong backend
+- fix hot reload issue[1.20.1]
+- fix view-distance calc exception when player died
+- fix we-selection-limit issue when not complete
+- fix player-join data loading issue[1.20.1]
+
+### 0.64.13
+
+compatibility: 0.64.10+
+
+[fix]
+
+- Actionbar UI are now sorted.(when they show up both,only high-priority UI will be rendered)
+
+[changes]
+
+- Adding PortableFunctionalBlocks, allow users to open workbench and grindstone without place them.
+- Player can open their EnderChest by holding them and right clicking air
+- Adding a more detailed ModuleManager and PackageManager listing display with hovered info
+- /quark package list and /quark module list can now have search params.
+- Remake stats page.
+- Added legacy support down to 1.8.8.
+- HoverDisplay can now have multiple columns by placing {#return} as separator
+
 ### 0.64.12
 
 [fix]
+
 - fixed ChatRenderer default rendering format issue.
 - fixed Worldedit selection tracking when not holding wooden_axe as sel-wand tool.
 - fixed Tasks auto-finalize issue on Folia/Leaves platform.
 - fixed ItemDropSecure lost item when inventory full
 
 [features]
+
 - WESessionRenderer can now use multi render mode(update/off/persistent) and change by player.
 - All 3d-box HUD now using Flame particle.
 - Using natively Worldedit API for WESessionTracking.
@@ -17,7 +60,9 @@
 - ChatComponents can now use {translate}key#format1;;format2{;}to build a translatable component.
 
 ### 0.64.10
+
 [core]
+
 - adding new configurations API
 - unused config will no longer be auto created
 - packages should now provide config registry entry
@@ -26,25 +71,31 @@
 - fixed exception when loading Full jar on renamed core file.
 
 [minecart-controller]
+
 - adding minecart(only normal minecart) movement realistic simulation
 - minecart speed will be set to 0 when player entered
 - minecart will automatically detect environment and limit its speed when entering slips
 
 [player-name-header]
+
 - name prefix and postfixes will now appear in display name
 - name prefix and postfixes will now appear in every minecraft player component(death message...)
 
 [custom-scoreboard]
+
 - adding a BELOW_NAME column(for 1.20.4+ server)
 
 [+nickname] (require protocol lib)
+
 - adding a nickname module[beta]
 
 [hover-display]
+
 - display texts can now have [Space] inside
 - display texts can now be saved and reloaded.
 
 [version-check]
+
 - change version calculation method
 - fix announce format error when player join.
 

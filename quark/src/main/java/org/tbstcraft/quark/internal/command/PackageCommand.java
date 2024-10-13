@@ -2,14 +2,17 @@ package org.tbstcraft.quark.internal.command;
 
 import me.gb2022.commons.TriState;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.tbstcraft.quark.foundation.platform.Players;
+import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.packages.IPackage;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.util.ObjectOperationResult;
@@ -38,8 +41,8 @@ public final class PackageCommand extends CoreCommand {
         suggestion.suggest(0, "enable", "disable", "list");
         suggestion.matchArgument(0, "list", (c) -> c.suggest(1, "<search meta>"));
         suggestion.matchArgument(0, "list", (c) -> c.suggest(1, PackageManager.getInstance().getPackages().keySet()));
-        suggestion.matchArgument(0, "enable", (c) -> c.suggest(1, PackageManager.getIdsByStatus(TriState.FALSE)));
-        suggestion.matchArgument(0, "disable", (c) -> c.suggest(1, PackageManager.getIdsByStatus(TriState.TRUE)));
+        suggestion.matchArgument(0, "enable", (c) -> c.suggest(1, PackageManager.getIdsByStatus(TriState.TRUE)));
+        suggestion.matchArgument(0, "disable", (c) -> c.suggest(1, PackageManager.getIdsByStatus(TriState.FALSE)));
     }
 
     @Override
@@ -97,13 +100,36 @@ public final class PackageCommand extends CoreCommand {
         this.getLanguage().sendMessage(sender, "list", sb.toString());
     }
 
-    private Component buildModuleInfo(IPackage m) {
-        var state = PackageManager.isPackageEnabled(m.getId()) ? "&aE" : "&cD";
-        var owner = m.getOwner().getName();
-        var ownerVer = m.getOwner().getDescription().getVersion();
-        var line = "&f[%s&f]%s &7[%s]".formatted(state, m.getId(), owner + ":" + ownerVer);
+    private Component buildModuleInfo(IPackage pkg) {
+        var state = PackageManager.isPackageEnabled(pkg.getId()) ? "&aE" : "&cD";
+        var owner = pkg.getOwner().getName();
+        var ownerVer = pkg.getOwner().getDescription().getVersion();
+        var line = "&f[%s&f]%s".formatted(state, pkg.getId());
 
-        return Component.text(ChatColor.translateAlternateColorCodes('&', line));
+        var command = "/quark module list %s";
+        var hover = getPackageDisplayHover(pkg, owner, ownerVer);
+
+        return Component.text(ChatColor.translateAlternateColorCodes('&', line))
+                .clickEvent(ClickEvent.runCommand(command.formatted(pkg.getId())))
+                .hoverEvent(HoverEvent.showText(Component.text(ChatColor.translateAlternateColorCodes('&', hover))));
+    }
+
+    private static @NotNull String getPackageDisplayHover(IPackage pkg, String owner, String ownerVer) {
+        var service= pkg.getServiceRegistry();
+        var module= pkg.getModuleRegistry();
+        return """
+                &7ID: &b%s
+                &7Owner: &a%s
+                &7Service: %s
+                &7Modules: %s
+                &f
+                &8[click to view modules]
+                """.formatted(
+                pkg.getId(),
+                owner + ":" + ownerVer,
+                service==null?"&7[empty]":"&a"+service.getServices().size(),
+                module==null?"&7[empty]":"&a"+module.getMetas().size()
+                             );
     }
 
     private void list(CommandSender sender, String prefix) {
@@ -116,7 +142,8 @@ public final class PackageCommand extends CoreCommand {
                 .toList();
         getLanguage().sendMessage(sender, "list", "");
         for (var meta : nodes) {
-            Players.sendMessage(sender, buildModuleInfo(meta));
+            Component msg = buildModuleInfo(meta);
+            TextSender.sendMessage(sender, msg);
         }
     }
 

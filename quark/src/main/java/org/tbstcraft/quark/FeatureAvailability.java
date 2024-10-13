@@ -5,6 +5,7 @@ import org.tbstcraft.quark.internal.ProductService;
 public enum FeatureAvailability {
     DEMO_ONLY("demo_only"),
     DEMO_AVAILABLE("demo_available"),
+    BOTH("demo_available"),
     PREMIUM("premium"),
     INHERIT("inherit");
 
@@ -26,7 +27,7 @@ public enum FeatureAvailability {
 
     public boolean load() {
         return switch (this) {
-            case DEMO_AVAILABLE -> true;
+            case DEMO_AVAILABLE, BOTH -> true;
             case PREMIUM -> ProductService.isActivated();
             case DEMO_ONLY -> !ProductService.isActivated();
             case INHERIT -> throw new IllegalArgumentException("wtf?");

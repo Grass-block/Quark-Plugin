@@ -25,6 +25,8 @@ import org.bukkit.util.Vector;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
 import org.tbstcraft.quark.data.language.LanguageItem;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -43,6 +45,11 @@ public final class StairSeat extends PackageModule {
 
     @Inject("tip")
     private LanguageItem tip;
+
+    @Override
+    public void checkCompatibility() throws APIIncompatibleException {
+        Compatibility.requireMethod(() -> Material.class.getMethod("getKey"));
+    }
 
     @Override
     public void enable() {
@@ -88,7 +95,7 @@ public final class StairSeat extends PackageModule {
 
         spawnLocation.setDirection(direction.multiply(-1));
         Player player = event.getPlayer();
-        var spawn=spawnLocation.add(0.5, -0.36, 0.5);
+        var spawn = spawnLocation.add(0.5, -0.36, 0.5);
         Pig pig = (Pig) world.spawnEntity(spawn, EntityType.PIG);
 
         pig.setInvulnerable(true);

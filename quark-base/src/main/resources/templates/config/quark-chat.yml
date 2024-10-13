@@ -11,7 +11,7 @@ config:
   chat-report:
     append: '{click(command,/chat-report %s);color(red)}[!]'
   chat-translator:
-    append: '{click(command,/translate %s);color(aqua)}[🌐]'
+    append: '{click(command,/translate %s);color(aqua)}[T]'
   npc-chat:
     template: "{#gray}[NPC]{#white}{name} {#gold}: {#gray}{text}"
     inactive-time: 8000
@@ -30,5 +30,3 @@ config:
     targets:
       - "733345889"
       - "805950688"
-
-

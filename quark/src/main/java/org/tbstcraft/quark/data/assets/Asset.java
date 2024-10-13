@@ -64,7 +64,6 @@ public final class Asset {
         InputStream stream = this.provider.getClass().getResourceAsStream(TEMPLATE.formatted(this.name));
 
         if (stream == null) {
-            System.out.println(TEMPLATE.formatted(this.name));
             return;
         }
 

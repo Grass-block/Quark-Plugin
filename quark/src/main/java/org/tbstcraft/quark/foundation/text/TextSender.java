@@ -1,217 +1,139 @@
 package org.tbstcraft.quark.foundation.text;
 
+import me.gb2022.commons.reflect.method.Assertion;
+import me.gb2022.commons.reflect.method.MethodHandle;
+import me.gb2022.commons.reflect.method.MethodHandleO1;
+import me.gb2022.commons.reflect.method.MethodHandleO3;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.Quark;
+import org.joml.Vector3i;
 import org.tbstcraft.quark.data.language.Language;
-import org.tbstcraft.quark.foundation.platform.APIProfileTest;
-import me.gb2022.commons.container.ObjectContainer;
 
 import java.time.Duration;
 import java.util.Locale;
 import java.util.function.Function;
 
+@SuppressWarnings("Convert2MethodRef")
 public interface TextSender {
-    ObjectContainer<TextSender> BACKEND = new ObjectContainer<>();
+    Assertion ADVENTURE_TITLE_API = () -> Player.class.getMethod("showTitle", Title.class);
 
-    static void initContext() {
-        if (APIProfileTest.isSpigotServer() || APIProfileTest.isArclightBasedServer()) {
-            Quark.getInstance().getLogger().warning("using custom text backend. this will cause text interaction unavailable.");
-            BACKEND.set(new SpigotSender());
-            return;
-        }
-        if (APIProfileTest.isPaperCompat()) {
-            BACKEND.set(new DirectSender());
-            return;
-        }
-        BACKEND.set(new BukkitSender());
-    }
+    MethodHandleO1<CommandSender, ComponentLike> SEND_MESSAGE = MethodHandle.select((ctx) -> {
+        ctx.attempt(() -> Player.class.getMethod("sendMessage", Component.class), (p, c) -> p.sendMessage(c));
+        ctx.attempt(
+                () -> CommandSender.Spigot.class.getMethod("sendMessage", BaseComponent.class),
+                (p, c) -> p.spigot().sendMessage(ComponentSerializer.bungee(c))
+                   );
+        ctx.attempt(
+                () -> CommandSender.class.getMethod("sendMessage", String.class),
+                (p, c) -> p.sendMessage(ComponentSerializer.legacy(c))
+                   );
+    });
+    MethodHandleO3<Player, ComponentLike, ComponentLike, Vector3i> SEND_TITLE = MethodHandle.select((ctx) -> {
+        ctx.attempt(ADVENTURE_TITLE_API, (p, t, s, v) -> {
+            var in = Duration.ofMillis(v.x() * 50L);
+            var stay = Duration.ofMillis(v.y() * 50L);
+            var out = Duration.ofMillis(v.z() * 50L);
+            var time = Title.Times.times(in, stay, out);
+
+            p.showTitle(Title.title(t.asComponent(), s.asComponent(), time));
+        });
+        ctx.dummy((p, t, s, v) -> {
+            var title = ComponentSerializer.legacy(t);
+            var subtitle = ComponentSerializer.legacy(s);
+
+            p.sendTitle(title, subtitle, v.x(), v.y(), v.z());
+        });
+    });
+    MethodHandleO1<Player, ComponentLike> SEND_ACTIONBAR_TITLE = MethodHandle.select((ctx) -> {
+        ctx.attempt(() -> Player.class.getMethod("sendActionBar", Component.class), (p, c) -> p.sendActionBar(c));
+        ctx.attempt(() -> Player.class.getMethod("sendActionBar", BaseComponent[].class), (p, c) -> {
+            var bc = ComponentSerializer.bungee(c);
+            p.sendActionBar(bc);
+        });
+        ctx.attempt(() -> Player.class.getMethod("spigot"), (p, c) -> {
+            var bc = ComponentSerializer.bungee(c);
+            p.sendMessage(ChatMessageType.ACTION_BAR, bc);
+        });
+    });
 
 
-    static void sendLine(CommandSender sender, ComponentLike component) {
-        BACKEND.get().send(sender, component);
+    //message
+    static void sendMessage(CommandSender sender, ComponentLike message) {
+        SEND_MESSAGE.invoke(sender, message);
     }
 
     static void sendBlock(CommandSender sender, ComponentBlock block) {
         for (Component line : block) {
-            sendLine(sender, line);
+            sendMessage(sender, line);
         }
     }
 
-    static void sendLine(ComponentLike component) {
-        sendLine(Bukkit.getConsoleSender(), component);
+    static void sendMessage(ComponentLike component) {
+        CommandSender sender = Bukkit.getConsoleSender();
+        sendMessage(sender, component);
     }
 
     static void sendBlock(ComponentBlock component) {
         sendBlock(Bukkit.getConsoleSender(), component);
     }
 
-    static void broadcastLine(Function<Locale, ComponentLike> component, boolean opOnly, boolean toConsole) {
-        BACKEND.get().broadcast(component, opOnly, toConsole);
-    }
 
-    static void broadcastBlock(Function<Locale, ComponentBlock> component, boolean opOnly, boolean toConsole) {
-        BACKEND.get()._broadcast(component, opOnly, toConsole);
-    }
-
-    static void sendTo(CommandSender sender, ComponentBlock block) {
-        sendLine(sender, block.toSingleLine());
-    }
-
-    static void sendToConsole(ComponentBlock block) {
-        for (Component line : block) {
-            sendLine(line);
-        }
+    //title
+    static void sendTitle(Player viewer, ComponentLike title, ComponentLike subtitle, int in, int stay, int out) {
+        SEND_TITLE.invoke(viewer, title, subtitle, new Vector3i(in, stay, out));
     }
 
     static void title(Player p, ComponentLike component, int in, int stay, int out) {
-        BACKEND.get().sendTitle(p, component, in, stay, out);
-    }
-
-    static void fullTitle(Player p, ComponentLike title, ComponentLike subtitle, int in, int stay, int out) {
-        BACKEND.get().sendFullTitle(p, title, subtitle, in, stay, out);
+        sendTitle(p, component, Component.text(""), in, stay, out);
     }
 
     static void subtitle(Player p, ComponentLike component, int in, int stay, int out) {
-        BACKEND.get().sendSubtitle(p, component, in, stay, out);
+        sendTitle(p, Component.text(""), component, in, stay, out);
     }
 
-    void sendSubtitle(Player p, ComponentLike component, int in, int stay, int out);
+    static void sendActionbarTitle(Player p, ComponentLike c) {
+        SEND_ACTIONBAR_TITLE.invoke(p, c.asComponent());
+    }
 
-    void sendFullTitle(Player p, ComponentLike title, ComponentLike subtitle, int in, int stay, int out);
 
-    void sendTitle(Player p, ComponentLike component, int in, int stay, int out);
-
-    void send(CommandSender sender, ComponentLike component);
-
-    default void broadcast(Function<Locale, ComponentLike> component, boolean opOnly, boolean toConsole) {
+    //broadcast
+    static void broadcastLine(Function<Locale, ComponentLike> component, boolean opOnly, boolean toConsole) {
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (!p.isOp() && opOnly) {
                 continue;
             }
-            send(p, component.apply(Language.locale(p)));
+            sendMessage(p, component.apply(Language.locale(p)));
         }
         if (!toConsole) {
             return;
         }
-        send(Bukkit.getConsoleSender(), component.apply(Locale.ENGLISH));
+        CommandSender sender = Bukkit.getConsoleSender();
+        sendMessage(sender, component.apply(Locale.ENGLISH));
     }
 
-    default void _broadcast(Function<Locale, ComponentBlock> component, boolean opOnly, boolean toConsole) {
+    static void broadcastBlock(Function<Locale, ComponentBlock> component, boolean opOnly, boolean toConsole) {
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (!p.isOp() && opOnly) {
                 continue;
             }
-            for (Component c : component.apply(Language.locale(p))) {
-                send(p, c);
-            }
-
+            sendBlock(p, component.apply(Language.locale(p)));
         }
         if (!toConsole) {
             return;
         }
-        for (Component c : component.apply(Locale.ENGLISH)) {
-            send(Bukkit.getConsoleSender(), c);
-        }
-
+        sendBlock(Bukkit.getConsoleSender(), component.apply(Locale.ENGLISH));
     }
 
-    final class DirectSender implements TextSender {
 
-        private Title.Times time(int in, int stay, int out) {
-            return Title.Times.times(
-                    Duration.ofMillis(in * 50L),
-                    Duration.ofMillis(stay * 50L),
-                    Duration.ofMillis(out * 50L)
-            );
-        }
-
-        @Override
-        public void sendFullTitle(Player p, ComponentLike title, ComponentLike subtitle, int in, int stay, int out) {
-            p.showTitle(Title.title(title.asComponent(), subtitle.asComponent(), time(in, stay, out)));
-        }
-
-        @Override
-        public void sendTitle(Player p, ComponentLike component, int in, int stay, int out) {
-            p.showTitle(Title.title(component.asComponent(), Component.text(""), time(in, stay, out)));
-        }
-
-        @Override
-        public void sendSubtitle(Player p, ComponentLike component, int in, int stay, int out) {
-            p.showTitle(Title.title(Component.text(""), component.asComponent(), time(in, stay, out)));
-        }
-
-        @Override
-        public void send(CommandSender sender, ComponentLike component) {
-            if (sender instanceof ConsoleCommandSender) {
-                sender.sendMessage(LegacyComponentSerializer.legacySection().serialize(component.asComponent()));
-                return;
-            }
-            sender.sendMessage(component.asComponent());
-        }
-    }
-
-    final class SpigotSender implements TextSender {
-        @Override
-        public void send(CommandSender sender, ComponentLike component) {
-            sender.spigot().sendMessage(ComponentSerializer.bungee(component));
-        }
-
-        @Override
-        public void sendFullTitle(Player p, ComponentLike title, ComponentLike subtitle, int in, int stay, int out) {
-            p.sendTitle(ComponentSerializer.legacy(title), ComponentSerializer.legacy(subtitle), in, stay, out);
-        }
-
-        @Override
-        public void sendSubtitle(Player p, ComponentLike component, int in, int stay, int out) {
-            p.sendTitle("", ComponentSerializer.legacy(component), in, stay, out);
-        }
-
-        @Override
-        public void sendTitle(Player p, ComponentLike component, int in, int stay, int out) {
-            p.sendTitle(ComponentSerializer.legacy(component), "", in, stay, out);
-        }
-
-        @Override
-        public void broadcast(Function<Locale, ComponentLike> component, boolean opOnly, boolean toConsole) {
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                if (!p.isOp() && opOnly) {
-                    continue;
-                }
-                p.sendMessage(ComponentSerializer.bungee(component.apply(Language.locale(p))));
-            }
-            if (!toConsole) {
-                return;
-            }
-            Bukkit.getConsoleSender().sendMessage(ComponentSerializer.bungee(component.apply(Locale.ENGLISH)));
-        }
-    }
-
-    final class BukkitSender implements TextSender {
-        @Override
-        public void sendFullTitle(Player p, ComponentLike title, ComponentLike subtitle, int in, int stay, int out) {
-            p.sendTitle(ComponentSerializer.legacy(title), ComponentSerializer.legacy(subtitle), in, stay, out);
-        }
-
-        @Override
-        public void sendSubtitle(Player p, ComponentLike component, int in, int stay, int out) {
-            p.sendTitle("", ComponentSerializer.legacy(component), in, stay, out);
-        }
-
-        @Override
-        public void sendTitle(Player p, ComponentLike component, int in, int stay, int out) {
-            p.sendTitle(ComponentSerializer.legacy(component), "", in, stay, out);
-        }
-
-        @Override
-        public void send(CommandSender sender, ComponentLike component) {
-            sender.sendMessage(LegacyComponentSerializer.legacySection().serialize(component.asComponent()));
-        }
+    //misc
+    static void sendChatColor(CommandSender sender, String msg) {
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
     }
 }

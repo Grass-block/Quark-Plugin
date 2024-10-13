@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 @QuarkService(id = "module")
 public final class ModuleManager implements Service {
     public static final ServiceHolder<ModuleManager> INSTANCE = new ServiceHolder<>();
+
     public static final String DATA_FILE = "%s/data/modules.properties";
 
     private final String parentName;
@@ -275,9 +276,10 @@ public final class ModuleManager implements Service {
             m.init(meta.id(), meta.parent());
             meta.handle(m);
             meta.status(FunctionalComponentStatus.CONSTRUCT);
-        } catch (Exception e) {
-            ExceptionUtil.log(e);
+        } catch (Throwable e) {
+            //ExceptionUtil.log(e);
             meta.status(FunctionalComponentStatus.CONSTRUCT_FAILED);
+            meta.additional(e.getCause().getClass().getSimpleName() + "[" + e.getCause().getMessage() + "]");
             return true;
         }
 

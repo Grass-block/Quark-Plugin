@@ -98,6 +98,10 @@ public interface ServiceManager {
         return implClass != Service.class;
     }
 
+    static HashMap<String, Class<? extends Service>> all() {
+        return ((Impl) INSTANCE).services;
+    }
+
     <I extends Service> Class<I> getService(String id, Class<Class<I>> type);
 
     <I extends Service> void registerService(Class<I> service);
@@ -149,7 +153,7 @@ public interface ServiceManager {
                             Bukkit.getServicesManager().register(service, instance, Quark.getInstance(), ServicePriority.High);
                         }
 
-                        if(holder.get()==null){
+                        if (holder.get() == null) {
                             continue;
                         }
 
@@ -174,11 +178,13 @@ public interface ServiceManager {
                     return;
                 }
 
-                m.invoke(null);
+                try {
+                    m.invoke(null);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
 
             } catch (NoSuchMethodException ignored) {
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                throw new RuntimeException(e);
             }
         }
 

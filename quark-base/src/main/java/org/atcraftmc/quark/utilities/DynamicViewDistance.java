@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.permissions.Permission;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.data.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.*;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
@@ -36,6 +37,9 @@ import java.util.List;
 public final class DynamicViewDistance extends PackageModule implements QuarkCommandExecutor {
     private final List<ViewDistanceStrategy> pipeline = new ArrayList<>();
 
+    @Inject
+    private LanguageEntry language;
+    
     @Inject("-quark.viewdistance.other")
     private Permission setOtherPermission;
 
@@ -102,7 +106,7 @@ public final class DynamicViewDistance extends PackageModule implements QuarkCom
         value = Math.max(2, Math.min(32, value));
 
         if ((programRemind && remind) || forceRemind) {
-            this.getLanguage().sendMessage(player, "set-self", value);
+            this.language.sendMessage(player, "set-self", value);
         }
 
         player.setViewDistance(value);
@@ -130,9 +134,9 @@ public final class DynamicViewDistance extends PackageModule implements QuarkCom
         if (value == -1) {
             CustomSettingStrategy.clear(player);
             if (!isSelf) {
-                getLanguage().sendMessage(sender, "reset-target", args[0]);
+                this.language.sendMessage(sender, "reset-target", args[0]);
             }
-            getLanguage().sendMessage(player, "reset-self");
+            this.language.sendMessage(player, "reset-self");
 
             this.calculatePlayerViewDistance(player, false, false);
             return;
@@ -140,9 +144,9 @@ public final class DynamicViewDistance extends PackageModule implements QuarkCom
 
         CustomSettingStrategy.set(player, value);
         if (!isSelf) {
-            getLanguage().sendMessage(sender, "set-target", args[1], value);
+            this.language.sendMessage(sender, "set-target", args[1], value);
         }
-        getLanguage().sendMessage(player, "set-self", value);
+        this.language.sendMessage(player, "set-self", value);
 
         this.calculatePlayerViewDistance(player, false, false);
     }

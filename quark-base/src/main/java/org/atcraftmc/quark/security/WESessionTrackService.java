@@ -79,6 +79,7 @@ public interface WESessionTrackService extends Service {
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requirePlugin("WorldEdit");
+            Compatibility.requireClass(()->Class.forName("com.sk89q.worldedit.util.HandSide"));
         }
 
         //api impl

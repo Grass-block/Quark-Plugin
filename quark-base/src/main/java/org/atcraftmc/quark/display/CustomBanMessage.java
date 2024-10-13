@@ -1,6 +1,7 @@
 package org.atcraftmc.quark.display;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.BanEntry;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -10,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.language.Language;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.event.BanMessageFetchEvent;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -20,6 +22,9 @@ import java.util.Locale;
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule(version = "1.0.2")
 public final class CustomBanMessage extends PackageModule {
+
+    @Inject
+    private LanguageEntry language;
 
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGH)
@@ -55,10 +60,10 @@ public final class CustomBanMessage extends PackageModule {
     public String buildBanUI(BanEntry entry, BanList.Type type, Locale locale) {
         String msg;
         if (type == BanList.Type.NAME) {
-            msg = this.getLanguage().buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui",
+            msg = this.language.buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui",
                     (s) -> s.replace("@type", "name")));
         } else {
-            msg = this.getLanguage().buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui",
+            msg = this.language.buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui",
                     (s) -> s.replace("@type", "ip")));
         }
 

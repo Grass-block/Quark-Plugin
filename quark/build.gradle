@@ -2,7 +2,7 @@ plugins{
     id 'java'
 }
 
-project.setProperty("version","0.64.12")
+project.setProperty("version","0.64.14")
 
 apply from: "E:/Java/GradleScripts/build-base.gradle"
 
@@ -31,8 +31,6 @@ dependencies {
     compileOnly 'net.kyori:adventure-text-serializer-gson:4.17.0'
     compileOnly 'net.kyori:adventure-text-serializer-legacy:4.17.0'
     compileOnly 'net.kyori:adventure-text-minimessage:4.17.0'
-    compileOnly 'net.kyori:adventure-platform-bukkit:4.0.0'
-    compileOnly 'net.kyori:adventure-platform-bungeecord:4.0.0'
 }
 
 //quark libraries(integrated)
@@ -57,9 +55,11 @@ dependencies {
 
 //platform api reference
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT';
+    //compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
     compileOnly 'io.netty:netty-buffer:4.1.25.Final'
-    compileOnly projectLocal('paper-threadedregions')
+
+    compileOnly projectLocal('paper-plugin')
 }
 
 jar {

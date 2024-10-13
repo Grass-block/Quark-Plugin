@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.framework.module;
 
+import org.apache.logging.log4j.LogManager;
 import org.tbstcraft.quark.data.config.ConfigContainer;
 import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.data.language.LanguageContainer;
@@ -23,25 +24,14 @@ public abstract class PackageModule extends AbstractModule {
 
     //lifecycle
     @Override
-    public final LanguageEntry createLanguage() {
-        return LanguageContainer.INSTANCE.entry(this.parent.getId(), this.getId());
-    }
-
-    @Override
-    public final ConfigEntry createConfig() {
-        return ConfigContainer.getInstance().entry(this.parent.getId(), Identifiers.external(this.getId()));
-    }
-
-    @Override
-    public final RecordEntry createRecord() {
-        return RecordService.create(this.id, this.getRecordFormat());
-    }
-
-    @Override
     public final Logger createLogger() {
         return Logger.getLogger(this.parent.getLoggerName() + "/" + this.getClass().getSimpleName());
     }
 
+    @Override
+    public org.apache.logging.log4j.Logger createL4JLogger() {
+        return LogManager.getLogger(this.parent.getLoggerName() + "/" + this.getClass().getSimpleName());
+    }
 
     //attribute
     @Override

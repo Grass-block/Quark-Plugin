@@ -1,12 +1,13 @@
 package org.tbstcraft.quark.internal.command;
 
 import org.atcraftmc.qlib.command.LegacyCommandManager;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.ProductInfo;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 
 import java.util.List;
@@ -18,9 +19,10 @@ import java.util.List;
         GlobalVarsCommand.class,
         PackageCommand.class,
         QuarkPluginCommand.ReloadCommand.class,
-        TestCommand.class
+        DebugCommand.class
 })
 public final class QuarkPluginCommand extends CoreCommand {
+
     @Override
     public void execute(CommandExecution context) {
         switch (context.requireEnum(0, "info", "stats", "sync-commands")) {
@@ -40,6 +42,12 @@ public final class QuarkPluginCommand extends CoreCommand {
             tabList.add("sync-commands");
             tabList.add("stats");
         }
+    }
+
+
+    @Override
+    public void suggest(CommandSuggestion suggestion) {
+        super.suggest(suggestion);
     }
 
     @QuarkCommand(name = "reload", permission = "-quark.reload")

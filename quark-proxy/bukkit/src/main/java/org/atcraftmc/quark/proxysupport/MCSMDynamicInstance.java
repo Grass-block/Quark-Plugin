@@ -6,6 +6,8 @@ import me.gb2022.apm.remote.event.remote.RemoteQueryEvent;
 import me.gb2022.commons.http.HttpMethod;
 import me.gb2022.commons.http.HttpRequest;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -29,6 +31,9 @@ import java.util.function.Consumer;
 @AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.REMOTE_MESSAGE})
 @CommandProvider(MCSMDynamicInstance.JoinDynamicServerCommand.class)
 public final class MCSMDynamicInstance extends PackageModule {
+    @Inject
+    private Logger logger;
+    
     @Override
     public void enable() {
         if (!this.getConfig().getBoolean("instance")) {
@@ -44,7 +49,7 @@ public final class MCSMDynamicInstance extends PackageModule {
         if (!this.getConfig().getBoolean("instance")) {
             return;
         }
-        getLogger().info("cancel server stopping process as POWER_SAVING");
+        this.logger.info("cancel server stopping process as POWER_SAVING");
         TaskService.async().cancel("quark:ps:countdown");
     }
 
@@ -59,9 +64,9 @@ public final class MCSMDynamicInstance extends PackageModule {
     }
 
     public void scheduleStop() {
-        getLogger().info("starting stopping countdown");
+        this.logger.info("starting stopping countdown");
         TaskService.async().delay("quark:ps:countdown", getConfig().getInt("shutdown-delay"), () -> {
-            getLogger().info("stopping server as POWER_SAVING");
+            this.logger.info("stopping server as POWER_SAVING");
             TaskService.global().run(() -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "stop"));
         });
     }
@@ -92,12 +97,12 @@ public final class MCSMDynamicInstance extends PackageModule {
                     .build()
                     .request();
 
-            getLogger().info("starting instance: " + name);
+            this.logger.info("starting instance: " + name);
             if (JsonParser.parseString(res).getAsJsonObject().get("status").getAsInt() == 200) {
                 handler.accept(0);
                 return;
             } else {
-                getLogger().info("starting instance failed: " + response);
+                this.logger.info("starting instance failed: " + response);
             }
             handler.accept(2);
         });

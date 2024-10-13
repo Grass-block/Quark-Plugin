@@ -4,6 +4,7 @@ import me.gb2022.apm.client.ClientMessenger;
 import me.gb2022.apm.client.backend.MessageBackend;
 import me.gb2022.commons.Timer;
 import org.atcraftmc.qlib.command.CommandManager;
+import org.atcraftmc.qlib.command.LegacyCommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -43,17 +44,17 @@ import java.util.logging.Logger;
  * 玩家每天新想法，天天改，日日忙。相顾无言，惟有泪千行。每晚灯火阑珊处，夜难寐，赶工狂。
  */
 public final class Quark extends JavaPlugin {
-    public static final int API_VERSION = 37;
+    public static final int API_VERSION = 38;
     public static final int BSTATS_ID = 22683;
     public static final String PLUGIN_ID = "quark";
-    public static final String CORE_UA = "quark/tm8.77[electron3.5]";
+    public static final String CORE_UA = "quark/tm8.8";
 
     public static final ILanguageAccess LANGUAGE = LanguageContainer.getInstance().access("quark-core");
     public static final ConfigAccess CONFIG = ConfigContainer.getInstance().access("quark-core");
     public static Quark PLUGIN;
     public static Logger LOGGER;
 
-    private final BundledPackageLoader bundledPackageLoader = new BundledPackageLoader();
+    private final BundledPackageProvider bundledPackageLoader = new BundledPackageProvider();
     private final CommandManager commandManager = new QuarkCommandManager(this);
 
     private String uuid;
@@ -68,27 +69,30 @@ public final class Quark extends JavaPlugin {
                 Locale locale = LocaleService.locale(audience);
                 String msg = LANGUAGE.getMessage(locale, "packages", "load");
 
-                Class<?> commandManager = Class.forName("org.atcraftmc.qlib.command.LegacyCommandManager");
-                Class<?> packageManager = Class.forName("org.tbstcraft.quark.framework.packages.PackageManager");
-                Class<?> pluginLoader = Class.forName("org.tbstcraft.quark.foundation.platform.PluginUtil");
+                var serverPacks = PackageManager.getSubPacksFromServer();
+                var folderPacks = PackageManager.getSubPacksFromFolder();
+                var modernPluginManager = PluginUtil.INSTANCE;
+                var coreFile = modernPluginManager.getFile(PLUGIN_ID);
 
-                pluginLoader.getMethod("reload", String.class).invoke(null, PLUGIN_ID);
-                packageManager.getMethod("reload").invoke(null);
-                commandManager.getMethod("sync").invoke(null);
+                modernPluginManager.unload(PLUGIN_ID);
+
+                for (var id : serverPacks) {
+                    modernPluginManager.unload(id);
+                }
+
+                modernPluginManager.load(coreFile);
+
+                for (var file : folderPacks) {
+                    modernPluginManager.load(file);
+                }
 
                 audience.sendMessage(msg);
+
+                LegacyCommandManager.sync();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         };
-
-        /* test - remove async reloading.
-        if (APIProfileTest.isArclightBasedServer()) {
-            task.run();
-        } else {
-            new Thread(task).start();
-        }
-         */
 
         task.run();
     }
@@ -103,11 +107,19 @@ public final class Quark extends JavaPlugin {
     }
 
     private void info(String msg, String zh, Object... format) {
-        log(Locale.getDefault().getCountry().contains("CN") ? zh : msg, format);
+        var b1 = Locale.getDefault().getCountry().equalsIgnoreCase("zh");
+        var b2 = getServer().getVersion().contains("PaperSpigot");
+        //var m = b1 && !b2 ? zh : msg;
+
+        this.getLogger().info(msg.formatted(format));
     }
 
     private void warn(String msg, String zh, Object... format) {
-        log(Locale.getDefault().getCountry().equalsIgnoreCase("zh") ? zh : msg, format);
+        var b1 = Locale.getDefault().getCountry().equalsIgnoreCase("zh");
+        var b2 = getServer().getVersion().contains("PaperSpigot");
+        //var m = b1 && !b2 ? zh : msg;
+
+        this.getLogger().warning(msg.formatted(format));
     }
 
     private void operation(String operation, String zh, Runnable task) {
@@ -123,7 +135,7 @@ public final class Quark extends JavaPlugin {
     }
 
 
-    //----[lifecycle]----
+    //----[plugin]----
     @Override
     public void onEnable() {
         Timer.restartTiming();
@@ -134,13 +146,11 @@ public final class Quark extends JavaPlugin {
 
         info("starting(v%s@API%s)...", "正在启动(v%s@API%s)...", ProductInfo.version(), API_VERSION);
 
-
-        this.bundledPackageLoader.init();
-        info("found bundler packages, constructing....", "找到绑定包，正在构造...");
         this.hasBundler = this.bundledPackageLoader.isPresent();
 
         operation("loading bootstrap classes...", "加载启动类...", () -> {
             try {
+                Class.forName("net.kyori.adventure.text.ComponentLike");
                 Class.forName("me.gb2022.commons.Timer");
                 Class.forName("org.tbstcraft.quark.data.config.Queries");
                 Class.forName("org.tbstcraft.quark.foundation.platform.APIProfile");
@@ -151,18 +161,18 @@ public final class Quark extends JavaPlugin {
                 throw new RuntimeException(e);
             }
         });
-        operation("loading plugin context...", "初始化插件上下文...", () -> {
+
+        APIProfileTest.test();
+        info("platform: %s".formatted(APIProfileTest.getAPIProfile().toString()), "当前平台: %s");
+
+
+        operation("initializing plugin context...", "初始化插件上下文...", () -> {
             this.uuid = UUID.randomUUID().toString();
 
             LOGGER = getLogger();
             PLUGIN = this;
 
             PluginUtil.CORE_REF.set(this);
-            APIProfileTest.test();
-
-            log("platform: %s".formatted(APIProfileTest.getAPIProfile().toString()));
-
-            TextSender.initContext();
         });
         operation("checking environment...", "检查环境...", () -> {
             var folia = APIProfileTest.isFoliaServer();
@@ -198,7 +208,7 @@ public final class Quark extends JavaPlugin {
             this.saveDefaultConfig();
             this.reloadConfig();
             try {
-                ProductInfo.METADATA.load(getClass().getResourceAsStream("/product-info.properties"));
+                ProductInfo.METADATA.load(getClass().getClassLoader().getResourceAsStream("product-info.properties"));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -282,7 +292,7 @@ public final class Quark extends JavaPlugin {
 
         if (this.hasBundler) {
             info("loading bundled packs...", "检测到绑定存在，正在加载...");
-            this.bundledPackageLoader.register();
+            this.bundledPackageLoader.onEnable();
         }
 
         info("done. (%d ms)", "完成! (%d ms)", Timer.passedTime());
@@ -297,7 +307,7 @@ public final class Quark extends JavaPlugin {
 
         if (this.hasBundler) {
             info("unloading bundled packs...", "检测到绑定存在，正在卸载...");
-            this.bundledPackageLoader.unregister();
+            this.bundledPackageLoader.onDisable();
         }
 
         operation("stopping services...", "停止服务组件...", () -> {
@@ -318,6 +328,10 @@ public final class Quark extends JavaPlugin {
         info("done (%d ms)", "完成! (%d ms)", Timer.passedTime());
     }
 
+    @Override
+    public @NotNull File getFile() {
+        return super.getFile();
+    }
 
     //----[properties]----
     public String getInstanceUUID() {
@@ -332,16 +346,11 @@ public final class Quark extends JavaPlugin {
         return metrics;
     }
 
-    public boolean isInitialized() {
+    public boolean isPluginInitialized() {
         return initialized;
     }
 
     public CommandManager getCommandManager() {
         return commandManager;
-    }
-
-    @Override
-    public @NotNull File getFile() {
-        return super.getFile();
     }
 }

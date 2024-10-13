@@ -10,28 +10,28 @@ import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import io.papermc.paper.scoreboard.numbers.NumberFormat;
-import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import me.gb2022.commons.reflect.method.MethodHandle;
+import me.gb2022.commons.reflect.method.MethodHandleO0;
 import me.gb2022.commons.reflect.method.MethodHandleO2;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.apache.logging.log4j.Logger;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
+import org.bukkit.scoreboard.*;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.ModuleDataService;
+import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.data.language.LanguageEntry;
-import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.data.storage.DataEntry;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
@@ -48,23 +48,43 @@ import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.CachedInfo;
 import org.tbstcraft.quark.util.placeholder.StringObjectPlaceHolder;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @SuppressWarnings("deprecation")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule
-@QuarkCommand(name = "header", op = true)
+@QuarkCommand(name = "header", permission = "-quark.header")
 @Components({PlayerNameHeader.ProtocolLibNameTags.class, PlayerNameHeader.NameTags.class, PlayerNameHeader.BelowNameColumns.class})
 public final class PlayerNameHeader extends CommandModule {
     @Inject
     private LanguageEntry language;
 
+    @Inject
+    private Logger logger;
+
     @Override
     public void enable() {
         super.enable();
+
+        DataEntry legacy = ModuleDataService.get("player-name-header");
+
+
+        var keys = new ArrayList<>(legacy.getTagMap().keySet());
+
+        for (String player : keys) {
+            try {
+                DataEntry fixed = PlayerDataService.get(player);
+                fixed.set("player-name-header", legacy.getString(player));
+                legacy.getTagMap().remove(player);
+                fixed.save();
+                this.logger.info("moved playerData handle of %s to modern format.".formatted(player));
+            } catch (Exception e) {
+                this.logger.error("failed to move playerData handle of %s".formatted(player), e);
+            }
+        }
+
+        ModuleDataService.save("player-name-header");
+
         for (Player p : Bukkit.getOnlinePlayers()) {
             this.attach(p);
         }
@@ -85,19 +105,20 @@ public final class PlayerNameHeader extends CommandModule {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         Player p = Bukkit.getPlayerExact(args[1]);
-        NBTTagCompound entry = ModuleDataService.getEntry(this.getId());
+        var entry = PlayerDataService.get(args[1]);
+
         if (Objects.equals(args[0], "set")) {
-            entry.setString(args[1], args[2]);
+            entry.set("player-name-header", args[2]);
             this.language.sendMessage(sender, "set-header", args[1], args[2]);
         }
         if (Objects.equals(args[0], "clear")) {
-            entry.remove(args[1]);
+            entry.remove("player-name-header");
             this.language.sendMessage(sender, "clear-header", args[1]);
         }
         if (p != null && p.isOnline()) {
             this.attach(p);
         }
-        ModuleDataService.save(this.getId());
+        entry.save();
     }
 
     @Override
@@ -159,11 +180,11 @@ public final class PlayerNameHeader extends CommandModule {
     }
 
     public String getHeader(Player player) {
-        String name = player.getName();
+        var data = PlayerDataService.get(player);
         String header;
-        NBTTagCompound tag = ModuleDataService.getEntry("player-name-header");
-        if (tag.hasKey(name)) {
-            header = tag.getString(name);
+
+        if (data.hasKey("player-name-header")) {
+            header = data.getString("player-name-header");
         } else {
             if (player.isOp()) {
                 header = getConfig().getString("op-header");
@@ -173,7 +194,6 @@ public final class PlayerNameHeader extends CommandModule {
         }
         return "{;}" + header + "{;}";
     }
-
 
     public Component getPlayerName(Player player) {
         String header = getHeader(player);
@@ -202,7 +222,7 @@ public final class PlayerNameHeader extends CommandModule {
 
 
     public static final class NameTags extends ModuleComponent<PlayerNameHeader> {
-        private final MethodHandleO2<Team, Component, Component> TEAM_PREFIX = MethodHandle.select((ctx) -> {
+        private static final MethodHandleO2<Team, Component, Component> TEAM_PREFIX = MethodHandle.select((ctx) -> {
             ctx.attempt(() -> Team.class.getMethod("prefix", Component.class), (t, c1, c2) -> {
                 t.prefix(c1);
                 t.suffix(c2);
@@ -212,11 +232,23 @@ public final class PlayerNameHeader extends CommandModule {
                 t.setSuffix(ComponentSerializer.legacy(c2));
             });
         });
+        private static final MethodHandleO0<Team> SET_NAME_TAG_VISIBILITY = MethodHandle.select((ctx) -> {
+            ctx.attempt(() -> {
+                Class.forName("org.bukkit.scoreboard.Team.Option");
+                return null;
+            }, (t) -> t.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS));
+            ctx.attempt(
+                    () -> Team.class.getMethod("setNameTagVisibility", NameTagVisibility.class),
+                    (t) -> t.setNameTagVisibility(NameTagVisibility.ALWAYS)
+                       );
+            ctx.dummy((t) -> {});
+        });
 
 
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requireClass(() -> Class.forName("org.bukkit.scoreboard.Team"));
+            Compatibility.requireClass(() -> Class.forName("org.bukkit.scoreboard.ScoreboardTeam"));
         }
 
         @Override
@@ -234,7 +266,7 @@ public final class PlayerNameHeader extends CommandModule {
                 Scoreboard scoreboard = view.getScoreboard();
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    var tid = "quark@" + player.getName();
+                    var tid = "quark@" + player.getName().hashCode();
 
                     Team t = scoreboard.getTeam(tid);
 
@@ -242,7 +274,8 @@ public final class PlayerNameHeader extends CommandModule {
                         t = scoreboard.registerNewTeam(tid);
                     }
 
-                    t.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS);
+
+                    SET_NAME_TAG_VISIBILITY.invoke(t);
                     TEAM_PREFIX.invoke(t, parent.getPlayerPrefix(player), parent.getPlayerSuffix(player));
                     t.addPlayer(player);
                 }
@@ -307,8 +340,6 @@ public final class PlayerNameHeader extends CommandModule {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (entityId == player.getEntityId()) {
 
-                        //System.out.println(packet.getType() + "->" + player.getName());
-
                         // 创建 DataWatcher 并设置新的显示名称
                         var watcher = new WrappedDataWatcher();
                         var serializer = WrappedDataWatcher.Registry.getChatComponentSerializer(true);
@@ -347,19 +378,19 @@ public final class PlayerNameHeader extends CommandModule {
 
         @Override
         public void enable() {
-            //service.addPacketListener(this.playerData);
-            //service.addPacketListener(this.entityMeta);
+            service.addPacketListener(this.playerData);
+            service.addPacketListener(this.entityMeta);
         }
 
         @Override
         public void disable() {
-            //service.removePacketListener(this.playerData);
-            //service.removePacketListener(this.entityMeta);
+            service.removePacketListener(this.playerData);
+            service.removePacketListener(this.entityMeta);
         }
 
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
-            //Compatibility.requireClass(() -> Class.forName("com.comphenix.protocol.ProtocolLibrary"));
+            Compatibility.requireClass(() -> Class.forName("com.comphenix.protocol.ProtocolLibrary"));
         }
     }
 }

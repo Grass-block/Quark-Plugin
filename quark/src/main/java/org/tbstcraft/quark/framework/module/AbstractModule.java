@@ -3,16 +3,20 @@ package org.tbstcraft.quark.framework.module;
 import org.atcraftmc.qlib.command.AbstractCommand;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.FeatureAvailability;
+import org.tbstcraft.quark.data.config.ConfigContainer;
 import org.tbstcraft.quark.data.config.ConfigEntry;
 import org.tbstcraft.quark.data.language.ILanguageAccess;
 import org.tbstcraft.quark.data.language.LanguageContainer;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
+import org.tbstcraft.quark.framework.FunctionalComponent;
 import org.tbstcraft.quark.framework.module.component.ModuleComponent;
 import org.tbstcraft.quark.framework.module.services.ModuleServices;
 import org.tbstcraft.quark.framework.packages.IPackage;
 import org.tbstcraft.quark.framework.record.EmptyRecordEntry;
 import org.tbstcraft.quark.framework.record.RecordEntry;
+import org.tbstcraft.quark.framework.record.RecordService;
+import org.tbstcraft.quark.util.Identifiers;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -24,20 +28,21 @@ public abstract class AbstractModule implements FunctionalComponent {
     private final Set<AbstractCommand> commands = new HashSet<>();
     private final Map<Class<? extends ModuleComponent<?>>, ModuleComponent<?>> components = new HashMap<>();
 
-    private RecordEntry record;
     private LanguageEntry language;
     private ConfigEntry config;
+    private org.apache.logging.log4j.Logger l4jLogger;
 
+    //deprecated
     private Logger logger;
-
-    public AbstractModule() {
-    }
+    private RecordEntry record;
 
     public final void enableModule() {
-        this.record = this.useRecord() ? createRecord() : new EmptyRecordEntry();
         this.language = this.createLanguage();
         this.config = this.createConfig();
+        this.l4jLogger = createL4JLogger();
+
         this.logger = createLogger();
+        this.record = this.useRecord() ? createRecord() : new EmptyRecordEntry();
 
         ModuleServices.onEnable(this);
 
@@ -62,16 +67,32 @@ public abstract class AbstractModule implements FunctionalComponent {
 
 
     //data support
-    public abstract LanguageEntry createLanguage();
-
-    public abstract RecordEntry createRecord();
-
-    public abstract ConfigEntry createConfig();
-
+    @Deprecated
     public abstract Logger createLogger();
 
+    public abstract org.apache.logging.log4j.Logger createL4JLogger();
 
-    //internal objects
+    public final LanguageEntry createLanguage() {
+        return LanguageContainer.getInstance().entry(this.getParent().getId(), this.getId());
+    }
+
+    public final ConfigEntry createConfig() {
+        return ConfigContainer.getInstance().entry(this.getParent().getId(), Identifiers.external(this.getId()));
+    }
+
+    public final RecordEntry createRecord() {
+        return RecordService.create(this.getId(), this.getRecordFormat());
+    }
+
+
+    //internal service access
+    @Deprecated
+    public final Logger getLogger() {
+        this.l4jLogger.warn("legacy(java)loggers are no longer supported, please use #getL4JLogger() instead.");
+        return this.logger;
+    }
+
+    @Deprecated
     public final RecordEntry getRecord() {
         return this.record;
     }
@@ -84,12 +105,8 @@ public abstract class AbstractModule implements FunctionalComponent {
         return this.config;
     }
 
-    public final Logger getLogger() {
-        return this.logger;
-    }
-
-    public final Set<AbstractCommand> getCommands() {
-        return this.commands;
+    public final org.apache.logging.log4j.Logger getL4jLogger() {
+        return this.l4jLogger;
     }
 
 
@@ -103,7 +120,6 @@ public abstract class AbstractModule implements FunctionalComponent {
     }
 
     public abstract String getId();
-
 
     public final String[] getRecordFormat() {
         return this.getDescriptor().recordFormat();
@@ -134,10 +150,24 @@ public abstract class AbstractModule implements FunctionalComponent {
     }
 
 
+    //components
+    public Map<Class<? extends ModuleComponent<?>>, ModuleComponent<?>> getComponents() {
+        return components;
+    }
+
+    public <I extends ModuleComponent<?>> void getComponent(Class<I> clazz, Consumer<I> consumer) {
+        consumer.accept((I) this.components.get(clazz));
+    }
+
+    public final Set<AbstractCommand> getCommands() {
+        return this.commands;
+    }
+
+
     //object
     @Override
     public final String toString() {
-        return "%s{id=%s version=%s beta=%s, compat_blacklist=%s}".formatted(
+        return "%s{id=%s version=%s beta=%s, compat-blacklist=%s}".formatted(
                 this.getClass().getSimpleName(),
                 this.getVersion(),
                 this.getFullId(),
@@ -161,7 +191,7 @@ public abstract class AbstractModule implements FunctionalComponent {
 
     @Override
     protected final Object clone() throws CloneNotSupportedException {
-        throw new CloneNotSupportedException("can't clone a module instance");
+        throw new CloneNotSupportedException("cannot clone a module instance!");
     }
 
 
@@ -178,11 +208,11 @@ public abstract class AbstractModule implements FunctionalComponent {
         return this.getClass().getResource("/assets" + path);
     }
 
-    public Plugin getOwnerPlugin() {
+    public final Plugin getOwnerPlugin() {
         return this.getParent().getOwner();
     }
 
-    public String getDisplayName(Locale locale) {
+    public final String getDisplayName(Locale locale) {
         ILanguageAccess lang = LanguageContainer.getInstance().access(this.getParent().getId());
 
         if (!lang.hasKey("-module-name", this.getId())) {
@@ -191,14 +221,5 @@ public abstract class AbstractModule implements FunctionalComponent {
 
         String displayName = lang.getMessage(locale, "-module-name", this.getId());
         return "%s{#gray}({#white}%s{#gray})".formatted(getId(), displayName);
-    }
-
-
-    public Map<Class<? extends ModuleComponent<?>>, ModuleComponent<?>> getComponents() {
-        return components;
-    }
-
-    public <I extends ModuleComponent<?>> void getComponent(Class<I> clazz, Consumer<I> consumer) {
-
     }
 }

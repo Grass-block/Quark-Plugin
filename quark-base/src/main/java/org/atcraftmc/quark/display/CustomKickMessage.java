@@ -4,10 +4,12 @@ import me.gb2022.apm.local.MappedQueryEvent;
 import me.gb2022.apm.local.PluginMessageHandler;
 import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.tbstcraft.quark.data.language.Language;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -18,13 +20,16 @@ import java.util.Locale;
 @QuarkModule(version = "1.0.0")
 public final class CustomKickMessage extends PackageModule {
 
+    @Inject
+    private LanguageEntry language;
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onKick(PlayerKickEvent event) {
         if (event.getReason().startsWith("\u0002")) {
             event.setReason(event.getReason().replaceFirst("\u0002", ""));
             return;
         }
-        String msg = this.getLanguage().buildTemplate(Language.locale(event.getPlayer()), Language.generateTemplate(this.getConfig(), "ui"));
+        String msg = this.language.buildTemplate(Language.locale(event.getPlayer()), Language.generateTemplate(this.getConfig(), "ui"));
         event.setReason(msg.replace("{reason}", event.getReason()));
     }
 
@@ -37,7 +42,7 @@ public final class CustomKickMessage extends PackageModule {
         }
 
         Locale locale = Language.locale(event.getProperty("locale", String.class));
-        String ui = this.getLanguage().buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui"));
+        String ui = this.language.buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui"));
         event.setProperty("message", ui.replace("{reason}", msg));
     }
 }

@@ -2,6 +2,7 @@ package org.atcraftmc.quark.display;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,7 +38,8 @@ public final class WelcomeMessage extends PackageModule {
     private void sendWelcomeMessage(Player player) {
         String msg = this.getLanguage().buildTemplate(Language.locale(player), Language.generateTemplate(this.getConfig(), "ui"));
         msg = msg.replace("{player}", player.getName());
-        TextSender.sendLine(player, TextBuilder.buildComponent(msg));
+        ComponentLike component = TextBuilder.buildComponent(msg);
+        TextSender.sendMessage(player, component);
     }
 
     @QuarkCommand(name = "welcome-message")

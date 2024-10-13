@@ -2,6 +2,7 @@ package org.atcraftmc.quark.chat;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
@@ -10,7 +11,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.tbstcraft.quark.data.assets.AssetGroup;
 import org.tbstcraft.quark.data.language.LanguageEntry;
-import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -141,17 +141,17 @@ public final class ChatFilter extends CommandModule {
     @EventHandler
     public void onChatReported(ChatReport.ChatReportedEvent event) {
         if (this.flagged.contains(event.getUuid())) {
-            this.getLanguage().sendMessage(Bukkit.getPlayerExact(event.getSender()), "reported-warn", event.getShorted());
+            this.language.sendMessage(Bukkit.getPlayerExact(event.getSender()), "reported-warn", event.getShorted());
 
             if (!this.getConfig().getBoolean("punish")) {
-                event.setOutcome(this.getLanguage().item("outcome-warn"));
+                event.setOutcome(this.language.item("outcome-warn"));
                 return;
             }
 
             var command = getConfig().getString("punish-command").replace("{player}", event.getSender());
             TaskService.global().run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
 
-            event.setOutcome(this.getLanguage().item("outcome-punished"));
+            event.setOutcome(this.language.item("outcome-punished"));
         }
     }
 

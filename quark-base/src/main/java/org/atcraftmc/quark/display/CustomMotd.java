@@ -2,6 +2,8 @@ package org.atcraftmc.quark.display;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.apache.logging.log4j.Logger;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -12,9 +14,9 @@ import org.bukkit.util.CachedServerIcon;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.api.QueryPingEvent;
 import org.tbstcraft.quark.data.assets.Asset;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
 import org.tbstcraft.quark.foundation.text.ComponentBlock;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
@@ -42,6 +44,12 @@ public final class CustomMotd extends PackageModule implements QuarkCommandExecu
     @Inject("motd.yml;false")
     private Asset motdText;
 
+    @Inject
+    private Logger logger;
+
+    @Inject
+    private LanguageEntry language;
+
     @Override
     public void enable() {
         this.motdIcon.getFile();
@@ -65,7 +73,7 @@ public final class CustomMotd extends PackageModule implements QuarkCommandExecu
         try {
             this.cachedServerIcon = Bukkit.loadServerIcon(this.motdIcon.getFile());
         } catch (Exception e) {
-            this.getLogger().severe("failed to load server icon. please consider refresh icon when fixed.");
+            this.logger.error("failed to load server icon. please consider refresh icon when fixed.", e);
         }
     }
 
@@ -131,14 +139,14 @@ public final class CustomMotd extends PackageModule implements QuarkCommandExecu
         switch (args[0]) {
             case "refresh-icon" -> {
                 refreshIcon();
-                this.getLanguage().sendMessage(sender, "icon-refresh");
+                this.language.sendMessage(sender, "icon-refresh");
             }
             case "refresh-text" -> {
                 this.refreshText();
-                this.getLanguage().sendMessage(sender, "text-refresh");
+                this.language.sendMessage(sender, "text-refresh");
             }
             case "text" -> {
-                this.getLanguage().sendMessage(sender, "motd-command");
+                this.language.sendMessage(sender, "motd-command");
                 getMessage().send(sender);
             }
         }

@@ -92,3 +92,8 @@ language:
     mode-update: "{global#sys-info}WorldEdit选区渲染模式已设为 [{#white}更新时{#gray}]"
     mode-off: "{global#sys-info}WorldEdit选区渲染模式已设为 [{#white}关{#gray}]"
     render: "{global#sys-success}您的WorldEdit选区已渲染（高亮）。"
+  afk:
+    left: "{global#info}玩家{#var}暂时离开了。"
+    left-self: "{global#info}你暂时离开了。"
+    back: "{global#info}玩家{#var}在暂时离开{#var}后回来了。"
+    back-self: "{global#info}你在暂时离开{#var}后回来了"

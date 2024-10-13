@@ -2,6 +2,7 @@ package org.atcraftmc.quark.security;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,6 +26,7 @@ import org.tbstcraft.quark.foundation.region.SimpleRegion;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.framework.record.RecordEntry;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 
 import java.util.*;
@@ -34,6 +36,9 @@ import java.util.*;
 @QuarkModule(version = "1.3.4", recordFormat = {"Time", "Player", "World", "X", "Y", "Z", "Region"})
 public final class ProtectionArea extends PackageModule {
     private final HashMap<String, SimpleRegion> regions = new HashMap<>();
+
+    @Inject("limited-area;Time,Player,World,X,Y,Z,Region")
+    private RecordEntry record;
 
     @Override
     public void enable() {
@@ -110,7 +115,7 @@ public final class ProtectionArea extends PackageModule {
                     }
                     Player p = event.getPlayer();
                     Location loc = p.getLocation();
-                    this.getRecord().addLine(
+                    this.record.addLine(
                             SharedObjects.DATE_FORMAT.format(new Date()),
                             p.getName(),
                             p.getLocation().getWorld().getName(),
@@ -140,7 +145,7 @@ public final class ProtectionArea extends PackageModule {
                 if (!this.getConfig().getBoolean("record")) {
                     return;
                 }
-                this.getRecord().addLine(
+                this.record.addLine(
                         SharedObjects.DATE_FORMAT.format(new Date()),
                         player.getName(),
                         player.getLocation().getWorld().getName(),

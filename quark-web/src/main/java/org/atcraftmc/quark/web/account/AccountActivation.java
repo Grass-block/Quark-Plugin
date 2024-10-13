@@ -4,6 +4,7 @@ import me.gb2022.apm.local.MappedBroadcastEvent;
 import me.gb2022.apm.local.PluginMessageHandler;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import net.kyori.adventure.text.ComponentLike;
 import org.atcraftmc.quark.web.HttpService;
 import org.atcraftmc.quark.web.SMTPService;
 import org.atcraftmc.quark.web.http.ContentType;
@@ -26,7 +27,6 @@ import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
-import org.tbstcraft.quark.util.ExceptionUtil;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -106,15 +106,13 @@ public final class AccountActivation extends PackageModule {
         Locale locale = Language.locale(player);
         TaskService.global().timer(uuid, 0, 20, () -> {
             if (status == AccountStatus.UNLINKED) {
-                TextSender.fullTitle(player,
-                        this.language.getMessageComponent(locale, "link-title"),
-                        this.language.getMessageComponent(locale, "link-guide"),
-                        0, 40, 0);
+                ComponentLike title = this.language.getMessageComponent(locale, "link-title");
+                ComponentLike subtitle = this.language.getMessageComponent(locale, "link-guide");
+                TextSender.sendTitle(player, title, subtitle, 0, 40, 0);
             } else {
-                TextSender.fullTitle(player,
-                        this.language.getMessageComponent(locale, "verify-title"),
-                        this.language.getMessageComponent(locale, "verify-guide"),
-                        0, 40, 0);
+                ComponentLike title = this.language.getMessageComponent(locale, "verify-title");
+                ComponentLike subtitle = this.language.getMessageComponent(locale, "verify-guide");
+                TextSender.sendTitle(player, title, subtitle, 0, 40, 0);
             }
 
             if (!player.isOnline()) {
@@ -147,7 +145,7 @@ public final class AccountActivation extends PackageModule {
 
             context.setData(content.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
-            ExceptionUtil.log(getLogger(), e);
+            getL4jLogger().error("failed to send response to verification page", e);
         }
     }
 

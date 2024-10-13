@@ -1,5 +1,6 @@
 package org.tbstcraft.quark.data;
 
+import com.google.common.annotations.Beta;
 import me.gb2022.commons.math.SHA;
 import me.gb2022.commons.nbt.NBT;
 import me.gb2022.commons.nbt.NBTTagCompound;
@@ -19,7 +20,7 @@ public class DataService implements StorageContext {
     private final ArrayDeque<String> saveRequest = new ArrayDeque<>();
     private final HashMap<String, NBTTagCompound> cache = new HashMap<>();
     private final HashMap<String, DataEntry> entries = new HashMap<>();
-    private final Logger logger;
+    final Logger logger;
     private final File folder;
     private DataBackend backend;
     private boolean available = true;
@@ -35,7 +36,7 @@ public class DataService implements StorageContext {
         this.saveEntry(entry.getId());
     }
 
-    public DataEntry get(String id) {
+    public synchronized DataEntry get(String id) {
         return this.entries.computeIfAbsent(id, k -> new DataEntry(this.getEntry(id), this, k));
     }
 
@@ -56,6 +57,7 @@ public class DataService implements StorageContext {
         this.convertTo(new FileBackend(this.getFolder()));
     }
 
+    @Beta
     private void convertTo(DataBackend backend) {
         this.available = false;
 
@@ -94,7 +96,6 @@ public class DataService implements StorageContext {
         this.available = true;
     }
 
-
     public synchronized void open() {
         if (this.isLevelDBStorage()) {
             this.backend = new LevelDBBackend(this.getFolder());
@@ -115,9 +116,14 @@ public class DataService implements StorageContext {
     public synchronized NBTTagCompound getEntry(String id) {
         id = Identifiers.internal(id);
         if (!this.cache.containsKey(id)) {
+            //load here.
             this.cache.put(id, this.backend.load(hash(id)));
         }
         return this.cache.get(id);
+    }
+
+    public File getFile(String id) {
+        return new File(((FileBackend) this.backend).getDataFile(hash(id)));
     }
 
     public synchronized void saveEntry(String id) {
@@ -182,7 +188,7 @@ public class DataService implements StorageContext {
         return backend;
     }
 
-    private String hash(String id) {
+    String hash(String id) {
         return SHA.getSHA1(id, false);
     }
 

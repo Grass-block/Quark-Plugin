@@ -1,6 +1,6 @@
 package org.tbstcraft.quark.framework.service;
 
-import org.tbstcraft.quark.framework.module.FunctionalComponent;
+import org.tbstcraft.quark.framework.FunctionalComponent;
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.internal.LocaleService;

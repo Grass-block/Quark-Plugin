@@ -1,6 +1,8 @@
 package org.atcraftmc.quark.contents;
 
 import me.gb2022.commons.reflect.Inject;
+import org.apache.logging.log4j.Logger;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -8,9 +10,10 @@ import org.bukkit.inventory.Recipe;
 import org.tbstcraft.quark.data.assets.AssetGroup;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.crafting.RecipeDeserializer;
 import org.tbstcraft.quark.foundation.crafting.RecipeManager;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 
@@ -27,11 +30,19 @@ public final class CustomRecipe extends PackageModule {
     @Inject("recipe;false")
     private AssetGroup recipeFiles;
 
+    @Inject
+    private Logger logger;
+
+    @Override
+    public void checkCompatibility() throws APIIncompatibleException {
+        Compatibility.requireClass(() -> Class.forName("org.bukkit.inventory.RecipeChoice"));
+    }
+
     public void load() {
         this.clear();
 
         for (String s : this.recipeFiles.list()) {
-            this.getLogger().info("loading recipe bundle %s".formatted(s));
+            this.logger.info("loading recipe bundle %s".formatted(s));
 
             ConfigurationSection map = YamlConfiguration.loadConfiguration(this.recipeFiles.getFile(s)).getConfigurationSection("recipes");
 

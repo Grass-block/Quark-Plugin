@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.assets.Asset;
 import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -24,6 +25,9 @@ import java.util.List;
 public final class CustomLogFormat extends CommandModule {
     @Inject("log.xml;false")
     private Asset logAsset;
+
+    @Inject
+    private LanguageEntry language;
 
     @Override
     public void enable() {
@@ -87,24 +91,24 @@ public final class CustomLogFormat extends CommandModule {
         switch (args[0]) {
             case "reload" -> {
                 this.setFormat();
-                this.getLanguage().sendMessage(sender, "reload");
+                this.language.sendMessage(sender, "reload");
             }
             case "restore" -> {
                 this.restoreFormatFile();
                 this.setFormat();
-                this.getLanguage().sendMessage(sender, "restore");
+                this.language.sendMessage(sender, "restore");
             }
             case "on" -> {
                 this.setDataEnable(true);
                 this.setFormat();
-                this.getLanguage().sendMessage(sender, "enable");
+                this.language.sendMessage(sender, "enable");
             }
             case "off" -> {
                 this.setDataEnable(false);
                 if (!this.setLoggerFormat(Bukkit.class.getResource("/log4j2.xml"))) {
                     this.logger.severe("failed to inject log format, consider checking resource.");
                 }
-                this.getLanguage().sendMessage(sender, "disable");
+                this.language.sendMessage(sender, "disable");
             }
         }
     }

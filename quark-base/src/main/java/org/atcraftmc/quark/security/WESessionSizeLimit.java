@@ -24,11 +24,13 @@ import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3i;
 import org.tbstcraft.quark.SharedObjects;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.framework.record.RecordEntry;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,12 +38,18 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @SuppressWarnings("DuplicatedCode")
-@QuarkModule(version = "1.2.5", recordFormat = {"Time", "Player", "Action", "X", "Y", "Z", "Limit"})
+@QuarkModule(version = "1.2.5")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class WESessionSizeLimit extends PackageModule {
 
     @Inject("!quark.we.size.bypass")
     public Permission bypassCheck;
+
+    @Inject
+    private LanguageEntry language;
+
+    @Inject("we-size-limit;Time,Player,Action,X,Y,Z,Limit")
+    private RecordEntry record;
 
     @Override
     public void checkCompatibility() throws APIIncompatibleException {
@@ -64,21 +72,24 @@ public final class WESessionSizeLimit extends PackageModule {
         var player = event.getPlayer();
         if (player.hasPermission(this.bypassCheck)) {
             if (event.getStage() == EditSession.Stage.BEFORE_CHANGE) {
-                this.getLanguage().sendMessage(player, "select-limited-warn", x, y, z, limit);
+                this.language.sendMessage(player, "select-limited-warn", x, y, z, limit);
             }
             return;
         }
 
         if (event.getStage() == EditSession.Stage.BEFORE_CHANGE) {
-            this.getLanguage().sendMessage(player, "select-limited", x, y, z, limit);
+            this.language.sendMessage(player, "select-limited", x, y, z, limit);
         }
 
         event.setCancelled(true);
-        this.getRecord().addLine(SharedObjects.DATE_FORMAT.format(new Date()), "Select", x, y, z, limit);
+        this.record.addLine(SharedObjects.DATE_FORMAT.format(new Date()), "Select", x, y, z, limit);
     }
 
     @EventHandler
     public void onSelect(WESessionSelectEvent event) {
+        if (event.getRegion() == null) {
+            return;
+        }
         var box = event.getRegion().asAABB();
         var limit = this.getConfig().getInt("max-selection-size");
 
@@ -90,7 +101,7 @@ public final class WESessionSizeLimit extends PackageModule {
             return;
         }
 
-        this.getLanguage().sendMessage(event.getPlayer(), "select-limited-warn", x, y, z, limit);
+        this.language.sendMessage(event.getPlayer(), "select-limited-warn", x, y, z, limit);
     }
 
     @EventHandler
@@ -105,14 +116,23 @@ public final class WESessionSizeLimit extends PackageModule {
 
         var region = WESessionTrackService.getRegion(player);
 
-        var cx = (int) region.asAABB().getCenter().x();
-        var cy = (int) region.asAABB().getCenter().y();
-        var cz = (int) region.asAABB().getCenter().z();
+        var aabb = region.asAABB();
+
+        var cx = (int) aabb.getCenter().x();
+        var cy = (int) aabb.getCenter().y();
+        var cz = (int) aabb.getCenter().z();
+
+        var w = aabb.x1 - aabb.x0;
+        var h = aabb.y1 - aabb.y0;
+        var d = aabb.z1 - aabb.z0;
 
         var wrapped = event.getMask();
         var wrapper = new RadiusLimitedExtent(wrapped, cx, cy, cz, limit, cancel);
 
-        wrapper.addAnnounce(() -> this.getLanguage().sendMessage(player, cancel ? "edit-limited" : "edit-limited-warn", limit));
+        wrapper.addAnnounce(() -> {
+            this.language.sendMessage(player, cancel ? "edit-limited" : "edit-limited-warn", limit);
+            this.record.addLine(SharedObjects.DATE_FORMAT.format(new Date()), "Edit", w, h, d, limit);
+        });
 
         event.setMask(wrapper);
     }

@@ -2,6 +2,7 @@ package org.tbstcraft.quark.internal;
 
 import com.google.gson.JsonObject;
 import me.gb2022.commons.reflect.Inject;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.assets.AssetGroup;
@@ -21,7 +22,7 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-@QuarkModule(version = "1.0")
+@QuarkModule
 public final class CustomLanguagePackLoader extends PackageModule {
     public static final String PACK_SCHEME = "CB723E2A-873D-5435-8CF2-9DEC5D09BDBD";
 
@@ -30,10 +31,13 @@ public final class CustomLanguagePackLoader extends PackageModule {
     @Inject("language-packs;false")
     private AssetGroup languagePacks;
 
+    @Inject
+    private Logger logger;
+
     @Override
     public void enable() {
         if (this.languagePacks.getFolder().mkdirs()) {
-            getLogger().info("created language pack container directory.");
+            this.logger.info("created language pack container directory.");
         }
 
         for (File f : Objects.requireNonNull(this.languagePacks.getFolder().listFiles())) {
@@ -46,7 +50,7 @@ public final class CustomLanguagePackLoader extends PackageModule {
                     LanguageContainer.getInstance().register(pack);
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                this.logger.error("cannot load custom language packs from {}", f.getAbsolutePath(), e);
             }
         }
         LanguageContainer.getInstance().refresh(true);
@@ -73,7 +77,7 @@ public final class CustomLanguagePackLoader extends PackageModule {
 
 
             if (!scheme.equals(PACK_SCHEME)) {
-                getLogger().warning("Invalid scheme uid %s at pack %s".formatted(scheme, file.getName()));
+                this.logger.warn("Invalid scheme uid %s at pack %s".formatted(scheme, file.getName()));
                 return packs;
             }
 
@@ -83,7 +87,7 @@ public final class CustomLanguagePackLoader extends PackageModule {
                     continue;
                 }
 
-                var packInfos = entry.getName().replace(".yml", "").split("_");
+                var packInfos = entry.getName().replace(".yml", "").split("\\.");
                 var packInput = file.getInputStream(entry);
 
                 packs.add(new ThirdPartyLanguagePack(packInfos[0], packInfos[1], this.getOwnerPlugin(), uuid, packInput));
@@ -92,7 +96,7 @@ public final class CustomLanguagePackLoader extends PackageModule {
             throw new RuntimeException(e);
         }
 
-        getLogger().info("loaded pack %s, %s packs created".formatted(file.getName(), packs.size()));
+        this.logger.info("loaded pack %s, %s packs created".formatted(file.getName(), packs.size()));
 
         return packs;
     }

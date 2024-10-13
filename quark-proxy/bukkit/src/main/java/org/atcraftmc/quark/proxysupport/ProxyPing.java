@@ -68,7 +68,7 @@ public final class ProxyPing extends PackageModule {
         AtomicInteger ping1 = new AtomicInteger(Players.getPing(player));
 
         RemoteMessageService.query("proxy", "quark:query/player/ping", (b) -> BufferUtil.writeString(b, player.getName()))
-                .timeout(250, () -> getLogger().severe("failed to send remote query(%s) for ping!".formatted(player.getName())))
+                .timeout(250, () -> getL4jLogger().error("failed to send remote query(%s) for ping!".formatted(player.getName())))
                 .result((b) -> ping1.set(b.readInt())).sync();
 
         int ping = ping1.get();

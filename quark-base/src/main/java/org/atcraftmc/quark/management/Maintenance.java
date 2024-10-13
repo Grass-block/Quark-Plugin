@@ -16,6 +16,7 @@ import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.internal.LocaleService;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ public final class Maintenance extends PackageModule {
         String locale = "zh-cn";
 
         if (p != null) {
-            locale = p.getLocale();
+            locale = LocaleService.saveGetMCPlayerLocale(p);
             if (p.hasPermission(this.bypass)) {
                 return;
             }

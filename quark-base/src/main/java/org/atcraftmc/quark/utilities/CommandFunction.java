@@ -2,6 +2,7 @@ package org.atcraftmc.quark.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.AbstractCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -27,6 +28,9 @@ public final class CommandFunction extends PackageModule {
     @Inject("function;false")
     private AssetGroup functionFiles;
 
+    @Inject
+    private Logger logger;
+
     @Override
     public void enable() {
         if (!this.functionFiles.existFolder()) {
@@ -44,7 +48,7 @@ public final class CommandFunction extends PackageModule {
                 QuarkCommandManager.getInstance().register(adapter);
             }
 
-            getLogger().info("loaded function provider file %s.".formatted(cfg));
+            this.logger.info("loaded function provider file %s.".formatted(cfg));
         }
     }
 

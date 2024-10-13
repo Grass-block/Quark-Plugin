@@ -19,12 +19,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.util.Vector;
+import org.tbstcraft.quark.PlayerView;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.foundation.platform.Players;
+import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -72,7 +75,31 @@ public final class RealisticMinecart extends PackageModule {
 
             agent.setExpectedMaxSpeed(0);
             agent.setSpeedLimit(0);
+
+            var view = PlayerView.getInstance(p).getActionbar();
+
+            view.addChannel("quark:realistic-minecart:ui", 999, 2, (a, t) -> {
+                var thrustLevel = p.getInventory().getHeldItemSlot() - 4;
+                var acceleration = getConfig().getFloat("thrust-" + thrustLevel + "-acceleration");
+                var speed = m.getMaxSpeed();
+
+                this.renderUI(p, speed, acceleration, thrustLevel);
+            });
         }
+    }
+
+    @EventHandler
+    public void onVehicleExit(VehicleExitEvent event) {
+        if (!(event.getVehicle() instanceof Minecart)) {
+            return;
+        }
+        if (!(event.getExited() instanceof Player p)) {
+            return;
+        }
+
+        var view = PlayerView.getInstance(p).getActionbar();
+
+        view.removeChannel("quark:realistic-minecart:ui");
     }
 
     @EventHandler
@@ -96,7 +123,6 @@ public final class RealisticMinecart extends PackageModule {
         var agent = VirtualMinecartAgent.get(this, minecart);
         var thrustLevel = p.getInventory().getHeldItemSlot() - 4;
         var acceleration = getConfig().getFloat("thrust-" + thrustLevel + "-acceleration");
-        var speed = minecart.getMaxSpeed();
 
         agent.setSpeedLimit(getConfig().getFloat("max-speed"));
         agent.setAcceleration(acceleration / 20f);
@@ -107,8 +133,6 @@ public final class RealisticMinecart extends PackageModule {
         if (BukkitUtil.getMaximumAxis(minecart.getVelocity()) == 0 && thrustLevel > 0) {
             minecart.setVelocity(this.buildPlayerSpeedVector(p));
         }
-
-        this.renderUI(p, speed, acceleration, thrustLevel);
     }
 
     private void renderUI(Player p, double speed, double acceleration, int thrustLevel) {
@@ -140,7 +164,8 @@ public final class RealisticMinecart extends PackageModule {
                 .replace("{acceleration}", accelerationColumn)
                 .replace("{level}", thrustLevelColumn);
 
-        Players.sendActionBarTitle(p, this.language.buildTemplate(locale, template));
+        String message = this.language.buildTemplate(locale, template);
+        TextSender.sendActionbarTitle(p, TextBuilder.build(message));
     }
 
     private Vector buildPlayerSpeedVector(Player p) {
@@ -160,10 +185,6 @@ public final class RealisticMinecart extends PackageModule {
     }
 
     private void tick() {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            tickPlayerMinecart(p);
-        }
-
         for (World world : Bukkit.getWorlds()) {
             for (Minecart minecart : world.getEntitiesByClass(Minecart.class)) {
                 if (minecart.getType() != EntityType.MINECART) {
@@ -172,6 +193,10 @@ public final class RealisticMinecart extends PackageModule {
 
                 TaskService.entity(minecart).run((ctx) -> VirtualMinecartAgent.get(this, minecart).tick());
             }
+        }
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            tickPlayerMinecart(p);
         }
     }
 

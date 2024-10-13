@@ -1,4 +1,3 @@
-#file: noinspection HttpUrlsUsage
 config:
   explosion-defender:
     override-explosion: true
@@ -25,9 +24,9 @@ config:
     max-selection-size: 128
     max-edit-size: 384
   ip-defender:
-    record: true
-    auto-ban: false
-    auto-ban-day-time: 0
+    record: true #是否记录IP属地变化
+    auto-ban: false #是否自动封禁
+    auto-ban-day-time: 0 #封禁的时间，往下为天，时，分，秒
     auto-ban-hour-time: 0
     auto-ban-minute-time: 10
     auto-ban-second-time: 0

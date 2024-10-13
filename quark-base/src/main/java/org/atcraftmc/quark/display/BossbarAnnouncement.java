@@ -21,7 +21,9 @@ import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.foundation.text.TextBuilder;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -41,6 +43,13 @@ public final class BossbarAnnouncement extends PackageModule {
 
     @Inject
     private LanguageEntry language;
+
+    @Override
+    public void checkCompatibility() throws APIIncompatibleException {
+        Compatibility.requireClass(()->Class.forName("org.bukkit.boss.BossBar"));
+        Compatibility.requireClass(()->Class.forName("org.bukkit.boss.BarColor"));
+        Compatibility.requireClass(()->Class.forName("org.bukkit.boss.BarStyle"));
+    }
 
     @Override
     public void enable() {

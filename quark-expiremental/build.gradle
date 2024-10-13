@@ -1,0 +1,13 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.atcraftmc'
+version = 'unspecified'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}

@@ -50,8 +50,9 @@ public final class JsonModuleRegistry extends ModuleRegistry {
         var logger = this.getPackage().getLogger();
         var classPath = this.json.get("package_namespace").getAsString();
 
-        for (var id : modules.keySet()) {
-            var path = modules.get(id).getAsString();
+        for (Map.Entry<String, JsonElement> entry : modules.entrySet()) {
+            var path = entry.getValue().getAsString();
+            var id = entry.getKey();
 
             if (path.startsWith(".")) {
                 path = classPath + path;

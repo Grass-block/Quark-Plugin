@@ -8,18 +8,22 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.Permission;
 import org.atcraftmc.qlib.command.QuarkCommand;
+import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 
 import java.util.List;
 
-@QuarkModule(version = "1.0")
+@QuarkModule
 @QuarkCommand(name = "hat", permission = "+quark.hat.command", playerOnly = true)
 public final class Hats extends CommandModule {
 
     @Inject("-quark.hat.other")
     private Permission setOtherPermission;
+    
+    @Inject
+    private LanguageEntry language;
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
@@ -27,7 +31,7 @@ public final class Hats extends CommandModule {
         ItemStack stack = player.getInventory().getItemInMainHand();
 
         if (stack.getType().isAir()) {
-            getLanguage().sendMessage(sender, "empty");
+            this.language.sendMessage(sender, "empty");
             return;
         }
 
@@ -42,15 +46,15 @@ public final class Hats extends CommandModule {
             }
             target = Bukkit.getPlayerExact(args[0]);
             if (target == null) {
-                getLanguage().sendMessage(sender, "not-found");
+                this.language.sendMessage(sender, "not-found");
                 return;
             }
         }
 
         if (!setHat(target, stack)) {
-            getLanguage().sendMessage(sender, "failed");
+            this.language.sendMessage(sender, "failed");
         } else {
-            getLanguage().sendMessage(sender, "success");
+            this.language.sendMessage(sender, "success");
 
             player.getInventory().setItemInMainHand(null);
         }

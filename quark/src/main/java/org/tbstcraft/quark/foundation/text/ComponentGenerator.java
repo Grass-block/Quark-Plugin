@@ -175,7 +175,6 @@ public interface ComponentGenerator {
         } else if (tag.contains("translate")) {
             var id = content.split("#")[0];
             var b = Component.translatable(Objects.requireNonNull(id)).toBuilder();
-            System.out.println(content);
             if (content.contains("#")) {
                 var c = content.split("#")[1];
 

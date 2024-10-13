@@ -8,6 +8,7 @@ import me.gb2022.commons.http.HttpRequest;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.BanList;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,28 +22,30 @@ import org.tbstcraft.quark.data.language.LanguageEntry;
 import org.tbstcraft.quark.data.language.LocaleMapping;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
 import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.framework.record.RecordEntry;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.net.InetSocketAddress;
 import java.util.*;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
-@QuarkModule(version = "1.3.4", recordFormat = {"Time", "Player", "OldIP", "NewIP"})
+@QuarkModule(version = "1.3.4")
 @CommandProvider(IPDefender.IPQueryCommand.class)
 public final class IPDefender extends PackageModule implements QuarkCommandExecutor {
 
     @Inject
     private LanguageEntry language;
 
+    @Inject("ip-defender;Time,Player,OldIP,NewIP")
+    private RecordEntry record;
+
     public static String defaultResult(Locale locale) {
-        if (List.of(Locale.CHINESE, Locale.SIMPLIFIED_CHINESE, Locale.TRADITIONAL_CHINESE, Locale.CHINA)
-                .contains(locale)) {
+        if (List.of(Locale.CHINESE, Locale.SIMPLIFIED_CHINESE, Locale.TRADITIONAL_CHINESE, Locale.CHINA).contains(locale)) {
             return "[未知]";
         }
         return "unknown";
@@ -79,11 +82,10 @@ public final class IPDefender extends PackageModule implements QuarkCommandExecu
 
             JsonObject json = SharedObjects.JSON_PARSER.parse(s).getAsJsonObject();
 
-            String result = "%s-%s-%s".formatted(
-                    json.getAsJsonObject().get("country").getAsString(),
-                    json.getAsJsonObject().get("regionName").getAsString(),
-                    json.getAsJsonObject().get("city").getAsString()
-            );
+            String result = "%s-%s-%s".formatted(json.getAsJsonObject().get("country").getAsString(),
+                                                 json.getAsJsonObject().get("regionName").getAsString(),
+                                                 json.getAsJsonObject().get("city").getAsString()
+                                                );
             if (Objects.equals(result, "null-null-null")) {
                 return defaultResult(locale);
             }
@@ -136,10 +138,9 @@ public final class IPDefender extends PackageModule implements QuarkCommandExecu
 
         this.language.sendMessage(player, "warn", currentDisplay);
 
-        PluginMessenger.broadcastMapped(
-                "ip:change",
-                (map) -> map.put("player", player.getName()).put("old-ip", previous).put("new-ip", currentDisplay)
-        );
+        PluginMessenger.broadcastMapped("ip:change",
+                                        (map) -> map.put("player", player.getName()).put("old-ip", previous).put("new-ip", currentDisplay)
+                                       );
 
         if (this.getConfig().getBoolean("auto_ban")) {
             String name = player.getName();
@@ -160,7 +161,7 @@ public final class IPDefender extends PackageModule implements QuarkCommandExecu
         }
 
         if (this.getConfig().getBoolean("record")) {
-            this.getRecord().addLine(SharedObjects.DATE_FORMAT.format(new Date()), player.getName(), previous, current);
+            this.record.addLine(SharedObjects.DATE_FORMAT.format(new Date()), player.getName(), previous, current);
         }
     }
 
