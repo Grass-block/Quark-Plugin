@@ -32,7 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @CommandProvider({AccountCommand.class})
-@QuarkModule(version = "1.0.2")
+@QuarkModule(version = "1.0.2", defaultEnable = false)
 @AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.PLUGIN_MESSAGE})
 public final class AccountActivation extends PackageModule {
     private final PlayerFreezingManager freezingManager = new PlayerFreezingManager(this);

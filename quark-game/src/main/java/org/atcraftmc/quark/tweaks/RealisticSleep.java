@@ -28,7 +28,7 @@ import org.tbstcraft.quark.util.TaskHandle;
 import java.util.*;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
-@QuarkModule(version = "1.0", compatBlackList = {APIProfile.ARCLIGHT, APIProfile.BUKKIT, APIProfile.BUKKIT})
+@QuarkModule(beta = true, compatBlackList = {APIProfile.ARCLIGHT, APIProfile.BUKKIT, APIProfile.BUKKIT})
 @CommandProvider(RealisticSleep.LeaveBedCommand.class)
 public final class RealisticSleep extends PackageModule {
     private final Map<World, Set<Player>> sleepingPlayers = new HashMap<>();

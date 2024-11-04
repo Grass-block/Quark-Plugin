@@ -2,3 +2,8 @@ config:
   waypoint:
     allow-coordinate-add: true
     home: true
+  rtp:
+    limit: 10000
+    min-height: 64
+    max-height: 140
+    attempt: 12

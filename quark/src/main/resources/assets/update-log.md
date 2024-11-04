@@ -12,6 +12,8 @@
 - [AdvancePluginCommands] Added hover and clicking infos when listing plugins.
 - [AdvancePluginCommands] Plugin manager can now fully remove a plugin and its ref when unloading it. [1.20.1]
 - [WESessionSizeLimit] Player Edit operation will be recorded.
+- [RTP] Added /rtp for random teleporting
+- [RealisticSleep] move to beta due to crushes and not-good feedbacks
 
 ### 0.64.14
 

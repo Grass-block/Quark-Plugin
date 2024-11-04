@@ -68,7 +68,6 @@ public final class PlayerNameHeader extends CommandModule {
 
         DataEntry legacy = ModuleDataService.get("player-name-header");
 
-
         var keys = new ArrayList<>(legacy.getTagMap().keySet());
 
         for (String player : keys) {
@@ -329,6 +328,9 @@ public final class PlayerNameHeader extends CommandModule {
     }
 
     public static final class ProtocolLibNameTags extends ModuleComponent<PlayerNameHeader> {
+
+
+
         private final ProtocolManager service = ProtocolLibrary.getProtocolManager();
 
         private final PacketListener entityMeta = new PacketAdapter(Quark.getInstance(), PacketType.Play.Server.ENTITY_METADATA) {
@@ -390,6 +392,7 @@ public final class PlayerNameHeader extends CommandModule {
 
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
+            Compatibility.assertion(false);
             Compatibility.requireClass(() -> Class.forName("com.comphenix.protocol.ProtocolLibrary"));
         }
     }

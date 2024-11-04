@@ -13,7 +13,7 @@ language:
       - 'You cannot enter as the server is under maintenance.'
       - 'Maintenance will take some time, please be patient. We apologize for any inconvenience.'
   advanced-plugin-command:
-    list: "{global#sys-operation}Here are all the plugins: {#return}{#var}"
+    list: "{global#sys-operation}Here are all the plugins: {#var}"
     enable: "{global#sys-operation}Enabled plugin {#var}."
     disable: "{global#sys-operation}Disabled plugin {#var}."
     load: "{global#sys-operation}Loaded plugin {#var}."

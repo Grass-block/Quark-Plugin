@@ -13,7 +13,7 @@ language:
       - '由于服务器正在维护,您暂时无法进入。'
       - '维护需要一段时间,请您耐心等待,我们对此十分抱歉。'
   advanced-plugin-command:
-    list: "{global#sys-operation}以下是所有插件: {#return}{#var}"
+    list: "{global#sys-operation}以下是所有插件: {#var}"
     info: "{global#sys-operation}以下是关于 {#var} 插件的信息:{#return}%s"
     info-name: "{#gold}名称{#white}: %s[%s]"
     info-version: "{#gold}版本{#white}: %s"

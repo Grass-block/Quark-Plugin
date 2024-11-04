@@ -2,9 +2,7 @@ package org.tbstcraft.quark.framework.packages.initializer;
 
 import me.gb2022.commons.container.Pair;
 import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.config.Configuration;
-import org.tbstcraft.quark.data.language.ILanguageAccess;
 import org.tbstcraft.quark.data.language.LanguagePack;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.providing.DirectModuleRegistry;
@@ -18,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public final class PackageBuilderInitializer implements PackageInitializer {
     private final Set<Class<? extends Service>> services = new HashSet<>();
@@ -31,6 +30,12 @@ public final class PackageBuilderInitializer implements PackageInitializer {
     public PackageBuilderInitializer(String id, FeatureAvailability availability) {
         this.id = id;
         this.availability = availability;
+    }
+
+    public static PackageBuilderInitializer of(String id, FeatureAvailability availability, Consumer<PackageBuilderInitializer> handler) {
+        var i = new PackageBuilderInitializer(id, availability);
+        handler.accept(i);
+        return i;
     }
 
     @Override
