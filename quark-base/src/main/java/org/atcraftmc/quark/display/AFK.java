@@ -108,7 +108,7 @@ public final class AFK extends PackageModule {
         broadcast(
                 player,
                 (p) -> this.language.sendMessage(p, "back-self", time),
-                (p) -> this.language.sendMessage(p, "back", time, p.getName())
-                 );
+                (p) -> this.language.sendMessage(p, "back", p.getName(), time)
+        );
     }
 }

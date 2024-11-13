@@ -46,7 +46,6 @@ public interface Compatibility {
         }
     }
 
-
     interface MethodAssertion {
         Method get() throws NoSuchMethodException;
     }

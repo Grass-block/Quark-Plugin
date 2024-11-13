@@ -8,6 +8,7 @@ import org.atcraftmc.quark.display.*;
 import org.atcraftmc.quark.management.*;
 import org.atcraftmc.quark.security.*;
 import org.atcraftmc.quark.utilities.*;
+import org.atcraftmc.quark.utilities.viewdistance.DynamicViewDistance;
 import org.tbstcraft.quark.FeatureAvailability;
 import org.tbstcraft.quark.framework.packages.initializer.PackageBuilderInitializer;
 import org.tbstcraft.quark.framework.packages.initializer.PackageInitializer;
@@ -83,6 +84,8 @@ public final class QuarkBase extends MultiPackageProvider {
 
             i.language("quark-display", "zh_cn");
             i.language("quark-display", "en_us");
+
+            i.service(ChatForwardingService.class);
 
             i.config("quark-display");
         }), PackageBuilderInitializer.of("quark-chat", FeatureAvailability.BOTH, (i) -> {

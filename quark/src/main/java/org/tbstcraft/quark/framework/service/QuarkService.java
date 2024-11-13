@@ -11,4 +11,6 @@ public @interface QuarkService {
     Class<? extends Service> impl() default Service.class;
 
     String id();
+
+    String[] requiredBy() default {"*"};
 }

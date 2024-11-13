@@ -1,4 +1,4 @@
-package org.atcraftmc.quark.utilities;
+package org.atcraftmc.quark.utilities.viewdistance;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
@@ -6,8 +6,6 @@ import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.assertion.NumberLimitation;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
-import org.atcraftmc.quark.utilities.viewdistance.CustomSettingStrategy;
-import org.atcraftmc.quark.utilities.viewdistance.PlayerCountStrategy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,7 +24,6 @@ import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
-import org.atcraftmc.quark.utilities.viewdistance.ViewDistanceStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,8 +73,12 @@ public final class DynamicViewDistance extends PackageModule implements QuarkCom
 
         int val = Bukkit.getViewDistance();
         for (Player p : Bukkit.getOnlinePlayers()) {
-            p.setViewDistance(val);
-            p.setSendViewDistance(val);
+            try {
+                p.setViewDistance(val);
+                p.setSendViewDistance(val);
+            }catch (IllegalStateException ignored){
+                //who cares?
+            }
         }
     }
 

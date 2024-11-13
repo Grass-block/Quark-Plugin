@@ -1,0 +1,6 @@
+language:
+  world:
+    world: "{#green}主世界"
+    world-nether: "{#red}下界"
+    world-the-end: "{#purple}末地"
+    aether: "{#aqua}天境" #todo

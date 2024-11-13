@@ -29,8 +29,9 @@ config:
     bar-color: white
     ui: '{#purple}{#server-name-plain} {#yellow}>> {rand#text}'
   chat-format:
-    template: '{0} {color(gold)}> {color(gray)}{1}'
-    time: "   {#gray}%s"
+    world: "common:world:%s"
+    time: "<post>   {#gray}%s"
+    template: '[{#white}{world}{#white}]{0} {color(gold)}> {color(gray)}{1} {time}'
   player-name-header:
     template: "[{#white}{header}{#white}] {player}"
     op-header: '{#dark-purple}管理'

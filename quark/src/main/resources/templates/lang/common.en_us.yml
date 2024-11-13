@@ -1,0 +1,6 @@
+language:
+  world:
+    world: "{#green}Overworld"
+    world-nether: "{#red}Nether"
+    world-the-end: "{#purple}TheEnd"
+    aether: "{#aqua}TheAether" #todo

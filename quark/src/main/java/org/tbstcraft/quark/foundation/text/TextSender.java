@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.joml.Vector3i;
 import org.tbstcraft.quark.data.language.Language;
+import org.tbstcraft.quark.internal.LocaleService;
 
 import java.time.Duration;
 import java.util.Locale;
@@ -29,11 +30,11 @@ public interface TextSender {
         ctx.attempt(
                 () -> CommandSender.Spigot.class.getMethod("sendMessage", BaseComponent.class),
                 (p, c) -> p.spigot().sendMessage(ComponentSerializer.bungee(c))
-                   );
+        );
         ctx.attempt(
                 () -> CommandSender.class.getMethod("sendMessage", String.class),
                 (p, c) -> p.sendMessage(ComponentSerializer.legacy(c))
-                   );
+        );
     });
     MethodHandleO3<Player, ComponentLike, ComponentLike, Vector3i> SEND_TITLE = MethodHandle.select((ctx) -> {
         ctx.attempt(ADVENTURE_TITLE_API, (p, t, s, v) -> {
@@ -66,7 +67,7 @@ public interface TextSender {
 
     //message
     static void sendMessage(CommandSender sender, ComponentLike message) {
-        SEND_MESSAGE.invoke(sender, message);
+        SEND_MESSAGE.invoke(sender, TextExaminer.examine(message.asComponent(), LocaleService.locale(sender)));
     }
 
     static void sendBlock(CommandSender sender, ComponentBlock block) {

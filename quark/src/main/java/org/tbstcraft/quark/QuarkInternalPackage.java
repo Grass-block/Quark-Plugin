@@ -45,6 +45,8 @@ public interface QuarkInternalPackage {
 
                 .language("quark-core", "zh_cn")
                 .language("quark-core", "en_us")
+                .language("common", "zh_cn")
+                .language("common", "en_us")
 
                 .config("quark-core");
     }
