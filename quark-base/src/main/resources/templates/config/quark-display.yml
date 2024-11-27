@@ -76,5 +76,9 @@ config:
   custom-death-message:
     prefix: "{#gray}[{#red}X{#gray}]{#reset}"
     suffix: ""
+  action-bar-hud:
+    template: "{biome}{#yellow} | {position} {#yellow} | {time}"
+    position: "%s,%s,%s"
+    biome: "{translate;color(green)}biome.%s.%s{;}"
   afk:
     timeout: 1200

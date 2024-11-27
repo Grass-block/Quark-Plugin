@@ -8,6 +8,7 @@ import org.atcraftmc.quark.storage.PortableShulkerBox;
 import org.atcraftmc.quark.tweaks.*;
 import org.atcraftmc.quark.warps.BackToDeath;
 import org.atcraftmc.quark.warps.RTP;
+import org.atcraftmc.quark.warps.TPA;
 import org.atcraftmc.quark.warps.Waypoint;
 import org.tbstcraft.quark.FeatureAvailability;
 import org.tbstcraft.quark.framework.packages.initializer.PackageBuilderInitializer;
@@ -62,6 +63,8 @@ public final class QuarkGame extends MultiPackageProvider {
                     i.module("waypoint", Waypoint.class);
                     i.module("back-to-death", BackToDeath.class);
                     i.module("rtp", RTP.class);
+                    i.module("tpa", TPA.class);
+
                     i.language("quark-warps", "zh_cn");
                     i.config("quark-warps");
                 })

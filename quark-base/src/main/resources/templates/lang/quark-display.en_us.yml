@@ -85,3 +85,8 @@ language:
     delete-all: "{global#info}Deleted ALL hover texts."
     edit: "{global#info}Successfully edited hover text {#var}."
     teleport: "{global#info}hover text {#var} has been teleported to you."
+  action-bar-hud:
+    time: "{#dark-aqua}WorldTime: {#aqua}{#world-time}"
+    position: "{#dark-purple}Position: {#purple}%s{#gray},{#purple}%s{#gray},{#purple}%s{#gray}"
+    biome: "{#dark-green}Biomes: {translate;color(green)}biome.%s.%s{;}"
+    face: "{#dark-blue}Facing: {#blue}%s(俯仰),%s(水平)"

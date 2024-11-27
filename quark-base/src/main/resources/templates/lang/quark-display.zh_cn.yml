@@ -97,3 +97,8 @@ language:
     left-self: "{global#info}你暂时离开了。"
     back: "{global#info}玩家{#var}在暂时离开{#var}后回来了。"
     back-self: "{global#info}你在暂时离开{#var}后回来了"
+  action-bar-hud:
+    time: "{#dark-aqua}世界时间: {#aqua}{#world-time}"
+    position: "{#dark-purple}位置: {#purple}%s{#gray},{#purple}%s{#gray},{#purple}%s{#gray}"
+    biome: "{#dark-green}生物群系: {translate;color(green)}biome.%s.%s{;}"
+    face: "{#dark-blue}朝向: {#blue}%s(俯仰),%s(水平)"

@@ -81,6 +81,7 @@ public final class QuarkBase extends MultiPackageProvider {
             i.module("custom-death-message", CustomDeathMessage.class);
             i.module("afk", AFK.class);
             i.module("player-skin-customizer", PlayerSkinCustomizer.class);
+            i.module("action-bar-hud", ActionBarHUD.class);
 
             i.language("quark-display", "zh_cn");
             i.language("quark-display", "en_us");
