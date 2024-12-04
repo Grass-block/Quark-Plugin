@@ -3,9 +3,11 @@ package org.tbstcraft.quark.framework.module;
 import me.gb2022.commons.TriState;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.Quark;
+import org.tbstcraft.quark.api.events.ModuleEvent;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.framework.FunctionalComponentStatus;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
@@ -75,33 +77,6 @@ public final class ModuleManager implements Service {
     }
 
 
-    //----[batch]----
-    public void enableAll() {
-        for (String id : this.getModules().keySet()) {
-            this.enable(id);
-        }
-    }
-
-    public void disableAll() {
-        for (String id : this.getModules().keySet()) {
-            this.disable(id);
-        }
-    }
-
-    public void reloadAll() {
-        List<String> list = new ArrayList<>();
-        for (String id : this.getModules().keySet()) {
-            if (this.disable(id) != ObjectOperationResult.SUCCESS) {
-                continue;
-            }
-            list.add(id);
-        }
-        for (String s : list) {
-            this.enable(s);
-        }
-    }
-
-
     //----[query]----
     public TriState getModuleStatus(String id) {
         return this.getStatus(id);
@@ -126,13 +101,6 @@ public final class ModuleManager implements Service {
         return this.metas.get(id);
     }
 
-    public TriState getStatus(String id) {
-        if (!this.statusMap.containsKey(id)) {
-            return TriState.UNKNOWN;
-        }
-        return Objects.equals(this.statusMap.get(id), "enabled") ? TriState.FALSE : TriState.TRUE;
-    }
-
     public AbstractModule get(String id) {
         return this.moduleMap.get(id);
     }
@@ -145,6 +113,12 @@ public final class ModuleManager implements Service {
         return this.metas;
     }
 
+    public TriState getStatus(String id) {
+        if (!this.statusMap.containsKey(id)) {
+            return TriState.UNKNOWN;
+        }
+        return Objects.equals(this.statusMap.get(id), "enabled") ? TriState.FALSE : TriState.TRUE;
+    }
 
     private void saveStatus() {
         try {
@@ -174,42 +148,32 @@ public final class ModuleManager implements Service {
         return file;
     }
 
-    private ObjectOperationResult enable0(String id) {
-        if (getStatus(id) == TriState.UNKNOWN) {
-            return ObjectOperationResult.NOT_FOUND;
+
+    //----[operation]----
+    public void enableAll() {
+        for (String id : this.getModules().keySet()) {
+            this.enable(id);
         }
-        if (getStatus(id) == TriState.FALSE) {
-            return ObjectOperationResult.ALREADY_OPERATED;
-        }
-        try {
-            this.get(id).enableModule();
-        } catch (Exception ex) {
-            ExceptionUtil.log(ex);
-            return ObjectOperationResult.INTERNAL_ERROR;
-        }
-        this.statusMap.put(id, "enabled");
-        this.getMeta(id).status(FunctionalComponentStatus.ENABLE);
-        return ObjectOperationResult.SUCCESS;
     }
 
-    private ObjectOperationResult disable0(String id) {
-        if (getStatus(id) == TriState.UNKNOWN) {
-            return ObjectOperationResult.NOT_FOUND;
+    public void disableAll() {
+        for (String id : this.getModules().keySet()) {
+            this.disable(id);
         }
-        if (getStatus(id) == TriState.TRUE) {
-            return ObjectOperationResult.ALREADY_OPERATED;
-        }
-        try {
-            this.get(id).disableModule();
-        } catch (Exception ex) {
-            ExceptionUtil.log(ex);
-            return ObjectOperationResult.INTERNAL_ERROR;
-        }
-        this.statusMap.put(id, "disabled");
-        this.getMeta(id).status(FunctionalComponentStatus.DISABLED);
-        return ObjectOperationResult.SUCCESS;
     }
 
+    public void reloadAll() {
+        List<String> list = new ArrayList<>();
+        for (String id : this.getModules().keySet()) {
+            if (this.disable(id) != ObjectOperationResult.SUCCESS) {
+                continue;
+            }
+            list.add(id);
+        }
+        for (String s : list) {
+            this.enable(s);
+        }
+    }
 
     public ObjectOperationResult enable(String id) {
         if (get(id).getDescriptor().internal()) {
@@ -241,6 +205,72 @@ public final class ModuleManager implements Service {
             return result;
         }
         return enable(id);
+    }
+
+    private ObjectOperationResult checkState0(ModuleMeta meta, FunctionalComponentStatus state) {
+        if (meta == null || meta.unknown() || meta.status() == FunctionalComponentStatus.UNKNOWN) {
+            return ObjectOperationResult.NOT_FOUND;
+        }
+
+        if (meta.status() == state) {
+            return ObjectOperationResult.ALREADY_OPERATED;
+        }
+
+        return ObjectOperationResult.INTERNAL_ERROR;
+    }
+
+    private ObjectOperationResult enable0(String id) {
+        var meta = this.getMeta(id);
+        var result = checkState0(meta, FunctionalComponentStatus.ENABLE);
+
+        if (result != ObjectOperationResult.INTERNAL_ERROR) {
+            return result;
+        }
+
+        BukkitUtil.callEvent(new ModuleEvent.PreEnable(getMeta(id)));
+
+        try {
+            meta.handle().enableModule();
+            result = ObjectOperationResult.SUCCESS;
+        } catch (Exception ex) {
+            ExceptionUtil.log(ex);
+        }
+
+        BukkitUtil.callEvent(new ModuleEvent.Enable(getMeta(id), result));
+
+        if (result == ObjectOperationResult.SUCCESS) {
+            this.statusMap.put(id, "enabled");
+            meta.status(FunctionalComponentStatus.ENABLE);
+        }
+
+        return result;
+    }
+
+    private ObjectOperationResult disable0(String id) {
+        var meta = this.getMeta(id);
+        var result = checkState0(meta, FunctionalComponentStatus.DISABLED);
+
+        if (result != ObjectOperationResult.INTERNAL_ERROR) {
+            return result;
+        }
+
+        BukkitUtil.callEvent(new ModuleEvent.PreEnable(getMeta(id)));
+
+        try {
+            meta.handle().disableModule();
+            result = ObjectOperationResult.SUCCESS;
+        } catch (Exception ex) {
+            ExceptionUtil.log(ex);
+        }
+
+        BukkitUtil.callEvent(new ModuleEvent.Enable(getMeta(id), result));
+
+        if (result == ObjectOperationResult.SUCCESS) {
+            this.statusMap.put(id, "enabled");
+            meta.status(FunctionalComponentStatus.DISABLED);
+        }
+
+        return result;
     }
 
 
@@ -297,7 +327,6 @@ public final class ModuleManager implements Service {
 
         return false;
     }
-
 
     public void registerMeta(ModuleMeta meta) {
         this.metas.put(meta.fullId(), meta);

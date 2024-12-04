@@ -3,6 +3,8 @@ package org.tbstcraft.quark;
 import me.gb2022.apm.client.ClientMessenger;
 import me.gb2022.apm.client.backend.MessageBackend;
 import me.gb2022.commons.Timer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.CommandManager;
 import org.atcraftmc.qlib.command.LegacyCommandManager;
 import org.bukkit.Bukkit;
@@ -11,6 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.tbstcraft.quark.api.events.CoreEvent;
 import org.tbstcraft.quark.data.config.ConfigAccess;
 import org.tbstcraft.quark.data.config.ConfigContainer;
 import org.tbstcraft.quark.data.config.Queries;
@@ -19,8 +22,8 @@ import org.tbstcraft.quark.data.language.ILanguageAccess;
 import org.tbstcraft.quark.data.language.LanguageContainer;
 import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
+import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.foundation.platform.PluginUtil;
-import org.tbstcraft.quark.foundation.text.TextSender;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceManager;
@@ -36,7 +39,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.jar.JarFile;
-import java.util.logging.Logger;
 
 /**
  * <h3>江城子·腐竹之歌</h3>
@@ -44,6 +46,7 @@ import java.util.logging.Logger;
  * 玩家每天新想法，天天改，日日忙。相顾无言，惟有泪千行。每晚灯火阑珊处，夜难寐，赶工狂。
  */
 public final class Quark extends JavaPlugin {
+    public static final Logger LOGGER = LogManager.getLogger("Quark");
     public static final int API_VERSION = 38;
     public static final int BSTATS_ID = 22683;
     public static final String PLUGIN_ID = "quark";
@@ -52,7 +55,6 @@ public final class Quark extends JavaPlugin {
     public static final ILanguageAccess LANGUAGE = LanguageContainer.getInstance().access("quark-core");
     public static final ConfigAccess CONFIG = ConfigContainer.getInstance().access("quark-core");
     public static Quark PLUGIN;
-    public static Logger LOGGER;
 
     private final BundledPackageProvider bundledPackageLoader = new BundledPackageProvider();
     private final CommandManager commandManager = new QuarkCommandManager(this);
@@ -64,6 +66,8 @@ public final class Quark extends JavaPlugin {
     private boolean hasBundler = false;
 
     public static void reload(CommandSender audience) {
+        BukkitUtil.callEventDirect(new CoreEvent.Reload());
+
         Runnable task = () -> {
             try {
                 Locale locale = LocaleService.locale(audience);
@@ -95,43 +99,24 @@ public final class Quark extends JavaPlugin {
         };
 
         task.run();
+
+        BukkitUtil.callEventDirect(new CoreEvent.PostReload());
     }
 
     public static Quark getInstance() {
         return (Quark) Bukkit.getPluginManager().getPlugin("quark");
     }
 
-    //----[logging]----
-    private void log(String msg, Object... format) {
-        this.getLogger().info(msg.formatted(format));
-    }
-
-    private void info(String msg, String zh, Object... format) {
-        var b1 = Locale.getDefault().getCountry().equalsIgnoreCase("zh");
-        var b2 = getServer().getVersion().contains("PaperSpigot");
-        //var m = b1 && !b2 ? zh : msg;
-
-        this.getLogger().info(msg.formatted(format));
-    }
-
-    private void warn(String msg, String zh, Object... format) {
-        var b1 = Locale.getDefault().getCountry().equalsIgnoreCase("zh");
-        var b2 = getServer().getVersion().contains("PaperSpigot");
-        //var m = b1 && !b2 ? zh : msg;
-
-        this.getLogger().warning(msg.formatted(format));
-    }
-
-    private void operation(String operation, String zh, Runnable task) {
-        info(operation, zh);
+    private void operation(String operation, Runnable task) {
+        LOGGER.info(operation);
         task.run();
     }
 
-    private void operation(String operation, String zh, boolean condition, Runnable task) {
+    private void operation(String operation, boolean condition, Runnable task) {
         if (!condition) {
             return;
         }
-        operation(operation, zh, task);
+        operation(operation, task);
     }
 
 
@@ -144,11 +129,11 @@ public final class Quark extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(s);
         }
 
-        info("starting(v%s@API%s)...", "正在启动(v%s@API%s)...", ProductInfo.version(), API_VERSION);
+        LOGGER.info("starting(v{}-{})...", ProductInfo.version(), API_VERSION);
 
         this.hasBundler = this.bundledPackageLoader.isPresent();
 
-        operation("loading bootstrap classes...", "加载启动类...", () -> {
+        operation("loading bootstrap classes...", () -> {
             try {
                 Class.forName("net.kyori.adventure.text.ComponentLike");
                 Class.forName("me.gb2022.commons.Timer");
@@ -162,49 +147,38 @@ public final class Quark extends JavaPlugin {
             }
         });
 
+        BukkitUtil.callEventDirect(new CoreEvent.Launch(this));
+
         APIProfileTest.test();
-        info("platform: %s".formatted(APIProfileTest.getAPIProfile().toString()), "当前平台: %s");
+        LOGGER.info("platform: {}", APIProfileTest.getAPIProfile().toString());
 
 
-        operation("initializing plugin context...", "初始化插件上下文...", () -> {
+        operation("initializing plugin context...", () -> {
             this.uuid = UUID.randomUUID().toString();
 
-            LOGGER = getLogger();
             PLUGIN = this;
 
             PluginUtil.CORE_REF.set(this);
         });
-        operation("checking environment...", "检查环境...", () -> {
+        operation("checking environment...", () -> {
             var folia = APIProfileTest.isFoliaServer();
             var arclight = APIProfileTest.isArclightBasedServer();
 
             if (folia) {
-                warn(
-                        "detected Folia type(Threaded Regions API) environment. using folia task system.",
-                        "检测到类Folia环境(线程化), 已启用Folia任务系统。"
-                    );
+                LOGGER.warn("detected Folia type(Threaded Regions API) environment. using folia task system.");
             }
             if (arclight) {
-                warn(
-                        "detected Arclight type(Forge API) environment. try restart your server rather than /quark reload.",
-                        "检测到类Arclight环境(Forge混合端), 请不要使用/quark reload重载插件。"
-                    );
+                LOGGER.warn("detected Arclight type(Forge API) environment. try restart your server rather than /quark reload.");
             }
             if (isFastBoot() && arclight) {
-                warn(
-                        "fastboot are not available on Arclight type(Forge API) platform! disabling fast-boot.",
-                        "快速启动在类Arclight平台(Forge混合端)不可用! 正在关闭快速启动..."
-                    );
+                LOGGER.warn("fastboot are not available on Arclight type(Forge API) platform! disabling fast-boot.");
                 this.fastBoot = false;
             }
             if (isFastBoot()) {
-                warn(
-                        "using Fast-Boot environment, hot-reload may not function well. RESTART your server if any error occurred.",
-                        "正在使用快速启动, 热重载可能表现不正常。如果遇到任何错误请重启服务器。"
-                    );
+                LOGGER.warn("using Fast-Boot environment, hot-reload may not function well. RESTART your server if any error occurred.");
             }
         });
-        operation("loading core configuration...", "加载核心配置...", () -> {
+        operation("loading core configuration...", () -> {
             this.saveDefaultConfig();
             this.reloadConfig();
             try {
@@ -230,14 +204,9 @@ public final class Quark extends JavaPlugin {
 
             Queries.setEnvironmentVars(Objects.requireNonNull(config.getConfigurationSection("config.environment")));
 
-            operation(
-                    "initializing metrics...",
-                    "初始化插件数据统计(Metrics)...",
-                    metrics,
-                    () -> this.metrics = new Metrics(this, BSTATS_ID)
-                     );
+            operation("initializing metrics...", metrics, () -> this.metrics = new Metrics(this, BSTATS_ID));
         });
-        operation("loading full jar...", "加载全Jar...", !this.fastBoot, () -> {
+        operation("loading full jar...", !this.fastBoot, () -> {
             var pluginsPath = System.getProperty("user.dir") + "/plugins/";
             var pluginsDir = new File(pluginsPath);
             var loader = Quark.class.getClassLoader();
@@ -282,7 +251,7 @@ public final class Quark extends JavaPlugin {
             } catch (Exception ignored) {
             }
         });
-        operation("starting services...", "启动服务组件...", () -> {
+        operation("starting services...", () -> {
             Service.initBase();
             QuarkInternalPackage.register(PackageManager.INSTANCE.get());
 
@@ -291,31 +260,35 @@ public final class Quark extends JavaPlugin {
         });
 
         if (this.hasBundler) {
-            info("loading bundled packs...", "检测到绑定存在，正在加载...");
+            LOGGER.info("loading bundled packs...");
             this.bundledPackageLoader.onEnable();
         }
 
-        info("done. (%d ms)", "完成! (%d ms)", Timer.passedTime());
+        LOGGER.info("done. ({} ms)", Timer.passedTime());
         this.initialized = true;
+
+        BukkitUtil.callEventDirect(new CoreEvent.PostLaunch(this));
     }
 
     @Override
     public void onDisable() {
+        BukkitUtil.callEventDirect(new CoreEvent.Dispose(this));
+
         Timer.restartTiming();
         this.initialized = false;
-        info("stopping(v%s@API%s)...", "正在停止(v%s@API%s)...", ProductInfo.version(), API_VERSION);
+        LOGGER.info("stopping(v{}-{})...", ProductInfo.version(), API_VERSION);
 
         if (this.hasBundler) {
-            info("unloading bundled packs...", "检测到绑定存在，正在卸载...");
+            LOGGER.info("unloading bundled packs...");
             this.bundledPackageLoader.onDisable();
         }
 
-        operation("stopping services...", "停止服务组件...", () -> {
+        operation("stopping services...", () -> {
             ServiceManager.unregisterAll();
             Service.stopBase();
             ClientMessenger.getBackend().stop();
         });
-        operation("destroying context...", "销毁插件上下文...", () -> {
+        operation("destroying context...", () -> {
             try {
                 this.getMetrics().shutdown();
             } catch (Exception ignored) {
@@ -323,9 +296,11 @@ public final class Quark extends JavaPlugin {
 
             this.metrics = null;
         });
-        operation("running finalize tasks...", "运行卸载任务...", TaskService::runFinalizeTask);
+        operation("running finalize tasks...", TaskService::runFinalizeTask);
 
-        info("done (%d ms)", "完成! (%d ms)", Timer.passedTime());
+        LOGGER.info("done ({} ms)", Timer.passedTime());
+
+        BukkitUtil.callEventDirect(new CoreEvent.PostDispose(this));
     }
 
     @Override

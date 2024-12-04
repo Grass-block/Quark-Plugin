@@ -14,7 +14,7 @@ import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceInject;
 
-@QuarkService(id = "chat-forwarding", requiredBy = {"*"})
+@QuarkService(id = "chat-forwarding", requiredBy = {"quark-base:"})
 public interface ChatForwardingService extends Service {
     Listener EVENT_HANDLER = createImplementation();
 
@@ -107,7 +107,6 @@ public interface ChatForwardingService extends Service {
             }
         }
     }
-
 
     class BukkitEventHandler implements Listener {
         @EventHandler(priority = EventPriority.MONITOR)

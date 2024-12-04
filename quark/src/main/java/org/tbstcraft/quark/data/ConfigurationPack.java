@@ -86,14 +86,14 @@ public abstract class ConfigurationPack {
         }
 
         if (file.getParentFile().mkdirs()) {
-            Quark.LOGGER.info("created storage file folder: " + file.getParentFile().getAbsolutePath());
+            Quark.LOGGER.info("created storage file folder: {}", file.getParentFile().getAbsolutePath());
         }
         try {
             if (file.createNewFile()) {
-                Quark.LOGGER.info("created storage file: " + file.getAbsolutePath());
+                Quark.LOGGER.info("created storage file: {}", file.getAbsolutePath());
             }
         } catch (IOException e) {
-            Quark.LOGGER.info("failed to create storage file: " + file.getAbsolutePath());
+            Quark.LOGGER.info("failed to create storage file: {}", file.getAbsolutePath());
             ExceptionUtil.log(e);
         }
 
@@ -103,7 +103,7 @@ public abstract class ConfigurationPack {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
-            Quark.LOGGER.info("failed to write storage file: " + file.getAbsolutePath());
+            Quark.LOGGER.info("failed to write storage file: {}", file.getAbsolutePath());
             ExceptionUtil.log(e);
         }
 
@@ -114,14 +114,14 @@ public abstract class ConfigurationPack {
         var file = new File(FilePath.pluginFolder("quark") + getTemplateFile());
 
         if (file.getParentFile().mkdirs()) {
-            Quark.LOGGER.info("created template file folder: " + file.getParentFile().getAbsolutePath());
+            Quark.LOGGER.info("created template file folder: {}", file.getParentFile().getAbsolutePath());
         }
         try {
             if (file.createNewFile()) {
-                Quark.LOGGER.info("created template file: " + file.getAbsolutePath());
+                Quark.LOGGER.info("created template file: {}", file.getAbsolutePath());
             }
         } catch (IOException e) {
-            Quark.LOGGER.info("failed to create template file: " + file.getAbsolutePath());
+            Quark.LOGGER.info("failed to create template file: {}", file.getAbsolutePath());
             ExceptionUtil.log(e);
         }
 
@@ -134,7 +134,7 @@ public abstract class ConfigurationPack {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
-            Quark.LOGGER.info("failed to write storage file: " + file.getAbsolutePath());
+            Quark.LOGGER.info("failed to write template file: {}", file.getAbsolutePath());
             ExceptionUtil.log(e);
         }
     }

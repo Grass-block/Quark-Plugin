@@ -54,7 +54,7 @@ public interface PlayerIdentificationService extends Service {
         @Override
         public String transform(String playerName) {
             if (playerName.matches("^[a-f\\d]{4}(?:[a-f\\d]{4}_){4}[a-f\\d]{12}$")) {
-                Quark.LOGGER.warning("cannot transform an UUID.");
+                Quark.LOGGER.warn("cannot transform an UUID: {}", playerName);
                 return playerName;
             }
 
@@ -62,7 +62,7 @@ public interface PlayerIdentificationService extends Service {
             var uuid = Bukkit.getPlayerUniqueId(playerName);
 
             if (uuid == null) {
-                Quark.LOGGER.warning("Player " + playerName + " cannot have a valid UUID.");
+                Quark.LOGGER.warn("Player {} cannot have a valid UUID.", playerName);
                 return Identifiers.internal(playerName);
             }
 

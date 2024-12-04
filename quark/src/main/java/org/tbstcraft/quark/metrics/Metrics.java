@@ -37,14 +37,14 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 
-// code formatted by Intellij IDEA.
-
-//modification start - [GrassBlock2022]suppress warnings
-//approved by https://github.com/Bastian/bstats-metrics/issues/125
+/// modification start
+/// - GrassBlock2022: suppress warnings
+/// - code formatted by Intellij IDEA.
+/// - approved by https://github.com/Bastian/bstats-metrics/issues/125
 
 @SuppressWarnings("all")
 
-//end
+// end
 
 public class Metrics {
 
@@ -72,7 +72,9 @@ public class Metrics {
             config.addDefault("logSentData", false);
             config.addDefault("logResponseStatusText", false);
             // Inform the server owners about bStats
-            config.options().header("bStats (https://bStats.org) collects some basic information for plugin authors, like how\n" + "many people use their plugin and their total player count. It's recommended to keep bStats\n" + "enabled, but if you're not comfortable with this, you can turn this setting off. There is no\n" + "performance penalty associated with having metrics enabled, and data sent to bStats is fully\n" + "anonymous.").copyDefaults(true);
+            config.options()
+                    .header("bStats (https://bStats.org) collects some basic information for plugin authors, like how\n" + "many people use their plugin and their total player count. It's recommended to keep bStats\n" + "enabled, but if you're not comfortable with this, you can turn this setting off. There is no\n" + "performance penalty associated with having metrics enabled, and data sent to bStats is fully\n" + "anonymous.")
+                    .copyDefaults(true);
             try {
                 config.save(configFile);
             } catch (IOException ignored) {
@@ -84,7 +86,21 @@ public class Metrics {
         boolean logErrors = config.getBoolean("logFailedRequests", false);
         boolean logSentData = config.getBoolean("logSentData", false);
         boolean logResponseStatusText = config.getBoolean("logResponseStatusText", false);
-        metricsBase = new MetricsBase("bukkit", serverUUID, serviceId, enabled, this::appendPlatformData, this::appendServiceData, submitDataTask -> Bukkit.getScheduler().runTask(plugin, submitDataTask), plugin::isEnabled, (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error), (message) -> this.plugin.getLogger().log(Level.INFO, message), logErrors, logSentData, logResponseStatusText);
+        metricsBase = new MetricsBase(
+                "bukkit",
+                serverUUID,
+                serviceId,
+                enabled,
+                this::appendPlatformData,
+                this::appendServiceData,
+                submitDataTask -> Bukkit.getScheduler().runTask(plugin, submitDataTask),
+                plugin::isEnabled,
+                (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
+                (message) -> this.plugin.getLogger().log(Level.INFO, message),
+                logErrors,
+                logSentData,
+                logResponseStatusText
+        );
     }
 
     /**
@@ -125,7 +141,9 @@ public class Metrics {
             // This fixes java.lang.NoSuchMethodError:
             // org.bukkit.Bukkit.getOnlinePlayers()Ljava/util/Collection;
             Method onlinePlayersMethod = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers");
-            return onlinePlayersMethod.getReturnType().equals(Collection.class) ? ((Collection<?>) onlinePlayersMethod.invoke(Bukkit.getServer())).size() : ((Player[]) onlinePlayersMethod.invoke(Bukkit.getServer())).length;
+            return onlinePlayersMethod.getReturnType()
+                    .equals(Collection.class) ? ((Collection<?>) onlinePlayersMethod.invoke(Bukkit.getServer())).size() : ((Player[]) onlinePlayersMethod.invoke(
+                    Bukkit.getServer())).length;
         } catch (Exception e) {
             // Just use the new method if the reflection failed
             return Bukkit.getOnlinePlayers().size();
@@ -278,7 +296,10 @@ public class Metrics {
             appendPlatformDataConsumer.accept(baseJsonBuilder);
             final JsonObjectBuilder serviceJsonBuilder = new JsonObjectBuilder();
             appendServiceDataConsumer.accept(serviceJsonBuilder);
-            JsonObjectBuilder.JsonObject[] chartData = customCharts.stream().map(customChart -> customChart.getRequestJsonObject(errorLogger, logErrors)).filter(Objects::nonNull).toArray(JsonObjectBuilder.JsonObject[]::new);
+            JsonObjectBuilder.JsonObject[] chartData = customCharts.stream()
+                    .map(customChart -> customChart.getRequestJsonObject(errorLogger, logErrors))
+                    .filter(Objects::nonNull)
+                    .toArray(JsonObjectBuilder.JsonObject[]::new);
             serviceJsonBuilder.appendField("id", serviceId);
             serviceJsonBuilder.appendField("customCharts", chartData);
             baseJsonBuilder.appendField("service", serviceJsonBuilder.build());
@@ -342,7 +363,9 @@ public class Metrics {
                 final String examplePackage = new String(new byte[]{'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e'});
                 // We want to make sure no one just copy & pastes the example and uses the wrong
                 // package names
-                if (MetricsBase.class.getPackage().getName().startsWith(defaultPackage) || MetricsBase.class.getPackage().getName().startsWith(examplePackage)) {
+                if (MetricsBase.class.getPackage().getName().startsWith(defaultPackage) || MetricsBase.class.getPackage()
+                        .getName()
+                        .startsWith(examplePackage)) {
                     throw new IllegalStateException("bStats Metrics class has not been relocated correctly!");
                 }
             }

@@ -39,6 +39,7 @@ public final class QuarkBase extends MultiPackageProvider {
             i.module("force-sprint", ForceSprint.class);
             i.module("item-custom-name", ItemCustomName.class);
             i.module("position-align", PositionAlign.class);
+            i.module("worldedit-commands", WorldEditCommands.class);
 
             i.language("quark-utilities", "zh_cn");
             i.language("quark-utilities", "en_us");
@@ -80,8 +81,9 @@ public final class QuarkBase extends MultiPackageProvider {
             i.module("nickname", Nickname.class);
             i.module("custom-death-message", CustomDeathMessage.class);
             i.module("afk", AFK.class);
-            i.module("player-skin-customizer", PlayerSkinCustomizer.class);
+            //i.module("player-skin-customizer", PlayerSkinCustomizer.class);
             i.module("action-bar-hud", ActionBarHUD.class);
+            i.module("drop-item-info", DropItemInfo.class);
 
             i.language("quark-display", "zh_cn");
             i.language("quark-display", "en_us");

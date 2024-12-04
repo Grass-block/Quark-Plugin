@@ -64,6 +64,15 @@ public interface BukkitUtil {
         }
     }
 
+    @SafeVarargs
+    static <E extends Event> void callEventDirect(E event, Consumer<E>... outcomes) {
+        try {
+            Bukkit.getPluginManager().callEvent(event);
+        } catch (Exception ignored) {
+            //todo:non-main check
+        }
+    }
+
     static void registerEventListener(Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, Quark.getInstance());
     }

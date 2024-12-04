@@ -25,16 +25,20 @@ public final class MotdSync extends ProxyModule {
     }
 
     private void update() {
-        String name = getConfig("ping").getString("provider");
-        getServer().getServer(name).ifPresentOrElse((s) -> {
-            try {
-                this.ping = s.ping().get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        }, () -> getLogger().error("no server motd provider named {}", name));
+        try {
+            String name = getConfig("ping").getString("provider");
+            getServer().getServer(name).ifPresentOrElse((s) -> {
+                try {
+                    this.ping = s.ping().get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            }, () -> getLogger().error("no server motd provider named {}", name));
 
-        this.lastUpdate = System.currentTimeMillis();
+            this.lastUpdate = System.currentTimeMillis();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

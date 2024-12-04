@@ -12,5 +12,5 @@ public @interface QuarkService {
 
     String id();
 
-    String[] requiredBy() default {"*"};
+    String[] requiredBy() default {};
 }

@@ -79,7 +79,7 @@ public interface WESessionTrackService extends Service {
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requirePlugin("WorldEdit");
-            Compatibility.requireClass(()->Class.forName("com.sk89q.worldedit.util.HandSide"));
+            Compatibility.requireClass(() -> Class.forName("com.sk89q.worldedit.util.HandSide"));
         }
 
         //api impl
@@ -119,11 +119,10 @@ public interface WESessionTrackService extends Service {
             }
         }
 
-
         //WorldEdit event handle
         @Subscribe(priority = com.sk89q.worldedit.util.eventbus.EventHandler.Priority.VERY_LATE)
         public void handleInput(PlayerInputEvent event) {
-            var p=event.getPlayer();
+            var p = event.getPlayer();
             var session = WorldEdit.getInstance().getSessionManager().get(p);
             if (!(session.getTool(p.getItemInHand(HandSide.MAIN_HAND).getType()) instanceof SelectionWand)) {
                 return;
@@ -135,6 +134,10 @@ public interface WESessionTrackService extends Service {
         @Subscribe(priority = com.sk89q.worldedit.util.eventbus.EventHandler.Priority.VERY_LATE)
         public void handleBlockInput(BlockInteractEvent event) {
             if (!(event.getCause() instanceof com.sk89q.worldedit.entity.Player p)) {
+                return;
+            }
+            var session = WorldEdit.getInstance().getSessionManager().get(p);
+            if (!(session.getTool(p.getItemInHand(HandSide.MAIN_HAND).getType()) instanceof SelectionWand)) {
                 return;
             }
 
@@ -182,11 +185,6 @@ public interface WESessionTrackService extends Service {
         }
 
         private void handleWEEvent(com.sk89q.worldedit.entity.Player p) {
-            var session = WorldEdit.getInstance().getSessionManager().get(p);
-            if (!(session.getTool(p.getItemInHand(HandSide.MAIN_HAND).getType()) instanceof SelectionWand)) {
-                return;
-            }
-
             var player1 = BukkitAdapter.adapt(p);
             var session1 = WorldEdit.getInstance().getSessionManager().get(p);
             var world = p.getWorld();
