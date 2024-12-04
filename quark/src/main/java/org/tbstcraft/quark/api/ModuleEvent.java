@@ -1,4 +1,4 @@
-package org.tbstcraft.quark.api.events;
+package org.tbstcraft.quark.api;
 
 import org.bukkit.event.HandlerList;
 import org.tbstcraft.quark.framework.event.CustomEvent;

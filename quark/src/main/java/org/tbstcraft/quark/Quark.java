@@ -13,7 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.tbstcraft.quark.api.events.CoreEvent;
+import org.tbstcraft.quark.api.CoreEvent;
 import org.tbstcraft.quark.data.config.ConfigAccess;
 import org.tbstcraft.quark.data.config.ConfigContainer;
 import org.tbstcraft.quark.data.config.Queries;
