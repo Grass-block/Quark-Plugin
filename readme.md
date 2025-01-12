@@ -214,7 +214,7 @@ Since Modrinth has changed their download page, you should remember:
 | Spigot   | Most     | Full             | BugFix  |                                |
 | Bukkit   | Few      | No               | Test    |                                |
 | Folia    | Most     | Full             | BugFix  | No hot reload                  |
-| Mohist   | Few      | No               | Test    | UnexpectedBlockChange not sync |
+| Mohist   | Few      | No               | org.tbstcraft.quark.Test    | UnexpectedBlockChange not sync |
 
 <hr/>
 <div align="center">

@@ -5,9 +5,8 @@ import org.atcraftmc.qlib.command.execute.CommandErrorType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
-import org.tbstcraft.quark.BundledPackageLoader;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.internal.permission.PermissionService;
 
 public final class QuarkCommandManager extends CommandManager {

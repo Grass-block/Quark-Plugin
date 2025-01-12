@@ -2,7 +2,7 @@ package org.atcraftmc.quark.chat;
 
 import org.bukkit.command.CommandSender;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 

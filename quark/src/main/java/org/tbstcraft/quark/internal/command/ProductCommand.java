@@ -1,7 +1,7 @@
 package org.tbstcraft.quark.internal.command;
 
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.internal.ProductService;

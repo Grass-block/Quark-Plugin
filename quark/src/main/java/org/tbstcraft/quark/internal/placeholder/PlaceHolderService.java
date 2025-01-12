@@ -1,14 +1,14 @@
 package org.tbstcraft.quark.internal.placeholder;
 
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.data.config.GlobalVars;
+import org.tbstcraft.quark.data.GlobalVars;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceInject;
-import org.tbstcraft.quark.util.placeholder.GloballyPlaceHolder;
-import org.tbstcraft.quark.util.placeholder.ObjectivePlaceHolder;
-import org.tbstcraft.quark.util.placeholder.PlaceHolder;
-import org.tbstcraft.quark.util.placeholder.StringExtraction;
+import org.atcraftmc.qlib.texts.placeholder.GloballyPlaceHolder;
+import org.atcraftmc.qlib.texts.placeholder.ObjectivePlaceHolder;
+import org.atcraftmc.qlib.texts.placeholder.PlaceHolder;
+import org.atcraftmc.qlib.texts.placeholder.StringExtraction;
 
 import java.util.Map;
 import java.util.regex.Pattern;

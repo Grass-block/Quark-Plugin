@@ -54,7 +54,7 @@ public final class QuarkPluginCommand extends CoreCommand {
     public static final class ReloadCommand extends CoreCommand {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
-            if (APIProfileTest.isArclightBasedServer()) {
+            if (APIProfileTest.isMixedServer()) {
                 this.getLanguage().sendMessage(sender, "platform-unsupported");
                 return;
             }

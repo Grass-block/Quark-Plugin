@@ -16,12 +16,12 @@ import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
-import org.tbstcraft.quark.data.language.LanguageItem;
+import org.atcraftmc.qlib.language.LanguageItem;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.foundation.platform.BukkitDataAccess;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.component.Components;
@@ -29,7 +29,7 @@ import org.tbstcraft.quark.framework.module.component.ModuleComponent;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolders;
-import org.tbstcraft.quark.util.placeholder.GloballyPlaceHolder;
+import org.atcraftmc.qlib.texts.placeholder.GloballyPlaceHolder;
 
 
 @AutoRegister(ServiceType.EVENT_LISTEN)

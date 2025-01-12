@@ -6,6 +6,7 @@ import me.gb2022.commons.reflect.method.MethodHandleRO0;
 import org.atcraftmc.qlib.command.AbstractCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.Bukkit;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -16,12 +17,12 @@ import org.bukkit.plugin.ServicePriority;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.api.ClientLocaleChangeEvent;
 import org.tbstcraft.quark.data.PlayerDataService;
-import org.tbstcraft.quark.data.language.LocaleMapping;
+import org.atcraftmc.qlib.language.LocaleMapping;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.foundation.text.ComponentBlock;
-import org.tbstcraft.quark.foundation.text.TextSender;
+import org.atcraftmc.qlib.texts.ComponentBlock;
+import org.tbstcraft.quark.foundation.TextSender;
 import org.tbstcraft.quark.framework.service.QuarkService;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceInject;
@@ -59,7 +60,7 @@ public interface LocaleService extends Service {
 
     @SuppressWarnings("deprecation")//because other server still uses it.
     static Locale locale(CommandSender sender) {
-        if (sender instanceof ConsoleCommandSender) {
+        if (sender instanceof ConsoleCommandSender || sender instanceof BlockCommandSender) {
             return Locale.getDefault();
         }
         String locale = getUserLocale(((Player) sender));
@@ -184,6 +185,4 @@ public interface LocaleService extends Service {
             }
         }
     }
-
-
 }

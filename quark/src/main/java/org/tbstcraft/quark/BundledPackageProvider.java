@@ -1,13 +1,12 @@
 package org.tbstcraft.quark;
 
-import org.bukkit.Bukkit;
 import org.tbstcraft.quark.framework.packages.AbstractPackage;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.framework.packages.PluginPackage;
-import org.tbstcraft.quark.framework.packages.initializer.JsonPackageInitializer;
 import org.tbstcraft.quark.framework.packages.initializer.PackageInitializer;
 import org.tbstcraft.quark.framework.packages.provider.PackageProvider;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -51,23 +50,24 @@ public final class BundledPackageProvider implements PackageProvider {
     }
 
     public Set<PackageInitializer> createInitializers() {
-        return Set.of(
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark_security.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark_display.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark_chat.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark_utilities.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark_automatic.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark-management.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark-tweaks.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark-storage.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark-contents.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark-warps.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark_proxysupport.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark_clientsupport.json"),
-                new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark-web.json")
-                     );
-    }
+        try {
+            var packs = new Class[]{
+                    Class.forName("org.atcraftmc.quark.QuarkBase"),
+                    Class.forName("org.atcraftmc.quark.QuarkGame"),
+                    Class.forName("org.atcraftmc.quark.QuarkWeb")};
 
+            var set = new HashSet<PackageInitializer>();
+
+            for (var pack : packs) {
+                set.addAll((Collection<? extends PackageInitializer>) pack.getDeclaredMethod("initializers").invoke(null));
+            }
+
+            return set;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Set.of();
+        }
+    }
 
     public boolean isPresent() {
         return getClass().getResourceAsStream("/bundler.flag") != null;

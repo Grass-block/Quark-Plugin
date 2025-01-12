@@ -68,7 +68,6 @@ public final class CommandTabFix extends PackageModule {
 
     @EventHandler
     public void onTabComplete(TabCompleteEvent event) {
-
         if (isCommandNameMatch(event, "/schem", "/schematic")) {
             if (!(getLastArgument(event).equals("load") || getLastArgument(event).equals("delete"))) {
                 return;
@@ -94,8 +93,6 @@ public final class CommandTabFix extends PackageModule {
 
 
         List<String> match = new ArrayList<>();
-
-
 
         String[] args = event.getBuffer().split(" ");
         if (args.length <= 1) {

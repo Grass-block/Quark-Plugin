@@ -2,7 +2,7 @@ package org.atcraftmc.quark.automatic;
 
 import me.gb2022.commons.reflect.Inject;
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;

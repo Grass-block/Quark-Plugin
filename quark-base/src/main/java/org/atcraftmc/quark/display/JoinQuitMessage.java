@@ -2,7 +2,7 @@ package org.atcraftmc.quark.display;
 
 import me.gb2022.apm.remote.event.RemoteEventHandler;
 import me.gb2022.apm.remote.event.remote.RemoteMessageEvent;
-import me.gb2022.apm.remote.protocol.BufferUtil;
+import me.gb2022.apm.remote.util.BufferUtil;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
@@ -11,13 +11,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Consumer;
 
 @QuarkModule(version = "1.1.0")

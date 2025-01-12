@@ -6,7 +6,7 @@ import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.qlib.task.TaskScheduler;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.foundation.command.CoreCommand;
-import org.tbstcraft.quark.foundation.text.TextSender;
+import org.tbstcraft.quark.foundation.TextSender;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 @QuarkCommand(name = "debug", permission = "-quark.debug", subCommands = TestCommand.class)

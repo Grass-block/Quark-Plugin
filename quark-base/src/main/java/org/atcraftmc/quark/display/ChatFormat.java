@@ -9,16 +9,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.foundation.text.TextExaminer;
+import org.tbstcraft.quark.foundation.ComponentSerializer;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.foundation.text.ComponentSerializer;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.atcraftmc.qlib.texts.TextBuilder;
+import org.tbstcraft.quark.foundation.TextExaminer;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.component.Components;
 import org.tbstcraft.quark.framework.module.component.ModuleComponent;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 
 import java.util.Date;
 
@@ -41,11 +42,11 @@ public final class ChatFormat extends PackageModule {
             return "<{0}> {1}";
         }
 
-        var wid=player.getWorld().getName().replace("_","-");
+        var wid = player.getWorld().getName().replace("_", "-");
         var world = TextExaminer.examinableText(this.getConfig().getString("world").formatted(wid));
         var template = this.getConfig().getString("template");
 
-        return template.replace("{world}", world);
+        return PlaceHolderService.formatPlayer(player, template.replace("{world}", world));
     }
 
     public String getTime() {

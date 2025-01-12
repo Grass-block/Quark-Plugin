@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -30,12 +31,12 @@ import java.util.Objects;
 @QuarkModule(id = "chat-mute", version = "1.0.2")
 public final class ChatMute extends PackageModule implements Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onChatting(AsyncPlayerChatEvent event) {
         this.checkEvent(event.getPlayer(), event);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void detectCommand(PlayerCommandPreprocessEvent event) {
         if (!(event.getMessage().contains("say") || event.getMessage().contains("tell"))) {
             return;

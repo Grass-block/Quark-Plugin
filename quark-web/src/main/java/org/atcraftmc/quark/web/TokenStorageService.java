@@ -1,6 +1,6 @@
 package org.atcraftmc.quark.web;
 
-import org.tbstcraft.quark.data.config.ConfigContainer;
+import org.atcraftmc.qlib.config.ConfigContainer;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.ServiceInject;
 import org.tbstcraft.quark.internal.task.TaskService;

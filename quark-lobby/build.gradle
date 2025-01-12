@@ -4,4 +4,4 @@ plugins{
 
 project.setProperty("version","1.0.0")
 
-apply from:"E:/Java/Projects/Quark/modules.gradle"
+apply from:"../modules.gradle"

@@ -20,7 +20,7 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.PlayerDataService;
 import org.tbstcraft.quark.data.assets.AssetGroup;
-import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;

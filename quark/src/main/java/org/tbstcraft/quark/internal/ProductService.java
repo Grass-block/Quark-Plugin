@@ -12,18 +12,10 @@ import java.util.Base64;
 
 
 //激活：发送mac地址和访问码，远端服务器返回激活信息，并删除所有旧设备的激活信息。
-
-
 @Comments("Remove this from service list to crack. You win :D")
-
 @QuarkService(id = "product")
 public interface ProductService extends Service {
     Activator ACTIVATOR = new DevActivator();
-
-
-    /* update-check:
-     *  {"version":"3.54.18","version_info":"Update log"}
-     */
 
     @ServiceInject
     static void start() {
@@ -32,9 +24,9 @@ public interface ProductService extends Service {
 
     static String getSystemIdentifier() {
         try {
-            for (int i=0;i<8;i++){
+            for (int i = 0; i < 8; i++) {
                 NetworkInterface networkInterfaces = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
-                if(networkInterfaces==null){
+                if (networkInterfaces == null) {
                     continue;
                 }
                 return SHA.getSHA224(Base64.getEncoder().encodeToString(networkInterfaces.getHardwareAddress()), false);

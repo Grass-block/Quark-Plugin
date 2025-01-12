@@ -5,7 +5,9 @@ public enum APIProfile {
     SPIGOT("spigot"),
     PAPER("paper/airplane/purpur"),
     FOLIA("folia"),
-    ARCLIGHT("arclight/mohist");
+    ARCLIGHT("forge/arclight/mohist"),
+    BANNER("fabric/banner"),
+    YOUER("NEOForge/youer");
 
     final String name;
 
@@ -16,9 +18,9 @@ public enum APIProfile {
     public boolean isCompat(APIProfile platform) {
         return switch (this) {
             case BUKKIT -> platform == BUKKIT;
-            case ARCLIGHT, SPIGOT -> platform == BUKKIT || platform == SPIGOT;
+            case ARCLIGHT, SPIGOT, YOUER -> platform == BUKKIT || platform == SPIGOT;
             case PAPER -> platform != FOLIA;
-            case FOLIA -> true;
+            case FOLIA, BANNER -> true;
         };
     }
 

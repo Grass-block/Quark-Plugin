@@ -7,8 +7,8 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.PlayerDataService;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
-import org.tbstcraft.quark.foundation.text.TextSender;
+import org.atcraftmc.qlib.texts.TextBuilder;
+import org.tbstcraft.quark.foundation.TextSender;
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.framework.packages.PackageManager;
 import org.tbstcraft.quark.framework.service.ServiceManager;
@@ -26,7 +26,6 @@ public interface ProductInfo {
     static String version() {
         return Quark.getInstance().getDescription().getVersion();
     }
-
 
     static int archVersion() {
         return Integer.parseInt(String.valueOf(version().charAt(0)));

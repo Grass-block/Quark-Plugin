@@ -2,7 +2,7 @@ package org.tbstcraft.quark.foundation.command;
 
 import org.atcraftmc.qlib.command.AbstractCommand;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.atcraftmc.qlib.language.LanguageEntry;
 
 public abstract class CoreCommand extends AbstractCommand {
     private final LanguageEntry entry;

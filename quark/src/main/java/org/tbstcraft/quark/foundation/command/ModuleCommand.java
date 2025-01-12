@@ -3,8 +3,8 @@ package org.tbstcraft.quark.foundation.command;
 import org.atcraftmc.qlib.command.AbstractCommand;
 import org.atcraftmc.qlib.command.CommandManager;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.data.config.ConfigEntry;
-import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.atcraftmc.qlib.config.ConfigEntry;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 
 public abstract class ModuleCommand<M extends AbstractModule> extends AbstractCommand {

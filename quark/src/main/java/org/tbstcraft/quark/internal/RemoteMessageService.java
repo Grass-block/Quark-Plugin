@@ -1,11 +1,9 @@
 package org.tbstcraft.quark.internal;
 
 import io.netty.buffer.ByteBuf;
-import me.gb2022.apm.remote.APMLoggerManager;
 import me.gb2022.apm.remote.RemoteMessenger;
 import me.gb2022.apm.remote.connector.RemoteConnector;
-import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.data.config.ConfigEntry;
+import org.atcraftmc.qlib.config.ConfigEntry;
 import org.tbstcraft.quark.framework.service.*;
 
 import java.net.InetSocketAddress;
@@ -13,8 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
 @QuarkService(id = "remote-message-service")
 public interface RemoteMessageService extends Service {
@@ -41,6 +37,10 @@ public interface RemoteMessageService extends Service {
         return INSTANCE.get();
     }
 
+
+    static RemoteMessenger messenger() {
+        return getInstance().getMessenger();
+    }
 
     static void addHandler(Object handler) {
         getInstance().addMessageHandler(handler);
@@ -139,12 +139,6 @@ public interface RemoteMessageService extends Service {
         private final RemoteMessenger messenger;
 
         public Impl(String id, InetSocketAddress address, boolean proxy, byte[] key) {
-            APMLoggerManager.setLoggerCreator((s) -> new Logger(s, null) {
-                @Override
-                public void log(LogRecord record) {
-                    Quark.getInstance().getLogger().log(record);
-                }
-            });
             this.messenger = new RemoteMessenger(proxy, id, address, key);
         }
 

@@ -41,9 +41,9 @@ Quark(中文名: 夸克)是我服自主研发的综合管理型插件，目前�
 |--------------------|----------|------------------|---------|---------------|
 | Paper              | Full     | Full             | Full    | Recommended   |
 | Spigot             | Most     | Full             | BugFix  | --            |
-| Bukkit             | Few      | No               | Test    | --            |
+| Bukkit             | Few      | No               | org.tbstcraft.quark.Test    | --            |
 | Folia              | Most     | Full             | BugFix  | No hot reload |
-| Mohist             | Few      | No               | Test    | No hot reload |
+| Mohist             | Few      | No               | org.tbstcraft.quark.Test    | No hot reload |
 | Legacy(any<1.14.4) | Most     | Yes(>1.9)        | BugFix  | --            |
 
 ### 用户须知

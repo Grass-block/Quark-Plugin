@@ -1,8 +1,7 @@
 package org.atcraftmc.quark.web;
 
 import org.atcraftmc.quark.web.http.HTTPServer;
-import org.bukkit.configuration.ConfigurationSection;
-import org.tbstcraft.quark.data.config.ConfigEntry;
+import org.atcraftmc.qlib.config.ConfigEntry;
 import org.tbstcraft.quark.framework.service.*;
 
 @QuarkService(id = "http-service")

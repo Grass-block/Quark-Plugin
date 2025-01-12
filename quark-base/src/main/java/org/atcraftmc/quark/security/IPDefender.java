@@ -5,9 +5,10 @@ import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.TriState;
 import me.gb2022.commons.http.HttpMethod;
 import me.gb2022.commons.http.HttpRequest;
-import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.BanList;
 import org.bukkit.command.CommandSender;
@@ -17,9 +18,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.PlayerDataService;
-import org.tbstcraft.quark.data.language.Language;
-import org.tbstcraft.quark.data.language.LanguageEntry;
-import org.tbstcraft.quark.data.language.LocaleMapping;
+import org.atcraftmc.qlib.language.Language;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
@@ -44,6 +44,8 @@ public final class IPDefender extends PackageModule implements QuarkCommandExecu
     @Inject("ip-defender;Time,Player,OldIP,NewIP")
     private RecordEntry record;
 
+    private IPService service;
+
     public static String defaultResult(Locale locale) {
         if (List.of(Locale.CHINESE, Locale.SIMPLIFIED_CHINESE, Locale.TRADITIONAL_CHINESE, Locale.CHINA).contains(locale)) {
             return "[未知]";
@@ -51,77 +53,46 @@ public final class IPDefender extends PackageModule implements QuarkCommandExecu
         return "unknown";
     }
 
-    public static String query(InetSocketAddress address, Locale locale) {
-        if (address == null) {
-            return defaultResult(locale);
-        }
-
-        String ipString = address.toString().replace("/", "").split(":")[0];
-
-        if (LocaleMapping.minecraft(Locale.getDefault()).contains("zh")) {
-
-            var s = HttpRequest.https(HttpMethod.GET, "searchplugin.csdn.net/api/v1/ip/get")
-                    .browserBehavior(false)
-                    .param("ip", ipString)
-                    .build()
-                    .request();
-
-            JsonObject json = SharedObjects.JSON_PARSER.parse(s).getAsJsonObject();
-
-            return json.getAsJsonObject().getAsJsonObject("data").get("address").getAsString();
-
-        } else {
-            var loc = locale.toString().replace("_", "-");
-
-            var s = HttpRequest.http(HttpMethod.GET, "ip-api.com/json")
-                    .path(ipString)
-                    .param("lang", loc)
-                    .browserBehavior(false)
-                    .build()
-                    .request();
-
-            JsonObject json = SharedObjects.JSON_PARSER.parse(s).getAsJsonObject();
-
-            String result = "%s-%s-%s".formatted(json.getAsJsonObject().get("country").getAsString(),
-                                                 json.getAsJsonObject().get("regionName").getAsString(),
-                                                 json.getAsJsonObject().get("city").getAsString()
-                                                );
-            if (Objects.equals(result, "null-null-null")) {
-                return defaultResult(locale);
+    @Override
+    public void enable() {
+        this.service = switch (getConfig().getString("service")) {
+            case "ip-api" -> new IPService.IP_API();
+            case "ua-info" -> new IPService.UserAgentInfo();
+            case "baidu" -> new IPService.Baidu();
+            default -> {
+                getL4jLogger().error("unknown service: {},using default ip-api service", getConfig().getString("service"));
+                yield new IPService.IP_API();
             }
-            return result;
-        }
-
+        };
     }
 
-    public String query(Player player) {
-        return query(player.getAddress(), Language.locale(player));
+    @Override
+    public void onCommand(CommandSender sender, String[] args) {
+        TaskService.async().run(() -> this.language.sendMessage(sender, "check", query(((Player) sender))));
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        TaskService.async().run(() -> this.handle(event.getPlayer()));
-    }
+    public void check(Player player) {
+        var current = query(player.getAddress(), Locale.ENGLISH);
+        var data = PlayerDataService.get(player);
 
-    public void handle(Player player) {
         TriState state;
-
-        String current = query(player.getAddress(), Locale.ENGLISH);
         String previous;
 
-        NBTTagCompound tag = PlayerDataService.getEntry(player.getName(), this.getId());
-        if (!tag.hasKey("ip")) {
-            previous = null;
-            tag.setString("ip", current);
-            PlayerDataService.save(player.getName());
+        if (!data.hasKey("ip-address")) {
+            data.setString("ip-address", current);
+            data.save();
+
             state = TriState.UNKNOWN;
+            previous = null;
         } else {
-            previous = tag.getString("ip");
+            previous = data.getString("ip-address");
+
             if (Objects.equals(previous, current)) {
                 state = TriState.FALSE;
             } else {
-                tag.setString("ip", current);
-                PlayerDataService.save((player.getName()));
+                data.setString("ip-address", current);
+                data.save();
+
                 state = TriState.TRUE;
             }
         }
@@ -130,7 +101,8 @@ public final class IPDefender extends PackageModule implements QuarkCommandExecu
             return;
         }
 
-        String currentDisplay = query(player);
+        var currentDisplay = query(player);
+
         if (state == TriState.UNKNOWN) {
             this.language.sendMessage(player, "detect", currentDisplay);
             return;
@@ -138,19 +110,26 @@ public final class IPDefender extends PackageModule implements QuarkCommandExecu
 
         this.language.sendMessage(player, "warn", currentDisplay);
 
-        PluginMessenger.broadcastMapped("ip:change",
-                                        (map) -> map.put("player", player.getName()).put("old-ip", previous).put("new-ip", currentDisplay)
-                                       );
+        PluginMessenger.broadcastMapped("ip:change", (map) -> {
+            map.put("player", player.getName());
+            map.put("old-ip", previous);
+            map.put("new-ip", current);
+        });
+
+        if (this.getConfig().getBoolean("record")) {
+            this.record.addLine(SharedObjects.DATE_FORMAT.format(new Date()), player.getName(), previous, current);
+        }
 
         if (this.getConfig().getBoolean("auto_ban")) {
-            String name = player.getName();
-            String reason = getLanguage().getMessage(Language.locale(player), "auto_ban_reason");
-            int day = getConfig().getInt("auto_ban_day_time");
-            int hour = getConfig().getInt("auto_ban_hour_time");
-            int minute = getConfig().getInt("auto_ban_minute_time");
-            int second = getConfig().getInt("auto_ban_second_time");
+            var name = player.getName();
+            var reason = getLanguage().getMessage(Language.locale(player), "auto_ban_reason");
 
-            Calendar calendar = Calendar.getInstance();
+            var day = getConfig().getInt("auto_ban_day_time");
+            var hour = getConfig().getInt("auto_ban_hour_time");
+            var minute = getConfig().getInt("auto_ban_minute_time");
+            var second = getConfig().getInt("auto_ban_second_time");
+
+            var calendar = Calendar.getInstance();
 
             calendar.add(Calendar.DATE, day);
             calendar.add(Calendar.HOUR, hour);
@@ -159,15 +138,140 @@ public final class IPDefender extends PackageModule implements QuarkCommandExecu
 
             Players.banPlayer(name, BanList.Type.NAME, reason, calendar.getTime(), Quark.PLUGIN_ID);
         }
-
-        if (this.getConfig().getBoolean("record")) {
-            this.record.addLine(SharedObjects.DATE_FORMAT.format(new Date()), player.getName(), previous, current);
-        }
     }
 
-    @Override
-    public void onCommand(CommandSender sender, String[] args) {
-        TaskService.async().run(() -> this.language.sendMessage(sender, "check", query(((Player) sender))));
+    public String query(InetSocketAddress address, Locale locale) {
+        if (address == null) {
+            return defaultResult(locale);
+        }
+
+        var result = this.service.parse(address, locale);
+
+        if (IPService.isError(result)) {
+            return defaultResult(locale);
+        }
+
+        return result;
+    }
+
+    public String query(Player player) {
+        return query(player.getAddress(), Language.locale(player));
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        TaskService.async().run(() -> this.check(event.getPlayer()));
+    }
+
+    interface IPService {
+        Logger LOGGER = LogManager.getLogger("Quark-Plugin/IPService");
+
+        String RES_UNKNOWN = "[error]Unknown or LAN address";
+        String RES_NET_ERROR = "[error]Network error";
+        String RES_UNEXPECTED_RESPONSE = "[error]Unexpected response from server";
+
+        static boolean isError(String resp) {
+            return resp.startsWith("[error]");
+        }
+
+        HttpRequest buildRequest(InetSocketAddress address, Locale locale);
+
+        String parse(JsonObject response);
+
+        default String parse(InetSocketAddress address, Locale locale) {
+            var resp = ((String) null);
+            var dom = ((JsonObject) null);
+
+            try {
+                resp = buildRequest(address, locale).request();
+            } catch (Exception e) {
+                LOGGER.error(RES_NET_ERROR);
+                LOGGER.catching(e);
+                return RES_NET_ERROR;
+            }
+
+            try {
+                dom = SharedObjects.JSON_PARSER.parse(resp).getAsJsonObject();
+            } catch (Exception e) {
+                LOGGER.error(RES_UNEXPECTED_RESPONSE);
+                LOGGER.error(resp);
+                LOGGER.catching(e);
+                return RES_UNEXPECTED_RESPONSE;
+            }
+
+            return parse(dom);
+        }
+
+
+        class IP_API implements IPService {
+            @Override
+            public HttpRequest buildRequest(InetSocketAddress address, Locale locale) {
+                return HttpRequest.http(HttpMethod.GET, "ip-api.com/json")
+                        .path(address.getHostName())
+                        .param("lang", locale.toString().replace("_", "-"))
+                        .browserBehavior(false)
+                        .build();
+            }
+
+
+            @Override
+            public String parse(JsonObject response) {
+                var country = response.get("country").getAsString();
+                var regionName = response.get("regionName").getAsString();
+                var city = response.get("city").getAsString();
+                var result = "%s-%s-%s".formatted(country, regionName, city);
+
+                if (Objects.equals(result, "null-null-null")) {
+                    return RES_UNKNOWN;
+                }
+                return result;
+            }
+        }
+
+        class Baidu implements IPService {
+            @Override
+            public String parse(JsonObject response) {
+                if (response.getAsJsonArray("data").isEmpty()) {
+                    return RES_UNKNOWN;
+                }
+                return response.getAsJsonArray("data").get(0).getAsJsonObject().get("location").getAsString();
+            }
+
+            @Override
+            public HttpRequest buildRequest(InetSocketAddress address, Locale locale) {
+                return HttpRequest.http(HttpMethod.GET, "https://opendata.baidu.com/api.php")
+                        .param("query", address.getHostName())
+                        .param("co", "")
+                        .param("resource_id", "6006")
+                        .param("oe", "utf8")
+                        .browserBehavior(true)
+                        .build();
+            }
+        }
+
+        class UserAgentInfo implements IPService {
+
+            @Override
+            public HttpRequest buildRequest(InetSocketAddress address, Locale locale) {
+                return HttpRequest.http(HttpMethod.GET, "https://ip.useragentinfo.com/json")
+                        .param("ip", address.getHostName())
+                        .browserBehavior(true)
+                        .build();
+            }
+
+            @Override
+            public String parse(JsonObject response) {
+                var country = response.get("country").getAsString();
+                var province = response.get("province").getAsString();
+                var city = response.get("city").getAsString();
+
+                if (response.has("desc") && Objects.equals(response.get("desc").getAsString(), "query fail")) {
+                    return RES_UNKNOWN;
+                }
+
+                return "%s-%s-%s".formatted(country, province, city);
+            }
+        }
     }
 
     @QuarkCommand(name = "check-ip", permission = "+quark.ip.query", playerOnly = true)

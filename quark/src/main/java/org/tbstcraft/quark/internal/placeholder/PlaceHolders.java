@@ -1,6 +1,9 @@
 package org.tbstcraft.quark.internal.placeholder;
 
 import me.gb2022.commons.Formating;
+import me.gb2022.commons.TriState;
+import org.atcraftmc.qlib.language.Language;
+import org.atcraftmc.qlib.texts.placeholder.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -8,12 +11,9 @@ import org.tbstcraft.quark.ProductInfo;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.PlayerDataService;
-import org.tbstcraft.quark.data.language.Language;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
 import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.ModuleManager;
-import me.gb2022.commons.TriState;
-import org.tbstcraft.quark.util.placeholder.*;
 
 import java.util.Date;
 import java.util.Objects;
@@ -74,7 +74,10 @@ public interface PlaceHolders {
         holder.register("name", (StringObjectPlaceHolder<Player>) Player::getName);
         holder.register("display-name", (StringObjectPlaceHolder<Player>) Player::getDisplayName);
         holder.register("custom-name", (StringObjectPlaceHolder<Player>) Player::getName);
-        holder.register("address", (StringObjectPlaceHolder<Player>) (p) -> Objects.requireNonNull(p.getAddress()).getAddress().getHostAddress());
+        holder.register(
+                "address",
+                (StringObjectPlaceHolder<Player>) (p) -> Objects.requireNonNull(p.getAddress()).getAddress().getHostAddress()
+        );
         holder.register("locale", (StringObjectPlaceHolder<Player>) (p) -> Language.locale(Language.locale(p)));
         holder.register("ping", (StringObjectPlaceHolder<Player>) (p) -> BukkitUtil.formatPing(Players.getPing(p)));
         holder.register("play-time", (StringObjectPlaceHolder<Player>) (p) -> Formating.formatDuringFull(Players.getPlayTime(p)));
@@ -99,7 +102,10 @@ public interface PlaceHolders {
         GloballyPlaceHolder holder = new GloballyPlaceHolder();
 
         holder.register("module-installed", GlobalPlaceHolder.object(() -> ModuleManager.getInstance().getModules().size()));
-        holder.register("module-enabled", GlobalPlaceHolder.object(() -> ModuleManager.getInstance().getIdsByStatus(TriState.FALSE).size()));
+        holder.register(
+                "module-enabled",
+                GlobalPlaceHolder.object(() -> ModuleManager.getInstance().getIdsByStatus(TriState.FALSE).size())
+        );
         holder.register("player-data-count", GlobalPlaceHolder.object(PlayerDataService::entryCount));
         holder.register("module-data-count", GlobalPlaceHolder.object(ModuleDataService::getEntryCount));
         holder.register("quark-version", (StringPlaceHolder) ProductInfo::version);

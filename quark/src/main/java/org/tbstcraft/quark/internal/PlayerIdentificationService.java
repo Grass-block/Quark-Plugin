@@ -1,11 +1,12 @@
 package org.tbstcraft.quark.internal;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.data.config.ConfigEntry;
+import org.atcraftmc.qlib.config.ConfigEntry;
 import org.tbstcraft.quark.framework.service.*;
 import org.tbstcraft.quark.util.Identifiers;
+
+import java.util.Objects;
 
 @QuarkService(id = "hashing")
 public interface PlayerIdentificationService extends Service {
@@ -48,7 +49,7 @@ public interface PlayerIdentificationService extends Service {
     final class UUIDTransformer implements PlayerIdentificationService {
         @Override
         public String transform(Player player) {
-            return Identifiers.internal(player.getUniqueId().toString());
+            return Identifiers.internal(Objects.requireNonNull(player.getPlayerProfile().getUniqueId()).toString());
         }
 
         @Override
@@ -58,15 +59,9 @@ public interface PlayerIdentificationService extends Service {
                 return playerName;
             }
 
+            Quark.LOGGER.warn("Player {} cannot have a valid UUID.", playerName);
 
-            var uuid = Bukkit.getPlayerUniqueId(playerName);
-
-            if (uuid == null) {
-                Quark.LOGGER.warn("Player {} cannot have a valid UUID.", playerName);
-                return Identifiers.internal(playerName);
-            }
-
-            return Identifiers.internal(uuid.toString());
+            return Identifiers.internal(playerName);
         }
     }
 }

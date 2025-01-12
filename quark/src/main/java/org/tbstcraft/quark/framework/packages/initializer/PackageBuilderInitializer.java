@@ -2,8 +2,9 @@ package org.tbstcraft.quark.framework.packages.initializer;
 
 import me.gb2022.commons.container.Pair;
 import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.data.config.Configuration;
-import org.tbstcraft.quark.data.language.LanguagePack;
+import org.atcraftmc.qlib.config.Configuration;
+import org.atcraftmc.qlib.language.LanguagePack;
+import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.module.providing.DirectModuleRegistry;
 import org.tbstcraft.quark.framework.module.providing.ModuleRegistry;
@@ -47,7 +48,7 @@ public final class PackageBuilderInitializer implements PackageInitializer {
     public Set<Configuration> createConfig(AbstractPackage pkg) {
         Set<Configuration> configs = new HashSet<>();
         for (var id : this.configs) {
-            configs.add(new Configuration(pkg.getOwner(), id));
+            configs.add(new Configuration(Quark.PluginConceptWrapper.of(pkg.getOwner()), id));
         }
 
         return configs;
@@ -57,7 +58,7 @@ public final class PackageBuilderInitializer implements PackageInitializer {
     public Set<LanguagePack> createLanguagePack(AbstractPackage pkg) {
         Set<LanguagePack> packs = new HashSet<>();
         for (Pair<String, String> pack : this.packs) {
-            packs.add(new LanguagePack(pack.getLeft(), pack.getRight(), pkg.getOwner()));
+            packs.add(new LanguagePack(pack.getLeft(), pack.getRight(), Quark.PluginConceptWrapper.of(pkg.getOwner())));
         }
 
         return packs;

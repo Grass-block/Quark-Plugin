@@ -32,11 +32,10 @@ interface ParamDispatcher {
         dispatch(Object.class, PreparedStatement::setObject);
     }
 
-    @SuppressWarnings("unchecked")
     static <T> LambdaResolver<T> select(Object obj) {
         var type = RESOLVERS.get(obj.getClass());
 
-        return (LambdaResolver<T>) RESOLVERS.get(Objects.requireNonNullElse(type, Object.class));
+        return ((LambdaResolver<T>) Objects.requireNonNullElse(type, RESOLVERS.get(Object.class)));
     }
 
     static void set(PreparedStatement ps, int position, Object value) throws SQLException {

@@ -326,7 +326,7 @@ public interface PluginUtil {
 
             Plugin p;
             try {
-                if (APIProfileTest.isArclightBasedServer()) {
+                if (APIProfileTest.isMixedServer()) {
                     p = CORE_REF.get().getPluginLoader().loadPlugin(file);
                 } else {
                     p = this.handle.loadPlugin(file);

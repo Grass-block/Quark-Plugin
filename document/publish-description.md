@@ -49,6 +49,6 @@ or disable modules,add or remove extension packs,or even make your own pack thro
 |----------|----------|------------------|---------|---------------|
 | Paper    | Full     | Full             | Full    | Recommended   |
 | Spigot   | Most     | Full             | BugFix  |               |
-| Bukkit   | Few      | No               | Test    |               |
+| Bukkit   | Few      | No               | org.tbstcraft.quark.Test    |               |
 | Folia    | Most     | Full             | BugFix  | No hot reload |
-| Mohist   | Few      | No               | Test    | No hot reload |
+| Mohist   | Few      | No               | org.tbstcraft.quark.Test    | No hot reload |

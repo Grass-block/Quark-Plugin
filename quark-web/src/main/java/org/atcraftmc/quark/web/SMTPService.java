@@ -1,7 +1,7 @@
 package org.atcraftmc.quark.web;
 
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.data.config.ConfigEntry;
+import org.atcraftmc.qlib.config.ConfigEntry;
 import org.tbstcraft.quark.framework.service.Service;
 import org.tbstcraft.quark.framework.service.*;
 

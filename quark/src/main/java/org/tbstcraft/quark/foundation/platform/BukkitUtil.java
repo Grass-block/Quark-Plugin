@@ -15,7 +15,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.util.Vector;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.lang.reflect.InvocationTargetException;

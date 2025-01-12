@@ -1,6 +1,6 @@
 package org.atcraftmc.quark.contents.music;
 
-import me.gb2022.apm.remote.protocol.BufferUtil;
+import me.gb2022.apm.remote.util.BufferUtil;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.assets.AssetGroup;
 import org.tbstcraft.quark.internal.RemoteMessageService;

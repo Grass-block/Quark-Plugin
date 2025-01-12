@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.foundation.text.TextSender;
+import org.tbstcraft.quark.foundation.TextSender;
 import org.tbstcraft.quark.framework.event.CustomEvent;
 import org.tbstcraft.quark.framework.event.QuarkEvent;
 import org.tbstcraft.quark.framework.service.QuarkService;

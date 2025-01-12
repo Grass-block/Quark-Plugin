@@ -1,7 +1,7 @@
 package org.tbstcraft.quark.framework.module.component;
 
-import org.tbstcraft.quark.data.config.ConfigEntry;
-import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.atcraftmc.qlib.config.ConfigEntry;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.AbstractModule;
 import org.tbstcraft.quark.framework.FunctionalComponent;
 

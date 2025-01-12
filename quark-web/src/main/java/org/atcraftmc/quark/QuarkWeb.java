@@ -12,6 +12,10 @@ import java.util.Set;
 public final class QuarkWeb extends MultiPackageProvider {
     @Override
     public Set<PackageInitializer> createInitializers() {
+        return initializers();
+    }
+
+    public static Set<PackageInitializer> initializers(){
         return Set.of(
                 new JsonPackageInitializer(FeatureAvailability.PREMIUM, "/packages/quark-web.json")
         );

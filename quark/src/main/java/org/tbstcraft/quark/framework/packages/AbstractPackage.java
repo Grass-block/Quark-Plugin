@@ -1,10 +1,10 @@
 package org.tbstcraft.quark.framework.packages;
 
 import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.data.config.ConfigContainer;
-import org.tbstcraft.quark.data.config.Configuration;
-import org.tbstcraft.quark.data.language.LanguageContainer;
-import org.tbstcraft.quark.data.language.LanguagePack;
+import org.atcraftmc.qlib.config.ConfigContainer;
+import org.atcraftmc.qlib.config.Configuration;
+import org.atcraftmc.qlib.language.LanguageContainer;
+import org.atcraftmc.qlib.language.LanguagePack;
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.framework.module.providing.ModuleRegistry;
 import org.tbstcraft.quark.framework.packages.initializer.PackageInitializer;

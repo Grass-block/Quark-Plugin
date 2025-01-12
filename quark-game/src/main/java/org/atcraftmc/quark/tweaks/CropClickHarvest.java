@@ -53,7 +53,7 @@ public final class CropClickHarvest extends PackageModule {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if (!event.getAction().isRightClick()) {
+        if (!(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
         if (event.getClickedBlock() == null) {

@@ -4,6 +4,8 @@ import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.nbt.NBTTagList;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.commons.reflect.method.MethodHandle;
+import me.gb2022.commons.reflect.method.MethodHandleO1;
 import net.kyori.adventure.text.Component;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
@@ -11,18 +13,21 @@ import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Nameable;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.atcraftmc.qlib.language.LanguageEntry;
+import org.tbstcraft.quark.foundation.ComponentSerializer;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.BukkitCodec;
-import org.tbstcraft.quark.foundation.text.ComponentSerializer;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.tbstcraft.quark.framework.customcontent.CustomMeta;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -42,6 +47,12 @@ public final class HoverDisplay extends PackageModule implements QuarkCommandExe
 
     @Inject
     private LanguageEntry language;
+
+    @Override
+    public void checkCompatibility() throws APIIncompatibleException {
+        Compatibility.requireClass(() -> Class.forName("org.bukkit.Nameable"));
+        Compatibility.requireMethod(() -> Nameable.class.getDeclaredMethod("customName"));
+    }
 
     @Override
     public void enable() {
@@ -189,6 +200,11 @@ public final class HoverDisplay extends PackageModule implements QuarkCommandExe
     }
 
     public static final class ArmorStandGroup {
+        public static final MethodHandleO1<ArmorStand, Component> CUSTOM_NAME = MethodHandle.select((ctx) -> {
+            ctx.attempt(() -> Nameable.class.getMethod("customName", Component.class), (p, c) -> p.customName(c));
+            ctx.dummy((a, c) -> a.setCustomName(ComponentSerializer.legacy(c)));
+        });
+
         private final Set<ArmorStand> components = new HashSet<>();
         private final List<Component> texts = new ArrayList<>();
         private Location anchor;
@@ -241,7 +257,7 @@ public final class HoverDisplay extends PackageModule implements QuarkCommandExe
             stand.setGravity(false);
             stand.setInvulnerable(true);
             stand.setVisible(false);
-            stand.customName(text);
+            CUSTOM_NAME.invoke(stand, text);
             stand.setCustomNameVisible(true);
 
             this.components.add(stand);

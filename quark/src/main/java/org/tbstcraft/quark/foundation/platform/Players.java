@@ -7,11 +7,11 @@ import me.gb2022.commons.reflect.method.MethodHandleO2;
 import me.gb2022.commons.reflect.method.MethodHandleRO0;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.foundation.text.ComponentSerializer;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.tbstcraft.quark.foundation.ComponentSerializer;
 import org.tbstcraft.quark.framework.event.BanMessageFetchEvent;
 import org.tbstcraft.quark.framework.module.ModuleManager;
 import org.tbstcraft.quark.internal.LocaleService;
@@ -33,11 +33,11 @@ public interface Players {
         ctx.attempt(
                 () -> Player.class.getMethod("addCustomChatCompletions", Collection.class),
                 (p, a) -> p.addCustomChatCompletions(a)
-                   );
+        );
         ctx.attempt(
                 () -> Player.class.getMethod("addAdditionalChatCompletions", Collection.class),
                 (p, a) -> p.removeCustomChatCompletions(a)
-                   );
+        );
         ctx.dummy((p, a1) -> {
         });
     });
@@ -45,11 +45,11 @@ public interface Players {
         ctx.attempt(
                 () -> Player.class.getMethod("removeCustomChatCompletions", Collection.class),
                 (p, c) -> p.removeCustomChatCompletions(c)
-                   );
+        );
         ctx.attempt(
                 () -> Player.class.getMethod("removeAdditionalChatCompletions", Collection.class),
                 (p, c) -> p.removeAdditionalChatCompletions(c)
-                   );
+        );
         ctx.dummy((p, a1) -> {
         });
     });
@@ -61,7 +61,7 @@ public interface Players {
         ctx.attempt(
                 () -> Player.class.getMethod("sendPlayerListHeader", Component.class),
                 (p, c1, c2) -> p.sendPlayerListHeaderAndFooter(c1, c2)
-                   );
+        );
         ctx.attempt(
                 () -> Player.class.getMethod("setPlayerListHeaderFooter", BaseComponent.class, BaseComponent.class),
                 (p, c1, c2) -> {
@@ -69,7 +69,7 @@ public interface Players {
                     var cc2 = ComponentSerializer.bungee(c2);
                     p.setPlayerListHeaderFooter(cc1, cc2);
                 }
-                   );
+        );
         ctx.attempt(() -> Player.class.getMethod("setPlayerListHeader", String.class), (p, c1, c2) -> {
             p.setPlayerListHeader(ComponentSerializer.legacy(c1));
             p.setPlayerListFooter(ComponentSerializer.legacy(c2));

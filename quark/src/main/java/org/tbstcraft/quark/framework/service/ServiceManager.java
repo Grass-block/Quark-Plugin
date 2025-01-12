@@ -6,8 +6,8 @@ import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.data.config.ConfigContainer;
-import org.tbstcraft.quark.data.config.ConfigEntry;
+import org.atcraftmc.qlib.config.ConfigContainer;
+import org.atcraftmc.qlib.config.ConfigEntry;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.util.ExceptionUtil;
 

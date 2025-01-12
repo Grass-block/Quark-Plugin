@@ -2,6 +2,7 @@ package org.atcraftmc.quark.display;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,9 +10,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.PlayerView;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.data.language.LanguageEntry;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
-import org.tbstcraft.quark.foundation.text.TextSender;
+import org.atcraftmc.qlib.language.LanguageEntry;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
+import org.atcraftmc.qlib.texts.TextBuilder;
+import org.tbstcraft.quark.foundation.TextSender;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -25,14 +28,21 @@ public final class ActionBarHUD extends PackageModule {
     @Inject
     private LanguageEntry language;
 
+    @Override
+    public void checkCompatibility() throws APIIncompatibleException {
+        Compatibility.requireMethod(()->Player.class.getDeclaredMethod("sendActionBar", BaseComponent[].class));
+    }
+
     private String render(Player player) {
         var loc = player.getLocation();
         var block = loc.getBlock();
 
         var locale = LocaleService.locale(player);
+        var biome_n = block.getBiome().getKey().getNamespace();
+        var biome_k = block.getBiome().getKey().getKey();
 
         var p = this.language.getMessage(locale, "position", loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-        var b = this.language.getMessage(locale, "biome", (Object[]) block.getBiome().getKey().asString().split(":"));
+        var b = this.language.getMessage(locale, "biome", biome_n, ":", biome_k);
         var t = this.language.getMessage(locale, "time");
         var f = this.language.getMessage(
                 locale,
@@ -49,7 +59,6 @@ public final class ActionBarHUD extends PackageModule {
 
         return PlaceHolderService.formatPlayer(player, template);
     }
-
 
     private void startRender(Player player) {
         PlayerView.getInstance(player).getActionbar().addChannel("quark:actionbar-hud", -10, 3, TaskService.async(), (p, c) -> {

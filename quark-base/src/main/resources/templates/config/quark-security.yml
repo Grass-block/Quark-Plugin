@@ -24,6 +24,7 @@ config:
     max-selection-size: 128
     max-edit-size: 384
   ip-defender:
+    service: "ua-info"
     record: true #是否记录IP属地变化
     auto-ban: false #是否自动封禁
     auto-ban-day-time: 0 #封禁的时间，往下为天，时，分，秒

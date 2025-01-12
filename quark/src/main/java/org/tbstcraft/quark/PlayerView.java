@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component;
 import org.atcraftmc.qlib.task.Task;
 import org.atcraftmc.qlib.task.TaskScheduler;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.foundation.text.TextSender;
+import org.tbstcraft.quark.foundation.TextSender;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.util.ArrayList;

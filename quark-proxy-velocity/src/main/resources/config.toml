@@ -1,0 +1,11 @@
+[server]
+tbst-leacy = '原版城建'
+
+[environment-vars]
+server-name = '{color(aqua,purple)}ExampleServer{;}'
+server-name-plain = 'ExampleServer'
+var = '{#white}%s{#gray}'
+
+[tab]
+format = "{color(gold)}[%s{color(gold)}]{color(gray)}%s"
+

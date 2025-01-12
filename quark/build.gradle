@@ -49,8 +49,11 @@ dependencies {
     implementation localStorage('me.gb2022.apm-remote')
     implementation localStorage('me.gb2022.apm-client')
 
-    implementation projectLocal("qlib-task")
-    implementation projectLocal("qlib-command")
+    implementation localStorage("org.atcraftmc.qlib-base")
+    implementation localStorage("org.atcraftmc.qlib-task")
+    implementation localStorage("org.atcraftmc.qlib-texts")
+    implementation localStorage("org.atcraftmc.qlib-configuration")
+    implementation localStorage("org.atcraftmc.qlib-command")
 }
 
 //platform api reference

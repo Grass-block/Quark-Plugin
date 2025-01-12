@@ -29,14 +29,14 @@ import org.bukkit.scoreboard.*;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.PlayerDataService;
-import org.tbstcraft.quark.data.language.Language;
-import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.atcraftmc.qlib.language.Language;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.data.storage.DataEntry;
+import org.tbstcraft.quark.foundation.ComponentSerializer;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.foundation.text.ComponentSerializer;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.component.Components;
@@ -46,7 +46,7 @@ import org.tbstcraft.quark.internal.LocaleService;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.CachedInfo;
-import org.tbstcraft.quark.util.placeholder.StringObjectPlaceHolder;
+import org.atcraftmc.qlib.texts.placeholder.StringObjectPlaceHolder;
 
 import java.util.*;
 
@@ -286,6 +286,7 @@ public final class PlayerNameHeader extends CommandModule {
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requireClass(() -> Class.forName("io.papermc.paper.scoreboard.numbers.NumberFormat"));
+            Compatibility.assertion(false);
         }
 
         public Component build(Player player, Locale locale) {

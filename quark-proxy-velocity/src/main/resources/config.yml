@@ -1,0 +1,25 @@
+config:
+  --features:
+    stp-command: true
+    hub-command: true
+    stpa-command: true
+    motd-sync: true
+    tab-sync: false
+    chat-sync: true
+    legacy-forwarding-protect: true
+    server-statement-observer: true
+    server-transfer-message: true
+    proxy-ping: true
+    apm-service: true
+  apm-service:
+    exchange: true #is connector exchange?
+    host: '127.0.0.1' #host to bind connector
+    port: 25843 #port to bind connector
+    identifier: 'proxy' #identifier for apm to use
+    key: 'test' # always change key after installed!
+  motd-sync:
+    provider: "lobby"
+    max-players: 2024
+    hide-players: false
+    update-interval: 15
+

@@ -2,9 +2,9 @@ package org.atcraftmc.quark.contents.music;
 
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.PlayerView;
-import org.tbstcraft.quark.data.language.Language;
-import org.tbstcraft.quark.foundation.text.TextBuilder;
-import org.tbstcraft.quark.foundation.text.TextSender;
+import org.atcraftmc.qlib.language.Language;
+import org.atcraftmc.qlib.texts.TextBuilder;
+import org.tbstcraft.quark.foundation.TextSender;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 import java.text.DecimalFormat;

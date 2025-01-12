@@ -11,18 +11,27 @@ public interface RecipeManager {
         TaskService.global().run(() -> {
             for (Recipe r : recipes) {
                 if (Bukkit.getRecipe(((Keyed) r).getKey()) != null) {
-                    return;
+                    continue;
                 }
-                Bukkit.addRecipe(r);
+                try {
+                    Bukkit.addRecipe(r);
+                } catch (IllegalArgumentException e) {
+                    if (APIProfileTest.isMixedServer()) {
+                        continue;
+                    }
+
+                    throw e;
+                }
             }
         });
     }
 
     static void unregister(Recipe... recipes) {
+        if (APIProfileTest.isMixedServer()) {
+            return;
+        }
+
         TaskService.global().run(() -> {
-            if (APIProfileTest.isArclightBasedServer()) {
-                return;
-            }
             for (Recipe r : recipes) {
                 Bukkit.removeRecipe(((Keyed) r).getKey());
             }

@@ -17,7 +17,26 @@ public interface APIProfileTest {
         }
     }
 
-    static boolean folia() {
+    static boolean banner() {
+        try {
+            Class.forName("net.fabricmc.loader.api.FabricLoader");
+            return true;
+        } catch (Throwable e) {
+            return false;
+        }
+
+    }
+
+    static boolean youer() {
+        try {
+            Class.forName("net.neoforged.neoforge.common.NeoForgeMod");
+            return true;
+        } catch (Throwable e) {
+            return false;
+        }
+    }
+
+    static boolean threadedRegion() {
         try {
             if (getVersionString().contains("Purpur")) {
                 return false;
@@ -25,7 +44,7 @@ public interface APIProfileTest {
             if (getVersionString().contains("purpur")) {
                 return false;
             }
-            if(getVersionString().contains("paper")){
+            if (getVersionString().contains("paper")) {
                 return false;
             }
             Bukkit.getServer().getClass().getMethod("getRegionScheduler");
@@ -35,7 +54,7 @@ public interface APIProfileTest {
         }
     }
 
-    static boolean paper() {
+    static boolean adventurePlatform() {
         try {
             Bukkit.getConsoleSender().getClass().getMethod("sendMessage", ComponentLike.class);
             return true;
@@ -54,16 +73,22 @@ public interface APIProfileTest {
     }
 
     static APIProfile test() {
-        if (APIProfileTest.arclight()) {
+        if (arclight()) {
             return APIProfile.ARCLIGHT;
         }
-        if (APIProfileTest.folia()) {
+        if (banner()) {
+            return APIProfile.BANNER;
+        }
+        if (youer()) {
+            return APIProfile.YOUER;
+        }
+        if (threadedRegion()) {
             return APIProfile.FOLIA;
         }
-        if (APIProfileTest.paper()) {
+        if (adventurePlatform()) {
             return APIProfile.PAPER;
         }
-        if (APIProfileTest.spigot()) {
+        if (spigot()) {
             return APIProfile.SPIGOT;
         }
 
@@ -73,7 +98,6 @@ public interface APIProfileTest {
     static APIProfile getAPIProfile() {
         return PLATFORM;
     }
-
 
     static boolean isFoliaServer() {
         return Objects.equals(getAPIProfile(), APIProfile.FOLIA);
@@ -103,7 +127,7 @@ public interface APIProfileTest {
         return Bukkit.getVersionMessage().toLowerCase();
     }
 
-    static boolean isArclightBasedServer() {
-        return PLATFORM == APIProfile.ARCLIGHT;
+    static boolean isMixedServer() {
+        return PLATFORM == APIProfile.BANNER || PLATFORM == APIProfile.YOUER || PLATFORM == APIProfile.ARCLIGHT;
     }
 }

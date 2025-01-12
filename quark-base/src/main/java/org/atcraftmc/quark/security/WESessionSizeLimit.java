@@ -24,7 +24,7 @@ import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3i;
 import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;

@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.assets.Asset;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.data.language.LanguageEntry;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;

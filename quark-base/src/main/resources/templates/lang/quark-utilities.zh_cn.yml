@@ -61,6 +61,8 @@ language:
     sign-in: "{#yellow}|| {#red}签到 {#yellow}||"
   position-align:
     align: "{global#sys-success}已将您的坐标调整至 [{#var},{#var},{#var}] [{#var}|{#var}]。"
+  entity-motion:
+    hint: "{global#sys-success}已为{#var}个实体持续{#var}ticks设置动量: {#var}({#var},{#var},{#var})"
   tick-manager:
     freeze: "{global#warn}服务器已冻结。"
     unfreeze: "{global#info}服务器已解冻。"

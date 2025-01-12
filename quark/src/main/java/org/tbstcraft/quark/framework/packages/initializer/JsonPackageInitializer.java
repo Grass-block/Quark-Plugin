@@ -6,8 +6,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.data.config.Configuration;
-import org.tbstcraft.quark.data.language.LanguagePack;
+import org.atcraftmc.qlib.config.Configuration;
+import org.atcraftmc.qlib.language.LanguagePack;
+import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.framework.module.providing.JsonModuleRegistry;
 import org.tbstcraft.quark.framework.module.providing.ModuleRegistry;
 import org.tbstcraft.quark.framework.packages.AbstractPackage;
@@ -57,7 +58,7 @@ public final class JsonPackageInitializer implements PackageInitializer {
 
         for (JsonElement element : languages) {
             String[] item = element.getAsString().split(":");
-            packs.add(new LanguagePack(item[0], item[1], pkg.getOwner()));
+            packs.add(new LanguagePack(item[0], item[1], Quark.PluginConceptWrapper.of(pkg.getOwner())));
         }
 
         return packs;
@@ -74,7 +75,7 @@ public final class JsonPackageInitializer implements PackageInitializer {
 
         for (JsonElement element : arr) {
             String item = element.getAsString();
-            packs.add(new Configuration(pkg.getOwner(), item));
+            packs.add(new Configuration(Quark.PluginConceptWrapper.of(pkg.getOwner()), item));
         }
 
         return packs;

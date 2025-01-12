@@ -20,8 +20,7 @@ import java.util.Set;
 
 @QuarkPackageProvider
 public final class QuarkGame extends MultiPackageProvider {
-    @Override
-    public Set<PackageInitializer> createInitializers() {
+    public static Set<PackageInitializer> initializers() {
         return Set.of(
                 PackageBuilderInitializer.of("quark-tweaks", FeatureAvailability.BOTH, (i) -> {
                     i.module("time-scale", TimeScale.class);
@@ -69,6 +68,11 @@ public final class QuarkGame extends MultiPackageProvider {
                     i.config("quark-warps");
                 })
         );
+    }
+
+    @Override
+    public Set<PackageInitializer> createInitializers() {
+        return initializers();
     }
 
 }

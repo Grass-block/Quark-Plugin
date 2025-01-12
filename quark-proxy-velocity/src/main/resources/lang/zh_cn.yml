@@ -1,0 +1,43 @@
+language:
+  global-vars:
+    sys-info: "{#aqua}系统{#dark_aqua} > {#gray}"
+    sys-warning: "{#yellow}系统{#dark_aqua} > {#gray}"
+    sys-error: "{#red}系统{#dark_aqua} > {#gray}"
+    sys-success: "{#green}系统{#dark_aqua} > {#gray}"
+    sys-operation: "{#light-purple}系统{#dark_aqua} > {#gray}"
+  server-transfer-message:
+    join-proxy: '{global#sys-info}{#gray}玩家 {#white}{#var}{#gray} 加入了服务器，欢迎。'
+    join-server: '{global#sys-info}{#gray}玩家 {#white}{#var}{#gray} (来自{#var}) 加入了服务器，欢迎。'
+    leave-proxy: '{global#sys-info}玩家 {#white}{#var}{#gray} 离开了服务器。'
+    leave-server: '{global#sys-info}玩家 {#white}{#var}{#gray} (去往{#var}) 离开了服务器。'
+    join-message: '{global#sys-info}欢迎您({#var})来到 {#server-name}{#gray} 服务器, 祝您玩得开心。'
+    transfer-message: '{global#sys-info}已将您发送至 {#var} 服务器。使用 {#gold}/hub,/lobby{#gray}来回到大厅。'
+  stp-command:
+    player-not-found: '{global#sys-info}未找到玩家 {#var}。'
+    command-error: '{global#sys-error}需要一名玩家。'
+    transfer: '{global#sys-info}正在将您发送至玩家 {#var} 的服务器...'
+  stpa-command:
+    tpahere-accept-btn: '{color(white)}[{color(green);click(command,/stpahere accept %s)}接受{color(white)}]'
+    tpahere-deny-btn: '{color(white)}[{color(red);click(command,/stpahere deny %s)}拒绝{color(white)}]'
+    tpahere-request-sender: "{global#sys-info}你向玩家 {#var} 发送了传送到你服务器的的请求。"
+    tpahere-request-target: "{global#sys-info}玩家 {#var} 向你发送了传送到他/她的服务器的请求。{msg#tpahere-accept-btn} {msg#tpahere-deny-btn}"
+    tpahere-accept-sender: "{global#sys-info}你同意了传送到 {#var} 的服务器的请求, 正在发送..."
+    tpahere-accept-target: "{global#sys-info}{#var} 同意了他/她传送到你服务器的的请求。"
+    tpahere-deny-sender: "{global#sys-info}你拒绝了传送到 {#var} 的服务器请求。"
+    tpahere-deny-target: "{global#sys-info}{#var} 拒绝了他/她传送到你服务器的请求。"
+    tpahere-no-request: "{global#sys-info}{#var} 没有向你发送传送到他/她的服务器的请求。"
+
+    tpa-accept-btn: '{color(white)}[{color(green);click(command,/stpa accept %s)}接受{color(white)}]'
+    tpa-deny-btn: '{color(white)}[{color(red);click(command,/stpa deny %s)}拒绝{color(white)}]'
+    tpa-request-sender: "{global#sys-info}你向玩家 {#var} 发送了传送到他/她的服务器的请求。"
+    tpa-request-target: "{global#sys-info}玩家 {#var} 向你发送了传送到你的服务器的请求。{msg#tpa-accept-btn} {msg#tpa-deny-btn}"
+    tpa-accept-sender: "{global#sys-info}你同意了 {#var} 传送到你的服务器的请求。"
+    tpa-accept-target: "{global#sys-info}{#var} 同意了你传送到他/她服务器的服务器的的请求, 正在发送..."
+    tpa-deny-sender: "{global#sys-info}你拒绝了 {#var} 传送到你的服务器的请求。"
+    tpa-deny-target: "{global#sys-info}{#var} 拒绝了你传送到他/她的服务器的请求。"
+    tpa-no-request: "{global#sys-info}{#var} 没有向你发送他/她传送到你的服务器的请求。"
+
+    player-not-found: '{global#error}玩家不存在...'
+  server-statement-observer:
+    online: "{global#sys-info}服务器 {#var} 已上线, 您可前往游玩。"
+    offline: "{global#sys-info}服务器 {#var} 已离线，可能是计划关闭或者维护。"

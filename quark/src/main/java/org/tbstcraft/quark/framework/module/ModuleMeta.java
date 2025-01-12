@@ -1,8 +1,8 @@
 package org.tbstcraft.quark.framework.module;
 
 import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.data.language.LanguageContainer;
-import org.tbstcraft.quark.data.language.LanguageItem;
+import org.atcraftmc.qlib.language.LanguageContainer;
+import org.atcraftmc.qlib.language.LanguageItem;
 import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.framework.FunctionalComponentStatus;
 import org.tbstcraft.quark.framework.packages.IPackage;

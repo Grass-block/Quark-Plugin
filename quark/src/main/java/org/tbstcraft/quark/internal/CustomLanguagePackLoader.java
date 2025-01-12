@@ -3,11 +3,12 @@ package org.tbstcraft.quark.internal;
 import com.google.gson.JsonObject;
 import me.gb2022.commons.reflect.Inject;
 import org.apache.logging.log4j.Logger;
-import org.bukkit.plugin.Plugin;
+import org.atcraftmc.qlib.PluginConcept;
+import org.atcraftmc.qlib.language.LanguageContainer;
+import org.atcraftmc.qlib.language.LanguagePack;
+import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.assets.AssetGroup;
-import org.tbstcraft.quark.data.language.LanguageContainer;
-import org.tbstcraft.quark.data.language.LanguagePack;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 
@@ -90,7 +91,13 @@ public final class CustomLanguagePackLoader extends PackageModule {
                 var packInfos = entry.getName().replace(".yml", "").split("\\.");
                 var packInput = file.getInputStream(entry);
 
-                packs.add(new ThirdPartyLanguagePack(packInfos[0], packInfos[1], this.getOwnerPlugin(), uuid, packInput));
+                packs.add(new ThirdPartyLanguagePack(
+                        packInfos[0],
+                        packInfos[1],
+                        Quark.PluginConceptWrapper.of(this.getOwnerPlugin()),
+                        uuid,
+                        packInput
+                ));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -105,7 +112,7 @@ public final class CustomLanguagePackLoader extends PackageModule {
     public static final class ThirdPartyLanguagePack extends LanguagePack {
         private final String uuid;//provider
 
-        public ThirdPartyLanguagePack(String id, String locale, Plugin owner, String uuid, InputStream stream) throws Exception {
+        public ThirdPartyLanguagePack(String id, String locale, PluginConcept owner, String uuid, InputStream stream) throws Exception {
             super(id, locale, owner);
             this.uuid = uuid;
             this.dom.load(new String(stream.readAllBytes(), StandardCharsets.UTF_8));

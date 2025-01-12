@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+}
+
+apply from: "E:/Java/GradleScripts/build-base.gradle"
+
+applyGlobalScript("Publish/ProjectOutput.gradle")
+applyGlobalScript("Publish/MinecraftBungeeServerTest.gradle")
+applyGlobalScript("/Dependencies.gradle")
+
+group = 'org.atcraftmc'
+
+repositories {
+    maven {
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+}
+
+dependencies {
+    compileOnly 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
+    annotationProcessor 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
+
+    implementation localStorage("me.gb2022.commons-nbt")
+    implementation localStorage("me.gb2022.commons-math")
+    implementation localStorage('me.gb2022.commons-container')
+    implementation localStorage('me.gb2022.commons-event')
+    implementation localStorage('me.gb2022.commons-reflection')
+
+    implementation localStorage('me.gb2022.apm-plugin')
+    implementation localStorage('me.gb2022.apm-remote')
+
+    implementation localStorage("org.atcraftmc.qlib-base")
+    implementation localStorage("org.atcraftmc.qlib-texts")
+    implementation localStorage("org.atcraftmc.qlib-configuration")
+    implementation projectLocal("bukkit-configurations-api")
+
+    compileOnly 'io.netty:netty-buffer:4.1.100.Final'
+
+    compileOnly "org.apache.logging.log4j:log4j-api:2.8.1"
+    implementation 'org.slf4j:log4j-over-slf4j:2.0.0-alpha1'
+}
+
+jar {
+    archiveBaseName = "quark-proxy-velocity"
+}

@@ -46,9 +46,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-/productions/
-/unused/
-/productions/
-/unused/
 /test/
-/quark-atcraft/
+/unused/**
+/productions/**
