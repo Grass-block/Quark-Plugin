@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-@QuarkCommand(name = "chatgpt", permission = "-quark.chatgpt")
+@QuarkCommand(name = "chatgpt", permission = "+quark.chatgpt")
 @QuarkModule
 public final class ChatGPT extends CommandModule {
     public static final String GPT35 = "api.alcex.cn/API/gpt-3.5/";

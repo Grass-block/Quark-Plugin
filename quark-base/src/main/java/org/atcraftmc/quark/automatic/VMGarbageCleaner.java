@@ -1,17 +1,17 @@
 package org.atcraftmc.quark.automatic;
 
 import me.gb2022.commons.reflect.Inject;
-import org.bukkit.command.CommandSender;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.language.LanguageEntry;
+import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.internal.task.TaskService;
 
 @CommandProvider({VMGarbageCleaner.GCCommand.class})
-@QuarkModule(version = "1.3.0", defaultEnable = false)//no needed
+@QuarkModule(version = "1.3.0")
 public final class VMGarbageCleaner extends PackageModule {
     public static final String GC_TASK_TID = "quark:auto_gc:gc";
 

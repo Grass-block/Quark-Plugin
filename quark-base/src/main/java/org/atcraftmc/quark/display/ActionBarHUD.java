@@ -3,6 +3,8 @@ package org.atcraftmc.quark.display;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import net.md_5.bungee.api.chat.BaseComponent;
+import org.atcraftmc.qlib.language.LanguageEntry;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,11 +12,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.tbstcraft.quark.PlayerView;
 import org.tbstcraft.quark.SharedObjects;
-import org.atcraftmc.qlib.language.LanguageEntry;
+import org.tbstcraft.quark.foundation.TextSender;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.atcraftmc.qlib.texts.TextBuilder;
-import org.tbstcraft.quark.foundation.TextSender;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -30,7 +30,7 @@ public final class ActionBarHUD extends PackageModule {
 
     @Override
     public void checkCompatibility() throws APIIncompatibleException {
-        Compatibility.requireMethod(()->Player.class.getDeclaredMethod("sendActionBar", BaseComponent[].class));
+        Compatibility.requireMethod(() -> Player.class.getDeclaredMethod("sendActionBar", BaseComponent[].class));
     }
 
     private String render(Player player) {
@@ -42,7 +42,7 @@ public final class ActionBarHUD extends PackageModule {
         var biome_k = block.getBiome().getKey().getKey();
 
         var p = this.language.getMessage(locale, "position", loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-        var b = this.language.getMessage(locale, "biome", biome_n, ":", biome_k);
+        var b = this.language.getMessage(locale, "biome", biome_n, biome_k);
         var t = this.language.getMessage(locale, "time");
         var f = this.language.getMessage(
                 locale,

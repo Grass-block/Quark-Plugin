@@ -49,6 +49,7 @@ public final class QuarkGame extends MultiPackageProvider {
                     i.module("sit-on-player", SitOnPlayer.class);
 
                     i.language("quark-contents", "zh_cn");
+                    i.language("quark-contents", "en_us");
                     i.config("quark-contents");
                 }),
                 PackageBuilderInitializer.of("quark-storage", FeatureAvailability.BOTH, (i) -> {

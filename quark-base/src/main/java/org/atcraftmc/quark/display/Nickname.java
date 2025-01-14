@@ -27,7 +27,7 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 
 @QuarkModule(version = "1.0-beta", beta = true)
 @CommandProvider(Nickname.NickNameCommand.class)
-public final class Nickname extends PackageModule implements QuarkCommandExecutor {
+public class Nickname extends PackageModule implements QuarkCommandExecutor {
     private final ProtocolManager service = ProtocolLibrary.getProtocolManager();
 
     private final PacketListener playerData = new PacketAdapter(Quark.getInstance(), PacketType.Play.Server.PLAYER_INFO) {

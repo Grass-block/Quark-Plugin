@@ -2,7 +2,7 @@ plugins{
     id 'java'
 }
 
-project.setProperty("version","0.64.15")
+project.setProperty("version","0.70.0")
 
 apply from: "E:/Java/GradleScripts/build-base.gradle"
 

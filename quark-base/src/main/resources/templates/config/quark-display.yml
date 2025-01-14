@@ -82,4 +82,4 @@ config:
     position: "%s,%s,%s"
     biome: "{translate;color(green)}biome.%s.%s{;}"
   afk:
-    timeout: 1200
+    timeout: 120

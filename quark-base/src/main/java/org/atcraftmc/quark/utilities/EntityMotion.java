@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 
 @QuarkModule
 @AutoRegister(ServiceType.EVENT_LISTEN)
-@QuarkCommand(name = "motion", permission = "-quark.motion.command")
+@QuarkCommand(name = "motion", permission = "-quark.util.motion")
 public final class EntityMotion extends CommandModule {
     @Override
     public void checkCompatibility() throws APIIncompatibleException {

@@ -1,21 +1,22 @@
 config:
   chat-at:
-    title-fadein: 10
+    title-fadein: 10 #the title control time (ticks)
     title-fadeout: 10
     title-stay: 20
-    at-template: "{#green}@{player}{#reset}"
-    at-title-template: "{#green}{player}: {#reset}{message}"
-    sound: true
+    at-template: "{#green}@{player}{#reset}" #the @somebody template in chatline
+    at-title-template: "{#green}{player}: {#reset}{message}" #title shown on screen
+    sound: true #will sound be send to someone bing AT
   mail:
-    template: '{#white}[{#gold}%s{#white}] {#aqua}%s{#white}: %s'
+    sound: true #is sound effect will be play when player receives a mail
+    template: '{#white}[{#gold}%s{#white}] {#aqua}%s{#white}: %s' #message template for viewing
   chat-report:
-    append: '{click(command,/chat-report %s);color(red)}[!]'
+    append: '{click(command,/chat-report %s);color(red)}[!]' #report interactive text
   chat-translator:
     append: '{click(command,/translate %s);color(aqua)}[T]'
   npc-chat:
-    template: "{#gray}[NPC]{#white}{name} {#gold}: {#gray}{text}"
-    inactive-time: 8000
-    sound: true
+    template: "{#gray}[NPC]{#white}{name} {#gold}: {#gray}{text}" #npc conversation line format
+    inactive-time: 8000 #how long before the session expires
+    sound: true #is sound effect will be play when conversation happens
   chat-filter:
     except-player: true #player name will be excepted from process.
     cover: false #detected keywords will not be replaced, but still be detected.
@@ -24,9 +25,9 @@ config:
     punish: true #will punish player.
     punish-command: "mute {player} 3600 {#yellow}[quark]{#red}BadChatBehavior" #punish player using this command. support other plugins.
   qq-chat-sync:
-    message: "大厅 | [{#rank}] %s > %s"
-    token: "114514"
-    address: 127.0.0.1:53234
-    targets:
+    message: "大厅 | [{#rank}] %s > %s" #template
+    token: "114514" #token
+    address: 127.0.0.1:53234 #LLOnebot address
+    targets: #qq groups
       - "733345889"
       - "805950688"

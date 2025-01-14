@@ -19,6 +19,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.language.Language;
+import org.atcraftmc.qlib.language.LanguageEntry;
+import org.atcraftmc.qlib.texts.TextBuilder;
+import org.atcraftmc.qlib.texts.placeholder.StringObjectPlaceHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,14 +33,11 @@ import org.bukkit.scoreboard.*;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.PlayerDataService;
-import org.atcraftmc.qlib.language.Language;
-import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.data.storage.DataEntry;
 import org.tbstcraft.quark.foundation.ComponentSerializer;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.atcraftmc.qlib.texts.TextBuilder;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.component.Components;
@@ -46,7 +47,6 @@ import org.tbstcraft.quark.internal.LocaleService;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.CachedInfo;
-import org.atcraftmc.qlib.texts.placeholder.StringObjectPlaceHolder;
 
 import java.util.*;
 
@@ -54,7 +54,7 @@ import java.util.*;
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkModule
 @QuarkCommand(name = "header", permission = "-quark.header")
-@Components({PlayerNameHeader.ProtocolLibNameTags.class, PlayerNameHeader.NameTags.class, PlayerNameHeader.BelowNameColumns.class})
+@Components({PlayerNameHeader.NameTags.class, PlayerNameHeader.BelowNameColumns.class})
 public final class PlayerNameHeader extends CommandModule {
     @Inject
     private LanguageEntry language;
@@ -66,7 +66,7 @@ public final class PlayerNameHeader extends CommandModule {
     public void enable() {
         super.enable();
 
-        DataEntry legacy = ModuleDataService.get("player-name-header");
+        var legacy = ModuleDataService.get("player-name-header");
 
         var keys = new ArrayList<>(legacy.getTagMap().keySet());
 
@@ -76,15 +76,15 @@ public final class PlayerNameHeader extends CommandModule {
                 fixed.set("player-name-header", legacy.getString(player));
                 legacy.getTagMap().remove(player);
                 fixed.save();
-                this.logger.info("moved playerData handle of %s to modern format.".formatted(player));
+                this.logger.info("moved playerData handle of {} to modern format.", player);
             } catch (Exception e) {
                 this.logger.error("failed to move playerData handle of %s".formatted(player), e);
             }
         }
 
-        ModuleDataService.save("player-name-header");
+        legacy.save();
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
+        for (var p : Bukkit.getOnlinePlayers()) {
             this.attach(p);
         }
 
@@ -239,7 +239,7 @@ public final class PlayerNameHeader extends CommandModule {
             ctx.attempt(
                     () -> Team.class.getMethod("setNameTagVisibility", NameTagVisibility.class),
                     (t) -> t.setNameTagVisibility(NameTagVisibility.ALWAYS)
-                       );
+            );
             ctx.dummy((t) -> {});
         });
 
@@ -247,7 +247,7 @@ public final class PlayerNameHeader extends CommandModule {
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requireClass(() -> Class.forName("org.bukkit.scoreboard.Team"));
-            Compatibility.requireClass(() -> Class.forName("org.bukkit.scoreboard.ScoreboardTeam"));
+            Compatibility.requireClass(() -> Class.forName("org.bukkit.scoreboard.Team"));
         }
 
         @Override
@@ -261,18 +261,16 @@ public final class PlayerNameHeader extends CommandModule {
         }
 
         public void render() {
-            for (Player view : Bukkit.getOnlinePlayers()) {
-                Scoreboard scoreboard = view.getScoreboard();
+            for (var view : Bukkit.getOnlinePlayers()) {
+                var scoreboard = view.getScoreboard();
 
-                for (Player player : Bukkit.getOnlinePlayers()) {
+                for (var player : Bukkit.getOnlinePlayers()) {
                     var tid = "quark@" + player.getName().hashCode();
-
-                    Team t = scoreboard.getTeam(tid);
+                    var t = scoreboard.getTeam(tid);
 
                     if (t == null) {
                         t = scoreboard.registerNewTeam(tid);
                     }
-
 
                     SET_NAME_TAG_VISIBILITY.invoke(t);
                     TEAM_PREFIX.invoke(t, parent.getPlayerPrefix(player), parent.getPlayerSuffix(player));
@@ -286,7 +284,6 @@ public final class PlayerNameHeader extends CommandModule {
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requireClass(() -> Class.forName("io.papermc.paper.scoreboard.numbers.NumberFormat"));
-            Compatibility.assertion(false);
         }
 
         public Component build(Player player, Locale locale) {
@@ -329,9 +326,6 @@ public final class PlayerNameHeader extends CommandModule {
     }
 
     public static final class ProtocolLibNameTags extends ModuleComponent<PlayerNameHeader> {
-
-
-
         private final ProtocolManager service = ProtocolLibrary.getProtocolManager();
 
         private final PacketListener entityMeta = new PacketAdapter(Quark.getInstance(), PacketType.Play.Server.ENTITY_METADATA) {

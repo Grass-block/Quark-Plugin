@@ -63,6 +63,9 @@ public interface LocaleService extends Service {
         if (sender instanceof ConsoleCommandSender || sender instanceof BlockCommandSender) {
             return Locale.getDefault();
         }
+        if(!(sender instanceof Player)){
+            return Locale.getDefault();
+        }
         String locale = getUserLocale(((Player) sender));
         return LocaleMapping.locale(locale);
     }

@@ -20,7 +20,7 @@ import java.net.ConnectException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-@QuarkModule
+@QuarkModule(beta = true)
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class QQChatSync extends PackageModule {
     @Inject

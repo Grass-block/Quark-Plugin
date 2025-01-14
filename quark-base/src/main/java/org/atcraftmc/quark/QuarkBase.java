@@ -20,13 +20,7 @@ import java.util.Set;
 @QuarkPackageProvider
 public final class QuarkBase extends MultiPackageProvider {
 
-    @Override
-    public Set<PackageInitializer> createInitializers() {
-        return initializers();
-    }
-
-
-    public static Set<PackageInitializer> initializers(){
+    public static Set<PackageInitializer> initializers() {
         return Set.of(PackageBuilderInitializer.of("quark-utilities", FeatureAvailability.BOTH, (i) -> {
             i.module("command-tab-fix", CommandTabFix.class);
             i.module("calculator", Calculator.class);
@@ -46,6 +40,7 @@ public final class QuarkBase extends MultiPackageProvider {
             i.module("position-align", PositionAlign.class);
             i.module("worldedit-commands", WorldEditCommands.class);
             i.module("entity-motion", EntityMotion.class);
+            i.module("command-exec", CommandExec.class);
 
             i.language("quark-utilities", "zh_cn");
             i.language("quark-utilities", "en_us");
@@ -121,10 +116,16 @@ public final class QuarkBase extends MultiPackageProvider {
             i.module("maintenance", Maintenance.class);
             i.module("advanced-ban-command", AdvancedBan.class);
             i.module("stop-confirm", StopConfirm.class);
+            i.module("server-info", ServerInfo.class);
 
             i.language("quark-management", "zh_cn");
             i.language("quark-management", "en_us");
             i.config("quark-management");
         }));
+    }
+
+    @Override
+    public Set<PackageInitializer> createInitializers() {
+        return initializers();
     }
 }

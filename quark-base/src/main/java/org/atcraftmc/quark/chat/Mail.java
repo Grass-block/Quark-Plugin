@@ -4,26 +4,22 @@ import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
+import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.command.execute.CommandSuggestion;
+import org.atcraftmc.qlib.language.LanguageEntry;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.PlayerDataService;
-import org.atcraftmc.qlib.language.LanguageEntry;
-import org.atcraftmc.qlib.texts.TextBuilder;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.util.BukkitSound;
-import org.tbstcraft.quark.util.CachedInfo;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 @QuarkCommand(name = "mail", playerOnly = true)
 @QuarkModule(id = "mail", version = "1.0.0")
@@ -47,66 +43,67 @@ public final class Mail extends CommandModule {
     }
 
     @Override
-    public void onCommand(CommandSender sender, String[] args) {
-        if (Objects.equals(args[0], "view")) {
+    public void execute(CommandExecution context) {
+        var sender = context.getSender();
+
+        if (context.requireArgumentAt(0).equals("view")) {
             TaskService.async().run(() -> {
-                NBTTagCompound entry = PlayerDataService.getEntry(sender.getName(), this.getFullId());
-                StringBuilder sb = new StringBuilder();
-                Set<String> keys = new HashSet<>(entry.getTagMap().keySet());
+                var entry = PlayerDataService.getEntry(sender.getName(), this.getFullId());
+                var sb = new StringBuilder();
+                var keys = new HashSet<>(entry.getTagMap().keySet());
+
                 if (keys.isEmpty()) {
                     this.language.sendMessage(sender, "view-none", sb.toString());
                     return;
                 }
-                try {
-                    for (String s : keys) {
-                        String from = s.split("@")[0];
-                        String time = SharedObjects.DATE_FORMAT.format(Long.parseLong(s.split("@")[1]));
 
-                        String template = this.getConfig().getString("template");
-                        if (template == null) {
-                            template = "%s@%s: %s";
-                        }
-                        sb.append(template.formatted(time, from, entry.getString(s))).append("\n");
-                        entry.remove(s);
+                for (String s : keys) {
+                    var template = this.getConfig().getString("template");
+                    if (template == null) {
+                        template = "%s@%s: %s";
                     }
-                } catch (ArrayIndexOutOfBoundsException ignored) {
+
+                    try {
+                        var from = s.split("@")[0];
+                        var time = SharedObjects.DATE_FORMAT.format(Long.parseLong(s.split("@")[1]));
+
+                        sb.append(template.formatted(time, from, entry.getString(s))).append("\n");
+                    } catch (ArrayIndexOutOfBoundsException ignored) {
+                    }
+
+                    entry.remove(s);
                 }
+
                 PlayerDataService.save(sender.getName());
                 this.language.sendMessage(sender, "view", sb.toString());
             });
-            return;
-        }
 
+            var content = TextBuilder.EMPTY_COMPONENT + context.requireRemainAsParagraph(0, true) + TextBuilder.EMPTY_COMPONENT;
+            var recipient = context.requireOfflinePlayer(0);
 
-        StringBuilder sb = new StringBuilder(32);
+            if (recipient.isOnline()) {
+                this.language.sendMessage(recipient, "receive-direct", sender.getName(), content);
+                this.language.sendMessage(sender, "send-success", recipient, content);
 
-        for (int i = 1; i < args.length; i++) {
-            sb.append(args[i]).append(" ");
-        }
-        String content = TextBuilder.EMPTY_COMPONENT + sb + TextBuilder.EMPTY_COMPONENT;
-        String recipient = args[0];
-        Player recipientPlayer = Bukkit.getPlayerExact(recipient);
-        if (recipientPlayer != null) {
-            this.language.sendMessage(recipientPlayer, "receive-direct", sender.getName(), content);
+                if (getConfig().getBoolean("sound")) {
+                    BukkitSound.ANNOUNCE.play(recipient.getPlayer());
+                }
+
+                return;
+            }
+
+            var entry = PlayerDataService.getEntry(recipient.getName(), this.getFullId());
+            var key = sender.getName() + "@" + System.currentTimeMillis();
+            entry.setString(key, content);
+
             this.language.sendMessage(sender, "send-success", recipient, content);
-
-            BukkitSound.ANNOUNCE.play(recipientPlayer);
-            return;
         }
-
-        NBTTagCompound entry = PlayerDataService.getEntry(recipient, this.getFullId());
-        String key = sender.getName() + "@" + System.currentTimeMillis();
-        entry.setString(key, content);
-        this.language.sendMessage(sender, "send-success", recipient, content);
     }
 
     @Override
-    public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-        if (buffer.length == 1) {
-            tabList.addAll(CachedInfo.getAllPlayerNames());
-            tabList.add("view");
-        } else {
-            tabList.add("message");
-        }
+    public void suggest(CommandSuggestion suggestion) {
+        suggestion.suggestPlayers(0);
+        suggestion.suggest(0, "view");
+        suggestion.suggest(1, "[message...]");
     }
 }

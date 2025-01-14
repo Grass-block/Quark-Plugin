@@ -2,6 +2,7 @@ package org.atcraftmc.quark.display;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import net.kyori.adventure.text.Component;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Nameable;
 import org.bukkit.World;
@@ -15,7 +16,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.atcraftmc.qlib.texts.TextBuilder;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -46,7 +46,7 @@ public final class DropItemInfo extends PackageModule {
 
     @Override
     public void checkCompatibility() throws APIIncompatibleException {
-        Compatibility.requireMethod(()-> Nameable.class.getMethod("customName", Component.class));
+        Compatibility.requireMethod(() -> Nameable.class.getMethod("customName", Component.class));
     }
 
     @EventHandler
@@ -105,7 +105,6 @@ public final class DropItemInfo extends PackageModule {
             }
         }
     }
-
 
     public void setId(Item item) {
         var template = "{#red}{amount}{#yellow}x{translate;color(aqua)}{id}{;}";

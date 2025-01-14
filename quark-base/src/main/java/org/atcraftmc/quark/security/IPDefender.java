@@ -239,7 +239,7 @@ public final class IPDefender extends PackageModule implements QuarkCommandExecu
 
             @Override
             public HttpRequest buildRequest(InetSocketAddress address, Locale locale) {
-                return HttpRequest.http(HttpMethod.GET, "https://opendata.baidu.com/api.php")
+                return HttpRequest.http(HttpMethod.GET, "opendata.baidu.com/api.php")
                         .param("query", address.getHostName())
                         .param("co", "")
                         .param("resource_id", "6006")
@@ -253,7 +253,7 @@ public final class IPDefender extends PackageModule implements QuarkCommandExecu
 
             @Override
             public HttpRequest buildRequest(InetSocketAddress address, Locale locale) {
-                return HttpRequest.http(HttpMethod.GET, "https://ip.useragentinfo.com/json")
+                return HttpRequest.http(HttpMethod.GET, "ip.useragentinfo.com/json")
                         .param("ip", address.getHostName())
                         .browserBehavior(true)
                         .build();

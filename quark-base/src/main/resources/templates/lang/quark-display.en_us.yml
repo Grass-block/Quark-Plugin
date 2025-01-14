@@ -89,4 +89,9 @@ language:
     time: "{#dark-aqua}WorldTime: {#aqua}{#world-time}"
     position: "{#dark-purple}Position: {#purple}%s{#gray},{#purple}%s{#gray},{#purple}%s{#gray}"
     biome: "{#dark-green}Biomes: {translate;color(green)}biome.%s.%s{;}"
-    face: "{#dark-blue}Facing: {#blue}%s(俯仰),%s(水平)"
+    face: "{#dark-blue}Facing: {#blue}%s(Yaw),%s(Pitch)"
+  afk:
+    left: "{global#info}Player {#var} is now AFK."
+    left-self: "{global#info}You are now AFK"
+    back: "{global#info}Player {#var} has backed to game after {#var} of AFK"
+    back-self: "{global#info}You are backed to game after {#var} of AFK"

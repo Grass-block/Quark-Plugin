@@ -1,27 +1,23 @@
 package org.atcraftmc.quark.display;
 
-import me.gb2022.apm.remote.event.RemoteEventHandler;
-import me.gb2022.apm.remote.event.remote.RemoteMessageEvent;
-import me.gb2022.apm.remote.util.BufferUtil;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 import java.util.function.Consumer;
 
-@QuarkModule(version = "1.1.0")
+@QuarkModule(version = "1.5.0")
 @AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.REMOTE_MESSAGE})
 public final class JoinQuitMessage extends PackageModule {
-
     @Inject
     private LanguageEntry language;
 
@@ -38,20 +34,16 @@ public final class JoinQuitMessage extends PackageModule {
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage(null);
 
-        if (this.getConfig().getBoolean("proxy")) {
-            if (this.getConfig().getBoolean("sound")) {
-                var volume = this.getConfig().getFloat("volume");
-                event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, volume, 1);
-            }
-
-            /*
-            RemoteMessageService.message("proxy", "/transfer/join_server", buf -> BufferUtil.writeString(buf, event.getPlayer().getName()));
-             */
-            return;
+        if (!this.getConfig().getBoolean("proxy")) {
+            var player = event.getPlayer().getName();
+            this.broadcast(player, (p) -> this.language.sendMessage(p, "join", player));
+            this.language.sendMessage(Bukkit.getPlayerExact(player), "welcome-message", player);
         }
-        String player = event.getPlayer().getName();
-        this.broadcast(player, (p) -> this.language.sendMessage(p, "join", player));
-        this.language.sendMessage(Bukkit.getPlayerExact(player), "welcome-message", player);
+
+        if (this.getConfig().getBoolean("sound")) {
+            var volume = this.getConfig().getFloat("volume");
+            event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_PORTAL_TRAVEL, volume, 1);
+        }
     }
 
     @EventHandler
@@ -61,33 +53,8 @@ public final class JoinQuitMessage extends PackageModule {
         if (this.getConfig().getBoolean("proxy")) {
             return;
         }
-        String player = event.getPlayer().getName();
+
+        var player = event.getPlayer().getName();
         this.broadcast(player, (p) -> this.language.sendMessage(p, "leave", player));
-    }
-
-    @RemoteEventHandler("/transfer/join")
-    public void onPlayerJoin(RemoteMessageEvent event) {
-        String[] data = BufferUtil.readString(event.getData()).split(";");
-        this.broadcast(data[0], (p) -> this.language.sendMessage(p, "proxy-join", data[0], data[1]));
-        this.language.sendMessage(Bukkit.getPlayerExact(data[0]), "proxy-send", data[2]);
-    }
-
-    @RemoteEventHandler("/transfer/leave")
-    public void onPlayerQuit(RemoteMessageEvent event) {
-        String[] data = BufferUtil.readString(event.getData()).split(";");
-        this.broadcast(data[0], (p) -> this.language.sendMessage(p, "proxy-leave", data[0], data[1]));
-    }
-
-    @RemoteEventHandler("/transfer/join_proxy")
-    public void onPlayerJoinProxy(RemoteMessageEvent event) {
-        String data = BufferUtil.readString(event.getData());
-        this.broadcast(data, (p) -> this.language.sendMessage(p, "join", data));
-        this.language.sendMessage(Bukkit.getPlayerExact(data), "welcome-message", data);
-    }
-
-    @RemoteEventHandler("/transfer/quit_proxy")
-    public void onPlayerQuitProxy(RemoteMessageEvent event) {
-        String data = BufferUtil.readString(event.getData());
-        this.broadcast(data, (p) -> this.language.sendMessage(p, "leave", data));
     }
 }

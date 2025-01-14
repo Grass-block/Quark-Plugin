@@ -54,13 +54,4 @@ public class Database implements AutoCloseable {
     public void close() throws Exception {
         this.connection.close();
     }
-
-    @Override
-    protected void finalize() throws Throwable {
-        if (this.connection.isClosed()) {
-            return;
-        }
-        LOGGER.warn("unexpected unclosed DB object!");
-        close();
-    }
 }

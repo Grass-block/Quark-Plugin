@@ -1,0 +1,46 @@
+language:
+  -module-name:
+    custom-recipe: CustomRecipeLoader
+    elevator: ElevatorBlock
+    realistic-minecart: RealisticMinecart
+    music-player: MusicPlayer
+    stair-seat: StairSeat
+    hats: Hats
+  stair-seat:
+    tip: "{#gray}right-click a stair block to sit down."
+  realistic-minecart:
+    run-mode-run: "{#aqua}Running"
+    run-mode-boost: "{#green}Accelerating"
+    run-mode-break: "{#purple}Decelerating"
+    run-mode-stop: "{#gray}Stopping"
+    acceleration: "Acceleration: "
+    speed: "Speed: "
+    level: "Power: "
+  music-player:
+    playing: "Now Playing:"
+    paused: "Paused:"
+    play: "{global#sys-info}Player {#var} has played music {#var}(fix value:{#var})"
+    pause: "{global#sys-info}Player {#var}has {#yellow}paused{#gray}current playing."
+    resume: "{global#sys-info}Player {#var}has {#blue}recovered {#gray}current playing."
+    cancel: "{global#sys-info}Player {#var}has {#red}cancelled {#gray}current playing."
+    not-found: "{global#sys-error}Cannot find file {#var}."
+    error-resolving: "{global#sys-error}Cannot dispatch current file {#var}."
+    unsupported-format: "{global#sys-error}Unsupported file format of {#var}."
+    timeout: "{global#sys-error}Cannot download {#var} from content provider server."
+    restore-defaults: "{global#sys-info}Successfully saved example music files."
+  custom-recipe:
+    reload: "{global#sys-info}Successfully reloaded recipe groups."
+    restore: "{global#sys-info}Successfully saved template recipe groups."
+  item-counter:
+  hats:
+    empty: "{global#error}You didn't hold anything."
+    not-found: "{global#error}The specified player is not exist."
+    failed: "{global#error}Player's hat slot is not empty."
+    success: "{global#info}Successfully replaced the player's hat."
+  elevator:
+    tip:
+      - "{#gray}Use gold, piston and redstone to craft an elevator."
+      - "{#gray}Press [jump] or [shift] to go up or down"
+      - "{#gray}To let the elevator valid, 2 blocks up from elevator block must be air."
+      - "{#gray}Find recipe at {click(link,https://www.atforever.world/wiki.html#server-function.md)}{#white}[{#aqua}Here{#white}]{#gray}."
+

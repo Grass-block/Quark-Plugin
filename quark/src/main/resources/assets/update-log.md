@@ -1,3 +1,24 @@
+### 0.70.0
+- [upd] Framework: set API version to 40.
+- [add] Framework: add platform detection for Banner and Youer server.
+- [upd] Framework: improved startup performance.
+- [upd] Framework: now will show information in Console.
+- [rem] Framework: removed BOOTSTRAP_CLASSES stage since it's no longer needed.
+- [add] Framework: remade and introduced APM plugin networking.
+- [fix] Framework: fix unexpected behavior when console is calling entity selector.
+- [fix] Framework: fix unexpected behavior when other entities are expected to get their "locale".
+- [fix] AFK: AFK display error.
+- [fix] AFK: fix detection time delta.
+- [fix] PlayerNameHeader: fix name-tag display in header.
+- [rem] PlayerNameHeader: remove ProtocolNameTags.
+- [add] JoinQuitMessage: add configurable "sound" control.
+- [rem] NickName: remove for dev.
+- [rem] PlayerSkinCustomizer: remove for dev.
+- [add] ServerInfo: add /system command so you can check server details.
+- [add] CommandExec: add /exec <selector> [command] so you can execute ANY command as target entity.
+- [add] Translation: Added en_us translations for quark_content pack.
+- [fix] Translation: fixed missing of en_us/quark-display:afk translations
+
 ### 0.64.15
 
 - [Core] hot reload on all platforms are sync now.

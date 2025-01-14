@@ -18,7 +18,5 @@ public class ChatChannel extends PackageModule {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(final AsyncPlayerChatEvent event) {
         event.setCancelled(true);
-
-
     }
 }
