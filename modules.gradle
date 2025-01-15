@@ -1,11 +1,10 @@
 apply from: "E:/Java/GradleScripts/build-base.gradle"
+apply from: "../github-packages.gradle"
 
 applyGlobalScript("Publish/MinecraftServerTest.gradle")
 applyGlobalScript("Publish/ProjectOutput.gradle")
 applyGlobalScript("Repo/MinecraftPlugins.gradle")
 applyGlobalScript("Dependencies.gradle")
-
-tasks.named('build').get().dependsOn(':quark:build')
 
 //quark libraries
 dependencies {
@@ -19,17 +18,22 @@ dependencies {
     compileOnly 'io.netty:netty-buffer:4.1.25.Final'
     compileOnly project(":quark")
 
-    compileOnly localStorage("me.gb2022.commons-nbt")
-    compileOnly localStorage("me.gb2022.commons-math")
-    compileOnly localStorage("me.gb2022.commons-container")
-    compileOnly localStorage("me.gb2022.commons-general")
+    compileOnly 'me.gb2022.commons:commons-nbt:1.0'
+    compileOnly 'me.gb2022.commons:commons-math:1.0'
+    compileOnly 'me.gb2022.commons:commons-container:1.0'
+    compileOnly 'me.gb2022.commons:commons-general:1.0'
+    
+    compileOnly 'org.atcraftmc.qlib:qlib-base:1.3.2'
+    compileOnly 'org.atcraftmc.qlib:qlib-task:1.3.2'
+    compileOnly 'org.atcraftmc.qlib:qlib-texts:1.3.2'
+    compileOnly 'org.atcraftmc.qlib:qlib-configuration:1.3.2'
+    compileOnly 'org.atcraftmc.qlib:qlib-command:1.3.2'
 
     compileOnly localStorage('me.gb2022.apm-plugin')
     compileOnly localStorage('me.gb2022.apm-remote')
     compileOnly localStorage('me.gb2022.apm-client')
-
-    compileOnly projectLocal("qlib-task")
-    compileOnly projectLocal("qlib-command")
 }
 
 apply from: rootDir.getAbsolutePath()+"/info.gradle"
+
+tasks.named('build').get().dependsOn(':quark:build')

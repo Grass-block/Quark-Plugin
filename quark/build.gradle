@@ -5,6 +5,7 @@ plugins{
 project.setProperty("version","0.70.0")
 
 apply from: "E:/Java/GradleScripts/build-base.gradle"
+apply from: "../github-packages.gradle"
 
 applyGlobalScript("Publish/MinecraftServerTest.gradle")
 applyGlobalScript("Publish/ProjectOutput.gradle")
@@ -37,29 +38,27 @@ dependencies {
 dependencies {
     compileOnly 'org.iq80.leveldb:leveldb:0.12'
 
-    implementation localStorage("me.gb2022.commons-nbt")
-    implementation localStorage("me.gb2022.commons-math")
-    implementation localStorage('me.gb2022.commons-crypto')
-    implementation localStorage('me.gb2022.commons-container')
-    implementation localStorage('me.gb2022.commons-general')
-    implementation localStorage('me.gb2022.commons-event')
-    implementation localStorage('me.gb2022.commons-reflection')
+    implementation 'me.gb2022.commons:commons-nbt:1.0'
+    implementation 'me.gb2022.commons:commons-math:1.0'
+    implementation 'me.gb2022.commons:commons-container:1.0'
+    implementation 'me.gb2022.commons:commons-general:1.0'
+    implementation 'me.gb2022.commons:commons-event:1.0'
+    implementation 'me.gb2022.commons:commons-reflection:1.0'
+
+    implementation 'org.atcraftmc.qlib:qlib-base:1.3.2'
+    implementation 'org.atcraftmc.qlib:qlib-task:1.3.2'
+    implementation 'org.atcraftmc.qlib:qlib-texts:1.3.2'
+    implementation 'org.atcraftmc.qlib:qlib-configuration:1.3.2'
+    implementation 'org.atcraftmc.qlib:qlib-command:1.3.2'
 
     implementation localStorage('me.gb2022.apm-plugin')
     implementation localStorage('me.gb2022.apm-remote')
     implementation localStorage('me.gb2022.apm-client')
-
-    implementation localStorage("org.atcraftmc.qlib-base")
-    implementation localStorage("org.atcraftmc.qlib-task")
-    implementation localStorage("org.atcraftmc.qlib-texts")
-    implementation localStorage("org.atcraftmc.qlib-configuration")
-    implementation localStorage("org.atcraftmc.qlib-command")
 }
 
 //platform api reference
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT';
-    //compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
     compileOnly 'io.netty:netty-buffer:4.1.25.Final'
 
     compileOnly projectLocal('paper-plugin')
