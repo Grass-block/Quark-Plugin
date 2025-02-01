@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Consumer;
 
-@SuppressWarnings("unchecked")
 public interface PluginStorage {
     Map<String, Object> STORAGE = new HashMap<>();
 

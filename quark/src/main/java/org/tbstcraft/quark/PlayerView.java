@@ -57,6 +57,7 @@ public final class PlayerView {
         public static final int INTERVAL = 3;
         private final Map<String, GeneratedRendererRecord> renderers = new HashMap<>();
         private final PlayerView holder;
+        private boolean rejectAll;
         private Task currentTask;
 
         public ChannelRenderer(PlayerView holder) {
@@ -64,11 +65,19 @@ public final class PlayerView {
         }
 
         public void addChannel(String id, int priority, int interval, TaskScheduler target, ViewRenderer action) {
+            if(this.rejectAll){
+                return;
+            }
+
             this.renderers.put(id, new GeneratedRendererRecord(id, priority, interval, action, target));
             this.select();
         }
 
         public void addChannel(String id, int priority, int interval, ViewRenderer action) {
+            if(this.rejectAll){
+                return;
+            }
+
             addChannel(id, priority, interval, TaskService.global(), action);
         }
 
@@ -84,6 +93,10 @@ public final class PlayerView {
         private void select() {
             if (this.currentTask != null) {
                 this.currentTask.cancel();
+            }
+
+            if(this.rejectAll){
+                return;
             }
 
             var list = new ArrayList<>(this.renderers.values());
@@ -115,6 +128,10 @@ public final class PlayerView {
 
                 selected.renderer().render(this.holder.pointer, t);
             });
+        }
+
+        public void rejectAll(boolean enable) {
+            this.rejectAll = enable;
         }
     }
 }

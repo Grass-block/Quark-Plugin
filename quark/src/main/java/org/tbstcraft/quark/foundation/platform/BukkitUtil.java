@@ -2,6 +2,9 @@ package org.tbstcraft.quark.foundation.platform;
 
 import me.gb2022.commons.reflect.method.MethodHandle;
 import me.gb2022.commons.reflect.method.MethodHandleRS0;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
@@ -15,10 +18,8 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.util.Vector;
 import org.tbstcraft.quark.Quark;
-import org.atcraftmc.qlib.texts.TextBuilder;
 import org.tbstcraft.quark.internal.task.TaskService;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.Objects;
@@ -27,6 +28,8 @@ import java.util.function.Consumer;
 
 @SuppressWarnings({"unused", "Convert2MethodRef"})
 public interface BukkitUtil {
+    Logger LOGGER = LogManager.getLogger("BukkitUtil");
+
     MethodHandleRS0<double[]> TPS = MethodHandle.select((ctx) -> {
         ctx.attempt(() -> Bukkit.class.getMethod("getTPS"), () -> Bukkit.getTPS());
         ctx.attempt(() -> Server.class.getMethod("getTPS"), () -> Bukkit.getServer().getTPS());
@@ -69,7 +72,7 @@ public interface BukkitUtil {
         try {
             Bukkit.getPluginManager().callEvent(event);
         } catch (Exception ignored) {
-            //todo:non-main check
+
         }
     }
 
@@ -77,25 +80,33 @@ public interface BukkitUtil {
         Bukkit.getPluginManager().registerEvents(listener, Quark.getInstance());
     }
 
+    static void unregisterEventBinding(Method method, Listener listener) {
+        try {
+            if (!method.isAnnotationPresent(EventHandler.class)) {
+                return;
+            }
+
+            var eventHandler = method.getAnnotation(EventHandler.class);
+            var eventType = method.getParameterTypes()[0];
+            var m_getHandlerList = eventType.getMethod("getHandlerList");
+
+            var handlerList = (HandlerList) m_getHandlerList.invoke(null);
+
+            handlerList.unregister(listener);
+        } catch (Exception e) {
+            LOGGER.error("Failed to unregister event binding: {}", method.getName());
+            LOGGER.catching(e);
+        }
+    }
+
     static void unregisterEventListener(Listener listener) {
         try {
-            for (Method m : listener.getClass().getMethods()) {
-                EventHandler handler = m.getDeclaredAnnotation(EventHandler.class);
-                if (handler == null) {
-                    continue;
-                }
-                HandlerList list;
-                try {
-                    Class<?> clazz = m.getParameters()[0].getType();
-
-                    list = (HandlerList) clazz.getMethod("getHandlerList").invoke(null);
-                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    Quark.getInstance().getLogger().warning("failed to unregister listener %s: %s".formatted(m.getName(), e.getMessage()));
-                    continue;
-                }
-                list.unregister(listener);
+            for (var m : listener.getClass().getMethods()) {
+                unregisterEventBinding(m, listener);
             }
-        } catch (NoClassDefFoundError ignored) {
+        } catch (Throwable e) {
+            LOGGER.error("Failed to unregister event listener: {}", listener.getClass().getName());
+            LOGGER.catching(e);
         }
     }
 

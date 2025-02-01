@@ -1,0 +1,14 @@
+language:
+  item-command:
+    bind: "{global#sys-info}Item {#var} has been bound to the command {#var}."
+    unbind: "{global#sys-info}Cleared the command binding of item {#var}."
+    bind-fail: "{global#sys-error}Cannot bind command to an empty hand."
+    tip: "{#gray}Use {#gold}/item-command{#gray} to bind commands to your items, allowing quick execution of the command using the item."
+  console-command:
+    execute: "{global#sys-operation}Submitted console command: {#var}"
+  position-align:
+    align: "{global#sys-success}Adjusted your position to [{#var},{#var},{#var}] [{#var}|{#var}]。"
+  entity-motion:
+    hint: "{global#sys-success}Set motions for {#var} entities in {#var}ticks: {#var}({#var},{#var},{#var})"
+  command-exec:
+    hint: "{global#sys-success}Executed command for {#var} entities: {#var}"

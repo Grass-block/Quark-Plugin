@@ -7,8 +7,8 @@
     "bungee-connection-protect": ".BungeeConnectionProtect",
     "forge-server-teleportation": ".ForgeServerTeleportation",
     "mcsm-dynamic-instance": ".MCSMDynamicInstance",
-    "server-statement-observer": ".ServerStatementObserver",
-    "proxy-ping": ".ProxyPing"
+    "proxy-ping": ".ProxyPing",
+    "geyser-skin-redirect": ".GeyserSkinRedirect"
   },
   "languages": [
     "quark-proxysupport:zh_cn"

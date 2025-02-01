@@ -1,4 +1,4 @@
-package org.atcraftmc.quark.utilities;
+package org.atcraftmc.quark.commands;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import org.atcraftmc.qlib.command.LegacyCommandManager;

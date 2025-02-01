@@ -1,8 +1,6 @@
-package org.atcraftmc.quark.proxysupport;
+package org.atcraftmc.quark.proxy;
 
 import com.google.gson.JsonParser;
-import me.gb2022.apm.remote.event.RemoteEventHandler;
-import me.gb2022.apm.remote.event.remote.RemoteQueryEvent;
 import me.gb2022.commons.http.HttpMethod;
 import me.gb2022.commons.http.HttpRequest;
 import me.gb2022.commons.reflect.AutoRegister;
@@ -106,11 +104,6 @@ public final class MCSMDynamicInstance extends PackageModule {
             }
             handler.accept(2);
         });
-    }
-
-    @RemoteEventHandler("/quark/di/state")
-    public void onServerStatusQuery(RemoteQueryEvent event) {
-        event.writeResult((byteBuf -> byteBuf.writeByte(114)));
     }
 
     @QuarkCommand(name = "join-dyn-server", permission = "+quark.dynserver")

@@ -9,7 +9,7 @@ import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
-@QuarkModule(version = "1.0")
+@QuarkModule()
 public final class BackToSpawn extends PackageModule {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){

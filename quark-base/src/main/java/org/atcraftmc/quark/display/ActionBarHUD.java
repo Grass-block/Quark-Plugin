@@ -14,6 +14,7 @@ import org.tbstcraft.quark.PlayerView;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.foundation.TextSender;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
+import org.tbstcraft.quark.foundation.platform.APIProfile;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
@@ -31,6 +32,7 @@ public final class ActionBarHUD extends PackageModule {
     @Override
     public void checkCompatibility() throws APIIncompatibleException {
         Compatibility.requireMethod(() -> Player.class.getDeclaredMethod("sendActionBar", BaseComponent[].class));
+        Compatibility.blackListPlatform(APIProfile.ARCLIGHT, APIProfile.BANNER, APIProfile.YOUER);
     }
 
     private String render(Player player) {
@@ -44,12 +46,7 @@ public final class ActionBarHUD extends PackageModule {
         var p = this.language.getMessage(locale, "position", loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
         var b = this.language.getMessage(locale, "biome", biome_n, biome_k);
         var t = this.language.getMessage(locale, "time");
-        var f = this.language.getMessage(
-                locale,
-                "face",
-                SharedObjects.NUMBER_FORMAT.format(loc.getYaw()),
-                SharedObjects.NUMBER_FORMAT.format(loc.getPitch())
-        );
+        var f = this.language.getMessage(locale, "face", SharedObjects.NUMBER_FORMAT.format(loc.getYaw()), SharedObjects.NUMBER_FORMAT.format(loc.getPitch()));
 
         var template = getConfig().getString("template")
                 .replace("{position}", p)
@@ -61,10 +58,12 @@ public final class ActionBarHUD extends PackageModule {
     }
 
     private void startRender(Player player) {
-        PlayerView.getInstance(player).getActionbar().addChannel("quark:actionbar-hud", -10, 3, TaskService.async(), (p, c) -> {
-            var comp = TextBuilder.buildComponent(render(p));
-            TextSender.sendActionbarTitle(p, comp);
-        });
+        PlayerView.getInstance(player)
+                .getActionbar()
+                .addChannel("quark:actionbar-hud", -10, 3, TaskService.async(), (p, c) -> {
+                    var comp = TextBuilder.buildComponent(render(p));
+                    TextSender.sendActionbarTitle(p, comp);
+                });
     }
 
     private void stopRender(Player player) {

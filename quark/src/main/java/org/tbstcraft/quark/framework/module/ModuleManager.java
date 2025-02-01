@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
+//todo: test if module status work properly in Mohist[fixed:need_test]
 @QuarkService(id = "module")
 public final class ModuleManager implements Service {
     public static final ServiceHolder<ModuleManager> INSTANCE = new ServiceHolder<>();
@@ -48,7 +49,7 @@ public final class ModuleManager implements Service {
 
     @ServiceInject
     public static void start() {
-        INSTANCE.set(new ModuleManager(Quark.PLUGIN));
+        INSTANCE.set(new ModuleManager(Quark.getInstance()));
         INSTANCE.get().onEnable();
     }
 
@@ -59,7 +60,7 @@ public final class ModuleManager implements Service {
 
 
     @Override
-    public void onEnable() {
+    public void enable() {
         try {
             DataFix.moveFile("/config/modules.properties", "/data/modules.properties");
             this.statusMap.load(new FileInputStream(this.getStatusFile()));
@@ -69,13 +70,12 @@ public final class ModuleManager implements Service {
     }
 
     @Override
-    public void onDisable() {
+    public void disable() {
         this.saveStatus();
         for (String id : new ArrayList<>(this.getModules().keySet())) {
             this.unregister(id);
         }
     }
-
 
     //----[query]----
     public TriState getModuleStatus(String id) {
@@ -179,10 +179,13 @@ public final class ModuleManager implements Service {
         if (get(id).getDescriptor().internal()) {
             return ObjectOperationResult.BLOCKED_INTERNAL;
         }
-        ObjectOperationResult result = enable0(id);
+
+        var result = enable0(id);
+
         if (result == ObjectOperationResult.SUCCESS) {
             this.logger.info("enabled module %s.".formatted(id));
         }
+
         this.saveStatus();
         return result;
     }
@@ -191,10 +194,13 @@ public final class ModuleManager implements Service {
         if (get(id).getDescriptor().internal()) {
             return ObjectOperationResult.BLOCKED_INTERNAL;
         }
-        ObjectOperationResult result = disable0(id);
+
+        var result = disable0(id);
+
         if (result == ObjectOperationResult.SUCCESS) {
             this.logger.info("disabled module %s.".formatted(id));
         }
+
         this.saveStatus();
         return result;
     }
@@ -266,7 +272,7 @@ public final class ModuleManager implements Service {
         BukkitUtil.callEvent(new ModuleEvent.Enable(getMeta(id), result));
 
         if (result == ObjectOperationResult.SUCCESS) {
-            this.statusMap.put(id, "enabled");
+            this.statusMap.put(id, "disabled");
             meta.status(FunctionalComponentStatus.DISABLED);
         }
 
@@ -402,6 +408,5 @@ public final class ModuleManager implements Service {
         }
         this.moduleMap.remove(id);
         this.getKnownModuleMetas().remove(id);
-        //callback.info("unregistered module %s.".formatted(id));
     }
 }

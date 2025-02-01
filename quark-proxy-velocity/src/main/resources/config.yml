@@ -4,7 +4,7 @@ config:
     hub-command: true
     stpa-command: true
     motd-sync: true
-    tab-sync: false
+    tab-sync: true
     chat-sync: true
     legacy-forwarding-protect: true
     server-statement-observer: true
@@ -22,4 +22,7 @@ config:
     max-players: 2024
     hide-players: false
     update-interval: 15
-
+  tab-sync:
+    format: "{color(gold)}[%s{color(gold)}] {color(gray)}%s"
+  chat-sync:
+    template: "{color(gold)}[%s{color(gold)}] {color(gray)}%s: "

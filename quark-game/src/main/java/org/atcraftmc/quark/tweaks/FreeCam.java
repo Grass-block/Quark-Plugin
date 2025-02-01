@@ -2,22 +2,25 @@ package org.atcraftmc.quark.tweaks;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.language.LanguageItem;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.permissions.Permission;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
-import org.atcraftmc.qlib.language.LanguageItem;
-import org.atcraftmc.qlib.command.QuarkCommand;
 import org.tbstcraft.quark.foundation.platform.Players;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.tbstcraft.quark.internal.PlayerIdentificationService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +35,9 @@ public final class FreeCam extends CommandModule {
     @Inject("tip")
     private LanguageItem tip;
 
+    @Inject("-quark.freecam.bypass")
+    private Permission bypassPermission;
+
     @Override
     public void enable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
@@ -39,7 +45,7 @@ public final class FreeCam extends CommandModule {
     }
 
     @Override
-    public void disable(){
+    public void disable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
         for (Player p : Bukkit.getOnlinePlayers()) {
             reset(p);
@@ -48,7 +54,7 @@ public final class FreeCam extends CommandModule {
     }
 
     public void reset(Player player) {
-        String id = player.getName();
+        var id = PlayerIdentificationService.transformPlayer(player);
         if (!this.gameModes.containsKey(id)) {
             return;
         }
@@ -60,7 +66,7 @@ public final class FreeCam extends CommandModule {
     }
 
     public void start(Player player) {
-        String id = player.getName();
+        var id = PlayerIdentificationService.transformPlayer(player);
         if (this.gameModes.containsKey(id)) {
             return;
         }
@@ -71,11 +77,15 @@ public final class FreeCam extends CommandModule {
     }
 
     public void toggle(Player p) {
-        if (gameModes.containsKey(p.getName())) {
+        if (this.gameModes.containsKey(PlayerIdentificationService.transformPlayer(p))) {
             this.reset(p);
         } else {
             this.start(p);
         }
+    }
+
+    private boolean inSession(Player p) {
+        return this.gameModes.containsKey(PlayerIdentificationService.transformPlayer(p));
     }
 
     @EventHandler
@@ -91,5 +101,22 @@ public final class FreeCam extends CommandModule {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         this.toggle((Player) sender);
+    }
+
+    @EventHandler
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        if(event.getMessage().contains("freecam")){
+            return;
+        }
+        if(!this.getConfig().getBoolean("anti-cheat")){
+            return;
+        }
+        if(event.getPlayer().hasPermission(this.bypassPermission)){
+            return;
+        }
+        if (this.inSession(event.getPlayer())) {
+            event.setCancelled(true);
+            getLanguage().sendMessage(event.getPlayer(), "anti-cheat");
+        }
     }
 }

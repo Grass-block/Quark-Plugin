@@ -3,9 +3,15 @@ package org.atcraftmc.quark.chat;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.commons.reflect.method.MethodHandle;
+import me.gb2022.commons.reflect.method.MethodHandleO2;
+import me.gb2022.commons.reflect.method.MethodHandleRO1;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.atcraftmc.qlib.command.LegacyCommandManager;
+import org.atcraftmc.qlib.language.LanguageItem;
+import org.atcraftmc.qlib.texts.TextBuilder;
+import org.atcraftmc.qlib.texts.placeholder.GloballyPlaceHolder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.SignChangeEvent;
@@ -16,12 +22,11 @@ import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.tbstcraft.quark.api.PluginMessages;
 import org.tbstcraft.quark.api.PluginStorage;
-import org.atcraftmc.qlib.language.LanguageItem;
+import org.tbstcraft.quark.foundation.ComponentSerializer;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
 import org.tbstcraft.quark.foundation.platform.BukkitDataAccess;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.atcraftmc.qlib.texts.TextBuilder;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.component.Components;
@@ -29,7 +34,9 @@ import org.tbstcraft.quark.framework.module.component.ModuleComponent;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolders;
-import org.atcraftmc.qlib.texts.placeholder.GloballyPlaceHolder;
+
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
@@ -132,24 +139,46 @@ public final class ChatComponent extends PackageModule {
 
     @AutoRegister(ServiceType.EVENT_LISTEN)
     public static final class PaperSignChangeListener extends ModuleComponent<ChatComponent> {
+        private MethodHandleO2<SignChangeEvent, Integer, Component> setLine;
+        private MethodHandleRO1<SignChangeEvent, String, Integer> getLine;
+
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requireClass(() -> Class.forName("org.bukkit.event.block.SignChangeEvent"));
         }
 
+        @Override
+        public void enable() {
+            var t = SignChangeEvent.class;
+
+            this.setLine = MethodHandle.select((ctx) -> {
+                //noinspection Convert2MethodRef
+                ctx.attempt(() -> t.getMethod("line", int.class, Component.class), (o, i, c) -> o.line(i, c));
+                ctx.dummy((o, i, c) -> o.setLine(i, ComponentSerializer.legacy(c)));
+            });
+            this.getLine = MethodHandle.select((ctx) -> {
+                ctx.attempt(() -> t.getMethod("line", int.class), (o, i) -> ComponentSerializer.legacy(Objects.requireNonNullElse(o.line(i), Component.text(""))));
+                //noinspection Convert2MethodRef
+                ctx.dummy((o, i) -> o.getLine(i));
+            });
+        }
+
         @EventHandler
         public void onSignEdit(SignChangeEvent event) {
             for (int i = 0; i < event.lines().size(); i++) {
-                Component origin = event.line(i);
-                if (origin == null) {
-                    continue;
-                }
-
-                String text = LegacyComponentSerializer.legacySection().serialize(origin);
+                var text = this.getLine.invoke(event, i);
                 text = this.parent.processColorChars(text);
                 text = this.parent.processChar(text);
 
-                event.line(i, TextBuilder.buildComponent(text, false));
+                var matcher = Pattern.compile("§.").matcher(text);
+
+                while (matcher.find()) {
+                    var res = matcher.group();
+
+                    text = text.replace(res, "{#&" + res.substring(1) + "}");
+                }
+
+                this.setLine.invoke(event, i, TextBuilder.buildComponent(text, false));
             }
         }
     }

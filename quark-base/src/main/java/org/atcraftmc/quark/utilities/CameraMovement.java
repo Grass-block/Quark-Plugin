@@ -141,6 +141,8 @@ public final class CameraMovement extends CommandModule {
                 start.setPitch(viewer.getLocation().getPitch());
             }
 
+            viewer.setGameMode(GameMode.SPECTATOR);
+
             viewer.teleport(start);
         }
 
@@ -161,7 +163,7 @@ public final class CameraMovement extends CommandModule {
             Location nextInterpolatedLocation = this.callback.apply(t2);
 
             // 计算方向向量
-            Vector direction = nextInterpolatedLocation.toVector().subtract(interpolatedLocation.toVector()).normalize();
+            Vector direction = nextInterpolatedLocation.toVector().subtract(interpolatedLocation.toVector());
 
             // 设置玩家的速度
             this.viewer.setVelocity(direction.multiply(1));

@@ -48,24 +48,26 @@ public interface DataFix {
     }
 
     static void moveFile(String origin, String dest) {
-        String base = FilePath.pluginFolder("quark");
-        File org = new File(base + origin);
+        var base = FilePath.pluginFolder("quark");
+        var originFile = new File(base + origin);
+        var destFile = new File(base + dest);
 
-        if (!org.exists()) {
+        if (!originFile.exists()) {
+            return;
+        }
+        if (destFile.exists() && destFile.length() > 0) {
             return;
         }
 
         Quark.getInstance().getLogger().info("fixing up folder %s -> %s".formatted(origin, dest));
 
-        File des = new File(base + dest);
-
         try {
-            Files.copy(org, des);
+            Files.copy(originFile, destFile);
         } catch (IOException e) {
             Quark.getInstance().getLogger().warning("failed to move file %s".formatted(origin));
         }
 
-        if (org.delete()) {
+        if (originFile.delete()) {
             Quark.getInstance().getLogger().info("removed file %s".formatted(dest));
         }
     }

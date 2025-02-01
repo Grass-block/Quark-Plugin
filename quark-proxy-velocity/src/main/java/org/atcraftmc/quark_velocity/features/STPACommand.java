@@ -12,11 +12,13 @@ import java.util.List;
 import java.util.Objects;
 
 public final class STPACommand extends ProxyModule {
+    private final AbstractedTPACommand stpaHereCommand = new Here();
 
     @Override
     public void enable() {
         getCommandManager().registerCommand(new To());
-        getCommandManager().registerCommand(new Here());
+        getCommandManager().registerCommand(this.stpaHereCommand);
+        getCommandManager().registerCommand(new GloballySTPAHereCommand());
     }
 
     public abstract class AbstractedTPACommand implements SimpleCommand {
@@ -129,7 +131,7 @@ public final class STPACommand extends ProxyModule {
     }
 
     @VelocityCommand(name = "stpa")
-    public class To extends AbstractedTPACommand {
+    public final class To extends AbstractedTPACommand {
 
         @Override
         protected String messageNamespace() {
@@ -142,9 +144,8 @@ public final class STPACommand extends ProxyModule {
         }
     }
 
-    @VelocityCommand(name = "stpa-here", aliases = "stpa")
-    public class Here extends AbstractedTPACommand {
-
+    @VelocityCommand(name = "stpa-here", aliases = {"stpahere"})
+    public final class Here extends AbstractedTPACommand {
         @Override
         protected String messageNamespace() {
             return "tpahere";
@@ -153,8 +154,30 @@ public final class STPACommand extends ProxyModule {
         @Override
         public void onAccepted(Player handler, Player target) {
             handler.createConnectionRequest(target.getCurrentServer().orElseThrow().getServer()).connect();
-
         }
     }
+
+    @VelocityCommand(name = "invite", aliases = {"yq", "hh"})
+    public final class GloballySTPAHereCommand implements SimpleCommand {
+        @Override
+        public void execute(Invocation invocation) {
+            var lang = Config.language("stpa-command");
+            var sender = ((Player) invocation.source());
+            var senderName = sender.getUsername();
+            var senderOrigin = sender.getCurrentServer().orElseThrow().getServerInfo();
+
+            for (var player : getProxy().getAllPlayers()) {
+                if(player.getCurrentServer().orElseThrow().getServerInfo().equals(senderOrigin)){
+                    continue;
+                }
+
+                lang.sendMessage(player, "invite-request-target", senderName, senderName, senderName);
+                stpaHereCommand.getStorage().addRequest(player.getUsername(), senderName);
+            }
+
+            lang.sendMessage(sender, "invite-request-sender");
+        }
+    }
+
 
 }

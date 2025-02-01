@@ -33,7 +33,6 @@ import org.bukkit.scoreboard.*;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.ModuleDataService;
 import org.tbstcraft.quark.data.PlayerDataService;
-import org.tbstcraft.quark.data.storage.DataEntry;
 import org.tbstcraft.quark.foundation.ComponentSerializer;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.APIProfileTest;
@@ -67,12 +66,11 @@ public final class PlayerNameHeader extends CommandModule {
         super.enable();
 
         var legacy = ModuleDataService.get("player-name-header");
-
         var keys = new ArrayList<>(legacy.getTagMap().keySet());
 
-        for (String player : keys) {
+        for (var player : keys) {
             try {
-                DataEntry fixed = PlayerDataService.get(player);
+                var fixed = PlayerDataService.get(player);
                 fixed.set("player-name-header", legacy.getString(player));
                 legacy.getTagMap().remove(player);
                 fixed.save();

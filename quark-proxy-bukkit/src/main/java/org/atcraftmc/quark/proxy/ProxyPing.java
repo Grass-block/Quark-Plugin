@@ -1,9 +1,9 @@
-package org.atcraftmc.quark.proxysupport;
+package org.atcraftmc.quark.proxy;
 
 import me.gb2022.apm.local.ListedBroadcastEvent;
 import me.gb2022.apm.local.PluginMessageHandler;
-import me.gb2022.apm.remote.util.BufferUtil;
 import me.gb2022.commons.reflect.AutoRegister;
+import org.atcraftmc.qlib.texts.placeholder.StringObjectPlaceHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,7 +16,6 @@ import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.RemoteMessageService;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 import org.tbstcraft.quark.internal.task.TaskService;
-import org.atcraftmc.qlib.texts.placeholder.StringObjectPlaceHolder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,9 +66,11 @@ public final class ProxyPing extends PackageModule {
     private int refreshPing(Player player) {
         AtomicInteger ping1 = new AtomicInteger(Players.getPing(player));
 
-        RemoteMessageService.query("proxy", "quark:query/player/ping", (b) -> BufferUtil.writeString(b, player.getName()))
-                .timeout(250, () -> getL4jLogger().error("failed to send remote query(%s) for ping!".formatted(player.getName())))
-                .result((b) -> ping1.set(b.readInt())).sync();
+        RemoteMessageService.instance()
+                .query("proxy", "player:ping", player.getName())
+                .timeout(250, () -> this.logger.severe("failed to send remote query(%s) for ping!".formatted(player.getName())))
+                .result((b) -> ping1.set(Integer.parseInt(b)))
+                .request();
 
         int ping = ping1.get();
         this.ping.put(player.getName(), ping);

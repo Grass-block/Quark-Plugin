@@ -1,28 +1,64 @@
 package org.atcraftmc.quark.lobby;
 
+import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import me.gb2022.commons.reflect.AutoRegister;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
+import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.tbstcraft.quark.framework.module.component.Components;
+import org.tbstcraft.quark.framework.module.component.ModuleComponent;
+import org.tbstcraft.quark.framework.module.services.Registers;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
 import org.tbstcraft.quark.internal.permission.PermissionService;
 
-@QuarkModule(version = "1.0.0")
+@QuarkModule(version = "1.0.3")
 @AutoRegister(ServiceType.EVENT_LISTEN)
+@Components(MapProtect.PaperPreAttackEventEXT.class)
 public final class MapProtect extends PackageModule {
+    private static boolean allowBreak(Player player) {
+        if (player.getGameMode() == GameMode.CREATIVE) {
+            return true;
+        }
+        if (player.hasPermission("quark.lobby.break")) {
+            return true;
+        }
+
+        return false;
+    }
+
     @Override
     public void enable() {
-        PermissionService.createPermission("-quark.lobby.break");
-        PermissionService.createPermission("-quark.lobby.interact");
+        PermissionService.createPermission("!quark.lobby.break");
+        PermissionService.createPermission("!quark.lobby.interact");
     }
 
     @EventHandler
     public void onPlayerBreak(BlockBreakEvent event) {
-        if (event.getPlayer().hasPermission("quark.lobby.break")) {
+        if (allowBreak(event.getPlayer())) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if(event.getEntity() instanceof Player) {
+            return;
+        }
+        if (!(event.getDamager() instanceof Player player)) {
+            return;
+        }
+        if (allowBreak(player)) {
             return;
         }
         event.setCancelled(true);
@@ -43,9 +79,53 @@ public final class MapProtect extends PackageModule {
         if (!event.hasItem()) {
             return;
         }
+
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
+            return;
+        }
+
         if (event.getPlayer().hasPermission("quark.lobby.interact")) {
             return;
         }
-        //event.setCancelled(true);
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if (event.getRightClicked() instanceof Player) {
+            return;
+        }
+
+        if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
+            return;
+        }
+
+        if (event.getPlayer().hasPermission("quark.lobby.interact")) {
+            return;
+        }
+        event.setCancelled(true);
+    }
+
+
+    @AutoRegister(Registers.BUKKIT_EVENT)
+    public static final class PaperPreAttackEventEXT extends ModuleComponent<MapProtect> {
+        @Override
+        public void checkCompatibility() throws APIIncompatibleException {
+            Compatibility.requireClass(() -> Class.forName("io.papermc.paper.event.player.PrePlayerAttackEntityEvent"));
+        }
+
+        @EventHandler
+        public void onPlayerAttack(PrePlayerAttackEntityEvent event) {
+            if(event.getAttacked() instanceof Player) {
+                return;
+            }
+            if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
+                return;
+            }
+            if (event.getPlayer().hasPermission("quark.lobby.break")) {
+                return;
+            }
+            event.setCancelled(true);
+        }
     }
 }

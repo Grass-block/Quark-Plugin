@@ -1,5 +1,8 @@
 package org.atcraftmc.quark.web;
 
+import io.vertx.ext.jwt.JWT;
+import org.atcraftmc.quark.web.http.HttpHandlerContext;
+import org.atcraftmc.quark.web.http.HttpRequest;
 import org.bukkit.command.CommandSender;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.SharedObjects;
@@ -37,5 +40,13 @@ public final class PasswordAuthorcation extends CoreCommand {
                 if (Objects.equals(buffer[0], "set")) tabList.add("<password>");
             }
         }
+    }
+
+
+    @HttpRequest("/auth/password")
+    public void onAuthRequest(HttpHandlerContext context) {
+
+
+        context.createJsonReturn().addProperty("token","jwt");
     }
 }

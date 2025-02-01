@@ -1,4 +1,31 @@
+### 0.70.06
+
+- [add] DisplaySetting: add `/display-setting` to allow players to disable displays on screen.
+- [fix] ChatComponent: Exception when missing SignChangeEvent#line().
+- [fix] ChatComponent: lost of text style when re-editing signs.
+- [fix] ChatFormat: language key error on mohist platform(remapping worldIds).
+
+### 0.70.03
+
+- [fix] Core: fixed APM network query system.
+- [upd] SelfMessage: moved to `quark-utilities` pack.
+- [upd] Mail: add `send-direct-to-online-player` option.
+- [mov] CommandExec: moved to `quark-commands`
+- [mov] SelfMessageCommand: moved to `quark-commands`
+- [mov] CommandFunction: moved to `quark-commands`
+- [mov] ConsoleCommand: moved to `quark-commands`
+- [mov] EntityMotion: moved to `quark-commands`
+- [mov] PositionAlign: moved to `quark-commands`
+- [mov] ItemCommand: moved to `quark-commands`
+- [upd] PlayerNameHeader: changes of header will be announced.
+- [fix] CameraMovement: fixed velocity calculate error.
+- [fix] CameraMovement: fixed player's gamemode.
+- [fix] ChatFormat: fixed vanilla legacy server's player name formatting issue.
+- [fix] Core: fixed module status store error.
+- [add] IncompleteInstallationDetector: now quark-core will notify to ops if no extension packs installed.
+
 ### 0.70.0
+
 - [upd] Framework: set API version to 40.
 - [add] Framework: add platform detection for Banner and Youer server.
 - [upd] Framework: improved startup performance.
@@ -7,8 +34,8 @@
 - [add] Framework: remade and introduced APM plugin networking.
 - [fix] Framework: fix unexpected behavior when console is calling entity selector.
 - [fix] Framework: fix unexpected behavior when other entities are expected to get their "locale".
-- [fix] AFK: AFK display error.
-- [fix] AFK: fix detection time delta.
+- [fix] AFK: fixed AFK display error.
+- [fix] AFK: fixed detection time delta.
 - [fix] PlayerNameHeader: fix name-tag display in header.
 - [rem] PlayerNameHeader: remove ProtocolNameTags.
 - [add] JoinQuitMessage: add configurable "sound" control.
@@ -18,23 +45,26 @@
 - [add] CommandExec: add /exec <selector> [command] so you can execute ANY command as target entity.
 - [add] Translation: Added en_us translations for quark_content pack.
 - [fix] Translation: fixed missing of en_us/quark-display:afk translations
+- [add] Freecam: add `anti-cheat` options to prevent in-freecam players.
+- [upd] ConsoleCommand: add tab completion.
+- [fix] MusicPlayer: fixed autoplay fetch issue.
+- [fix] Framework: fix stats page display
 
 ### 0.64.15
 
-- [Core] hot reload on all platforms are sync now.
-- [Core] Language Detection will use cache as first in first time. this will cause lag for detection but reduce chance of
-  detecting wrong language.
-- [Core] PlayerData will now use UUID to identify player, legacy files will be updated.
-- [Core] All Modules are now using Log4j as logger.
-- [MusicPlayer] Always attempt to ignore delay before any first node being played.
-- [TabMenu] Default splitLine is longer now.
-- [PlayerNameHeader] now use PlayerDataService to store header,legacy file will be auto-updated.
-- [AdvancePluginCommands] Injected aliases to /plugins commands like /pl.
-- [AdvancePluginCommands] Added hover and clicking infos when listing plugins.
-- [AdvancePluginCommands] Plugin manager can now fully remove a plugin and its ref when unloading it. [1.20.1]
-- [WESessionSizeLimit] Player Edit operation will be recorded.
-- [RTP] Added /rtp for random teleporting
-- [RealisticSleep] move to beta due to crushes and not-good feedbacks
+- [upd] Framework: hot reload on all platforms are sync now.
+- [upd] Framework: Language Detection will use cache as first in first time. cause lag for detection but more accurate.
+- [upd] Framework: PlayerData will now use UUID to identify player, legacy files will be updated.
+- [upd] Framework: All Modules are now using Log4j as logger.
+- [upd] MusicPlayer: Always attempt to ignore delay before any first node being played.
+- [upd] TabMenu: Default splitLine is longer now.
+- [upd] PlayerNameHeader: now use PlayerDataService to store header,legacy file will be auto-updated.
+- [upd] AdvancePluginCommand: Injected aliases to /plugins commands like /pl.
+- [upd] AdvancePluginCommand: Added hover and clicking infos when listing plugins.
+- [upd] AdvancePluginCommand: Plugin manager can now fully remove a plugin and its ref when unloading it. [1.20.1]
+- [upd] WESessionSizeLimit: Player Edit operation will be recorded.
+- [add] RTP: Added /rtp for random teleporting
+- [rem] RealisticSleep: move to beta due to crushes and not-good feedbacks
 
 ### 0.64.14
 

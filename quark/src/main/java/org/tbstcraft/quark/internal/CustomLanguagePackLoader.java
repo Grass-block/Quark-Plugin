@@ -94,7 +94,7 @@ public final class CustomLanguagePackLoader extends PackageModule {
                 packs.add(new ThirdPartyLanguagePack(
                         packInfos[0],
                         packInfos[1],
-                        Quark.PluginConceptWrapper.of(this.getOwnerPlugin()),
+                        Quark.SubpackPluginConceptWrapper.of(this.getOwnerPlugin()),
                         uuid,
                         packInput
                 ));

@@ -1,20 +1,21 @@
 package org.tbstcraft.quark.framework.module.services;
 
-import me.gb2022.apm.client.ClientMessenger;
 import me.gb2022.apm.local.PluginMessenger;
+import me.gb2022.apm.remote.event.MessengerEventChannel;
+import me.gb2022.apm.remote.event.RemoteEventListener;
 import me.gb2022.commons.reflect.Annotations;
 import me.gb2022.commons.reflect.AutoRegisterManager;
 import me.gb2022.commons.reflect.DependencyInjector;
 import org.atcraftmc.qlib.command.AbstractCommand;
+import org.atcraftmc.qlib.language.LanguageContainer;
+import org.atcraftmc.qlib.language.LanguageEntry;
+import org.atcraftmc.qlib.language.LanguageItem;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.data.assets.Asset;
 import org.tbstcraft.quark.data.assets.AssetGroup;
-import org.atcraftmc.qlib.language.LanguageContainer;
-import org.atcraftmc.qlib.language.LanguageEntry;
-import org.atcraftmc.qlib.language.LanguageItem;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
@@ -30,12 +31,16 @@ import org.tbstcraft.quark.framework.record.RecordService;
 import org.tbstcraft.quark.internal.RemoteMessageService;
 import org.tbstcraft.quark.internal.permission.PermissionService;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
-@SuppressWarnings({"rawtypes"})
+
 public interface ModuleServices {
     ModuleAutoRegManager AUTO_REG = new ModuleAutoRegManager();
     DependencyInjector<AbstractModule> MODULE_DEPENDENCY_INJECTOR = new ModuleDependencyInjector();
@@ -47,26 +52,20 @@ public interface ModuleServices {
         }
 
         MODULE_DEPENDENCY_INJECTOR.inject(module);
-
-        initCommands(module);
-
         AUTO_REG.attach(module);
+        initCommands(module);
     }
 
     static void onDisable(AbstractModule module) {
         AUTO_REG.detach(module);
-
-        for (FunctionalComponent component : module.getComponents().values()) {
-            AUTO_REG.detach(component);
-        }
-
-        module.getComponents().clear();
 
         if (module.getClass().getDeclaredAnnotation(CommandProvider.class) != null) {
             for (AbstractCommand cmd : module.getCommands()) {
                 Quark.getInstance().getCommandManager().unregister(cmd);
             }
         }
+
+        module.getComponents().clear();
     }
 
     static <E extends AbstractModule> Set<ModuleComponent<E>> createComponents(E module) {
@@ -99,13 +98,16 @@ public interface ModuleServices {
         return components;
     }
 
+    @SuppressWarnings({"rawtypes"})
     static void initCommands(AbstractModule module) {
-        CommandProvider annotation = module.getClass().getAnnotation(CommandProvider.class);
-        if (annotation == null) {
+        if(!module.getClass().isAnnotationPresent(CommandProvider.class)) {
             return;
         }
 
         module.getCommands().clear();
+
+        var annotation = module.getClass().getAnnotation(CommandProvider.class);
+
         for (Class<? extends AbstractCommand> commandClass : annotation.value()) {
             AbstractCommand cmd;
             try {
@@ -122,7 +124,7 @@ public interface ModuleServices {
     }
 
 
-    class ModuleDependencyInjector extends DependencyInjector<AbstractModule> {
+    final class ModuleDependencyInjector extends DependencyInjector<AbstractModule> {
         public ModuleDependencyInjector() {
             Function<String[], Boolean> useCacheForAsset = (p) -> p.length == 1 || Boolean.parseBoolean(p[1]);
 
@@ -130,7 +132,8 @@ public interface ModuleServices {
             registerInjector(AssetGroup.class, (p, m) -> new AssetGroup(m.getOwnerPlugin(), p[0], useCacheForAsset.apply(p)));
             registerInjector(Permission.class, (p, m) -> PermissionService.createPermissionObject(p[0]));
             registerInjector(LanguageEntry.class, (p, m) -> m.getLanguage());
-            registerInjector(LanguageItem.class, (p, m) -> LanguageContainer.getInstance().item(m.getParent().getId(), m.getId(), p[0]));
+            registerInjector(LanguageItem.class, (p, m) -> LanguageContainer.getInstance()
+                    .item(m.getParent().getId(), m.getId(), p[0]));
             registerInjector(IPackage.class, (p, m) -> m.getParent());
             registerInjector(Plugin.class, (p, m) -> m.getOwnerPlugin());
             registerInjector(Logger.class, (p, m) -> m.getLogger());
@@ -152,20 +155,20 @@ public interface ModuleServices {
         }
     }
 
-    class ModuleAutoRegManager extends AutoRegisterManager<Listener> {
+    final class ModuleAutoRegManager extends AutoRegisterManager<Listener> {
         public ModuleAutoRegManager() {
-            this.registerHandler(ServiceType.EVENT_LISTEN, BukkitUtil::registerEventListener, BukkitUtil::unregisterEventListener);
-            this.registerHandler(
-                    ServiceType.CLIENT_MESSAGE,
-                    ClientMessenger.EVENT_BUS::registerEventListener,
-                    ClientMessenger.EVENT_BUS::unregisterEventListener
-                                );
-            this.registerHandler(
-                    ServiceType.PLUGIN_MESSAGE,
-                    PluginMessenger.EVENT_BUS::registerEventListener,
-                    PluginMessenger.EVENT_BUS::unregisterEventListener
-                                );
-            this.registerHandler(ServiceType.REMOTE_MESSAGE, RemoteMessageService::addHandler, RemoteMessageService::removeHandler);
+            Builder.build(this, (i) -> {
+                i.attach(Registers.BUKKIT_EVENT, BukkitUtil::registerEventListener);
+                i.detach(Registers.BUKKIT_EVENT, BukkitUtil::unregisterEventListener);
+                i.attach(Registers.PLUGIN_MESSAGE, PluginMessenger.EVENT_BUS::registerEventListener);
+                i.detach(Registers.PLUGIN_MESSAGE, PluginMessenger.EVENT_BUS::unregisterEventListener);
+                i.attach(Registers.APM_EVENT, Builder.apmService((l, s) -> s.registerEventHandler(l)));
+                i.detach(Registers.APM_EVENT, Builder.apmService((l, s) -> s.registerEventHandler(l)));
+                i.attach(Registers.APM_LISTEN, Builder.apmEvent((l, s) -> s.addListener(l)));
+                i.detach(Registers.APM_LISTEN, Builder.apmEvent((l, s) -> s.removeListener(l)));
+                i.attach(ServiceType.CLIENT_MESSAGE, (l) -> System.out.println("deprecated register: client message API"));
+                i.detach(ServiceType.CLIENT_MESSAGE, (l) -> System.out.println("deprecated register: client message API"));
+            });
         }
 
         public void attach(AbstractModule object) {
@@ -192,6 +195,40 @@ public interface ModuleServices {
         @Override
         public void handleDetachFailed(Listener object, String type) {
             System.out.println("no module service named " + type);
+        }
+
+        private static final class Builder {
+            private final Map<String, Consumer<Listener>> attachFunctions = new HashMap<>();
+            private final Map<String, Consumer<Listener>> detachFunctions = new HashMap<>();
+
+            static void build(AutoRegisterManager<Listener> target, Consumer<Builder> func) {
+                var builder = new Builder();
+                func.accept(builder);
+                builder.build(target);
+            }
+
+            public static Consumer<Listener> apmService(BiConsumer<Listener, RemoteMessageService> func) {
+                return listener -> func.accept(listener, RemoteMessageService.instance());
+            }
+
+            public static Consumer<Listener> apmEvent(BiConsumer<RemoteEventListener, MessengerEventChannel> func) {
+                return listener -> func.accept((RemoteEventListener) listener, RemoteMessageService.instance()
+                        .eventChannel());
+            }
+
+            public void attach(String id, Consumer<Listener> function) {
+                attachFunctions.put(id, function);
+            }
+
+            public void detach(String id, Consumer<Listener> function) {
+                detachFunctions.put(id, function);
+            }
+
+            public void build(AutoRegisterManager<Listener> target) {
+                for (var s : attachFunctions.keySet()) {
+                    target.registerHandler(s, this.attachFunctions.get(s), this.detachFunctions.get(s));
+                }
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
 import org.tbstcraft.quark.foundation.platform.Compatibility;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -33,8 +34,13 @@ public final class LegacyCommandTimingsPatch extends PackageModule {
         this.inject();
     }
 
+    @EventHandler
+    public void onServerCommand(ServerCommandEvent event) {
+        this.inject();
+    }
+
     public void inject() {
-        for (Command c : LegacyCommandManager.getKnownCommands(LegacyCommandManager.getCommandMap()).values()) {
+        for (var c : LegacyCommandManager.getKnownCommands(LegacyCommandManager.getCommandMap()).values()) {
             if (c.timings == null) {
                 c.timings = co.aikar.timings.TimingsManager.getCommandTiming("_quark_inject", c);
             }

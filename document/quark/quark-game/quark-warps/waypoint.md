@@ -12,10 +12,15 @@
     allow_coordinate_add: true #是否允许玩家添加坐标
 ```
 
+
+### 权限
+- `quark.waypoint.bypass` 默认: op 绕过“坐标添加” 限制
+- `quark.waypoint.bypass` 默认: op 允许编辑公共导航点列表
+
 ### 命令
-- `waypoint add [name] [world] [x] [y] [z]` 添加一个公共导航点(仅OP可用)
-- `waypoint add [name] @self` 以自己的位置添加一个公共导航点(仅OP可用)
-- `waypoint remove [name]` 移除一个公共导航点(仅OP可用)
+- `/waypoint add [name] [world] [x] [y] [z]` 添加一个公共导航点(仅OP可用)
+- `/waypoint add [name] @self` 以自己的位置添加一个公共导航点(仅OP可用)
+- `/waypoint remove [name]` 移除一个公共导航点(仅OP可用)
 - `/waypoint tp [name]`  传送到一个公共导航点
 - `/waypoint add-private [name] [world] [x] [y] [z]` 添加一个私有导航点
 - `/waypoint add-private [name] @self` 以自己的位置添加一个私有导航点

@@ -19,3 +19,5 @@ config:
       tbst-mod: 4a1b4530667d4ac6830d0c1994fb8530
   proxy-ping:
     interval: 200
+  geyser-skin-redirect:
+    prefix: "."

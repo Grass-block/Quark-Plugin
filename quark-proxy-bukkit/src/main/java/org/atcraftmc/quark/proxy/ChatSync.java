@@ -1,4 +1,4 @@
-package org.atcraftmc.quark.proxysupport;
+package org.atcraftmc.quark.proxy;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import me.gb2022.commons.reflect.AutoRegister;
@@ -21,17 +21,17 @@ import org.tbstcraft.quark.framework.module.services.ServiceType;
 import java.nio.charset.StandardCharsets;
 
 @QuarkModule(version = "1.0.0")
-@AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.REMOTE_MESSAGE})
+@AutoRegister({ServiceType.EVENT_LISTEN})
 @Components({ChatSync.BukkitListener.class, ChatSync.PaperListener.class})
 public final class ChatSync extends PackageModule {
     @Override
     public void enable() {
-        Bukkit.getMessenger().registerOutgoingPluginChannel(Quark.getInstance(), "quark-pl:msg");
+        Bukkit.getMessenger().registerOutgoingPluginChannel(Quark.getInstance(), "quark_plugin:msg");
     }
 
     public void send(Player player, Component message) {
-        var payload = GsonComponentSerializer.gson().serialize(message).getBytes(StandardCharsets.UTF_8);
-        player.sendPluginMessage(Quark.PLUGIN, "quark-pl:msg", payload);
+        var payload = GsonComponentSerializer.gson().serialize(message);
+        player.sendPluginMessage(Quark.getInstance(), "quark_plugin:msg", payload.getBytes(StandardCharsets.UTF_8));
     }
 
     @AutoRegister({ServiceType.EVENT_LISTEN})
@@ -40,7 +40,7 @@ public final class ChatSync extends PackageModule {
         public void checkCompatibility() throws APIIncompatibleException {
             try {
                 Class.forName("io.papermc.paper.event.player.AsyncChatEvent");
-                throw new RuntimeException("assertion failed");
+                throw new APIIncompatibleException("assertion failed");
             } catch (ClassNotFoundException ignored) {
             }
         }

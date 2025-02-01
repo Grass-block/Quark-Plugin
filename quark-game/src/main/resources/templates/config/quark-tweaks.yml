@@ -9,6 +9,8 @@ config:
     scale-per-player: 3.5
     health-interval: 20
     health-amount: 1
+  freecam:
+    anti-cheat: true
   vein-miner:
     max-iterations: 64
     regex: "_ore|_leaves|_log|glowstone|ancient_debris"

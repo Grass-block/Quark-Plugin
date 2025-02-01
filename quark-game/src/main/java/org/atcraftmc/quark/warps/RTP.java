@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 @QuarkModule
-@QuarkCommand(name = "random-tp", aliases = "rtp", permission = "+quark.rtp")
+@QuarkCommand(name = "random-tp", aliases = "rtp", permission = "+quark.warps.rtp")
 public final class RTP extends CommandModule {
 
     @Override
@@ -117,6 +117,7 @@ public final class RTP extends CommandModule {
             this.attempt(new Random(), player, callback, 0, false);
         }
     }
+
 
     private boolean verifyAirBlock(Material b) {
         return !b.isAir();

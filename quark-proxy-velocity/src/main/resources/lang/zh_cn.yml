@@ -37,6 +37,9 @@ language:
     tpa-deny-target: "{global#sys-info}{#var} 拒绝了你传送到他/她的服务器的请求。"
     tpa-no-request: "{global#sys-info}{#var} 没有向你发送他/她传送到你的服务器的请求。"
 
+    invite-request-sender: "{global#sys-info}您已向全服玩家发送了进入您服务器的邀请。"
+    invite-request-target: "{global#sys-info}玩家 {#var} 邀请您进入他/她的服务器。{msg#tpahere-accept-btn}"
+
     player-not-found: '{global#error}玩家不存在...'
   server-statement-observer:
     online: "{global#sys-info}服务器 {#var} 已上线, 您可前往游玩。"

@@ -1,4 +1,4 @@
-package org.atcraftmc.quark.utilities;
+package org.atcraftmc.quark.commands;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import org.atcraftmc.qlib.command.LegacyCommandManager;
@@ -68,30 +68,6 @@ public final class CommandTabFix extends PackageModule {
 
     @EventHandler
     public void onTabComplete(TabCompleteEvent event) {
-        if (isCommandNameMatch(event, "/schem", "/schematic")) {
-            if (!(getLastArgument(event).equals("load") || getLastArgument(event).equals("delete"))) {
-                return;
-            }
-
-            var folder = new File(FilePath.pluginsFolder() + "/WorldEdit/schematics");
-            System.out.println(folder.getAbsolutePath());
-
-            handleCompletion(event, (list) -> {
-                for (File f : Objects.requireNonNull(folder.listFiles())) {
-                    list.add(f.getName());
-                }
-            });
-        }
-
-        if (isCommandNameMatch(event, "set") && getArguments(event).length <= 2) {
-            handleCompletion(event, (list) -> list.add("hand"));
-        }
-
-        if (isCommandNameMatch(event, "replace") && getArguments(event).length <= 3) {
-            handleCompletion(event, (list) -> list.add("hand"));
-        }
-
-
         List<String> match = new ArrayList<>();
 
         String[] args = event.getBuffer().split(" ");

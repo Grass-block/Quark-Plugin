@@ -1,8 +1,6 @@
 package org.atcraftmc.quark.warps;
 
 import com.google.gson.JsonArray;
-import me.gb2022.apm.client.event.ClientRequestEvent;
-import me.gb2022.apm.client.event.driver.ClientEventHandler;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
@@ -56,29 +54,6 @@ public final class Waypoint extends CommandModule {
 
     @Inject("tip-home")
     private LanguageItem tipHome;
-
-    @ClientEventHandler("/quark/waypoint/list-private")
-    public void onWaypointFetchPrivate(ClientRequestEvent event) {
-        JsonArray array = new JsonArray();
-
-        NBTTagCompound entry = PlayerDataService.getEntry(event.getPlayer(), this.getId());
-
-        for (String s : entry.getTagMap().keySet()) {
-            array.add(s);
-        }
-        event.makeResponse(array);
-    }
-
-    @ClientEventHandler("/quark/waypoint/list")
-    public void onWaypointFetch(ClientRequestEvent event) {
-        JsonArray array = new JsonArray();
-        NBTTagCompound entry = ModuleDataService.getEntry(this.getId());
-        for (String s : entry.getTagMap().keySet()) {
-            array.add(s);
-        }
-        event.makeResponse(array);
-    }
-
 
     @Override
     public void enable() {

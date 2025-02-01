@@ -1,4 +1,4 @@
-package org.atcraftmc.quark.proxysupport;
+package org.atcraftmc.quark.proxy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

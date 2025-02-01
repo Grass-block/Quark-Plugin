@@ -58,7 +58,7 @@ public final class JsonPackageInitializer implements PackageInitializer {
 
         for (JsonElement element : languages) {
             String[] item = element.getAsString().split(":");
-            packs.add(new LanguagePack(item[0], item[1], Quark.PluginConceptWrapper.of(pkg.getOwner())));
+            packs.add(new LanguagePack(item[0], item[1], Quark.SubpackPluginConceptWrapper.of(pkg.getOwner())));
         }
 
         return packs;
@@ -75,7 +75,7 @@ public final class JsonPackageInitializer implements PackageInitializer {
 
         for (JsonElement element : arr) {
             String item = element.getAsString();
-            packs.add(new Configuration(Quark.PluginConceptWrapper.of(pkg.getOwner()), item));
+            packs.add(new Configuration(Quark.SubpackPluginConceptWrapper.of(pkg.getOwner()), item));
         }
 
         return packs;

@@ -1,0 +1,21 @@
+# Note: this file is only for a placeholder which specifies that is a 'plugin'
+# since Modrinth requires all published files to be a valid plugin
+# all the files that originally to be published is in the zip.
+
+name: quark-plugin-resource-pack
+version: '${version}'
+
+#api
+main: org.tbstcraft.quark.Quark
+api-version: 1.13
+folia-supported: true
+load: POSTWORLD
+softdepend: [ 'quark-platform','PlaceholderAPI' ]
+
+#description
+authors: [ "GrassBlock2022","TBSTMC" ]
+website: https://quark.tbstmc.xyz
+prefix: QuarkCore
+description: __PlaceHolder__
+
+

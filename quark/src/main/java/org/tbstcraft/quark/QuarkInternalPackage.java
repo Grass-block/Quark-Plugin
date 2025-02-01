@@ -42,6 +42,7 @@ public interface QuarkInternalPackage {
                 .module("custom-language-pack-loader", CustomLanguagePackLoader.class)
                 .module("papi-global-vars-injector", PAPIGlobalVarsInjector.class)
                 .module("legacy-command-timings-patch", LegacyCommandTimingsPatch.class)
+                .module("incomplete-installation-detector", IncompleteInstallationDetector.class)
 
                 .language("quark-core", "zh_cn")
                 .language("quark-core", "en_us")

@@ -41,6 +41,7 @@ language:
   player-name-header:
     set-header: '{global#sys-operation}将 {#var} 的头衔设置为 {#var}。'
     clear-header: '{global#sys-operation}将 {#var} 的头衔清除。'
+    announce: '{global#sys-info}玩家 {#var} 获得了头衔 {#var}。'
   welcome-message:
     title: '{#gold}欢迎!'
     content: '{#white}欢迎来到{#server-name}{#white}服务器,祝你玩得开心!'

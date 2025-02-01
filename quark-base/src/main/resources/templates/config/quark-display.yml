@@ -31,7 +31,7 @@ config:
   chat-format:
     world: "common:world:%s"
     time: "<post>   {#gray}%s"
-    template: '[{#white}{world}{#white}]{0} {color(gold)}> {color(gray)}{1} {time}'
+    template: '[{#white}{world}{#white}]{0} {color(gold)}> {color(white)}{1} {time}'
   player-name-header:
     template: "[{#white}{header}{#white}] {player}"
     op-header: '{#dark-purple}管理'
@@ -82,4 +82,4 @@ config:
     position: "%s,%s,%s"
     biome: "{translate;color(green)}biome.%s.%s{;}"
   afk:
-    timeout: 120
+    timeout: 3600

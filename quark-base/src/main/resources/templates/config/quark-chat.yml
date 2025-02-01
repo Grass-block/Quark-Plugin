@@ -9,6 +9,7 @@ config:
   mail:
     sound: true #is sound effect will be play when player receives a mail
     template: '{#white}[{#gold}%s{#white}] {#aqua}%s{#white}: %s' #message template for viewing
+    send-direct-to-online-player: false
   chat-report:
     append: '{click(command,/chat-report %s);color(red)}[!]' #report interactive text
   chat-translator:

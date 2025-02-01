@@ -1,6 +1,6 @@
 language:
   world:
-    world: "{#green}Overworld"
-    world-nether: "{#red}Nether"
-    world-the-end: "{#purple}TheEnd"
-    aether: "{#aqua}TheAether" #todo
+    minecraft:world: "{#green}Overworld"
+    minecraft:world-nether: "{#red}Nether"
+    minecraft:world-the-end: "{#purple}TheEnd"
+    aether:aether: "{#aqua}TheAether"

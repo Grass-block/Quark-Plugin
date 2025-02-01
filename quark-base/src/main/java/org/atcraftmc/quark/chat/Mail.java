@@ -8,11 +8,14 @@ import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.texts.TextBuilder;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.PlayerDataService;
+import org.tbstcraft.quark.data.storage.StorageTable;
 import org.tbstcraft.quark.framework.module.CommandModule;
 import org.tbstcraft.quark.framework.module.QuarkModule;
 import org.tbstcraft.quark.framework.module.services.ServiceType;
@@ -31,15 +34,75 @@ public final class Mail extends CommandModule {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        tryRemindPlayer(event.getPlayer());
+    }
+
+    private void tryRemindPlayer(Player player) {
         TaskService.async().run(() -> {
-            Player sender = event.getPlayer();
-            NBTTagCompound entry = PlayerDataService.getEntry(sender.getName(), this.getFullId());
+            var entry = data(player);
             int size = entry.getTagMap().keySet().size();
             if (size == 0) {
                 return;
             }
-            this.language.sendMessage(sender, "view-hint", size);
+            this.language.sendMessage(player, "view-hint", size);
         });
+    }
+
+    private void view(CommandSender sender, StorageTable data) {
+        var sb = new StringBuilder();
+        var keys = new HashSet<>(data.getTagMap().keySet());
+
+        if (keys.isEmpty()) {
+            this.language.sendMessage(sender, "view-none", sb.toString());
+            return;
+        }
+
+        for (String s : keys) {
+            var template = this.getConfig().getString("template");
+            if (template == null) {
+                template = "%s@%s: %s";
+            }
+
+            try {
+                var from = s.split("@")[0];
+                var time = SharedObjects.DATE_FORMAT.format(Long.parseLong(s.split("@")[1]));
+
+                sb.append(template.formatted(time, from, data.getString(s))).append("\n");
+            } catch (ArrayIndexOutOfBoundsException ignored) {
+            }
+
+            data.remove(s);
+        }
+
+        data.save();
+        this.language.sendMessage(sender, "view", sb.toString());
+    }
+
+    private void send(OfflinePlayer recipient, CommandSender sender, String content) {
+        if (recipient.isOnline()) {
+            if (getConfig().getBoolean("sound")) {
+                BukkitSound.ANNOUNCE.play(recipient.getPlayer());
+            }
+
+            if (this.getConfig().getBoolean("send-direct-to-online-player")) {
+                this.language.sendMessage(recipient, "receive-direct", sender.getName(), content);
+                this.language.sendMessage(sender, "send-success", recipient, content);
+                return;
+            }
+        }
+
+        var entry = data(recipient);
+        var key = sender.getName() + "@" + System.currentTimeMillis();
+
+        entry.setString(key, content);
+        entry.save();
+
+        this.language.sendMessage(sender, "send-success", recipient, content);
+
+        if (recipient.isOnline()) {
+            tryRemindPlayer(recipient.getPlayer());
+        }
+
     }
 
     @Override
@@ -47,57 +110,14 @@ public final class Mail extends CommandModule {
         var sender = context.getSender();
 
         if (context.requireArgumentAt(0).equals("view")) {
-            TaskService.async().run(() -> {
-                var entry = PlayerDataService.getEntry(sender.getName(), this.getFullId());
-                var sb = new StringBuilder();
-                var keys = new HashSet<>(entry.getTagMap().keySet());
-
-                if (keys.isEmpty()) {
-                    this.language.sendMessage(sender, "view-none", sb.toString());
-                    return;
-                }
-
-                for (String s : keys) {
-                    var template = this.getConfig().getString("template");
-                    if (template == null) {
-                        template = "%s@%s: %s";
-                    }
-
-                    try {
-                        var from = s.split("@")[0];
-                        var time = SharedObjects.DATE_FORMAT.format(Long.parseLong(s.split("@")[1]));
-
-                        sb.append(template.formatted(time, from, entry.getString(s))).append("\n");
-                    } catch (ArrayIndexOutOfBoundsException ignored) {
-                    }
-
-                    entry.remove(s);
-                }
-
-                PlayerDataService.save(sender.getName());
-                this.language.sendMessage(sender, "view", sb.toString());
-            });
-
-            var content = TextBuilder.EMPTY_COMPONENT + context.requireRemainAsParagraph(0, true) + TextBuilder.EMPTY_COMPONENT;
-            var recipient = context.requireOfflinePlayer(0);
-
-            if (recipient.isOnline()) {
-                this.language.sendMessage(recipient, "receive-direct", sender.getName(), content);
-                this.language.sendMessage(sender, "send-success", recipient, content);
-
-                if (getConfig().getBoolean("sound")) {
-                    BukkitSound.ANNOUNCE.play(recipient.getPlayer());
-                }
-
-                return;
-            }
-
-            var entry = PlayerDataService.getEntry(recipient.getName(), this.getFullId());
-            var key = sender.getName() + "@" + System.currentTimeMillis();
-            entry.setString(key, content);
-
-            this.language.sendMessage(sender, "send-success", recipient, content);
+            var entry = data(context.requireSenderAsPlayer());
+            TaskService.async().run(() -> view(context.getSender(), entry));
         }
+
+        var content = TextBuilder.EMPTY_COMPONENT + context.requireRemainAsParagraph(0, true) + TextBuilder.EMPTY_COMPONENT;
+        var recipient = context.requireOfflinePlayer(0);
+
+        send(recipient, sender, content);
     }
 
     @Override
@@ -105,5 +125,16 @@ public final class Mail extends CommandModule {
         suggestion.suggestPlayers(0);
         suggestion.suggest(0, "view");
         suggestion.suggest(1, "[message...]");
+    }
+
+
+    private StorageTable data(OfflinePlayer player) {
+        var data = PlayerDataService.get(player.getName());
+
+        if (!data.hasKey(this.getFullId())) {
+            data.setCompoundTag(this.getFullId(), new NBTTagCompound());
+        }
+
+        return data.getTable(this.getFullId());
     }
 }

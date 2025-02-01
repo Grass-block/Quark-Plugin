@@ -1,6 +1,6 @@
 language:
   world:
-    world: "{#green}主世界"
-    world-nether: "{#red}下界"
-    world-the-end: "{#purple}末地"
-    aether: "{#aqua}天境" #todo
+    minecraft:world: "{#green}主世界"
+    minecraft:world-nether: "{#red}下界"
+    minecraft:world-the-end: "{#purple}末地"
+    aether:aether: "{#aqua}天境"

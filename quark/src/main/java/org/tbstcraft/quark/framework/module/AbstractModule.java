@@ -42,19 +42,19 @@ public abstract class AbstractModule implements FunctionalComponent {
         this.l4jLogger = createL4JLogger();
 
         this.logger = createLogger();
-        this.record = this.useRecord() ? createRecord() : new EmptyRecordEntry();
+        this.record = this.useRecord() ? this.createRecord() : new EmptyRecordEntry();
 
         ModuleServices.onEnable(this);
 
         this.enable();
 
-        for (FunctionalComponent component : this.components.values()) {
+        for (var component : this.components.values()) {
             component.enable();
         }
     }
 
     public final void disableModule() {
-        for (FunctionalComponent component : this.components.values()) {
+        for (var component : this.components.values()) {
             component.disable();
         }
 
@@ -151,11 +151,11 @@ public abstract class AbstractModule implements FunctionalComponent {
 
 
     //components
-    public Map<Class<? extends ModuleComponent<?>>, ModuleComponent<?>> getComponents() {
+    public final Map<Class<? extends ModuleComponent<?>>, ModuleComponent<?>> getComponents() {
         return components;
     }
 
-    public <I extends ModuleComponent<?>> void getComponent(Class<I> clazz, Consumer<I> consumer) {
+    public final  <I extends ModuleComponent<?>> void getComponent(Class<I> clazz, Consumer<I> consumer) {
         consumer.accept((I) this.components.get(clazz));
     }
 

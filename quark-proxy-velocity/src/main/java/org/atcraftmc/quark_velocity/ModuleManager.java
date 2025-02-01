@@ -22,7 +22,7 @@ public final class ModuleManager {
         this.modules.put("proxy-ping", new ProxyPing());
         this.modules.put("motd-sync", new MotdSync());
         this.modules.put("chat-sync", new ChatSync());
-        //this.modules.put("tab-sync", new TabSync());
+        this.modules.put("tab-sync", new TabSync());
     }
 
     public void enable() {

@@ -2,30 +2,35 @@ package org.tbstcraft.quark.internal;
 
 import io.netty.buffer.ByteBuf;
 import me.gb2022.apm.remote.RemoteMessenger;
+import me.gb2022.apm.remote.RemoteQuery;
 import me.gb2022.apm.remote.connector.RemoteConnector;
+import me.gb2022.apm.remote.event.MessengerEventChannel;
+import me.gb2022.apm.remote.event.channel.MessageChannel;
 import org.atcraftmc.qlib.config.ConfigEntry;
+import org.tbstcraft.quark.Quark;
 import org.tbstcraft.quark.framework.service.*;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 @QuarkService(id = "remote-message-service")
-public interface RemoteMessageService extends Service {
+public class RemoteMessageService implements Service {
+    public static final Runnable EMPTY_ACTION = () -> {};
 
     @RegisterAsGlobal
     @ServiceInject
-    ServiceHolder<RemoteMessageService> INSTANCE = new ServiceHolder<>();
+    public static final ServiceHolder<RemoteMessageService> INSTANCE = new ServiceHolder<>();
 
     @ServiceProvider
-    static RemoteMessageService create(ConfigEntry config) {
+    public static RemoteMessageService create(ConfigEntry config) {
         if (!config.getBoolean("enable")) {
-            return new PHImpl();
+            return new RemoteMessageService();
         }
 
-        return new Impl(
+        return new SimpleImplementation(
                 config.getString("identifier"),
                 new InetSocketAddress(Objects.requireNonNull(config.getString("host")), config.getInt("port")),
                 config.getBoolean("proxy"),
@@ -33,134 +38,115 @@ public interface RemoteMessageService extends Service {
         );
     }
 
-    static RemoteMessageService getInstance() {
+    public static RemoteMessageService instance() {
         return INSTANCE.get();
     }
 
+    public static RemoteMessenger messenger() {
+        if (instance() instanceof SimpleImplementation i) {
+            return i.getMessenger();
+        }
 
-    static RemoteMessenger messenger() {
-        return getInstance().getMessenger();
+        throw new IllegalStateException("non implemented instance");
     }
 
-    static void addHandler(Object handler) {
-        getInstance().addMessageHandler(handler);
+    static RemoteConnector connector() {
+        if (instance() instanceof SimpleImplementation i) {
+            return i.getConnector();
+        }
+
+        throw new IllegalStateException("non implemented instance");
     }
 
-    static void removeHandler(Object handler) {
-        getInstance().removeMessageHandler(handler);
+    public void registerEventHandler(Object handler) {
     }
 
-    static void broadcast(String path, Consumer<ByteBuf> b) {
-        getInstance().sendBroadcast(path, b);
+    public void registerEventHandler(Class<?> handler) {
     }
 
-    static void message(String receiver, String path, Consumer<ByteBuf> b) {
-        getInstance().sendMessage(receiver, path, b);
+    public void removeMessageHandler(Object handler) {
     }
 
-    static RemoteConnector.ServerQuery query(String receiver, String path, Consumer<ByteBuf> b) {
-        return getInstance().sendQuery(receiver, path, b);
+    public void removeMessageHandler(Class<?> handler) {
     }
 
-    Set<String> getServerInGroup();
-
-    void addMessageHandler(Object handler);
-
-    void removeMessageHandler(Object handler);
-
-    void sendMessage(String target, String channel, ByteBuf msg);
-
-    void sendMessage(String target, String channel, Consumer<ByteBuf> writer);
-
-    void sendBroadcast(String channel, ByteBuf msg);
-
-    void sendBroadcast(String channel, Consumer<ByteBuf> writer);
-
-    RemoteConnector.ServerQuery sendQuery(String target, String channel, ByteBuf msg);
-
-    RemoteConnector.ServerQuery sendQuery(String target, String channel, Consumer<ByteBuf> writer);
-
-    RemoteMessenger getMessenger();
-
-    final class PHImpl implements RemoteMessageService {
-
-        @Override
-        public Set<String> getServerInGroup() {
-            return Set.of();
-        }
-
-        @Override
-        public void addMessageHandler(Object handler) {
-
-        }
-
-        @Override
-        public void removeMessageHandler(Object handler) {
-
-        }
-
-        @Override
-        public void sendMessage(String target, String channel, ByteBuf msg) {
-
-        }
-
-        @Override
-        public void sendMessage(String target, String channel, Consumer<ByteBuf> writer) {
-
-        }
-
-        @Override
-        public void sendBroadcast(String channel, ByteBuf msg) {
-
-        }
-
-        @Override
-        public void sendBroadcast(String channel, Consumer<ByteBuf> writer) {
-
-        }
-
-        @Override
-        public RemoteConnector.ServerQuery sendQuery(String target, String channel, ByteBuf msg) {
-            return null;
-        }
-
-        @Override
-        public RemoteConnector.ServerQuery sendQuery(String target, String channel, Consumer<ByteBuf> writer) {
-            return null;
-        }
-
-        @Override
-        public RemoteMessenger getMessenger() {
-            return null;
-        }
+    public String getIdentifier() {
+        return "";
     }
 
-    final class Impl implements RemoteMessageService {
+    public MessengerEventChannel eventChannel() {
+        return null;
+    }
+
+    public MessageChannel messageChannel(String channel) {
+        return null;
+    }
+
+    public String message(String uuid, String target, String channel, ByteBuf msg) {
+        return UUID.randomUUID().toString();
+    }
+
+    public String message(String target, String channel, ByteBuf msg) {
+        return UUID.randomUUID().toString();
+    }
+
+    public String broadcast(String channel, ByteBuf msg) {
+        return UUID.randomUUID().toString();
+    }
+
+    public RemoteQuery<ByteBuf> query(String target, String channel, ByteBuf msg) {
+        return new RemoteQuery<>(UUID.randomUUID().toString(), ByteBuf.class, (u) -> {});
+    }
+
+    public String message(String uuid, String target, String channel, Consumer<ByteBuf> writer) {
+        return UUID.randomUUID().toString();
+    }
+
+    public String message(String target, String channel, Consumer<ByteBuf> writer) {
+        return UUID.randomUUID().toString();
+    }
+
+    public String broadcast(String channel, Consumer<ByteBuf> writer) {
+        return UUID.randomUUID().toString();
+    }
+
+    public RemoteQuery<ByteBuf> query(String target, String channel, Consumer<ByteBuf> writer) {
+        return new RemoteQuery<>(UUID.randomUUID().toString(), ByteBuf.class, (u) -> {});
+    }
+
+    public <I> String message(String uuid, String target, String channel, I object) {
+        return UUID.randomUUID().toString();
+    }
+
+    public <I> String message(String target, String channel, I object) {
+        return UUID.randomUUID().toString();
+    }
+
+    public <I> String broadcast(String channel, I object) {
+        return UUID.randomUUID().toString();
+    }
+
+    public <I> RemoteQuery<I> query(String target, String channel, I msg) {
+        return (RemoteQuery<I>) new RemoteQuery<>(UUID.randomUUID().toString(), msg.getClass(), (u) -> {});
+    }
+
+    static final class SimpleImplementation extends RemoteMessageService {
         private final RemoteMessenger messenger;
 
-        public Impl(String id, InetSocketAddress address, boolean proxy, byte[] key) {
+        public SimpleImplementation(String id, InetSocketAddress address, boolean proxy, byte[] key) {
             this.messenger = new RemoteMessenger(proxy, id, address, key);
+            this.messenger.connector().debug(true);
         }
 
 
         @Override
-        public void onEnable() {
-            RemoteMessageService.super.onEnable();
+        public void registerEventHandler(Object handler) {
+            this.messenger.registerEventHandler(handler);
         }
 
         @Override
-        public void onDisable() {
-            this.messenger.stop();
-        }
-
-        @Override
-        public Set<String> getServerInGroup() {
-            return this.messenger.getServerInGroup();
-        }
-
-        @Override
-        public void addMessageHandler(Object handler) {
-            this.messenger.addMessageHandler(handler);
+        public void registerEventHandler(Class<?> handler) {
+            this.messenger.registerEventHandler(handler);
         }
 
         @Override
@@ -169,38 +155,91 @@ public interface RemoteMessageService extends Service {
         }
 
         @Override
-        public void sendMessage(String target, String channel, ByteBuf msg) {
-            this.messenger.sendMessage(target, channel, msg);
+        public void removeMessageHandler(Class<?> handler) {
+            this.messenger.removeMessageHandler(handler);
         }
 
-        @Override
-        public void sendMessage(String target, String channel, Consumer<ByteBuf> writer) {
-            this.messenger.sendMessage(target, channel, writer);
+        public RemoteConnector getConnector() {
+            return this.messenger.connector();
         }
 
-        @Override
-        public void sendBroadcast(String channel, ByteBuf msg) {
-            this.messenger.sendBroadcast(channel, msg);
-        }
-
-        @Override
-        public void sendBroadcast(String channel, Consumer<ByteBuf> writer) {
-            this.messenger.sendBroadcast(channel, writer);
-        }
-
-        @Override
-        public RemoteConnector.ServerQuery sendQuery(String target, String channel, ByteBuf msg) {
-            return this.messenger.sendQuery(target, channel, msg);
-        }
-
-        @Override
-        public RemoteConnector.ServerQuery sendQuery(String target, String channel, Consumer<ByteBuf> writer) {
-            return this.messenger.sendQuery(target, channel, writer);
-        }
-
-        @Override
         public RemoteMessenger getMessenger() {
-            return this.messenger;
+            return messenger;
+        }
+
+        @Override
+        public String getIdentifier() {
+            return this.messenger.getIdentifier();
+        }
+
+        @Override
+        public MessengerEventChannel eventChannel() {
+            return this.messenger.eventChannel();
+        }
+
+        @Override
+        public MessageChannel messageChannel(String channel) {
+            return this.messenger.messageChannel(channel);
+        }
+
+        @Override
+        public String message(String uuid, String target, String channel, ByteBuf msg) {
+            return this.messenger.message(uuid, target, channel, msg);
+        }
+
+        @Override
+        public String message(String target, String channel, ByteBuf msg) {
+            return this.messenger.message(target, channel, msg);
+        }
+
+        @Override
+        public String broadcast(String channel, ByteBuf msg) {
+            return this.messenger.broadcast(channel, msg);
+        }
+
+        @Override
+        public RemoteQuery<ByteBuf> query(String target, String channel, ByteBuf msg) {
+            return this.messenger.query(target, channel, msg);
+        }
+
+        @Override
+        public String message(String uuid, String target, String channel, Consumer<ByteBuf> writer) {
+            return this.messenger.message(uuid, target, channel, writer);
+        }
+
+        @Override
+        public String message(String target, String channel, Consumer<ByteBuf> writer) {
+            return this.messenger.message(target, channel, writer);
+        }
+
+        @Override
+        public String broadcast(String channel, Consumer<ByteBuf> writer) {
+            return this.messenger.broadcast(channel, writer);
+        }
+
+        @Override
+        public RemoteQuery<ByteBuf> query(String target, String channel, Consumer<ByteBuf> writer) {
+            return this.messenger.query(target, channel, writer);
+        }
+
+        @Override
+        public <I> String message(String uuid, String target, String channel, I object) {
+            return this.messenger.message(uuid, target, channel, object);
+        }
+
+        @Override
+        public <I> String message(String target, String channel, I object) {
+            return this.messenger.message(target, channel, object);
+        }
+
+        @Override
+        public <I> String broadcast(String channel, I object) {
+            return this.messenger.broadcast(channel, object);
+        }
+
+        @Override
+        public <I> RemoteQuery<I> query(String target, String channel, I msg) {
+            return this.messenger.query(target, channel, msg);
         }
     }
 }

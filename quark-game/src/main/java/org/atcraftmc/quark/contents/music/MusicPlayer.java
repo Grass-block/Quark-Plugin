@@ -1,18 +1,16 @@
 package org.atcraftmc.quark.contents.music;
 
-import com.google.gson.JsonArray;
-import me.gb2022.apm.client.ClientMessenger;
-import me.gb2022.apm.client.event.ClientRequestEvent;
-import me.gb2022.apm.client.event.driver.ClientEventHandler;
-import me.gb2022.apm.remote.event.RemoteEventHandler;
-import me.gb2022.apm.remote.event.remote.RemoteMessageEvent;
-import me.gb2022.apm.remote.event.remote.RemoteQueryEvent;
+import me.gb2022.apm.remote.RemoteMessenger;
+import me.gb2022.apm.remote.event.APMRemoteEvent;
+import me.gb2022.apm.remote.event.message.RemoteMessageEvent;
+import me.gb2022.apm.remote.event.message.RemoteQueryEvent;
 import me.gb2022.apm.remote.util.BufferUtil;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import me.gb2022.commons.reflect.method.MethodHandle;
 import me.gb2022.commons.reflect.method.MethodHandleO3;
 import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Note;
 import org.bukkit.Sound;
@@ -27,7 +25,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.tbstcraft.quark.SharedObjects;
 import org.tbstcraft.quark.data.assets.AssetGroup;
-import org.atcraftmc.qlib.language.LanguageEntry;
 import org.tbstcraft.quark.foundation.command.CommandProvider;
 import org.tbstcraft.quark.foundation.command.ModuleCommand;
 import org.tbstcraft.quark.framework.module.PackageModule;
@@ -38,7 +35,6 @@ import org.tbstcraft.quark.internal.task.TaskService;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiSystem;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashSet;
@@ -129,63 +125,38 @@ public final class MusicPlayer extends PackageModule {
     }
 
 
-    @ClientEventHandler("/quark/music/list")
-    public void onMusicFetch(ClientRequestEvent event) {
-        JsonArray array = new JsonArray();
-        for (String s : this.loader.list()) {
-            array.add(s);
-        }
-        ClientMessenger.sendResponse(event.getPlayer(), "/quark/music/list", array);
-    }
-
-    @RemoteEventHandler("/music/get")
-    public void onMusicFetch(RemoteQueryEvent event) {
-        String fileName = BufferUtil.readString(event.getData());
-
-        this.musicGroup.asInputStream(fileName, (stream -> {
+    @APMRemoteEvent("music:get")
+    public void onMusicFetch(RemoteMessenger ctx, RemoteQueryEvent event) {
+        this.musicGroup.asInputStream(BufferUtil.readString(event.message()), (stream -> event.write((b) -> {
             try {
-                BufferUtil.writeArray(event.getResult(), stream.readAllBytes());
+                BufferUtil.writeArray(b, stream.readAllBytes());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }));
+        })));
     }
 
-    @RemoteEventHandler("/music/list")
-    public void onMusicList(RemoteQueryEvent event) {
-        StringBuilder sb = new StringBuilder();
+    @APMRemoteEvent("music:list")
+    public void onMusicList(RemoteMessenger ctx, RemoteQueryEvent event) {
+        event.write(String.join(";", this.musicGroup.list().toArray(new String[0])));
+    }
 
-        String[] objects = this.musicGroup.list().toArray(new String[0]);
-        for (int i = 0; i < objects.length; ++i) {
-            sb.append(objects[i]);
-            if (i != objects.length - 1) {
-                sb.append(';');
+    @APMRemoteEvent("music:control")
+    public void onMusicEvent(RemoteMessenger ctx, RemoteMessageEvent event) {
+        var commands = event.decode(String.class).split(";");
+
+        switch (commands[0]) {
+            case "cancel" -> cancelMusic(commands[1]);
+            case "pause" -> pauseMusic(commands[1]);
+            case "resume" -> resumeMusic(commands[1]);
+            case "play" -> {
+                var player = commands[1];
+                var music = commands[2];
+                var pitch = Integer.parseInt(commands[3]);
+                var speed = Float.parseFloat(commands[5]);
+                var legacy = Boolean.parseBoolean(commands[4]);
+                TaskService.async().run(()-> playMusic(player, music, pitch, legacy, speed));
             }
-        }
-
-        BufferUtil.writeString(event.getResult(), sb.toString());
-    }
-
-    @RemoteEventHandler("/music/control")
-    public void onMusicEvent(RemoteMessageEvent event) {
-        String[] args = BufferUtil.readString(event.getData()).split(";");
-        boolean b = true;
-        try {
-            b = event.getData().readBoolean();
-        } catch (Exception ignored) {
-        }
-
-        float speedMod = args.length > 3 ? Float.parseFloat(args[3]) : 1.0f;
-
-        if (speedMod == 0) {
-            speedMod = 1.0f;
-        }
-
-        switch (args[0]) {
-            case "cancel" -> cancelMusic(args[1]);
-            case "pause" -> pauseMusic(args[1]);
-            case "resume" -> resumeMusic(args[1]);
-            case "play" -> playMusic(args[1], args[2], Integer.parseInt(args[3]), b, speedMod);
         }
     }
 
@@ -222,7 +193,7 @@ public final class MusicPlayer extends PackageModule {
             return;
         }
 
-        EnumInstrument remapped = switch (targetInstrument) {
+        var remapped = switch (targetInstrument) {
             case GUITAR ->
                     base > 0 ? base < 24 ? EnumInstrument.BASS_GUITAR : base >= 48 ? EnumInstrument.XYLOPHONE : EnumInstrument.GUITAR : EnumInstrument.BASS_DRUM;
             case PIANO ->
@@ -238,10 +209,10 @@ public final class MusicPlayer extends PackageModule {
         };
 
 
-        int off1 = base % 12;
-        int octave = base % 24 > 11 ? 1 : 0;
+        var off1 = base % 12;
+        var octave = base % 24 > 11 ? 1 : 0;
 
-        Note n = switch (off1) {
+        var n = switch (off1) {
             case 6 -> Note.natural(octave, Note.Tone.C);
             case 7 -> Note.sharp(octave, Note.Tone.C);
             case 8 -> Note.natural(octave, Note.Tone.D);
@@ -265,7 +236,7 @@ public final class MusicPlayer extends PackageModule {
     }
 
     private MusicData select(String name, int pitch, boolean dispatchInstrument, float speedMod) {
-        File f = this.loader.load(name);
+        var f = this.loader.load(name);
 
         if (!f.exists()) {
             throw new IllegalArgumentException(NOT_FOUND);
@@ -279,7 +250,7 @@ public final class MusicPlayer extends PackageModule {
                         pitch,
                         dispatchInstrument,
                         speedMod
-                                           );
+                );
             } catch (InvalidMidiDataException | IOException e) {
                 throw new RuntimeException(RESOLVE_ERROR);
             }
@@ -293,7 +264,7 @@ public final class MusicPlayer extends PackageModule {
     public static final class MusicCommand extends ModuleCommand<MusicPlayer> {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
-            RemoteMessageService service = RemoteMessageService.getInstance();
+            var service = RemoteMessageService.instance();
 
             String operator = sender.getName();
 
@@ -304,15 +275,15 @@ public final class MusicPlayer extends PackageModule {
                 }
                 case "cancel" -> {
                     this.getModule().cancelMusic(operator);
-                    service.sendBroadcast("/music/control", msg -> BufferUtil.writeString(msg, "cancel;" + operator));
+                    service.broadcast("music:control", "cancel;" + operator);
                 }
                 case "pause" -> {
                     this.getModule().pauseMusic(operator);
-                    service.sendBroadcast("/music/control", msg -> BufferUtil.writeString(msg, "pause;" + operator));
+                    service.broadcast("music:control", "pause;" + operator);
                 }
                 case "resume" -> {
                     this.getModule().resumeMusic(operator);
-                    service.sendBroadcast("/music/control", msg -> BufferUtil.writeString(msg, "resume;" + operator));
+                    service.broadcast("music:control", "resume;" + operator);
                 }
                 case "play" -> {
                     int pitch = 0;
@@ -323,7 +294,7 @@ public final class MusicPlayer extends PackageModule {
                         pitch = pitchOffsets.getInt(args[1]);
                     }
 
-                    boolean dispatchInstruments = !List.of(args).contains("-legacy");
+                    boolean legacy = !List.of(args).contains("-legacy");
 
                     for (String s : args) {
                         if (s.startsWith("-p:")) {
@@ -343,20 +314,20 @@ public final class MusicPlayer extends PackageModule {
                     }
 
                     if (!this.getModule().loader.list().contains(music)) {
-                        this.getLanguage().sendMessage(sender, "not-found");
+                        this.getLanguage().sendMessage(sender, "not-found", music);
                         return;
                     }
 
 
-                    this.getModule().playMusic(operator, music, pitch, dispatchInstruments, speedMod);
+                    this.getModule().playMusic(operator, music, pitch, legacy, speedMod);
 
                     int finalPitch = pitch;
                     float finalSpeedMod = speedMod;
 
-                    service.sendBroadcast("/music/control", msg -> {
-                        String data = "play;%s;%s;%d;%f".formatted(operator, music, finalPitch, finalSpeedMod);
+                    service.broadcast("music:control", msg -> {
+                        String data = "play;%s;%s;%d;%s;%f".formatted(operator, music, finalPitch, legacy, finalSpeedMod);
                         BufferUtil.writeString(msg, data);
-                        msg.writeBoolean(dispatchInstruments);
+
                     });
                 }
                 default -> sendExceptionMessage(sender);

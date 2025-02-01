@@ -1,8 +1,10 @@
 package org.tbstcraft.quark.internal;
 
+import org.atcraftmc.qlib.config.ConfigEntry;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.tbstcraft.quark.Quark;
-import org.atcraftmc.qlib.config.ConfigEntry;
 import org.tbstcraft.quark.framework.service.*;
 import org.tbstcraft.quark.util.Identifiers;
 
@@ -17,7 +19,13 @@ public interface PlayerIdentificationService extends Service {
 
     @ServiceProvider
     static PlayerIdentificationService create(ConfigEntry config) {
-        return new UUIDTransformer();
+        try {
+            Player.class.getMethod("getUniqueId");
+            OfflinePlayer.class.getMethod("getUniqueId");
+            return new UUIDTransformer();
+        } catch (NoSuchMethodException e) {
+            return new NameTransformer();
+        }
     }
 
     static String transformPlayer(Player player) {
@@ -32,7 +40,6 @@ public interface PlayerIdentificationService extends Service {
     String transform(String playerName);
 
     String transform(Player player);
-
 
     final class NameTransformer implements PlayerIdentificationService {
         @Override
@@ -49,7 +56,7 @@ public interface PlayerIdentificationService extends Service {
     final class UUIDTransformer implements PlayerIdentificationService {
         @Override
         public String transform(Player player) {
-            return Identifiers.internal(Objects.requireNonNull(player.getPlayerProfile().getUniqueId()).toString());
+            return Identifiers.internal(Objects.requireNonNull(player.getUniqueId()).toString());
         }
 
         @Override
@@ -59,9 +66,10 @@ public interface PlayerIdentificationService extends Service {
                 return playerName;
             }
 
-            Quark.LOGGER.warn("Player {} cannot have a valid UUID.", playerName);
+            var player = Bukkit.getOfflinePlayer(playerName);
+            var profile = player.getUniqueId();
 
-            return Identifiers.internal(playerName);
+            return Identifiers.internal(profile.toString());
         }
     }
 }

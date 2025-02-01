@@ -1,7 +1,5 @@
 package org.tbstcraft.quark;
 
-import me.gb2022.apm.client.ClientMessenger;
-import me.gb2022.apm.client.backend.MessageBackend;
 import me.gb2022.commons.Timer;
 import net.kyori.adventure.text.ComponentLike;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +32,7 @@ import org.tbstcraft.quark.internal.LocaleService;
 import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
 import org.tbstcraft.quark.internal.task.TaskService;
 import org.tbstcraft.quark.metrics.Metrics;
+import org.tbstcraft.quark.util.Comments;
 import org.tbstcraft.quark.util.FilePath;
 
 import java.io.File;
@@ -50,12 +49,13 @@ import java.util.jar.JarFile;
  * 十年生死两茫茫，写程序，到天亮。千万插件，Bug何处藏。纵使上线又何妨，朝要改，夕断肠。<br>
  * 玩家每天新想法，天天改，日日忙。相顾无言，惟有泪千行。每晚灯火阑珊处，夜难寐，赶工狂。
  */
+@Comments("到底是谁拿着我的代码声称是自己做的，好难猜啊")
 public final class Quark extends JavaPlugin implements PluginConcept {
-    public static final Logger LOGGER = LogManager.getLogger("Quark");
-    public static final int API_VERSION = 40;
+    public static final Logger LOGGER = LogManager.getLogger("Quark-Plugin");
+    public static final int API_VERSION = 42;
     public static final int BSTATS_ID = 22683;
     public static final String PLUGIN_ID = "quark";
-    public static final String CORE_UA = "quark/tm9";
+    public static final String CORE_UA = "quark/tm9.2";
 
     public static final ILanguageAccess LANGUAGE = LanguageContainer.getInstance().access("quark-core");
     public static Quark PLUGIN;
@@ -68,38 +68,36 @@ public final class Quark extends JavaPlugin implements PluginConcept {
     private boolean fastBoot;
     private boolean initialized;
     private boolean hasBundler = false;
+    private boolean debug = false;
 
     public static void reload(CommandSender audience) {
         BukkitUtil.callEventDirect(new CoreEvent.Reload());
 
-        Runnable task = () -> {
-            try {
-                Locale locale = LocaleService.locale(audience);
-                String msg = LANGUAGE.getMessage(locale, "packages", "load");
+        var task = (Runnable) () -> {
+            var locale = LocaleService.locale(audience);
+            var msg = LANGUAGE.getMessage(locale, "packages", "load");
 
-                var serverPacks = PackageManager.getSubPacksFromServer();
-                var folderPacks = PackageManager.getSubPacksFromFolder();
-                var modernPluginManager = PluginUtil.INSTANCE;
-                var coreFile = modernPluginManager.getFile(PLUGIN_ID);
+            var serverPacks = PackageManager.getSubPacksFromServer();
+            var folderPacks = PackageManager.getSubPacksFromFolder();
+            var modernPluginManager = PluginUtil.INSTANCE;
+            var coreFile = modernPluginManager.getFile(PLUGIN_ID);
 
-                modernPluginManager.unload(PLUGIN_ID);
+            modernPluginManager.unload(PLUGIN_ID);
 
-                for (var id : serverPacks) {
-                    modernPluginManager.unload(id);
-                }
-
-                modernPluginManager.load(coreFile);
-
-                for (var file : folderPacks) {
-                    modernPluginManager.load(file);
-                }
-
-                audience.sendMessage(msg);
-
-                LegacyCommandManager.sync();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            for (var id : serverPacks) {
+                modernPluginManager.unload(id);
             }
+
+            modernPluginManager.load(coreFile);
+
+            for (var file : folderPacks) {
+                modernPluginManager.load(file);
+            }
+
+            audience.sendMessage(msg);
+
+            LegacyCommandManager.sync();
+
         };
 
         task.run();
@@ -114,13 +112,6 @@ public final class Quark extends JavaPlugin implements PluginConcept {
     private void operation(String operation, Runnable task) {
         LOGGER.info(operation);
         task.run();
-    }
-
-    private void operation(String operation, boolean condition, Runnable task) {
-        if (!condition) {
-            return;
-        }
-        operation(operation, task);
     }
 
     //----[plugin concept]----
@@ -185,6 +176,7 @@ public final class Quark extends JavaPlugin implements PluginConcept {
         var config = getConfig();
         var metrics = config.getBoolean("config.plugin.metrics");
         this.fastBoot = config.getBoolean("config.plugin.fast-boot");
+        this.debug = config.getBoolean("config.plugin.debug");
 
         try {
             ProductInfo.METADATA.load(getClass().getClassLoader().getResourceAsStream("product-info.properties"));
@@ -289,9 +281,6 @@ public final class Quark extends JavaPlugin implements PluginConcept {
         operation("starting services...", () -> {
             Service.initBase();
             QuarkInternalPackage.register(PackageManager.INSTANCE.get());
-
-            ClientMessenger.setBackend(MessageBackend.bukkit(Quark.getInstance()));
-            ClientMessenger.getBackend().start();
         });
 
         if (this.hasBundler) {
@@ -321,21 +310,24 @@ public final class Quark extends JavaPlugin implements PluginConcept {
         operation("stopping services...", () -> {
             ServiceManager.unregisterAll();
             Service.stopBase();
-            ClientMessenger.getBackend().stop();
         });
-        operation("destroying context...", () -> {
-            try {
-                this.getMetrics().shutdown();
-            } catch (Exception ignored) {
-            }
 
-            this.metrics = null;
-        });
-        operation("running finalize tasks...", TaskService::runFinalizeTask);
+        try {
+            this.getMetrics().shutdown();
+        } catch (Exception e) {
+            LOGGER.warn("failed to shutdown metrics: {}", e.getMessage());
+            LOGGER.catching(e);
+        }
+
+        LOGGER.info("Metrics shutdown successfully");
+
+        LOGGER.info("broadcasting dispose event...");
+        TaskService.runFinalizeTask();
+
+        LOGGER.info("broadcasting dispose event...");
+        BukkitUtil.callEventDirect(new CoreEvent.PostDispose(this));
 
         LOGGER.info("done ({} ms)", Timer.passedTime());
-
-        BukkitUtil.callEventDirect(new CoreEvent.PostDispose(this));
     }
 
     @Override
@@ -354,6 +346,10 @@ public final class Quark extends JavaPlugin implements PluginConcept {
 
     public Metrics getMetrics() {
         return metrics;
+    }
+
+    public boolean isDebug() {
+        return debug;
     }
 
     public boolean isPluginInitialized() {
@@ -397,15 +393,15 @@ public final class Quark extends JavaPlugin implements PluginConcept {
         }
     }
 
-    public static final class PluginConceptWrapper implements PluginConcept {
+    public static final class SubpackPluginConceptWrapper implements PluginConcept {
         private final Object handle;
 
-        private PluginConceptWrapper(Object handle) {
+        private SubpackPluginConceptWrapper(Object handle) {
             this.handle = handle;
         }
 
         public static PluginConcept of(Plugin owner) {
-            return new PluginConceptWrapper(owner);
+            return new SubpackPluginConceptWrapper(owner);
         }
 
         @Override

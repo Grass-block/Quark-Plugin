@@ -13,7 +13,7 @@ public interface Compatibility {
     static void requireClass(ClassAssertion supplier) {
         try {
             supplier.get();
-        } catch (ClassNotFoundException e) {
+        } catch (Throwable e) {
             throw new APIIncompatibleException(e.getMessage());
         }
     }
@@ -21,7 +21,7 @@ public interface Compatibility {
     static void requireMethod(MethodAssertion supplier) {
         try {
             supplier.get();
-        } catch (NoSuchMethodException e) {
+        } catch (Throwable e) {
             throw new APIIncompatibleException(e.getMessage());
         }
     }

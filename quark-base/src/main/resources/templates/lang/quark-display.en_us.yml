@@ -41,6 +41,7 @@ language:
   player-name-header:
     set-header: '{global#sys-operation}Set player name tag of {#var} to {#var}.'
     clear-header: '{global#sys-operation}Cleared name tag of {#var}.'
+    announce: '{global#sys-info} player {#var} has gained name header of {#var}.'
   welcome-message:
     title: '{#gold}>> Welcome!'
     content: '{#white}Welcome to {#server-name}{#white} server, Enjoy your game!'

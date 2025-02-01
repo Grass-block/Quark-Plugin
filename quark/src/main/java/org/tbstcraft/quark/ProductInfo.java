@@ -83,8 +83,8 @@ public interface ProductInfo {
                 """;
 
         var text = ChatColor.translateAlternateColorCodes('&', dom.formatted(
-                ProductInfo.METADATA.getProperty("build-time"),
                 version() + "/api_" + apiMajorVersion() + "." + apiMinorVersion(),
+                ProductInfo.METADATA.getProperty("build-time"),
                 ModuleManager.getInstance().getIdsByStatus(TriState.FALSE).size(),
                 ModuleManager.getInstance().getKnownModuleMetas().size(),
                 PackageManager.getIdsByStatus(TriState.FALSE).size(),

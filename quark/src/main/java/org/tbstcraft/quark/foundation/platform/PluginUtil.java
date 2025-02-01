@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 @SuppressWarnings({"removal", "CallToPrintStackTrace"})
 public interface PluginUtil {
-    ModernPluginManager INSTANCE = ModernPluginManager.getInstance(Quark.getInstance());
+    ModernPluginManager INSTANCE = ModernPluginManager.getInstance();
     ObjectContainer<Quark> CORE_REF = new ObjectContainer<>();
 
     static Plugin load(String fileName) {
@@ -119,7 +119,8 @@ public interface PluginUtil {
             var plugins = (List<Plugin>) getFieldValue(holder, "plugins");
             var lookupNames = (Map<String, Plugin>) getFieldValue(holder, "lookupNames");
 
-            plugins.removeIf(pluginInstance -> pluginInstance == plugin || pluginInstance.getName().equals(plugin.getName()));
+            plugins.removeIf(pluginInstance -> pluginInstance == plugin || pluginInstance.getName()
+                    .equals(plugin.getName()));
 
             for (var k : List.copyOf(lookupNames.keySet())) {
                 if (lookupNames.get(k).equals(plugin)) {
@@ -211,7 +212,8 @@ public interface PluginUtil {
                 }
 
             } catch (ClassNotFoundException | IllegalStateException | NoClassDefFoundError ignored) {
-            } catch (NoSuchFieldException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+            } catch (NoSuchFieldException | InvocationTargetException | IllegalAccessException |
+                     NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -220,17 +222,15 @@ public interface PluginUtil {
     final class ModernPluginManager {
         private final HashMap<String, File> pluginFileMapping = new HashMap<>();
         private final Logger logger;
-        private final Plugin owner;
         private final PluginManager handle;
 
-        public ModernPluginManager(Logger logger, Plugin owner, PluginManager handle) {
+        public ModernPluginManager(Logger logger, PluginManager handle) {
             this.logger = logger;
-            this.owner = owner;
             this.handle = handle;
         }
 
-        static ModernPluginManager getInstance(Plugin owner) {
-            return new ModernPluginManager(owner.getLogger(), owner, Bukkit.getPluginManager());
+        static ModernPluginManager getInstance() {
+            return new ModernPluginManager(Logger.getLogger("Quark/ModernPluginManager"), Bukkit.getPluginManager());
         }
 
         public File getFile(String id) {
@@ -256,7 +256,7 @@ public interface PluginUtil {
                 try {
                     this.pluginFileMapping.put(getPluginDescription(f).getName(), f);
                 } catch (InvalidDescriptionException e) {
-                    this.owner.getLogger().warning("find invalid plugin file: " + f.getName());
+                    this.logger.warning("find invalid plugin file: " + f.getName());
                 }
             }
 
@@ -267,8 +267,15 @@ public interface PluginUtil {
             var file = getFile(id);
 
             if (file == null) {
-                this.logger.severe("cannot find plugin named %s".formatted(id));
-                return null;
+                file = new File(FilePath.server() + "/plugins/" + id);
+                if (!file.exists() || file.length() == 0) {
+                    this.logger.severe("cannot find plugin for %s whatever".formatted(id));
+                    return null;
+                }
+
+                this.logger.severe("find plugin file %s".formatted(id));
+            } else {
+                this.logger.severe("found plugin %s".formatted(id));
             }
 
             return this.load(file);

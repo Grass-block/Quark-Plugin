@@ -128,6 +128,12 @@ public interface PlayerDataService extends IDataService {
 
             this.logger.info("detected legacy ID storage '%s'(%s),updating it...".formatted(id, legacyStorage.getName()));
 
+
+            if (uuidStorage.exists()) {
+                this.logger.severe("Found both UUID and ID data file (%s/%s)!".formatted(legacyStorage.getName(), uuidStorage.getName()));
+                return;
+            }
+
             if (uuidStorage.createNewFile()) {
                 this.logger.info("created uuid storage file '%s'(%s)".formatted(uuid, uuidStorage.getName()));
             }
