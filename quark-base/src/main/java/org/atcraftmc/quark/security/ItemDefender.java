@@ -11,18 +11,20 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
-import org.tbstcraft.quark.SharedObjects;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.qlib.language.LanguageEntry;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.framework.record.RecordEntry;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.data.record.RecordEntry;
 
 import java.util.Date;
 import java.util.List;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
-@QuarkModule(version = "1.2.2", recordFormat = {})
+@SLModule(version = "1.2.2", recordFormat = {})
 public final class ItemDefender extends PackageModule {
 
     @Inject
@@ -57,7 +59,7 @@ public final class ItemDefender extends PackageModule {
             return;
         }
 
-        if (this.getConfig().getBoolean("op-ignore") && p.isOp()) {
+        if (ConfigAccessor.getBool(this.getConfig(), "op-ignore") && p.isOp()) {
             return;
         }
 
@@ -79,13 +81,13 @@ public final class ItemDefender extends PackageModule {
 
         if (say) {
             if (itemIllegal) {
-                this.language.sendMessage(p, "illegal-item", m.getKey().toString());
+                MessageAccessor.send(this.language, p, "illegal-item", m.getKey().toString());
             } else {
-                this.language.sendMessage(p, "warning-item", m.getKey().toString());
+                MessageAccessor.send(this.language, p, "warning-item", m.getKey().toString());
             }
         }
 
-        if (this.getConfig().getBoolean("record")) {
+        if (ConfigAccessor.getBool(this.getConfig(), "record")) {
             this.record.addLine(
                     SharedObjects.DATE_FORMAT.format(new Date()),
                     b2 ? "Warning" : "Illegal",
@@ -104,22 +106,22 @@ public final class ItemDefender extends PackageModule {
                         .put("type", itemIllegal ? "illegal" : "warning")
                         .put("item", m.getKey().getKey()));
 
-        if (this.getConfig().getBoolean("broadcast")) {
+        if (ConfigAccessor.getBool(this.getConfig(), "broadcast")) {
             if (itemIllegal) {
-                this.language.broadcastMessage(true,false, "illegal-item-broadcast", p.getName(), m.getKey().toString());
+               MessageAccessor.broadcast(this.language, true, false, "illegal-item-broadcast", p.getName(), m.getKey().toString());
             } else {
-                this.language.broadcastMessage(true,false, "warning-item-broadcast", p.getName(), m.getKey().toString());
+               MessageAccessor.broadcast(this.language, true, false, "warning-item-broadcast", p.getName(), m.getKey().toString());
             }
         }
     }
 
     private boolean isItemIllegal(Material material) {
-        List<String> list = this.getConfig().getList("illegal-list");
+        List<String> list = ConfigAccessor.configList(getConfig(), "illegal-list", String.class);
         return list.contains(material.getKey().getKey());
     }
 
     private boolean isItemWarning(Material material) {
-        List<String> list = this.getConfig().getList("warning-list");
+        List<String> list = ConfigAccessor.configList(getConfig(), "warning-list", String.class);
         return list.contains(material.getKey().getKey());
     }
 }

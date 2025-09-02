@@ -1,5 +1,5 @@
 language:
-  -module-names:
+  -module-name:
     item-command: Item-Command Binding
     surrounding-refresh: Surround Block Refresh
     player-ping-command: Player Ping Query

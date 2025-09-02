@@ -1,0 +1,39 @@
+config:
+  tab-menu:
+    render-ping: true
+    header-ui:
+      - '{#dark-gray}一一一一一一一一一一一一一一一一一一一一一一一一一一一一'
+      - '{#yellow}>> {#white} {msg#welcome-header} {#yellow} <<{#white}'
+      - '{msg#player}    {msg#max-player}'
+    footer-ui:
+      - ' '
+      - '{msg#tps}   {msg#mspt}   {msg#ping}'
+      - '{msg#date}'
+      - '{#dark-gray}一一一一一一一一一一一一一一一一一一一一一一一一一一一一'
+  custom-scoreboard:
+    ui:
+      - ' '
+      - ' {msg#date}'
+      - ' {msg#time}'
+      - ' '
+      - ' {msg#player}'
+      - ' {msg#rank}'
+      - ' {msg#play-time}'
+      - ' {msg#world-time}'
+      - ' '
+      - ' {msg#player-count}'
+      - ' {msg#ping}'
+      - ' '
+      - ' {msg#qq-group}'
+      - ' {msg#website}'
+      - ' '
+  player-name-header:
+    template: "[{#white}{header}{#white}] {player}"
+    op-header: '{#dark-purple}管理'
+    player-header: '{#dark-aqua}玩家'
+    below-name: " {msg#custom-scoreboard:play-time}  {msg#custom-scoreboard:ping}"
+    below-name-enable: false
+  chat-format:
+    world: "common:world:%s"
+    time: "<post>   {#gray}%s"
+    template: '[{#white}{world}{#white}]{0} {color(gold)}> {color(white)}{1} {time}'

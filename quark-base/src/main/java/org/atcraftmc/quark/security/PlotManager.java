@@ -7,20 +7,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.platform.Players;
-import org.tbstcraft.quark.foundation.region.Region;
-import org.tbstcraft.quark.foundation.region.RegionDataManager;
-import org.tbstcraft.quark.foundation.region.RegionManager;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.data.ModuleDataService;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.platform.Players;
+import org.atcraftmc.starlight.core.objects.Region;
+import org.atcraftmc.starlight.foundation.RegionDataManager;
+import org.atcraftmc.starlight.core.data.RegionManager;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
 
 import java.util.*;
 
 @Deprecated(since = "//没做完，但是他们说不需要了")
-@QuarkModule
+@SLModule
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public class PlotManager extends PackageModule {
     private final Map<String, PlotRegion> editModePlayers = new HashMap<>();
@@ -41,27 +43,27 @@ public class PlotManager extends PackageModule {
     public void onPlayerInteract(final PlayerInteractEvent event) {
         final Player player = event.getPlayer();
 
-        PlotRegion region = this.regionManager.getMinIntersected(event.getPlayer().getLocation());
+        var region = this.regionManager.getMinIntersected(event.getPlayer().getLocation());
 
         if (this.editModePlayers.containsKey(player.getName())) {
             event.setCancelled(true);
             if (region != null) {
-                getLanguage().sendMessage(event.getPlayer(), "edit-conflict");
+                MessageAccessor.send(this.getLanguage(), event.getPlayer(), "edit-conflict");
                 return;
             }
 
-            PlotRegion edit = this.editModePlayers.get(player.getName());
+            var edit = this.editModePlayers.get(player.getName());
 
             if (event.hasBlock()) {
                 return;
             }
             if (event.getAction().isLeftClick()) {
                 edit.setPoint0(Objects.requireNonNull(event.getClickedBlock()).getLocation());
-                getLanguage().sendMessage(event.getPlayer(), "edit-p0");
+                MessageAccessor.send(this.getLanguage(), event.getPlayer(), "edit-p0");
             }
             if (event.getAction().isRightClick()) {
                 edit.setPoint1(Objects.requireNonNull(event.getClickedBlock()).getLocation());
-                getLanguage().sendMessage(event.getPlayer(), "edit-p1");
+                MessageAccessor.send(this.getLanguage(), event.getPlayer(), "edit-p1");
             }
 
             Players.show3DBox(event.getPlayer(), edit.getPoint0(), edit.getPoint1());
@@ -70,18 +72,18 @@ public class PlotManager extends PackageModule {
 
 
         if (region == null) {
-            if (this.getConfig().getBoolean("allow-access-public-area")) {
+            if (ConfigAccessor.getBool(this.getConfig(), "allow-access-public-area")) {
                 return;
             }
             event.setCancelled(true);
-            getLanguage().sendMessage(event.getPlayer(), "deny-public-area");
+            MessageAccessor.send(this.getLanguage(), event.getPlayer(), "deny-public-area");
             return;
         }
         if (region.canAccess(event.getPlayer().getName())) {
             return;
         }
         event.setCancelled(true);
-        getLanguage().sendMessage(event.getPlayer(), "deny-inside-area", region.getOwner());
+        MessageAccessor.send(this.getLanguage(), event.getPlayer(), "deny-inside-area", region.getOwner());
     }
 
     private void startEditing(Player player) {
@@ -97,10 +99,11 @@ public class PlotManager extends PackageModule {
         if (!region.isComplete()) {
             return EditResult.NOT_COMPLETE;
         }
-        if (region.asAABB().getMaxWidth() > this.getConfig().getInt("own-count")) {
+        if (region.asAABB().getMaxWidth() > ConfigAccessor.getInt(this.getConfig(), "own-count")) {
             return EditResult.TOO_BIG;
         }
-        if (this.regionManager.filter((r) -> Objects.equals(r.getOwner(), player.getName())).size() > this.getConfig().getInt("own-count")) {
+        if (this.regionManager.filter((r) -> Objects.equals(r.getOwner(), player.getName())).size() > ConfigAccessor.getInt(this.getConfig(),
+                                                                                                                            "own-count")) {
             return EditResult.CANNOT_ALLOCATE;
         }
 

@@ -7,19 +7,20 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.CachedInfo;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.util.CachedInfo;
 
 import java.util.HashSet;
 import java.util.List;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 @CommandProvider(PlayerPositionLock.LockPositionCommand.class)
 public final class PlayerPositionLock extends PackageModule {
     private final HashSet<String> lockedPlayers = new HashSet<>();
@@ -43,10 +44,10 @@ public final class PlayerPositionLock extends PackageModule {
         }
         if (this.isLocked(name)) {
             this.lockedPlayers.remove(name);
-            this.getLanguage().sendMessage(p, "unlock");
+            MessageAccessor.send(this.getLanguage(), p, "unlock");
         } else {
             this.lockedPlayers.add(name);
-            this.getLanguage().sendMessage(p, "lock");
+            MessageAccessor.send(this.getLanguage(), p, "lock");
         }
     }
 
@@ -63,9 +64,9 @@ public final class PlayerPositionLock extends PackageModule {
 
                 this.getModule().toggle(args[0]);
                 if (this.getModule().isLocked(args[0])) {
-                    this.getLanguage().sendMessage(sender, "lock-player", args[0]);
+                    MessageAccessor.send(this.getLanguage(), sender, "lock-player", args[0]);
                 } else {
-                    this.getLanguage().sendMessage(sender, "unlock-player", args[0]);
+                    MessageAccessor.send(this.getLanguage(), sender, "unlock-player", args[0]);
                 }
                 return;
             }

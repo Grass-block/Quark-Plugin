@@ -1,4 +1,23 @@
 language:
+  -module-name:
+    bossbar-announcement: 自定义顶栏显示
+    custom-scoreboard: 自定义记分板显示
+    custom-death-message: 自定义死亡信息重渲染
+    afk: 挂机状态监测
+    custom-motd: 自定义MOTD显示信息
+    custom-ban-message: 自定义封禁显示信息
+    custom-kick-message: 自定义踢出显示信息
+    chat-announce: 聊天栏公告显示
+    tab-menu: 自定义TAB栏显示
+    join-quit-message: 自定义加入/退出信息
+    action-bar-hud: 自定义快捷栏HUD
+    player-name-header: 玩家名称头衔
+    we-session-renderer: 服务端WorldEdit选区渲染
+    chat-format: 自定义聊天信息重渲染
+    drop-item-info: 掉落物信息显示
+    welcone-message: 自定义欢迎信息
+    nickname: "[实验]自定义游戏名称"
+    hover-display: 悬浮文本
   custom-motd:
     motd-command: '{global#info}服务器MOTD信息: '
     icon-refresh: '{global#success}成功刷新MOTD图片缓存。'
@@ -10,26 +29,15 @@ language:
     proxy-leave: '{global#sys-info}玩家 {#white}{#var}{#gray} (去往{#var}) 离开了服务器。'
     welcome-message: '{global#sys-info}欢迎您({#var})来到 {#server-name}{#gray} 服务器, 祝您玩得开心。'
     proxy-send: '{global#sys-info}已将您发送至 {#var} 服务器。使用 {#gold}/hub,/lobby{#gray}来回到大厅！'
-  tab-menu:
-    welcome-header: 欢迎来到{#aqua}{#server-name}{#reset}服务器!
-    tps: '{#gray}TPS: {#white}{#tps}{#white}/20'
-    mspt: '{#gray}MSPT: {#white}{#mspt}{#white}'
-    ping: '{#gray}Ping: {#white}{#ping}'
-    player: '{#gray}当前在线: {#white}{#player}'
-    max-player: '{#gray}最大: {#white}{#max-player}'
-    date: '{#gray}日期/时间: {#white}{#date}'
-    website: '{#gray}官网: {#aqua}{#underline}{#server-website}'
-  custom-ban-message:
-    header: '{#white}您已被{#aqua}{#server-name}{#reset}封禁'
-    name: 很抱歉,您的玩家身份已被{#server-name}封禁。
-    ip: 很抱歉,您的地址已被{#server-name}封禁。
-    hint: 如果您确认这是个错误, 请向管理员提供你的完整信息。
-    reason: '{#yellow}封禁原因{#white}: {reason}'
-    info: '{#gray}操作者{#white}: {source}    {#gray}结束时间: {expire}'
-    website-hint: '{#gray}访问官网: {#aqua}{#underline}{#server-website}'
   custom-kick-message:
     header: '{#white}您已被踢出{#aqua}{#server-name}{#white}服务器'
     website-hint: '{#gray}访问官网: {#aqua}{#underline}{#server-website}'
+    ban-header: '{#white}您已被{#aqua}{#server-name}{#reset}封禁'
+    ban-name: 很抱歉,您的玩家身份已被{#server-name}封禁。
+    ban-ip: 很抱歉,您的地址已被{#server-name}封禁。
+    ban-hint: 如果您确认这是个错误, 请向管理员提供你的完整信息。
+    ban-reason: '{#yellow}封禁原因{#white}: {reason}'
+    ban-info: '{#gray}操作者{#white}: {source}    {#gray}结束时间: {expire}'
   bossbar-announcement:
     custom-set: '{global#sys-operation}成功设置自定义Boss栏内容: {#white}%s'
     custom-clear: '{global#sys-operation}成功清除自定义Boss栏内容。'
@@ -46,20 +54,6 @@ language:
     title: '{#gold}欢迎!'
     content: '{#white}欢迎来到{#server-name}{#white}服务器,祝你玩得开心!'
     callback: '{#gray}(本消息可用{#gold}/welcome-message{#gray}再次呼出)'
-  custom-scoreboard:
-    title: '{#aqua}{#server-name}{#reset}'
-    date: '{#gray}日期: {#white}{#date-day}'
-    time: '{#gray}时间: {#white}{#date-time}'
-    player: '{#gray}玩家: {#white}{player}'
-    rank: '{#gray}身份: {#white}{#rank}'
-    play-time: '{#gray}游戏时间: {#white}{#play-time}'
-    world-time: '{#gray}世界时间: {#white}{#world-time}'
-    player-count: '{#gray}在线玩家: {#white}{#player}'
-    ping: '{#gray}当前延迟(参考): {#white}{#ping}'
-    tps: '{#gray}TPS: {#white}{#tps}{#white}/20'
-    mspt: '{#gray}MSPT: {#white}{#mspt}{#white}'
-    website: '{#yellow}{#server-website}'
-    qq-group: '{#gray}QQ群:{#aqua}{#underline}{#qq-group}'
   chat-announce:
     title: '提示:'
     type-tip: '{#green}技巧:'
@@ -88,11 +82,6 @@ language:
     delete-all: "{global#info}已清除全部悬浮文本。"
     edit: "{global#info}成功编辑悬浮文本 {#var}。"
     teleport: "{global#info}悬浮文本 {#var} 已被传送到您的位置。"
-  we-session-renderer:
-    mode-persistent: "{global#sys-info}WorldEdit选区渲染模式已设为 [{#white}持久{#gray}]"
-    mode-update: "{global#sys-info}WorldEdit选区渲染模式已设为 [{#white}更新时{#gray}]"
-    mode-off: "{global#sys-info}WorldEdit选区渲染模式已设为 [{#white}关{#gray}]"
-    render: "{global#sys-success}您的WorldEdit选区已渲染（高亮）。"
   afk:
     left: "{global#info}玩家{#var}暂时离开了。"
     left-self: "{global#info}你暂时离开了。"

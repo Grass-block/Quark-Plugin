@@ -11,18 +11,20 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.*;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-@QuarkModule(version = "1.1")
+@SLModule(version = "1.1")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class AFK extends PackageModule {
     private final Listener actionListener = new PlayerActionListener();
@@ -48,6 +50,10 @@ public final class AFK extends PackageModule {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         this.lastAFK.put(e.getPlayer().getName(), -1L);
+        var id = e.getPlayer().getName();
+        var tid = "quark:afk:delay@" + id;
+
+        TaskService.async().cancel(tid);
     }
 
     @EventHandler
@@ -74,11 +80,15 @@ public final class AFK extends PackageModule {
 
         var timestamp = System.currentTimeMillis();
 
-        TaskService.async().delay(tid, getConfig().getInt("timeout"), () -> {
+        TaskService.async().delay(tid, ConfigAccessor.getInt(getConfig(), "timeout"), () -> {
+            if (!player.isOnline()) {
+                return;
+            }
+
             broadcast(
                     player,
-                    (p) -> this.language.sendMessage(p, "left-self"),
-                    (p, p2) -> this.language.sendMessage(p, "left", p2.getName())
+                    (p) -> MessageAccessor.send(this.language, p, "left-self"),
+                    (p, p2) -> MessageAccessor.send(this.language, p, "left", p2.getName())
             );
             this.lastAFK.put(id, timestamp);
         });
@@ -97,8 +107,8 @@ public final class AFK extends PackageModule {
 
         broadcast(
                 player,
-                (p) -> this.language.sendMessage(p, "back-self", time),
-                (p, p2) -> this.language.sendMessage(p, "back", p2.getName(), time)
+                (p) -> MessageAccessor.send(this.language, p, "back-self", time),
+                (p, p2) -> MessageAccessor.send(this.language, p, "back", p2.getName(), time)
         );
     }
 

@@ -1,42 +1,45 @@
 package org.atcraftmc.quark.warps;
 
-import com.google.gson.JsonArray;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import net.kyori.adventure.text.event.ClickEvent;
+import org.atcraftmc.qlib.platform.PluginPlatform;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.assertion.NumberLimitation;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
+import org.atcraftmc.qlib.language.LanguageItem;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.WorldInfo;
 import org.bukkit.permissions.Permission;
-import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.api.PluginStorage;
-import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.data.PlayerDataService;
-import org.atcraftmc.qlib.language.LanguageItem;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
-import org.tbstcraft.quark.foundation.platform.BukkitCodec;
-import org.tbstcraft.quark.foundation.platform.Players;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.BukkitSound;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.api.PluginMessages;
+import org.atcraftmc.starlight.api.PluginStorage;
+import org.atcraftmc.starlight.data.ModuleDataService;
+import org.atcraftmc.starlight.data.PlayerDataService;
+import org.atcraftmc.starlight.foundation.TextSender;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
+import org.atcraftmc.starlight.foundation.platform.BukkitCodec;
+import org.atcraftmc.starlight.foundation.platform.Players;
+import org.atcraftmc.starlight.framework.module.CommandModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.LocaleService;
+import org.atcraftmc.starlight.util.BukkitSound;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @QuarkCommand(name = "waypoint")
-@QuarkModule(version = "2.0.3", compatBlackList = {APIProfile.ARCLIGHT})
+@SLModule(version = "2.0.3")
 @CommandProvider({Waypoint.WaypointCommand.class})
 @AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.CLIENT_MESSAGE})
 public final class Waypoint extends CommandModule {
@@ -59,9 +62,9 @@ public final class Waypoint extends CommandModule {
     public void enable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
 
-        if (this.getConfig().getBoolean("home")) {
-            QuarkCommandManager.getInstance().register(this.setHomeCommand);
-            QuarkCommandManager.getInstance().register(this.warpHomeCommand);
+        if (ConfigAccessor.getBool(this.getConfig(), "home")) {
+            StarlightCommandManager.getInstance().register(this.setHomeCommand);
+            StarlightCommandManager.getInstance().register(this.warpHomeCommand);
 
             PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tipHome));
         }
@@ -71,9 +74,9 @@ public final class Waypoint extends CommandModule {
     public void disable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
 
-        if (this.getConfig().getBoolean("home")) {
-            QuarkCommandManager.getInstance().unregister(this.setHomeCommand);
-            QuarkCommandManager.getInstance().unregister(this.warpHomeCommand);
+        if (ConfigAccessor.getBool(this.getConfig(), "home")) {
+            StarlightCommandManager.getInstance().unregister(this.setHomeCommand);
+            StarlightCommandManager.getInstance().unregister(this.warpHomeCommand);
 
             PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tipHome));
         }
@@ -87,6 +90,7 @@ public final class Waypoint extends CommandModule {
             var mode = context.requireEnum(0, "add-private", "remove-private", "tp-private", "list-private", "add", "remove", "tp", "list");
             var isPrivate = mode.contains("private");
             var sender = context.requireSenderAsPlayer();
+            var locale = LocaleService.locale(sender);
 
             NBTTagCompound entry;
             if (isPrivate) {
@@ -101,35 +105,61 @@ public final class Waypoint extends CommandModule {
 
             switch (mode) {
                 case "list", "list-private" -> {
-                    StringBuilder sb = new StringBuilder(128);
-                    entry.getTagMap()
-                            .forEach((name, data) -> sb.append(name)
-                                    .append(ChatColor.GRAY)
-                                    .append(" -> ")
-                                    .append(ChatColor.WHITE)
-                                    .append(BukkitCodec.string(BukkitCodec.location(entry.getCompoundTag(name))))
-                                    .append("\n"));
-                    this.getLanguage().sendMessage(sender, "list", sb);
+                    var list = this.getLanguage().item("list").component(locale);
+
+                    entry.getTagMap().forEach((name, data) -> {
+                        var loc = BukkitCodec.location(entry.getCompoundTag(name));
+                        var component = getLanguage().item("list-item").component(
+                                locale,
+                                name,
+                                loc.getWorld().getName(),
+                                loc.getBlockX(),
+                                loc.getBlockY(),
+                                loc.getBlockZ(),
+                                isPrivate ? "-private" : "",
+                                name
+                        );
+                        var hover = getLanguage().item("list-hover")
+                                .component(
+                                        locale,
+                                        name,
+                                        loc.getWorld().getName(),
+                                        loc.getX(),
+                                        loc.getY(),
+                                        loc.getZ(),
+                                        loc.getYaw(),
+                                        loc.getPitch()
+                                );
+                        var line = component.asComponent()
+                                .hoverEvent(hover.asComponent().asHoverEvent())
+                                .clickEvent(ClickEvent.runCommand("/waypoint %s %s".formatted(isPrivate ? "tp-private" : "tp", name)));
+
+                        list.add(line);
+                    });
+
+                    sender.sendMessage(PluginPlatform.global().globalFormatMessage("{#line}"));
+                    TextSender.sendMessage(sender, list);
+                    sender.sendMessage(PluginPlatform.global().globalFormatMessage("{#line}"));
                 }
                 case "tp", "tp-private" -> {
                     var id = context.requireArgumentAt(1);
 
                     NBTTagCompound tag = entry.getCompoundTag(id);
                     if (tag == null || !tag.hasKey("world")) {
-                        this.getLanguage().sendMessage(sender, "not-exist", id);
+                        MessageAccessor.send(this.getLanguage(), sender, "not-exist", id);
                         break;
                     }
 
                     Players.teleport(sender, BukkitCodec.location(tag));
                     BukkitSound.WARP.play(sender);
-                    this.getLanguage().sendMessage(sender, "tp-success", id);
+                    MessageAccessor.send(this.getLanguage(), sender, "tp-success", id);
                 }
                 case "add", "add-private" -> {
                     var id = context.requireArgumentAt(1);
                     var tag = entry.getCompoundTag(id);
 
                     if (tag.hasKey("world")) {
-                        this.getLanguage().sendMessage(sender, "exist", id);
+                        MessageAccessor.send(this.getLanguage(), sender, "exist", id);
                         return;
                     }
 
@@ -139,19 +169,21 @@ public final class Waypoint extends CommandModule {
                         loc = sender.getLocation();
                     } else {
 
-                        if (!this.getConfig().getBoolean("allow-coordinate-add")) {
+                        if (!ConfigAccessor.getBool(this.getConfig(), "allow-coordinate-add")) {
                             context.requirePermission(this.getModule().bypassAddLimitPermission);
                         }
 
-                        loc = new Location(Bukkit.getWorld(context.requireEnum(2,
-                                                                               Bukkit.getWorlds()
-                                                                                       .stream()
-                                                                                       .map(WorldInfo::getName)
-                                                                                       .collect(Collectors.toSet())
-                                                                              )),
-                                           context.requireArgumentDouble(3, NumberLimitation.any()),
-                                           context.requireArgumentDouble(4, NumberLimitation.any()),
-                                           context.requireArgumentDouble(5, NumberLimitation.any())
+                        loc = new Location(
+                                Bukkit.getWorld(context.requireEnum(
+                                        2,
+                                        Bukkit.getWorlds()
+                                                .stream()
+                                                .map(WorldInfo::getName)
+                                                .collect(Collectors.toSet())
+                                )),
+                                context.requireArgumentDouble(3, NumberLimitation.any()),
+                                context.requireArgumentDouble(4, NumberLimitation.any()),
+                                context.requireArgumentDouble(5, NumberLimitation.any())
                         );
                         if (context.hasArgumentAt(6)) {
                             loc.setYaw(context.requireArgumentFloat(6, NumberLimitation.any()));
@@ -161,7 +193,7 @@ public final class Waypoint extends CommandModule {
 
                     tag = BukkitCodec.nbt(loc);
                     entry.setCompoundTag(id, tag);
-                    this.getLanguage().sendMessage(sender, "add-success", id);
+                    MessageAccessor.send(this.getLanguage(), sender, "add-success", id);
 
                     PlayerDataService.save(sender.getName());
                     ModuleDataService.save(this.getModuleId());
@@ -171,11 +203,11 @@ public final class Waypoint extends CommandModule {
                     var tag = entry.getCompoundTag(id);
 
                     if (!tag.hasKey("world")) {
-                        this.getLanguage().sendMessage(sender, "not-exist", id);
+                        MessageAccessor.send(this.getLanguage(), sender, "not-exist", id);
                         return;
                     }
                     entry.remove(id);
-                    this.getLanguage().sendMessage(sender, "remove-success", id);
+                    MessageAccessor.send(this.getLanguage(), sender, "remove-success", id);
                 }
             }
         }
@@ -229,11 +261,11 @@ public final class Waypoint extends CommandModule {
         public void onCommand(CommandSender sender, String[] args) {
             NBTTagCompound entry = PlayerDataService.getEntry(sender.getName(), this.getModuleId());
             if (entry.hasKey("home") && (args.length < 1 || !Objects.equals(args[0], "-f"))) {
-                this.getLanguage().sendMessage(sender, "home-exist-warn");
+                MessageAccessor.send(this.getLanguage(), sender, "home-exist-warn");
                 return;
             }
             entry.setCompoundTag("home", BukkitCodec.nbt(((Player) sender).getLocation()));
-            this.getLanguage().sendMessage(sender, "home-set-success");
+            MessageAccessor.send(this.getLanguage(), sender, "home-set-success");
         }
     }
 
@@ -248,12 +280,12 @@ public final class Waypoint extends CommandModule {
         public void onCommand(CommandSender sender, String[] args) {
             NBTTagCompound entry = PlayerDataService.getEntry(sender.getName(), this.getModuleId());
             if (!entry.hasKey("home")) {
-                this.getLanguage().sendMessage(sender, "home-not-set");
+                MessageAccessor.send(this.getLanguage(), sender, "home-not-set");
                 return;
             }
             Location loc = BukkitCodec.location(entry.getCompoundTag("home"));
             Players.teleport(((Player) sender), loc);
-            this.getLanguage().sendMessage(sender, "home-tp-success");
+            MessageAccessor.send(this.getLanguage(), sender, "home-tp-success");
             BukkitSound.WARP.play((Player) sender);
         }
     }

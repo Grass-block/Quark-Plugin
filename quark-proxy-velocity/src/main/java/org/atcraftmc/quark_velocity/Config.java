@@ -26,7 +26,7 @@ public final class Config {
     }
 
     public static LanguageEntry language(String id){
-        return LanguageContainer.getInstance().entry("--global", id);
+        return QuarkVelocity.lang().entry("--global", id);
     }
 
     public void load() {

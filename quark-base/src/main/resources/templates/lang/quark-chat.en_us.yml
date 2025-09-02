@@ -35,12 +35,5 @@ language:
     view-hint: "{global#sys-info}You received {#var} messages while offline. Use the command {#gold}/mail view{#gray} or {click(command,/mail view)}{#white}[{#aqua}Click to view{#white}]"
     view-none: "{global#sys-info}You did not receive any messages while offline."
     tip: '{#gray}If a player is offline, you can use {#gold}/mail [player] [content] to leave a message.'
-  chat-report:
-    not-exist: "{global#sys-error}The chat log entry you want to report does not exist, or it might have already been reported."
-    success: "{global#sys-success}You have submitted a chat report for {#var} ({#var})."
-    tip: '{#gray}If a player sends inappropriate content, you can click the "[!]" after the chat text to report it.'
-  chat-filter:
-    reload: "{global#sys-success}Successfully reloaded the rule file."
-    save: "{global#sys-success}Successfully saved the default rule file."
   hitokoto:
     sentence: "{hover(text,Text from {#red}[{#white}Hitokoto{#red}]{#gray}(https://hitokoto.cn/))}{#red}[{#white}Hitokoto{#red}] {#white}%s {#gray}——%s({#var})"

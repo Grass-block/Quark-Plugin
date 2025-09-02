@@ -12,20 +12,22 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
-import org.tbstcraft.quark.util.ExceptionUtil;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.util.ExceptionUtil;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-@QuarkModule(defaultEnable = false, version = "1.2")
+@SLModule(defaultEnable = false, version = "1.2")
 @AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.REMOTE_MESSAGE})
 @CommandProvider(MCSMDynamicInstance.JoinDynamicServerCommand.class)
 public final class MCSMDynamicInstance extends PackageModule {
@@ -34,7 +36,7 @@ public final class MCSMDynamicInstance extends PackageModule {
     
     @Override
     public void enable() {
-        if (!this.getConfig().getBoolean("instance")) {
+        if (!ConfigAccessor.getBool(this.getConfig(), "instance")) {
             return;
         }
         if (Bukkit.getOnlinePlayers().isEmpty()) {
@@ -44,7 +46,7 @@ public final class MCSMDynamicInstance extends PackageModule {
 
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent event) {
-        if (!this.getConfig().getBoolean("instance")) {
+        if (!ConfigAccessor.getBool(this.getConfig(),"instance")) {
             return;
         }
         this.logger.info("cancel server stopping process as POWER_SAVING");
@@ -53,7 +55,7 @@ public final class MCSMDynamicInstance extends PackageModule {
 
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent event) {
-        if (!this.getConfig().getBoolean("instance")) {
+        if (!ConfigAccessor.getBool(this.getConfig(),"instance")) {
             return;
         }
         if (Bukkit.getOnlinePlayers().size() == 1) {
@@ -63,20 +65,20 @@ public final class MCSMDynamicInstance extends PackageModule {
 
     public void scheduleStop() {
         this.logger.info("starting stopping countdown");
-        TaskService.async().delay("quark:ps:countdown", getConfig().getInt("shutdown-delay"), () -> {
+        TaskService.async().delay("quark:ps:countdown", ConfigAccessor.getInt(getConfig(),"shutdown-delay"), () -> {
             this.logger.info("stopping server as POWER_SAVING");
             TaskService.global().run(() -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "stop"));
         });
     }
 
     public void startServer(CommandSender sender, String name, Consumer<Integer> handler) {
-        String apiKey = getConfig().getString("api-key");
-        String daemon = getConfig().getString("daemon");
+        String apiKey = getConfig().value("api-key").string();
+        String daemon = getConfig().value("daemon").string();
 
         TaskService.async().run(() -> {
             var response = HttpRequest.http(HttpMethod.GET, daemon + "/api/instance")
                     .param("apikey", apiKey)
-                    .param("daemonId", this.getConfig().getString("daemon-id"))
+                    .param("daemonId", this.getConfig().value("daemon-id").string())
                     .param("uuid", name)
                     .browserBehavior(true)
                     .build()
@@ -86,11 +88,11 @@ public final class MCSMDynamicInstance extends PackageModule {
                 handler.accept(1);
                 return;
             }
-            this.getLanguage().sendMessage(sender, "wakeup");
+            MessageAccessor.send(this.getLanguage(), sender, "wakeup");
 
             var res = HttpRequest.http(HttpMethod.GET, daemon + "/api/protected_instance/open")
                     .param("apikey", apiKey)
-                    .param("daemonId", this.getConfig().getString("daemon-id"))
+                    .param("daemonId", this.getConfig().value("daemon-id").string())
                     .param("uuid", name)
                     .build()
                     .request();
@@ -110,35 +112,35 @@ public final class MCSMDynamicInstance extends PackageModule {
     public static final class JoinDynamicServerCommand extends ModuleCommand<MCSMDynamicInstance> {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
-            if (getConfig().getBoolean("instance")) {
+            if (getConfig().value("instance").bool()) {
                 return;
             }
-            ConfigurationSection servers = this.getConfig().getSection("servers");
+            ConfigurationSection servers = this.getConfig().value("servers").section();
             if (!Objects.requireNonNull(servers).contains(args[0])) {
-                this.getLanguage().sendMessage(sender, "not-found", args[0]);
+                MessageAccessor.send(this.getLanguage(), sender, "not-found", args[0]);
                 return;
             }
 
-            this.getLanguage().sendMessage(sender, "checking");
+            MessageAccessor.send(this.getLanguage(), sender, "checking");
 
             try {
                 this.getModule().startServer(sender, servers.getString(args[0]), (i) -> {
                     switch (i) {
-                        case 0 -> getLanguage().sendMessage(sender, "starting");
-                        case 1 -> getLanguage().sendMessage(sender, "running");
-                        case 2 -> getLanguage().sendMessage(sender, "start-error");
+                        case 0 -> MessageAccessor.send(this.getLanguage(), sender, "starting");
+                        case 1 -> MessageAccessor.send(this.getLanguage(), sender, "running");
+                        case 2 -> MessageAccessor.send(this.getLanguage(), sender, "start-error");
                     }
                 });
             } catch (Exception e) {
                 ExceptionUtil.log(e);
-                getLanguage().sendMessage(sender, "start-error");
+                MessageAccessor.send(this.getLanguage(), sender, "start-error");
             }
         }
 
         @Override
         public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
             if (buffer.length == 1) {
-                tabList.addAll(Objects.requireNonNull(this.getConfig().getSection("servers")).getKeys(false));
+                tabList.addAll(Objects.requireNonNull(this.getConfig().value("servers").section()).getKeys(false));
             }
         }
     }

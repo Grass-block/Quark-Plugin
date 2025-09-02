@@ -1,11 +1,11 @@
 package org.atcraftmc.quark;
 
 import org.atcraftmc.quark.proxy.*;
-import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.framework.packages.initializer.PackageBuilderInitializer;
-import org.tbstcraft.quark.framework.packages.initializer.PackageInitializer;
-import org.tbstcraft.quark.framework.packages.provider.MultiPackageProvider;
-import org.tbstcraft.quark.framework.packages.provider.QuarkPackageProvider;
+import org.atcraftmc.starlight.framework.FeatureAvailability;
+import org.atcraftmc.starlight.framework.packages.initializer.PackageBuilderInitializer;
+import org.atcraftmc.starlight.framework.packages.initializer.PackageInitializer;
+import org.atcraftmc.starlight.framework.packages.provider.MultiPackageProvider;
+import org.atcraftmc.starlight.framework.packages.provider.QuarkPackageProvider;
 
 import java.util.Set;
 
@@ -20,6 +20,7 @@ public final class QuarkProxy extends MultiPackageProvider {
             i.module("legacy-forwarding-protect", LegacyForwardingProtect.class);
             i.module("mcsm-dynamic-instance", MCSMDynamicInstance.class);
             i.module("proxy-ping", ProxyPing.class);
+            i.module("server-connect", ServerConnect.class);
 
             i.config("quark-proxysupport");
             i.language("quark-proxysupport", "zh_cn");

@@ -5,15 +5,16 @@ import org.atcraftmc.qlib.command.assertion.NumberLimitation;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.CommandModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
 
 import java.util.List;
 import java.util.Objects;
 
-@QuarkModule(version = "1.0")
+@SLModule(version = "1.0")
 @QuarkCommand(name = "server-tick", permission = "-quark.tick")
 public final class TickManager extends CommandModule {
 
@@ -27,16 +28,16 @@ public final class TickManager extends CommandModule {
         switch (execution.requireEnum(0, "freeze", "unfreeze", "step")) {
             case "freeze" -> {
                 Bukkit.getServer().getServerTickManager().setFrozen(true);
-                getLanguage().sendMessage(execution.getSender(), "freeze");
+                MessageAccessor.send(this.getLanguage(), execution.getSender(), "freeze");
             }
             case "unfreeze" -> {
                 Bukkit.getServer().getServerTickManager().setFrozen(false);
-                getLanguage().sendMessage(execution.getSender(), "unfreeze");
+                MessageAccessor.send(this.getLanguage(), execution.getSender(), "unfreeze");
             }
             case "step" -> {
                 var stp = execution.requireArgumentInteger(1, NumberLimitation.any());
                 Bukkit.getServer().getServerTickManager().stepGameIfFrozen(stp);
-                getLanguage().sendMessage(execution.getSender(), "step", stp);
+                MessageAccessor.send(this.getLanguage(), execution.getSender(), "step", stp);
             }
         }
     }

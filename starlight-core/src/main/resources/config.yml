@@ -1,0 +1,10 @@
+config:
+  plugin:
+    fast-boot: false
+    debug: false
+    metrics: true
+  default-status:
+    module: true
+    package: true
+  environment:
+    proxy: false

@@ -1,0 +1,17 @@
+#identifier
+name: starlight-core
+version: '${version}'
+
+#api
+main: org.atcraftmc.starlight.Starlight
+api-version: 1.13
+folia-supported: true
+load: POSTWORLD
+softdepend: [ 'quark-platform','PlaceholderAPI' ]
+provides: [ 'qlib-bukkit' ]
+
+#description
+authors: [ "GrassBlock2022","TBSTMC" ]
+website: https://atcraftmc.cn
+prefix: Starlight-Core
+description: "BETA"

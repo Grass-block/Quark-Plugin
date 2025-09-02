@@ -3,3 +3,11 @@ config:
     verify-link-delegation: 'http://service.tbstmc.xyz/api'
   token-storage:
     expire: 1800
+
+  jwt: #RFC7519 standard
+    keystore-path: keystore.jceks #wtf is this?
+    keystore-secret: "78j91dj3891" #change them before installed!
+    key-secret: "UHonyepy328EWQP" #change them before installed!
+    issuer: quark-plugin web services #the 'iss' field
+    expires: 259200 #how long before jwt token expire(sec)
+

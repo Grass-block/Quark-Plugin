@@ -6,15 +6,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
+import org.atcraftmc.starlight.core.TaskService;
 
 /**
  * <code:yml></code>
  */
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 public class CommandTriggers extends PackageModule {
 
     public static void runCommand(String command, Player player) {

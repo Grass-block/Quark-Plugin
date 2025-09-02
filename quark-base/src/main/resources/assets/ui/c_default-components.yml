@@ -1,0 +1,112 @@
+components:
+  return:
+    icon: { type: "arrow" }
+    name: { lang: "common:ui:return" }
+    any-click:
+      - "[sound]ui.button.click"
+      - "[close]"
+      - "[command]/menu"
+  close:
+    icon: { type: "redstone" }
+    name: { lang: "common:ui:close" }
+    any-click:
+      - "[sound]ui.button.click"
+      - "[close]"
+
+  open-waypoint-list:
+    icon: { type: "oak_sign" }
+    name: { text: "{#aqua}导航点传送" }
+    lore:
+      - { text: "{#gray}快速前往不同的地标" }
+      - { text: "{#gold}[点击打开]" }
+    left-click:
+      - "[sound]ui.button.click"
+      - "[close]"
+      - "[command]/waypoint gui"
+  open-music-player:
+    icon: { type: "note_block" }
+    name: { text: "{#yellow}音乐播放器" }
+    lore:
+      - { text: "{#gray}和全服玩家一起听你想听的音乐" }
+      - { text: "{#gray}无需任何额外客户端模组和修改" }
+      - { text: "{#gold}[左键点击打开]" }
+    left-click:
+      - "[close]"
+      - "[sound]ui.button.click"
+      - "[command]/music gui"
+  open-warps-menu:
+    icon: { type: "compass" }
+    name: { text: "{#purple}传送系统" }
+    lore:
+      - { text: "{#gray}提供不同的传送功能" }
+      - { text: "{#gray}左键 | 打开二级菜单(全部功能)" }
+      - { text: "{#gray}右侧 | 快速访问" }
+    left-click:
+      - "[sound]ui.button.click"
+      - "[close]"
+      - "[command]/warp-menu"
+  open-servers-menu:
+    icon: { type: "end_portal_frame" }
+    name: { text: "{#purple}世界传送" }
+    lore:
+      - { text: "{#gray}前往不同的「世界」" }
+      - { text: "{#gray}注: 在不同的服务器之间传送" }
+      - { text: "{#gray}“别问这是为什么，问就是「开拓」之力”" }
+      - { text: "{#gold}[点击打开]" }
+    any-click:
+      - "[sound]ui.button.click"
+      - "[close]"
+      - "[command]/servers-menu"
+  open-view-distance-menu:
+    icon: { type: "ender_eye" }
+    name: { text: "{#purple}服务器渲染距离调整" }
+    lore:
+      - { text: "{#gray}调整你的服务器渲染距离" }
+      - { text: "{#gray}决定你能看到的范围上限" }
+      - { text: "{#gold}[点击打开]" }
+    any-click:
+      - "[sound]ui.button.click"
+      - "[close]"
+      - "[command]/view-distance-menu"
+  back-to-home:
+    icon: { type: "red_bed" }
+    name: { text: "{#aqua}快速回家" }
+    lore:
+      - { text: "{#gray}快速返回你设置的「家」" }
+      - { text: "{#dark_purple}左键 | 返回设定的「家」" }
+      - { text: "{#dark_purple}右键 | 设置当前地点为你的「家」" }
+      - { text: "{#gold}[点击执行]" }
+    left-click:
+      - "[sound]ui.button.click"
+      - "[close]"
+      - "[command]/home"
+    right-click:
+      - "[sound]ui.button.click"
+      - "[close]"
+      - "[command]/sethome"
+  back-to-death:
+    icon: { type: 'name_tag' }
+    name: { text: "{#aqua}返回死亡地点" }
+    lore:
+      - { text: "{#gray}快速返回上一个死亡位置" }
+      - { text: "{#gray}注意: 跨纬度传送有概率不工作" }
+      - { text: "{#gold}[点击执行]" }
+    any-click: [ "[sound]ui.button.click","[close]","[command]/back" ]
+  random-tp:
+    icon: { type: 'ender_pearl' }
+    name: { text: "{#dark_aqua}随机传送" }
+    lore:
+      - { text: "{#gray}将你传送到所在世界的随机位置" }
+      - { text: "{#gray}注意: 降落点总是安全的" }
+      - { text: "{#gray}地形搜索需要时间，请耐心等待" }
+      - { text: "{#gold}[点击执行]" }
+    any-click: [ "[sound]ui.button.click","[close]","[command]/rtp" ]
+  enter-freecam:
+    icon: { type: 'ender_pearl' }
+    name: { text: "{#dark_green}进入自由视角" }
+    lore:
+      - { text: "{#gray}允许额外的穿墙等移动" }
+      - { text: "{#gray}注意: 进入自由视角后无法使用其他指令" }
+      - { text: "{#gray}请手动执行 {#aqua}/freecam {#gray}关闭自由视角" }
+      - { text: "{#gold}[点击执行]" }
+    any-click: [ "[sound]ui.button.click","[close]","[command]/freecam" ]

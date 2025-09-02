@@ -5,15 +5,15 @@ import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.data.PlayerDataService;
-import org.tbstcraft.quark.framework.service.QuarkService;
-import org.tbstcraft.quark.framework.service.ServiceInject;
+import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.data.PlayerDataService;
+import org.atcraftmc.starlight.framework.service.SLService;
+import org.atcraftmc.starlight.framework.service.ServiceInject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@QuarkService(id = "player-points")
+@SLService(id = "player-points")
 public final class PlayerPointService {
     private static final Map<String, PlayerPointService> INSTANCES = new HashMap<>();
     private static final AbstractCommand COMMAND = new PointManagementCommand();
@@ -73,12 +73,12 @@ public final class PlayerPointService {
 
     @ServiceInject
     public void start() {
-        Quark.getInstance().getCommandManager().register(COMMAND);
+        Starlight.instance().getCommandManager().register(COMMAND);
     }
 
     @ServiceInject
     public void stop() {
-        Quark.getInstance().getCommandManager().unregister(COMMAND);
+        Starlight.instance().getCommandManager().unregister(COMMAND);
     }
 
     @QuarkCommand(name = "points", playerOnly = true)

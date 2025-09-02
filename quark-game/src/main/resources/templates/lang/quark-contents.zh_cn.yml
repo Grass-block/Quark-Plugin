@@ -20,10 +20,6 @@ language:
   114514:
     message:
       - '{#purple}已经到顶啦~'
-      - '{#purple}好爽~'
-      - '{#purple}杂鱼~杂鱼~'
-      - '{#purple}药~膏~潮~了~'
-      - '{#purple}啊~'
   neko:
     chat-postfix: '喵~'
     to: '{global#sys-operation}已将 {#var} 变成猫娘。'
@@ -40,6 +36,12 @@ language:
     unsupported-format: "{global#sys-error}不支持的文件 {#var}。"
     timeout: "{global#sys-error}无法从内容服务器下载文件 {#var}。"
     restore-defaults: "{global#sys-info}成功保存样例音乐文件。"
+    trim: "{global#sys-info}已修正 {#var} 个文件的名称格式。"
+    ui-title: "{#dark-aqua}音乐播放 {#white}(共 %s 页)"
+    ui-click: "{#gold}[点击播放]"
+    ui-legacy-control-open: "{#purple}启用旧版解析: [开]"
+    ui-legacy-control-close: "{#gray}启用旧版解析: [关]"
+    ui-cancel: "{#red}停止播放"
   custom-recipe:
     reload: "{global#sys-info}成功重载配方组。"
     restore: "{global#sys-info}成功保存样例配方组。"

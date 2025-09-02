@@ -10,18 +10,18 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.foundation.platform.BukkitDataAccess;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.SharedObjects;
+import org.atcraftmc.starlight.foundation.platform.BukkitDataAccess;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class CropClickHarvest extends PackageModule {
     public static final Map<Material, Material> CROPS = new HashMap<>();

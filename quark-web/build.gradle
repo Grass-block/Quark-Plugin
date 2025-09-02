@@ -12,5 +12,8 @@ jar {
 
 dependencies {
     implementation projectLocal('javax.mail-1.6.2')
-    implementation("io.vertx:vertx-auth-jwt:3.5.1")
+    implementation('io.vertx:vertx-auth-jwt:4.5.12')
+    implementation('io.vertx:vertx-web:4.5.12')
+
+    compileOnly project(":quark-base")
 }

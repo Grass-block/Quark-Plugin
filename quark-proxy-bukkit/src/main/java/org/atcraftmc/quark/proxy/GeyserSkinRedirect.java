@@ -9,22 +9,20 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.TaskService;
 
-import java.util.UUID;
-
-@QuarkModule
+@SLModule
 @AutoRegister({ServiceType.EVENT_LISTEN})
 @CommandProvider(GeyserSkinRedirect.RedirectSkinCommand.class)
-public class GeyserSkinRedirect extends PackageModule implements QuarkCommandExecutor {
+public class GeyserSkinRedirect extends PackageModule implements PluginCommandExecutor {
 
     @Override
     public void checkCompatibility() throws APIIncompatibleException {
@@ -37,7 +35,7 @@ public class GeyserSkinRedirect extends PackageModule implements QuarkCommandExe
     }
 
     public void redirect(Player player) {
-        var prefix = this.getConfig().getString("prefix");
+        var prefix = this.getConfig().value("prefix").string();
 
         if (!player.getName().startsWith(prefix)) {
             return;

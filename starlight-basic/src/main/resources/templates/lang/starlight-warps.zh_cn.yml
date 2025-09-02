@@ -1,0 +1,71 @@
+language:
+  -module-name:
+    tpa: 传送请求
+    waypoint: 导航点
+    back-to-death: 回到死亡点
+  waypoint:
+    exist: '{global#sys-error}已存在导航点 {#var}。'
+    not-exist: '{global#sys-error}不存在导航点 {#var}。'
+    add-success: '{global#sys-operation}成功添加了导航点 {#var}。'
+    remove-success: '{global#sys-operation}成功移除了导航点 {#var}。'
+    remove-failed: '{global#sys-error}权限不足: 你不是 {#var} 的所有者, 且你没有starlight.waypoint.admin权限组。'
+    tp-success: '{global#sys-success}已将你传送到导航点 {#var}。'
+    allow: '{global#sys-success}成功向玩家 {#var} 开放了 {#var} 导航点的访问。'
+    allow-all: '{global#sys-success}成功向全部玩家开放了 {#var} 导航点的访问。'
+    disallow: '{global#sys-success}成功向玩家 {#var} 关闭了 {#var} 导航点的访问。'
+    disallow-all: '{global#sys-success}成功向全部玩家关闭了 {#var} 导航点的访问。'
+    home-exist-warn: "{global#sys-warning}你已经设置了一个家。若要覆盖，请使用 {#gold}/sethome -f"
+    home-set-success: "{global#sys-operation}设置成功。"
+    home-not-set: "{global#sys-error}你还没有设置家,使用 {#gold}/sethome{#gray} 来设置一个!"
+    home-tp-success: "{global#sys-success}已将你传送回家。"
+    tip: "{#gray}使用{#gold}/waypoint{#gray}可以建立你自己的导航或者使用公共导航点。"
+    tip-home: "{#gray}使用{#gold}/sethome{#gray}添加一个家，用{#gold}/home{#gray}可以快速回家。"
+    list: '{#aqua}导航点列表: '
+    list-item: "{color(#44FFAA)}[%s]{#white}%s: %s,%s,%s{color(white);click(command,/waypoint remove %s)} [{#red}X{#white}]"
+    list-hover: |-
+     {color(#44FFAA)}名称: {#white}%s
+      世界: {#white}%s
+      坐标: {#white}[{#red}%s{#gray}, {#green}%s{#gray}, {#aqua}%s{#white}]
+      角度: {#purple}[%s,%s]
+      所有者: {#white}%s
+      UUID: {#white}%s
+      {#gold}[点击传送]
+  back-to-death:
+    back-not-set: "{global#sys-error}你还没死亡过。"
+    back-tp-success: "{global#sys-success}已将你传送到上次死亡地点。"
+    back-hint: "{global#sys-info}你的死亡地点已经记录。使用 {#gold}/back{#gray} 或 {click(command,/back)}{#white}[{#aqua}点此传送{#white}]"
+    tip-back: "{#gray}使用{#gold}/back{#gray}可以快速回到死亡位置。"
+  tpa:
+    tpahere-accept-btn: '{color(white)}[{color(green);click(command,/tpahere accept %s)}接受{color(white)}]'
+    tpahere-deny-btn: '{color(white)}[{color(red);click(command,/tpahere deny %s)}拒绝{color(white)}]'
+    tpahere-request-sender: "{global#sys-info}你向玩家 {#var} 发送了传送到你的请求。"
+    tpahere-request-target: "{global#sys-info}玩家 {#var} 向你发送了传送到他/她的请求。{msg#tpahere-accept-btn} {msg#tpahere-deny-btn}"
+    tpahere-accept-sender: "{global#sys-info}你同意了传送到 {#var} 的请求, 正在传送..."
+    tpahere-accept-target: "{global#sys-info}{#var} 同意了他/她传送到你的请求。"
+    tpahere-deny-sender: "{global#sys-info}你拒绝了传送到 {#var} 的请求。"
+    tpahere-deny-target: "{global#sys-info}{#var} 拒绝了他/她传送到你的请求。"
+    tpahere-no-request: "{global#sys-info}{#var} 没有向你发送传送到他/她的请求。"
+
+    tpa-accept-btn: '{color(white)}[{color(green);click(command,/tpa accept %s)}接受{color(white)}]'
+    tpa-deny-btn: '{color(white)}[{color(red);click(command,/tpa deny %s)}拒绝{color(white)}]'
+    tpa-request-sender: "{global#sys-info}你向玩家 {#var} 发送了传送到他/她的请求。"
+    tpa-request-target: "{global#sys-info}玩家 {#var} 向你发送了传送到你的请求。{msg#tpa-accept-btn} {msg#tpa-deny-btn}"
+    tpa-accept-sender: "{global#sys-info}你同意了 {#var} 传送到你的请求。"
+    tpa-accept-target: "{global#sys-info}{#var} 同意了你传送到他/她的请求, 正在传送..."
+    tpa-deny-sender: "{global#sys-info}你拒绝了 {#var} 传送到你的请求。"
+    tpa-deny-target: "{global#sys-info}{#var} 拒绝了你传送到他/她的请求。"
+    tpa-no-request: "{global#sys-info}{#var} 没有向你发送他/她传送到你的请求。"
+
+    send: '{global#info}你发送了向玩家 {#var} 的传送请求。'
+    undo: '{global#info}你撤消了向玩家 {#var} 的传送请求。'
+    accept: '{global#success}你已接受玩家 {#var} 的传送请求。'
+    deny: '{global#info}你已拒绝玩家 {#var} 的传送请求。'
+    send-announce: '{global#info}玩家 {#var} 向你发送了传送请求。 {msg#accept-btn} {msg#deny-btn}'
+    denied: '{global#error}{#var} 拒绝了你的传送请求。'
+    accepted: '{global#success}{#var} 同意了你的的传送请求, 正在传送...'
+    player-not-found: '{global#error}玩家不存在...'
+    list: '{global#info}以下是你未处理的传送请求: {#return} {#var}'
+  rtp:
+    start: '{global#info}随机传送尝试开始, 将在 {#var} 游戏刻内寻找目标...'
+    success: '{global#success}随机传送成功! (目标位置: [{#var},{#var},{#var}])'
+    failed: '{global#error}未能在允许的寻找次数内找到目标地点, 传送失败。'

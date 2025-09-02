@@ -1,0 +1,5 @@
+language:
+  console-execute:
+    execute: "{global#sys-operation}已提交命令行: {#var}"
+  clear-console:
+    execute: "{global#sys-operation}已清除控制台命令缓冲区。"

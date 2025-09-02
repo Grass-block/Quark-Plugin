@@ -7,18 +7,18 @@ main: org.atcraftmc.quark.QuarkBase
 api-version: 1.16
 folia-supported: true
 load: POSTWORLD
-depend: [ "quark" ]
-softdepend: [ "WorldEdit","ProtocolLib" ]
+depend: [ "starlight-core" ]
+softdepend: [ "WorldEdit","ProtocolLibMessageImpl" ]
 
 #description
 authors: [ "GrassBlock2022","TBSTCraft" ]
 website: https://quark.tbstmc.xyz
 description: |
-  Extension pack of Quark plugin ecosystem, providing base features.
+  Extension pack of Starlight plugin ecosystem, providing base features.
   including packs:
     - security
     - chat
     - display
     - automatic
     - utilities
-prefix: QuarkBase
+prefix: Starlight-Base

@@ -8,20 +8,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.foundation.platform.Players;
+import org.atcraftmc.starlight.foundation.platform.Players;
 import org.atcraftmc.qlib.texts.TextBuilder;
-import org.tbstcraft.quark.foundation.TextSender;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
+import org.atcraftmc.starlight.foundation.TextSender;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
-@QuarkModule(id = "chat-at", version = "1.2")
+@SLModule(id = "chat-at", version = "1.2")
 public final class ChatAt extends PackageModule {
 
     @EventHandler
@@ -30,6 +30,7 @@ public final class ChatAt extends PackageModule {
             Players.addChatTabOption(player, "@" + event.getPlayer().getName());
             Players.addChatTabOption(event.getPlayer(), "@" + player.getName());
         }
+        Players.addChatTabOption(event.getPlayer(), "@all");
     }
 
     @EventHandler
@@ -84,10 +85,10 @@ public final class ChatAt extends PackageModule {
                 continue;
             }
             TextSender.subtitle(p, TextBuilder.buildComponent(this.generateTitleMessage(titleBuilder.toString(), event.getPlayer())),
-                    cfg.getInt("title-fadein"),
-                    cfg.getInt("title-stay"),
-                    cfg.getInt("title-fadeout"));
-            if (cfg.getBoolean("sound")) {
+                    cfg.value("title-fadein").intValue(),
+                    cfg.value("title-stay").intValue(),
+                    cfg.value("title-fadeout").intValue());
+            if (cfg.value("sound").bool()) {
                 p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 0);
             }
         }
@@ -95,15 +96,15 @@ public final class ChatAt extends PackageModule {
 
     public String generateAtMessage(String column) {
         var cfg = this.getConfig();
-        String target = column.replaceFirst("@", "");
-        String completedTemplate = Objects.requireNonNull(cfg.getString("at-template")).replace("{player}", target);
+        var target = column.replaceFirst("@", "");
+        var completedTemplate = cfg.value("at-template").string().replace("{player}", target);
         return PlaceHolderService.format(completedTemplate);
     }
 
     public String generateTitleMessage(String msg, Player p) {
         var cfg = this.getConfig();
-        String template = Objects.requireNonNull(cfg.getString("at-title-template"));
-        String completedTemplate = template.replace("{player}", p.getName()).replace("{message}", msg);
+        var template = Objects.requireNonNull(cfg.value("at-title-template").string());
+        var completedTemplate = template.replace("{player}", p.getName()).replace("{message}", msg);
         return PlaceHolderService.format(completedTemplate);
     }
 }

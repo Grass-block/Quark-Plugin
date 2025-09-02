@@ -19,17 +19,15 @@ language:
     max-player: '{#gray}Max: {#white}{#max-player}'
     date: '{#gray}Date/Time: {#white}{#date}'
     website: '{#gray}Website: {#aqua}{#underline}{#server-website}'
-  custom-ban-message:
-    header: '{#white}You have been banned from {#aqua}{#server-name}{#reset}'
-    name: Sorry, your have been banned by {#server-name}.
-    ip: Sorry, your address has been banned by {#server-name}.
-    hint: If you believe this is an error, please provide your full information to the admin.
-    reason: '{#yellow}Ban reason{#white}: {reason}'
-    info: '{#gray}Operator{#white}: {source}    {#gray}End time: {expire}'
-    website-hint: '{#gray}Visit website: {#aqua}{#underline}{#server-website}'
   custom-kick-message:
     header: '{#white}You have been kicked from {#aqua}{#server-name}{#white} server'
     website-hint: '{#gray}Visit website: {#aqua}{#underline}{#server-website}'
+    ban-header: '{#white}You have been banned from {#aqua}{#server-name}{#reset}'
+    ban-name: Sorry, your have been banned by {#server-name}.
+    ban-ip: Sorry, your address has been banned by {#server-name}.
+    ban-hint: If you believe this is an error, please provide your full information to the admin.
+    ban-reason: '{#yellow}Ban reason{#white}: {reason}'
+    ban-info: '{#gray}Operator{#white}: {source}    {#gray}End time: {expire}'
   bossbar-announcement:
     custom-set: '{global#sys-operation}Successfully set custom BossBar content: {#white}%s'
     custom-clear: '{global#sys-operation}Successfully cleared custom BossBar content.'

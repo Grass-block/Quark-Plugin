@@ -1,5 +1,0 @@
-config:
-  advanced-ban-command:
-    broadcast: true
-  kick-on-reload:
-    op-ignore: false

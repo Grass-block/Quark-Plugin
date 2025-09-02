@@ -7,16 +7,16 @@ import org.bukkit.Material;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.data.Directional;
 import org.bukkit.event.EventHandler;
-import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.api.PluginStorage;
+import org.atcraftmc.starlight.api.PluginMessages;
+import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageItem;
-import org.tbstcraft.quark.foundation.platform.BukkitDataAccess;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.foundation.platform.BukkitDataAccess;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
 
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class DispenserBlockPlacer extends PackageModule {
 

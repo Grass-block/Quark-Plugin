@@ -1,0 +1,29 @@
+config:
+  ac-potato-war:
+    template: "  {#yellow}%s. {#blue}%s {#white}- {#red}%s"
+    ui:
+      - "{#yellow}------------[{#green}{msg#title}{#yellow}]------------"
+      - "%s"
+  guns-dimension-liberation:
+    template: "  {#yellow}%s. {#blue}%s {#white}- {#red}%s"
+    ui: |
+      {#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一一
+      {msg#title}
+      %s
+      %s
+      {#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一一
+    goals: #每个维度独立的解放所需区域数量
+      minecraft-overworld: 3750
+      minecraft-the-nether: 2600
+      minecraft-the-end: 3250
+      aether-the-aether: 2250
+    progress-colors: #每个维度的进度条颜色
+      minecraft-overworld: GREEN
+      minecraft-the-end: PURPLE
+      minecraft-the-nether: RED
+      aether-the-aether: WHITE
+    score-multiplier: #每个维度的积分值
+      minecraft-overworld: 1
+      minecraft-the-nether: 1
+      minecraft-the-end: 2
+      aether-the-aether: 4

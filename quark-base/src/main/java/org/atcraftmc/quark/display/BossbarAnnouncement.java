@@ -5,6 +5,7 @@ import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.atcraftmc.qlib.language.MinecraftLocale;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -14,31 +15,34 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.api.ClientLocaleChangeEvent;
-import org.tbstcraft.quark.data.ModuleDataService;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.api.event.ClientLocaleChangeEvent;
+import org.atcraftmc.starlight.data.ModuleDataService;
 import org.atcraftmc.qlib.language.Language;
 import org.atcraftmc.qlib.language.LanguageEntry;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.APIProfileTest;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.APIProfileTest;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
 import org.atcraftmc.qlib.texts.TextBuilder;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.LocaleService;
+import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.*;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(BossbarAnnouncement.BossbarAnnounceCommand.class)
-@QuarkModule(version = "1.1.0")
+@SLModule(version = "1.1.0")
 public final class BossbarAnnouncement extends PackageModule {
     public static final String TASK_UPDATE_TID = "quark-display:custom_bossbar:update";
-    private final HashMap<Locale, BossbarWrapper> bars = new HashMap<>();
+    private final HashMap<MinecraftLocale, BossbarWrapper> bars = new HashMap<>();
     private String content = null;
 
     @Inject
@@ -59,7 +63,7 @@ public final class BossbarAnnouncement extends PackageModule {
         if (tag.hasKey("custom")) {
             this.content = tag.getString("custom");
         }
-        TaskService.async().timer(TASK_UPDATE_TID, 0, config.getInt("period"), this::updateBossbar);
+        TaskService.async().timer(TASK_UPDATE_TID, 0, ConfigAccessor.getInt(config, "period"), this::updateBossbar);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             this.addBar(player);
@@ -96,17 +100,17 @@ public final class BossbarAnnouncement extends PackageModule {
     }
 
     public void addBar(Player p) {
-        final Locale locale = Language.locale(p);
+        final var locale = LocaleService.locale(p);
         BossbarWrapper b = this.bars.computeIfAbsent(locale, s -> generateBossbar(locale));
         b.add(p);
     }
 
     public void removeBar(Player p) {
-        Locale locale = Language.locale(p);
+        var locale = LocaleService.locale(p);
         for (BossbarWrapper bar : new ArrayList<>(this.bars.values())) {
             bar.remove(p);
         }
-        BossbarWrapper bar = this.bars.get(Language.locale(p));
+        var bar = this.bars.get(LocaleService.locale(p));
         if (bar == null) {
             return;
         }
@@ -115,20 +119,19 @@ public final class BossbarAnnouncement extends PackageModule {
         }
     }
 
-    private BossbarWrapper generateBossbar(Locale locale) {
-        String msg = this.language.buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui"));
+    private BossbarWrapper generateBossbar(MinecraftLocale locale) {
+        String msg = getLanguage().inline(Language.generateTemplate(this.getConfig(), "ui"),locale);
 
         BossbarWrapper wrapper = BossbarWrapper.create();
 
-        wrapper.color(this.getConfig().getString("bar-color"));
+        wrapper.color(this.getConfig().value("bar-color").string());
         wrapper.title(TextBuilder.buildComponent(msg));
         return wrapper;
     }
 
     public void updateBossbar() {
-        Set<Locale> _keySet = this.bars.keySet();
-        for (Locale locale : _keySet) {
-            String msg = this.getLanguage().buildTemplate(locale, Language.generateTemplate(this.getConfig(), "ui"));
+        for (var locale : this.bars.keySet()) {
+            String msg = getLanguage().inline(Language.generateTemplate(this.getConfig(), "ui"),locale);
             BossbarWrapper bar = this.bars.get(locale);
             if (this.content != null) {
                 bar.title(TextBuilder.buildComponent(this.content));
@@ -234,7 +237,7 @@ public final class BossbarAnnouncement extends PackageModule {
             NBTTagCompound tag = ModuleDataService.getEntry(this.getModuleId());
             if (Objects.equals(args[0], "none")) {
                 tag.remove("custom");
-                this.getLanguage().sendMessage(sender, "custom-clear");
+                MessageAccessor.send(this.getLanguage(), sender, "custom-clear");
                 this.getModule().setContent(null);
             } else {
                 StringBuilder sb = new StringBuilder();
@@ -243,7 +246,7 @@ public final class BossbarAnnouncement extends PackageModule {
                 }
                 String content = PlaceHolderService.format(sb.toString());
                 tag.setString("custom", content);
-                this.getLanguage().sendMessage(sender, "custom-set", content);
+                MessageAccessor.send(this.getLanguage(), sender, "custom-set", content);
                 this.getModule().setContent(content);
             }
             this.getModule().updateBossbar();

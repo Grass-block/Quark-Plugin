@@ -6,15 +6,13 @@ import org.atcraftmc.quark.automatic.VMGarbageCleaner;
 import org.atcraftmc.quark.chat.*;
 import org.atcraftmc.quark.commands.*;
 import org.atcraftmc.quark.display.*;
-import org.atcraftmc.quark.management.*;
 import org.atcraftmc.quark.security.*;
 import org.atcraftmc.quark.utilities.*;
-import org.atcraftmc.quark.utilities.viewdistance.DynamicViewDistance;
-import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.framework.packages.initializer.PackageBuilderInitializer;
-import org.tbstcraft.quark.framework.packages.initializer.PackageInitializer;
-import org.tbstcraft.quark.framework.packages.provider.MultiPackageProvider;
-import org.tbstcraft.quark.framework.packages.provider.QuarkPackageProvider;
+import org.atcraftmc.starlight.framework.FeatureAvailability;
+import org.atcraftmc.starlight.framework.packages.initializer.PackageBuilderInitializer;
+import org.atcraftmc.starlight.framework.packages.initializer.PackageInitializer;
+import org.atcraftmc.starlight.framework.packages.provider.MultiPackageProvider;
+import org.atcraftmc.starlight.framework.packages.provider.QuarkPackageProvider;
 
 import java.util.Set;
 
@@ -36,8 +34,6 @@ public final class QuarkBase extends MultiPackageProvider {
                     i.language("quark-commands", "zh_cn");
                     i.language("quark-commands", "en_us");
                 }),
-
-
                 PackageBuilderInitializer.of("quark-utilities", FeatureAvailability.BOTH, (i) -> {
                     i.module("command-tab-fix", CommandTabFix.class);
                     i.module("calculator", Calculator.class);
@@ -52,6 +48,9 @@ public final class QuarkBase extends MultiPackageProvider {
                     i.module("worldedit-commands", WorldEditCommands.class);
                     i.module("surrounding-refresh", SurroundingRefresh.class);
                     i.module("item-custom-name", ItemCustomName.class);
+                    i.module("log-color-patch", LogColorPatch.class);
+                    i.module("inventory-menu", InventoryMenu.class);
+                    i.module("unexpected-kick-prevent", UnexpectedKickPrevent.class);
 
                     i.language("quark-utilities", "zh_cn");
                     i.language("quark-utilities", "en_us");
@@ -70,7 +69,6 @@ public final class QuarkBase extends MultiPackageProvider {
                     i.module("item-defender", ItemDefender.class);
                     i.module("protection-area", ProtectionArea.class);
                     i.module("advanced-permission-control", AdvancedPermissionControl.class);
-                    i.module("ip-defender", IPDefender.class);
 
                     i.service(WESessionTrackService.class);
 
@@ -78,7 +76,6 @@ public final class QuarkBase extends MultiPackageProvider {
                     i.config("quark-security");
                 }), PackageBuilderInitializer.of("quark-display", FeatureAvailability.BOTH, (i) -> {
                     i.module("custom-motd", CustomMotd.class);
-                    i.module("custom-ban-message", CustomBanMessage.class);
                     i.module("custom-kick-message", CustomKickMessage.class);
                     i.module("bossbar-announcement", BossbarAnnouncement.class);
                     i.module("join-quit-message", JoinQuitMessage.class);
@@ -100,17 +97,13 @@ public final class QuarkBase extends MultiPackageProvider {
                     i.language("quark-display", "zh_cn");
                     i.language("quark-display", "en_us");
 
-                    i.service(ChatForwardingService.class);
-
                     i.config("quark-display");
                 }), PackageBuilderInitializer.of("quark-chat", FeatureAvailability.BOTH, (i) -> {
-                    i.module("chat-filter", ChatFilter.class);
-                    i.module("chat-mute", ChatMute.class);
+
                     i.module("chat-translator", ChatTranslator.class);
-                    i.module("chat-component", ChatComponent.class);
                     i.module("chat-at", ChatAt.class);
                     i.module("mail", Mail.class);
-                    i.module("chat-report", ChatReport.class);
+
                     i.module("hitokoto", Hitokoto.class);
                     i.module("chatgpt", ChatGPT.class);
                     i.module("npc-chat", NPCChat.class);
@@ -121,18 +114,8 @@ public final class QuarkBase extends MultiPackageProvider {
                     i.language("quark-chat", "en_us");
 
                     i.config("quark-chat");
-                }), PackageBuilderInitializer.of("quark-management", FeatureAvailability.BOTH, (i) -> {
-                    i.module("advanced-plugin-command", AdvancedPluginCommand.class);
-                    i.module("kick-on-reload", KickOnReload.class);
-                    i.module("maintenance", Maintenance.class);
-                    i.module("advanced-ban-command", AdvancedBan.class);
-                    i.module("stop-confirm", StopConfirm.class);
-                    i.module("server-info", ServerInfo.class);
-
-                    i.language("quark-management", "zh_cn");
-                    i.language("quark-management", "en_us");
-                    i.config("quark-management");
-                }));
+                })
+        );
     }
 
     @Override

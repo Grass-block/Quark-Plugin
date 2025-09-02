@@ -1,9 +1,10 @@
 package org.atcraftmc.quark.contents.music;
 
-import me.gb2022.apm.remote.util.BufferUtil;
-import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.data.assets.AssetGroup;
-import org.tbstcraft.quark.internal.RemoteMessageService;
+import me.gb2022.simpnet.util.BufferUtil;
+import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.SharedObjects;
+import org.atcraftmc.starlight.data.assets.AssetGroup;
+import org.atcraftmc.starlight.core.RemoteMessageService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,12 +15,38 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public interface MusicFileLoader {
     File load(String name);
 
     Set<String> list();
+
+    default String random() {
+        var music = list();
+        var index = SharedObjects.RANDOM.nextInt(music.size());
+        return music.toArray(new String[0])[index];
+    }
+
+    default int trim() {
+        return 0;
+    }
+
+    class FileStorage {
+        private final String path;
+
+        public FileStorage(String path) {
+            this.path = path;
+        }
+
+        private File getMD5StorageFile() {
+            return new File(this.path + "/_checksums.md5.dat");
+        }
+
+        
+    }
+
 
     class LocalLoader implements MusicFileLoader {
         private final AssetGroup folder;
@@ -39,6 +66,21 @@ public interface MusicFileLoader {
         @Override
         public Set<String> list() {
             return this.folder.list();
+        }
+
+        @Override
+        public int trim() {
+            int count = 0;
+            for (var file : Objects.requireNonNull(this.folder.getFolder().listFiles())) {
+                var name = file.getName();
+                if (name.contains(" ")) {
+                    if (file.renameTo(new File(this.folder.getFolder(), name.replace(" ", "_")))) {
+                        count++;
+                    }
+                }
+            }
+
+            return count;
         }
     }
 
@@ -67,7 +109,7 @@ public interface MusicFileLoader {
 
                         try {
                             if (file.createNewFile()) {
-                                Quark.getInstance().getLogger().info("cached music file %s.".formatted(file.getName()));
+                                Starlight.instance().getLogger().info("cached music file %s.".formatted(file.getName()));
                             }
 
                             var stream = new FileOutputStream(file);

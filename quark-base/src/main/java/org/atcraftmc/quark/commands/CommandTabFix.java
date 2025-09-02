@@ -5,15 +5,15 @@ import org.atcraftmc.qlib.command.LegacyCommandManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.TabCompleteEvent;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.component.Components;
-import org.tbstcraft.quark.framework.module.component.ModuleComponent;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
-import org.tbstcraft.quark.util.FilePath;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.component.Components;
+import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.util.FilePath;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-@QuarkModule(version = "1.2.0")
+@SLModule(version = "1.2.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @Components({CommandTabFix.WEAddition.class,})
 public final class CommandTabFix extends PackageModule {

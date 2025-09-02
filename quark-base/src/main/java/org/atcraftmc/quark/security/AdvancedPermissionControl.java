@@ -10,12 +10,13 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.permissions.Permission;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.permission.PermissionService;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.permission.PermissionService;
 
-@QuarkModule(version = "1.0")
+@SLModule(version = "1.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class AdvancedPermissionControl extends PackageModule {
     @Inject("+quark.player.chat")
@@ -35,7 +36,7 @@ public final class AdvancedPermissionControl extends PackageModule {
             return;
         }
         event.setCancelled(true);
-        getLanguage().sendMessage(player, "no-perm", permission.getName());
+        MessageAccessor.send(this.getLanguage(), player, "no-perm", permission.getName());
     }
 
     @Override

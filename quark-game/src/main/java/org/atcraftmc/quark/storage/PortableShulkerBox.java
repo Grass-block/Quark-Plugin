@@ -14,14 +14,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BlockStateMeta;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@QuarkModule(version = "1.0")
+@SLModule(version = "1.2")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class PortableShulkerBox extends PackageModule {
     private final Map<String, Session> sessions = new HashMap<>();
@@ -44,16 +45,20 @@ public final class PortableShulkerBox extends PackageModule {
             return;
         }
 
-        Session session = new Session(inv.getItemInMainHand(), event.getPlayer());
-        this.sessions.put(event.getPlayer().getName(), session);
+        TaskService.entity(event.getPlayer()).run(() -> {
+            Session session = new Session(inv.getItemInMainHand(), event.getPlayer());
+            this.sessions.put(event.getPlayer().getName(), session);
+        });
     }
 
     public void close(String player) {
         if (!this.sessions.containsKey(player)) {
             return;
         }
-        this.sessions.get(player).close();
-        this.sessions.remove(player);
+        TaskService.entity(Bukkit.getPlayerExact(player)).run(() -> {
+            this.sessions.get(player).close();
+            this.sessions.remove(player);
+        });
     }
 
     @EventHandler

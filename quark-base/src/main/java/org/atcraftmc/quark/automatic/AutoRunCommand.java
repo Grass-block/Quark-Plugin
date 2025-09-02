@@ -4,18 +4,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.Objects;
 
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 public final class AutoRunCommand extends PackageModule {
 
     @Override
     public void enable() {
-        ConfigurationSection configs = Objects.requireNonNull(this.getConfig().getSection("commands"));
+        ConfigurationSection configs = Objects.requireNonNull(this.getConfig().value("commands").section());
         for (String name : configs.getKeys(false)) {
             ConfigurationSection command = configs.getConfigurationSection(name);
             if (command == null) {
@@ -32,7 +32,7 @@ public final class AutoRunCommand extends PackageModule {
 
     @Override
     public void disable() {
-        ConfigurationSection configs = Objects.requireNonNull(this.getConfig().getSection("commands"));
+        ConfigurationSection configs = Objects.requireNonNull(this.getConfig().value("commands").section());
         for (String name : configs.getKeys(false)) {
             String taskId = "quark://auto_run_command/" + name;
             TaskService.global().cancel(taskId);

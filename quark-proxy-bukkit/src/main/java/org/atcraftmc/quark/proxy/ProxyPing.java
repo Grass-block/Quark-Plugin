@@ -8,27 +8,28 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.foundation.platform.Players;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.RemoteMessageService;
-import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
+import org.atcraftmc.starlight.foundation.platform.Players;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.RemoteMessageService;
+import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
+import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@QuarkModule(defaultEnable = false)
+@SLModule(defaultEnable = false)
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class ProxyPing extends PackageModule {
     private final Map<String, Integer> ping = new HashMap<>();
 
     @Override
     public void enable() {
-        int interval = getConfig().getInt("interval");
+        int interval = ConfigAccessor.getInt(getConfig(), "interval");
         TaskService.async().timer("quark:proxy-ping:update", interval, interval, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 refreshPing(p);
@@ -69,7 +70,7 @@ public final class ProxyPing extends PackageModule {
         RemoteMessageService.instance()
                 .query("proxy", "player:ping", player.getName())
                 .timeout(250, () -> this.logger.severe("failed to send remote query(%s) for ping!".formatted(player.getName())))
-                .result((b) -> ping1.set(Integer.parseInt(b)))
+                .result((b) -> ping1.addAndGet(Integer.parseInt(b)))
                 .request();
 
         int ping = ping1.get();

@@ -1,0 +1,10 @@
+config:
+  maintenance:
+    reload-ui:
+  dynamic-view-distance:
+    max: 32
+    calc-period: 100000
+  frpc-holder:
+    command: frpc-custom.exe -c frpc-roy-server_tc.toml
+    path: D:/Services/[32767]CustomFrpc
+

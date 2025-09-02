@@ -1,8 +1,8 @@
 package org.atcraftmc.quark.web.http;
 
 import com.sun.net.httpserver.HttpServer;
-import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.SharedObjects;
+import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.SharedObjects;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 public final class HTTPServer {
-    private final Logger logger = Quark.getInstance().getLogger();
+    private final Logger logger = Starlight.instance().getLogger();
     public ExecutorService threadPool;
     private HttpServer server;
     private boolean running = false;

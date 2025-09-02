@@ -4,34 +4,34 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import me.gb2022.commons.reflect.AutoRegister;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import org.atcraftmc.starlight.Starlight;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.component.Components;
-import org.tbstcraft.quark.framework.module.component.ModuleComponent;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.component.Components;
+import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
 
 import java.nio.charset.StandardCharsets;
 
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 @AutoRegister({ServiceType.EVENT_LISTEN})
 @Components({ChatSync.BukkitListener.class, ChatSync.PaperListener.class})
 public final class ChatSync extends PackageModule {
     @Override
     public void enable() {
-        Bukkit.getMessenger().registerOutgoingPluginChannel(Quark.getInstance(), "quark_plugin:msg");
+        Bukkit.getMessenger().registerOutgoingPluginChannel(Starlight.instance(), "quark_plugin:msg");
     }
 
     public void send(Player player, Component message) {
         var payload = GsonComponentSerializer.gson().serialize(message);
-        player.sendPluginMessage(Quark.getInstance(), "quark_plugin:msg", payload.getBytes(StandardCharsets.UTF_8));
+        player.sendPluginMessage(Starlight.instance(), "quark_plugin:msg", payload.getBytes(StandardCharsets.UTF_8));
     }
 
     @AutoRegister({ServiceType.EVENT_LISTEN})

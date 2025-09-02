@@ -4,18 +4,19 @@ import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.*;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
 
 import java.util.List;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({BlockUpdateLocker.BlockUpdateLockerCommand.class})
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 public final class BlockUpdateLocker extends PackageModule {
     private boolean locked = false;
 
@@ -62,10 +63,10 @@ public final class BlockUpdateLocker extends PackageModule {
             switch (args[0]) {
                 case "lock" -> {
                     this.getModule().locked = true;
-                    this.getLanguage().sendMessage(sender,"lock");
+                    MessageAccessor.send(this.getLanguage(), sender, "lock");
                 }
                 case "unlock" -> {
-                    this.getLanguage().sendMessage(sender,"unlock");
+                    MessageAccessor.send(this.getLanguage(), sender, "unlock");
                     this.getModule().locked = false;
                 }
             }

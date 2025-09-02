@@ -3,20 +3,21 @@ package org.atcraftmc.quark.tweaks;
 import me.gb2022.commons.reflect.Inject;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.api.PluginStorage;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.api.PluginMessages;
+import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageItem;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
 
 import java.util.List;
 import java.util.Objects;
 
 
-@QuarkModule(version = "1.2.0")
+@SLModule(version = "1.2.0")
 @CommandProvider({FlySpeedModifier.FlySpeedCommand.class, FlySpeedModifier.FlyToggleCommand.class})
 public final class FlySpeedModifier extends PackageModule {
     @Inject("tip")
@@ -39,7 +40,7 @@ public final class FlySpeedModifier extends PackageModule {
             if (sender instanceof Player p) {
                 if (Objects.equals(args[0], "reset")) {
                     p.setFlySpeed(0.125f);
-                    this.getLanguage().sendMessage(sender, "cmd-speed-set", "0.125");
+                    MessageAccessor.send(this.getLanguage(), sender, "cmd-speed-set", "0.125");
                     return;
                 }
                 float speed = Float.parseFloat(args[0]);
@@ -48,7 +49,7 @@ public final class FlySpeedModifier extends PackageModule {
                     return;
                 }
                 p.setFlySpeed(speed);
-                this.getLanguage().sendMessage(sender, "cmd-speed-set", Float.toString(speed));
+                MessageAccessor.send(this.getLanguage(), sender, "cmd-speed-set", Float.toString(speed));
             }
         }
 
@@ -72,7 +73,7 @@ public final class FlySpeedModifier extends PackageModule {
 
         @Override
         public void onCommand(CommandSender sender, String[] args) {
-            this.getLanguage().sendMessage(sender, "toggle");
+            MessageAccessor.send(this.getLanguage(), sender, "toggle");
             Player p = ((Player) sender);
             p.setAllowFlight(!p.getAllowFlight());
         }

@@ -5,8 +5,6 @@ language:
     hint: "{global#sys-success}已为{#var}个实体持续{#var}ticks设置动量: {#var}({#var},{#var},{#var})"
   command-exec:
     hint: "{global#sys-success}已为{#var}个实体执行指令: {#var}"
-  console-command:
-    execute: "{global#sys-operation}已提交命令行: {#var}"
   item-command:
     bind: "{global#sys-info}已将物品 {#var} 绑定到命令行 {#var}。"
     unbind: "{global#sys-info}已将清除物品 {#var} 的命令行绑定。"

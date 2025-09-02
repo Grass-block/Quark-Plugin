@@ -18,28 +18,29 @@ import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.tbstcraft.quark.data.ModuleDataService;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.data.ModuleDataService;
 import org.atcraftmc.qlib.language.LanguageEntry;
-import org.tbstcraft.quark.foundation.ComponentSerializer;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.BukkitCodec;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.foundation.ComponentSerializer;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.BukkitCodec;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
 import org.atcraftmc.qlib.texts.TextBuilder;
-import org.tbstcraft.quark.framework.customcontent.CustomMeta;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.core.custom.CustomMeta;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.*;
 
-@QuarkModule
+@SLModule
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(HoverDisplay.HoverDisplayCommand.class)
-public final class HoverDisplay extends PackageModule implements QuarkCommandExecutor {
+public final class HoverDisplay extends PackageModule implements PluginCommandExecutor {
     private final Map<String, ArmorStandGroup> stands = new HashMap<>();
 
     @Inject
@@ -144,7 +145,7 @@ public final class HoverDisplay extends PackageModule implements QuarkCommandExe
 
         if (Objects.equals(op, "delete-all")) {
             TaskService.global().run(this::clearAll);
-            this.language.sendMessage(sender, "delete-all");
+            MessageAccessor.send(this.language, sender, "delete-all");
             return;
         }
 
@@ -152,11 +153,11 @@ public final class HoverDisplay extends PackageModule implements QuarkCommandExe
 
         if (Objects.equals(op, "create")) {
             if (stands.containsKey(name)) {
-                this.language.sendMessage(sender, "exist", name);
+                MessageAccessor.send(this.language, sender, "exist", name);
                 return;
             }
         } else if (!stands.containsKey(name)) {
-            this.language.sendMessage(sender, "not-found", name);
+            MessageAccessor.send(this.language, sender, "not-found", name);
             return;
         }
 
@@ -164,19 +165,19 @@ public final class HoverDisplay extends PackageModule implements QuarkCommandExe
         switch (op) {
             case "create" -> {
                 create(name, sender.getLocation().add(0, 1.37, 0), buildText(context));
-                this.language.sendMessage(sender, "create", name);
+                MessageAccessor.send(this.language, sender, "create", name);
             }
             case "delete" -> {
                 TaskService.global().run(() -> stands.remove(name).destroy());
-                this.language.sendMessage(sender, "delete", name);
+                MessageAccessor.send(this.language, sender, "delete", name);
             }
             case "edit" -> {
                 this.stands.get(name).edit(buildText(context));
-                this.language.sendMessage(sender, "edit", name);
+                MessageAccessor.send(this.language, sender, "edit", name);
             }
             case "tp" -> {
                 stands.get(name).teleport(sender.getLocation().add(0, 1.37, 0));
-                this.language.sendMessage(sender, "teleport", name);
+                MessageAccessor.send(this.language, sender, "teleport", name);
             }
         }
     }

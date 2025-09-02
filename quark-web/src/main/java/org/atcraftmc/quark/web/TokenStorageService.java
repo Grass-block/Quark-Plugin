@@ -1,9 +1,9 @@
 package org.atcraftmc.quark.web;
 
 import org.atcraftmc.qlib.config.ConfigContainer;
-import org.tbstcraft.quark.framework.service.Service;
-import org.tbstcraft.quark.framework.service.ServiceInject;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.framework.service.Service;
+import org.atcraftmc.starlight.framework.service.ServiceInject;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public interface TokenStorageService extends Service {
     }
 
     static String create() {
-        int lifetime = ConfigContainer.getInstance().getInt("quark-web","token-storage","expire");
+        int lifetime = ConfigContainer.getInstance().value("quark-web:token-storage:expire").intValue();
 
         SecureRandom secureRandom = new SecureRandom();
         byte[] randomBytes = new byte[64];

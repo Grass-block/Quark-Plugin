@@ -1,0 +1,3 @@
+database:  #Shared data DB connection.
+  id: "starlight:shared"
+  link: "starlight:default" #inline: reuse another connection for this db.

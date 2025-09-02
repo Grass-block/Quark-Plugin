@@ -10,11 +10,11 @@ import org.atcraftmc.quark.warps.BackToDeath;
 import org.atcraftmc.quark.warps.RTP;
 import org.atcraftmc.quark.warps.TPA;
 import org.atcraftmc.quark.warps.Waypoint;
-import org.tbstcraft.quark.FeatureAvailability;
-import org.tbstcraft.quark.framework.packages.initializer.PackageBuilderInitializer;
-import org.tbstcraft.quark.framework.packages.initializer.PackageInitializer;
-import org.tbstcraft.quark.framework.packages.provider.MultiPackageProvider;
-import org.tbstcraft.quark.framework.packages.provider.QuarkPackageProvider;
+import org.atcraftmc.starlight.framework.FeatureAvailability;
+import org.atcraftmc.starlight.framework.packages.initializer.PackageBuilderInitializer;
+import org.atcraftmc.starlight.framework.packages.initializer.PackageInitializer;
+import org.atcraftmc.starlight.framework.packages.provider.MultiPackageProvider;
+import org.atcraftmc.starlight.framework.packages.provider.QuarkPackageProvider;
 
 import java.util.Set;
 
@@ -66,6 +66,7 @@ public final class QuarkGame extends MultiPackageProvider {
                     i.module("tpa", TPA.class);
 
                     i.language("quark-warps", "zh_cn");
+                    i.language("quark-warps", "en_us");
                     i.config("quark-warps");
                 })
         );

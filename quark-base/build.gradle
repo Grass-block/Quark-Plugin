@@ -13,6 +13,7 @@ repositories {
 dependencies {
     compileOnly "org.apache.logging.log4j:log4j-core:2.8.1"
     compileOnly projectLocal("ProtocolLib")
+    implementation projectLocal("paper-logger")
     compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT'
     compileOnly 'com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT'
 }

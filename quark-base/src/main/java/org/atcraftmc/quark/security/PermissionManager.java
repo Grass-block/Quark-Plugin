@@ -4,41 +4,39 @@ import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import org.apache.logging.log4j.Logger;
+import org.atcraftmc.qlib.bukkit.util.permission.PermissionEventHandler;
+import org.atcraftmc.qlib.bukkit.util.permission.PlayerPermissionManager;
 import org.atcraftmc.qlib.command.LegacyCommandManager;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.PermissionAttachment;
-import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.data.PlayerDataService;
-import org.tbstcraft.quark.data.assets.AssetGroup;
-import org.atcraftmc.qlib.language.LanguageEntry;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.permission.LazyPermissionEntry;
-import org.tbstcraft.quark.internal.permission.PermissionEntry;
-import org.tbstcraft.quark.internal.permission.PermissionValue;
+import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.data.PlayerDataService;
+import org.atcraftmc.starlight.data.assets.AssetGroup;
+import org.atcraftmc.starlight.data.storage.StorageTable;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.permission.PermissionEntry;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.*;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({PermissionManager.PermissionCommand.class})
-@QuarkModule(version = "1.0.3")
-public final class PermissionManager extends PackageModule implements QuarkCommandExecutor {
-    public static final HashMap<Permissible, PermissionEntry> CACHE = new HashMap<>();
-    public static final HashMap<String, PermissionAttachment> ATTACHMENTS = new HashMap<>();
+@SLModule(version = "1.0.3")
+public final class PermissionManager extends PackageModule implements PluginCommandExecutor, PermissionEventHandler {
+    private final PlayerPermissionManager service = new PlayerPermissionManager(Starlight.instance(), this);
     private final Map<String, List<String>> tags = new HashMap<>();
     private final Map<String, ConfigurationSection> groups = new HashMap<>();
 
@@ -51,13 +49,78 @@ public final class PermissionManager extends PackageModule implements QuarkComma
     @Inject("permission;false")
     private AssetGroup permissionConfigs;
 
-    static PermissionEntry get(Permissible target) {
-        if (CACHE.containsKey(target)) {
-            return CACHE.get(target);
+    private static void setPermission(PermissionAttachment attachment, List<String> permissions) {
+        for (var item : permissions) {
+            var name = item.substring(1);
+
+            if (item.charAt(0) == '+') {
+                attachment.setPermission(name, true);
+            }
+            if (item.charAt(0) == '-') {
+                attachment.setPermission(name, false);
+            }
         }
-        PermissionEntry entry = new LazyPermissionEntry(target);
-        CACHE.put(target, entry);
-        return entry;
+    }
+
+    @Override
+    public void onAttachmentCreated(UUID uuid, PermissionAttachment attachment) {
+        var player = Bukkit.getPlayer(uuid);
+
+        if (player == null) {
+            throw new IllegalArgumentException("Player not found: " + uuid);
+        }
+
+        this.sync(player, attachment);
+    }
+
+    public void sync(Player player, PermissionAttachment attachment) {
+        var data = PlayerDataService.getEntry(player.getName(), this.getId());
+        var permissions = new ArrayList<String>();
+        var tags = new ArrayList<String>();
+
+        if (!data.hasKey("group")) {
+            data.setString("group", player.isOp() ? "--operator" : "--player");
+            this.logger.info("set default permission group {} to {}", data.getString("group"), player.getName());
+            PlayerDataService.save(player.getName());
+        }
+
+        var group = data.getString("group");
+        var section = this.groups.get(group);
+
+        if (section != null) {
+            permissions.addAll(section.getStringList("permissions"));
+            tags.addAll(section.getStringList("tags"));
+        } else {
+            this.logger.warn("detected unknown permission group of player {}: {}",player.getName(), group);
+        }
+
+        tags.addAll(getPermissionTags(player.getName()).getTagMap().keySet());
+
+        var keys = new HashSet<>(data.getTagMap().keySet());
+
+        keys.remove("group");
+        keys.remove("tags");
+
+        for (var key : keys) {
+            try {
+                permissions.add(data.getBoolean(key) ? "+" : "-" + key);
+            } catch (ClassCastException ignored) {
+                this.logger.warn("attempt to fetch invalid permission data {} for %{}", key, player.getName());
+            }
+        }
+
+        for (var tag : tags) {
+            var tagPermissions = this.tags.get(tag);
+            if (tagPermissions == null) {
+                this.logger.warn("find an unknown permission tag of player {} : {}", player.getName(), tag);
+                continue;
+            }
+
+            setPermission(attachment, tagPermissions);
+        }
+
+        setPermission(attachment, permissions);
+        TaskService.async().delay(10, LegacyCommandManager::sync);
     }
 
     @Override
@@ -84,7 +147,7 @@ public final class PermissionManager extends PackageModule implements QuarkComma
                     }
                 }
 
-                this.logger.info("loaded configuration file %s as tag provider.".formatted(cfg));
+                this.logger.info("loaded configuration file {} as tag provider.", cfg);
                 continue;
             }
             if (dom.contains("groups")) {
@@ -96,184 +159,74 @@ public final class PermissionManager extends PackageModule implements QuarkComma
                     this.groups.put(groupName, group.getConfigurationSection(groupName));
                 }
 
-                this.logger.info("loaded configuration file %s as group provider.".formatted(cfg));
+                this.logger.info("loaded configuration file {} as group provider.", cfg);
                 continue;
             }
 
-            this.logger.info("skipped unknown config file %s".formatted(cfg));
+            this.logger.info("skipped unknown config file {}", cfg);
         }
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            attach(p);
-        }
+        this.service.initialize();
     }
 
     @Override
     public void disable() {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            detach(p);
-        }
-
-        for (PermissionEntry entry : CACHE.values()) {
-            entry.getAttachment().remove();
-        }
-
-        CACHE.clear();
+        this.service.release();
     }
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        this.attach(event.getPlayer());
-    }
-
-    @EventHandler
-    public void onPlayerLeave(PlayerQuitEvent event) {
-        this.detach(event.getPlayer());
-    }
-
-
-    //attachment
-    public void attach(Player player) {
-        PermissionAttachment attachment = player.addAttachment(Quark.getInstance());
-        ATTACHMENTS.put(player.getName(), attachment);
-        this.sync(player);
-    }
-
-    public void detach(Player player) {
-        PermissionAttachment attachment = ATTACHMENTS.get(player.getName());
-        if (attachment == null) {
-            return;
-        }
-        ATTACHMENTS.remove(player.getName());
-        player.removeAttachment(attachment);
-        player.recalculatePermissions();
-    }
-
-    public void sync(Player p) {
-        PermissionEntry entry = get(p);
-        NBTTagCompound data = PlayerDataService.getEntry(p.getName(), this.getId());
-
-        var permissions = new ArrayList<String>();
-        var tags = new ArrayList<String>();
-
-        if (!data.hasKey("group")) {
-            data.setString("group", p.isOp() ? "--operator" : "--player");
-            this.logger.info("set default permission group %s to %s".formatted(data.getString("group"), p.getName()));
-            PlayerDataService.save(p.getName());
-        }
-        String group = data.getString("group");
-        ConfigurationSection section = this.groups.get(group);
-
-        if (section != null) {
-            permissions.addAll(section.getStringList("permissions"));
-            tags.addAll(section.getStringList("tags"));
-        } else {
-            this.logger.warn("detected unknown permission group of player %s : %s".formatted(p.getName(), group));
-        }
-
-        tags.addAll(getPermissionTags(p.getName()).getTagMap().keySet());
-
-        var keys = new HashSet<>(data.getTagMap().keySet());
-
-        keys.remove("group");
-        keys.remove("tags");
-
-        for (String key : keys) {
-            try {
-                permissions.add(data.getBoolean(key) ? "+" : "-" + key);
-            } catch (ClassCastException ignored) {
-                //this.logger.warning("attempt to fetch invalid permission data %s for %s".formatted(key, p.getName()));;
-            }
-        }
-
-        entry.clear();
-
-        for (String tag : tags) {
-            List<String> tagPermissions = this.tags.get(tag);
-            if (tagPermissions == null) {
-                this.logger.warn("find an unknown permission tag of player %s : %s".formatted(p.getName(), tag));
-                continue;
-            }
-
-            setPermission(entry, tagPermissions);
-        }
-
-        setPermission(entry, permissions);
-        LegacyCommandManager.sync();
-        p.recalculatePermissions();
-    }
-
-    private void setPermission(PermissionEntry entry, List<String> permissions) {
-        for (String item : permissions) {
-            String name = item.substring(1);
-
-            if (item.charAt(0) == '+') {
-                entry.setPermission(name, PermissionValue.TRUE);
-            }
-            if (item.charAt(0) == '-') {
-                entry.setPermission(name, PermissionValue.FALSE);
-            }
-        }
-    }
-
 
     //modify
-    private NBTTagCompound getPermissionTags(String name) {
-        NBTTagCompound tag = PlayerDataService.getEntry(name, this.getId());
-        if (!tag.hasKey("tags")) {
-            tag.setTag("tags", new NBTTagCompound());
+    private StorageTable getPermissionTags(String name) {
+        var data = PlayerDataService.get(name);
+        if (!data.hasKey("tags")) {
+            data.setTag("tags", new NBTTagCompound());
         }
-        return tag.getCompoundTag("tags");
+        return data.getTable("tags");
     }
-
 
     //command
     @Override
     public void execute(CommandExecution context) {
+        var target = context.requireOfflinePlayer(1);
         var playerName = context.requireArgumentAt(1);
-        var target = context.requireOfflinePlayer(1).getPlayer();
         var name = context.requireArgumentAt(2);
         var sender = context.getSender();
-
-        var data = PlayerDataService.get(playerName).getTable(this.getId());
+        var data = PlayerDataService.get(target);
+        var table = data.getTable(this.getId());
 
         switch (context.requireEnum(0, "set", "add-tag", "remove-tag", "group")) {
             case "set" -> {
                 var value = context.requireArgumentAt(3);
 
                 if (Objects.equals(value, "unset")) {
-                    data.remove(name);
+                    table.remove(name);
                 } else {
-                    data.setBoolean(name, Boolean.parseBoolean(value));
+                    table.setBoolean(name, Boolean.parseBoolean(value));
                 }
 
-                if (target != null) {
-                    PermissionEntry entry = get(target);
-                    entry.setPermission(name, PermissionValue.parse(value));
-                }
-
-                this.language.sendMessage(sender, "cmd-perm-set", playerName, "{;}" + name, value);
+                MessageAccessor.send(this.language, sender, "cmd-perm-set", playerName, "{;}" + name, value);
             }
             case "add-tag" -> {
                 getPermissionTags(playerName).setString(name, name);
-                this.language.sendMessage(sender, "cmd-tag-add", playerName, name);
+                MessageAccessor.send(this.language, sender, "cmd-tag-add", playerName, name);
             }
             case "remove-tag" -> {
                 getPermissionTags(playerName).remove(name);
-                this.language.sendMessage(sender, "cmd-tag-remove", playerName, name);
+                MessageAccessor.send(this.language, sender, "cmd-tag-remove", playerName, name);
             }
             case "group" -> {
                 data.setString("group", name);
-                this.language.sendMessage(sender, "cmd-group-set", playerName, name);
+                MessageAccessor.send(this.language, sender, "cmd-group-set", playerName, name);
             }
         }
 
-        PlayerDataService.save(playerName);
-        if (target == null) {
+        data.save();
+        if (!target.isOnline()) {
             return;
         }
-        this.sync(target);
-        LegacyCommandManager.sync();
+
+        var attachment = this.service.attachment(target.getPlayer());
+        this.sync(Objects.requireNonNull(target.getPlayer()), attachment);
+        attachment.refresh();
     }
 
     @Override

@@ -8,12 +8,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.foundation.command.*;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
+import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
+import org.atcraftmc.starlight.foundation.platform.Players;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
 
-@QuarkModule(version = "1.0.2")
+@SLModule(version = "1.0.2")
 public final class TPA extends PackageModule {
     private final TPACommand tpa = new TPACommand();
     private final TPAHereCommand tpaHere = new TPAHereCommand();
@@ -23,8 +26,8 @@ public final class TPA extends PackageModule {
         this.tpa.initContext(this);
         this.tpaHere.initContext(this);
 
-        QuarkCommandManager.getInstance().register(this.tpa);
-        QuarkCommandManager.getInstance().register(this.tpaHere);
+        StarlightCommandManager.getInstance().register(this.tpa);
+        StarlightCommandManager.getInstance().register(this.tpaHere);
 
         BukkitUtil.registerEventListener(this.tpa);
         BukkitUtil.registerEventListener(this.tpaHere);
@@ -32,8 +35,8 @@ public final class TPA extends PackageModule {
 
     @Override
     public void disable() {
-        QuarkCommandManager.getInstance().unregister(this.tpa);
-        QuarkCommandManager.getInstance().unregister(this.tpaHere);
+        StarlightCommandManager.getInstance().unregister(this.tpa);
+        StarlightCommandManager.getInstance().unregister(this.tpaHere);
 
         BukkitUtil.unregisterEventListener(this.tpa);
         BukkitUtil.unregisterEventListener(this.tpaHere);
@@ -64,26 +67,26 @@ public final class TPA extends PackageModule {
             switch (context.requireEnum(0, "request", "accept", "deny")) {
                 case "accept" -> {
                     if (!getStorage().containsRequest(senderName, targetName)) {
-                        getLanguage().sendMessage(sender, this.getName() + "-no-request", targetName);
+                        MessageAccessor.send(this.getLanguage(), sender, this.getName() + "-no-request", targetName);
                         return;
                     }
                     this.onAccepted(sender, target);
-                    getLanguage().sendMessage(sender, this.getName() + "-accept-sender", targetName);
-                    getLanguage().sendMessage(target, this.getName() + "-accept-target", senderName);
+                    MessageAccessor.send(this.getLanguage(), sender, this.getName() + "-accept-sender", targetName);
+                    MessageAccessor.send(this.getLanguage(), target, this.getName() + "-accept-target", senderName);
                     getStorage().removeRequest(senderName, targetName);
                 }
                 case "deny" -> {
                     if (!getStorage().containsRequest(senderName, targetName)) {
-                        getLanguage().sendMessage(sender, this.getName() + "-no-request", targetName);
+                        MessageAccessor.send(this.getLanguage(), sender, this.getName() + "-no-request", targetName);
                         return;
                     }
-                    getLanguage().sendMessage(sender, this.getName() + "-deny-sender", targetName);
-                    getLanguage().sendMessage(target, this.getName() + "-deny-target", senderName);
+                    MessageAccessor.send(this.getLanguage(), sender, this.getName() + "-deny-sender", targetName);
+                    MessageAccessor.send(this.getLanguage(), target, this.getName() + "-deny-target", senderName);
                     getStorage().removeRequest(senderName, targetName);
                 }
                 case "request" -> {
-                    getLanguage().sendMessage(sender, this.getName() + "-request-sender", targetName);
-                    getLanguage().sendMessage(target, this.getName() + "-request-target", senderName, senderName, senderName);
+                    MessageAccessor.send(this.getLanguage(), sender, this.getName() + "-request-sender", targetName);
+                    MessageAccessor.send(this.getLanguage(), target, this.getName() + "-request-target", senderName, senderName, senderName);
                     getStorage().addRequest(targetName, senderName);
                 }
             }
@@ -108,7 +111,7 @@ public final class TPA extends PackageModule {
 
         @Override
         public void onAccepted(Player handler, Player target) {
-            target.teleport(handler.getLocation());
+            Players.teleport(target, handler.getLocation());
         }
     }
 
@@ -117,7 +120,7 @@ public final class TPA extends PackageModule {
 
         @Override
         public void onAccepted(Player handler, Player target) {
-            handler.teleport(target.getLocation());
+            Players.teleport(handler, target.getLocation());
         }
     }
 }

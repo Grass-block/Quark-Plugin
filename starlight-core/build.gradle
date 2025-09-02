@@ -1,0 +1,81 @@
+plugins {
+    id 'java'
+}
+
+project.setProperty("version", "0.70.10")
+
+apply from: rootDir.getAbsolutePath() + "/gbuild.gradle"
+apply from: "../github-packages.gradle"
+
+applyGlobalScript("Publish/MinecraftServerTest.gradle")
+applyGlobalScript("Publish/ProjectOutput.gradle")
+applyGlobalScript("Publish/LocalStorage.gradle")
+
+applyGlobalScript("Repo/MinecraftPlugins.gradle")
+applyGlobalScript("/Dependencies.gradle")
+
+apply from: rootDir.getAbsolutePath() + "/info.gradle"
+
+
+repositories {
+    mavenCentral()
+    papermcRepo()
+    spigotmcRepo()
+}
+
+compileJava {
+    sourceCompatibility = 17
+    targetCompatibility = 17
+}
+
+repositories {
+    maven {
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+}
+
+//implemented by platform
+dependencies {
+    compileOnly 'net.kyori:adventure-api:4.17.0'
+    compileOnly 'net.kyori:adventure-text-serializer-gson:4.17.0'
+    compileOnly 'net.kyori:adventure-text-serializer-legacy:4.17.0'
+    compileOnly 'net.kyori:adventure-text-minimessage:4.17.0'
+    compileOnly 'me.clip:placeholderapi:2.11.6'
+}
+
+//integrated
+dependencies {
+    implementation 'me.gb2022.commons:commons-nbt:1.0'
+    implementation 'me.gb2022.commons:commons-math:1.0'
+    implementation 'me.gb2022.commons:commons-container:1.0'
+    implementation 'me.gb2022.commons:commons-general:1.0'
+    implementation 'me.gb2022.commons:commons-event:1.0'
+    implementation 'me.gb2022.commons:commons-reflection:1.0'
+
+    implementation('org.fusesource.leveldbjni:leveldbjni-all:1.8')
+    implementation localStorage("me.gb2022.pluginsX-lib")
+
+    implementation("net.kyori:adventure-platform-bukkit:4.3.4")
+
+    implementation gbuildLib("org.atcraftmc.qlib:qlib-bukkit")
+    implementation gbuildLib("me.gb2022.apm:apm-remote")
+    implementation gbuildLib("me.gb2022.apm:apm-plugin")
+
+    implementation 'com.h2database:h2:2.3.232'
+}
+
+//platform api reference
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT';
+    compileOnly 'io.netty:netty-buffer:4.1.25.Final'
+
+    compileOnly projectLib('paper-plugin')
+    compileOnly projectLib("ProtocolLib")
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from sourceSets.main.output.filter { File file ->
+        (file.name != 'LICENSE.txt')
+    }
+}

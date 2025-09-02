@@ -1,14 +1,15 @@
 package org.atcraftmc.quark.tweaks;
 
 import org.bukkit.event.Listener;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@QuarkModule(version = "1.2.0")
+@SLModule(version = "1.2.0")
 public class VanillaTweaks extends PackageModule {
     private static final Map<String, Listener> FEATURES = new HashMap<>();
 
@@ -20,7 +21,7 @@ public class VanillaTweaks extends PackageModule {
     public void enable() {
         initializeFeatures();
         for (String k : FEATURES.keySet()) {
-            if (!this.getConfig().getBoolean(k)) {
+            if (!ConfigAccessor.getBool(this.getConfig(), k)) {
                 continue;
             }
             BukkitUtil.registerEventListener(FEATURES.get(k));

@@ -1,0 +1,33 @@
+language:
+  tab-menu:
+    welcome-header: '欢迎来到{#aqua}{#server-name}{#reset}服务器!'
+    tps: '{#gray}TPS: {#white}{#tps}{#white}/20'
+    mspt: '{#gray}MSPT: {#white}{#mspt}{#white}'
+    ping: '{#gray}Ping: {#white}{#ping}'
+    player: '{#gray}当前在线: {#white}{#player}'
+    max-player: '{#gray}最大: {#white}{#max-player}'
+    date: '{#gray}日期/时间: {#white}{#date}'
+    website: '{#gray}官网: {#aqua}{#underline}{#server-website}'
+  custom-scoreboard:
+    title: '{#aqua}{#server-name}{#reset}'
+    date: '{#gray}日期: {#white}{#date-day}'
+    time: '{#gray}时间: {#white}{#date-time}'
+    player: '{#gray}玩家: {#white}{player}'
+    rank: '{#gray}身份: {#white}{#rank}'
+    play-time: '{#gray}游戏时间: {#white}{#play-time}'
+    world-time: '{#gray}世界时间: {#white}{#world-time}'
+    player-count: '{#gray}在线玩家: {#white}{#player}'
+    ping: '{#gray}当前延迟(参考): {#white}{#ping}'
+    tps: '{#gray}TPS: {#white}{#tps}{#white}/20'
+    mspt: '{#gray}MSPT: {#white}{#mspt}{#white}'
+    website: '{#yellow}{#server-website}'
+    qq-group: '{#gray}QQ群:{#aqua}{#underline}{#qq-group}'
+  player-name-header:
+    set-header: '{global#sys-operation}将 {#var} 的头衔设置为 {#var}。'
+    clear-header: '{global#sys-operation}将 {#var} 的头衔清除。'
+    announce: '{global#sys-info}玩家 {#var} 获得了头衔 {#var}。'
+  we-session-renderer:
+    mode-persistent: "{global#sys-info}WorldEdit选区渲染模式已设为 [{#white}持久{#gray}]"
+    mode-update: "{global#sys-info}WorldEdit选区渲染模式已设为 [{#white}更新时{#gray}]"
+    mode-off: "{global#sys-info}WorldEdit选区渲染模式已设为 [{#white}关{#gray}]"
+    render: "{global#sys-success}您的WorldEdit选区已渲染（高亮）。"

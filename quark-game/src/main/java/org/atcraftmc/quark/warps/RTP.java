@@ -7,30 +7,32 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.foundation.platform.Players;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.foundation.platform.Players;
+import org.atcraftmc.starlight.framework.module.CommandModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
-@QuarkModule
+@SLModule
 @QuarkCommand(name = "random-tp", aliases = "rtp", permission = "+quark.warps.rtp")
 public final class RTP extends CommandModule {
 
     @Override
     public void execute(CommandExecution context) {
-        getLanguage().sendMessage(context.getSender(), "start", this.getConfig().getInt("attempt"));
+        MessageAccessor.send(this.getLanguage(), context.getSender(), "start", ConfigAccessor.getInt(this.getConfig(), "attempt"));
 
         this.teleport(context.requireSenderAsPlayer(), (loc) -> {
             if (loc == null) {
-                getLanguage().sendMessage(context.getSender(), "failed");
+                MessageAccessor.send(this.getLanguage(), context.getSender(), "failed");
                 return;
             }
 
-            getLanguage().sendMessage(context.getSender(), "success", loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+            MessageAccessor.send(this.getLanguage(), context.getSender(), "success", loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
         });
     }
 
@@ -38,10 +40,10 @@ public final class RTP extends CommandModule {
     public void attempt(Random random, Player player, Consumer<Location> callback, int counter, boolean async) {
         (async ? TaskService.async() : TaskService.global()).delay(1, () -> {
 
-            var limit = this.getConfig().getInt("limit");
-            var max = this.getConfig().getInt("max-height");
-            var min = this.getConfig().getInt("min-height");
-            var attempt = this.getConfig().getInt("attempt");
+            var limit = ConfigAccessor.getInt(this.getConfig(), "limit");
+            var max = ConfigAccessor.getInt(this.getConfig(), "max-height");
+            var min = ConfigAccessor.getInt(this.getConfig(), "min-height");
+            var attempt = ConfigAccessor.getInt(this.getConfig(), "attempt");
 
             var x = random.nextInt(-limit, limit);
             var z = random.nextInt(-limit, limit);

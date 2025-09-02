@@ -11,17 +11,17 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.component.Components;
-import org.tbstcraft.quark.framework.module.component.ModuleComponent;
-import org.tbstcraft.quark.framework.module.services.Registers;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.permission.PermissionService;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.component.Components;
+import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
+import org.atcraftmc.starlight.framework.module.services.Registers;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.permission.PermissionService;
 
-@QuarkModule(version = "1.0.3")
+@SLModule(version = "1.0.3")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @Components(MapProtect.PaperPreAttackEventEXT.class)
 public final class MapProtect extends PackageModule {

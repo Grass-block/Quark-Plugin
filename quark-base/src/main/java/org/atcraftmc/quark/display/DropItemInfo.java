@@ -2,6 +2,7 @@ package org.atcraftmc.quark.display;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import net.kyori.adventure.text.Component;
+import org.atcraftmc.qlib.platform.PluginPlatform;
 import org.atcraftmc.qlib.texts.TextBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Nameable;
@@ -14,14 +15,14 @@ import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.TaskService;
 
-@QuarkModule
+@SLModule
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class DropItemInfo extends PackageModule {
 
@@ -112,8 +113,10 @@ public final class DropItemInfo extends PackageModule {
         var stack = item.getItemStack();
         var type = stack.getType();
         var id = (type.isBlock() ? "block." : "item.") + type.getKey().toString().replace(":", ".");
+        var s = PluginPlatform.global()
+                .globalFormatMessage(template.replace("{amount}", String.valueOf(stack.getAmount())).replace("{id}", id));
 
-        item.customName(TextBuilder.buildComponent(template.replace("{amount}", String.valueOf(stack.getAmount())).replace("{id}", id)));
+        item.customName(TextBuilder.buildComponent(s));
         item.setCustomNameVisible(true);
     }
 }

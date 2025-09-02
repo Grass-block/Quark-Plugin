@@ -3,13 +3,12 @@ package org.atcraftmc.quark.lobby;
 import me.gb2022.commons.reflect.AutoRegister;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
-@QuarkModule()
+@SLModule()
 public final class BackToSpawn extends PackageModule {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){

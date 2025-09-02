@@ -7,12 +7,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.permissions.Permission;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
 
 @AutoRegister({ServiceType.EVENT_LISTEN})
-@QuarkModule(version = "1.0")
+@SLModule(version = "1.0")
 public final class SitOnPlayer extends PackageModule {
 
     @Inject("+quark.sit")

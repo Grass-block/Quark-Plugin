@@ -10,25 +10,26 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.api.PluginStorage;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.api.PluginMessages;
+import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageItem;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.customcontent.CustomMeta;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.core.custom.CustomMeta;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
 
 import java.util.List;
 import java.util.Objects;
 
-@QuarkModule(version = "0.3")
+@SLModule(version = "0.3")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({ItemCommand.ItemCommandCommand.class})
-public final class ItemCommand extends PackageModule implements QuarkCommandExecutor {
+public final class ItemCommand extends PackageModule implements PluginCommandExecutor {
 
     @Inject("tip")
     private LanguageItem tip;
@@ -76,13 +77,13 @@ public final class ItemCommand extends PackageModule implements QuarkCommandExec
     public void onCommand(CommandSender sender, String[] args) {
         ItemStack stack = ((Player) sender).getInventory().getItemInMainHand();
         if (stack.getType() == Material.AIR) {
-            this.getLanguage().sendMessage(sender, "bind-failed");
+            MessageAccessor.send(this.getLanguage(), sender, "bind-failed");
             return;
         }
         String id = stack.getType().getKey().getKey();
         if (args[0].equals("none")) {
             CustomMeta.removeItemPDCProperty(stack, "cmd_bind");
-            this.getLanguage().sendMessage(sender, "unbind", id);
+            MessageAccessor.send(this.getLanguage(), sender, "unbind", id);
         } else {
             StringBuilder sb = new StringBuilder();
             for (String s : args) {
@@ -91,7 +92,7 @@ public final class ItemCommand extends PackageModule implements QuarkCommandExec
             String cmdLine = sb.toString();
 
             CustomMeta.setItemPDCProperty(stack, "cmd_bind", cmdLine);
-            this.getLanguage().sendMessage(sender, "bind", id, cmdLine);
+            MessageAccessor.send(this.getLanguage(), sender, "bind", id, cmdLine);
         }
     }
 

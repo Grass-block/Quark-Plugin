@@ -13,22 +13,24 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
-import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.api.PluginStorage;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.api.PluginMessages;
+import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageItem;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
-import org.tbstcraft.quark.util.TaskHandle;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.platform.APIProfile;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.util.TaskHandle;
 
 import java.util.*;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
-@QuarkModule(beta = true, compatBlackList = {APIProfile.ARCLIGHT, APIProfile.BUKKIT, APIProfile.BUKKIT})
+@SLModule(beta = true, compatBlackList = {APIProfile.ARCLIGHT, APIProfile.BUKKIT, APIProfile.BUKKIT})
 @CommandProvider(RealisticSleep.LeaveBedCommand.class)
 public final class RealisticSleep extends PackageModule {
     private final Map<World, Set<Player>> sleepingPlayers = new HashMap<>();
@@ -45,7 +47,7 @@ public final class RealisticSleep extends PackageModule {
                 this.sleepingPlayers.put(w, new HashSet<>());
             }
 
-            w.setTime((long) (w.getTime() + this.sleepingPlayers.get(w).size() * this.getConfig().getFloat("scale-per-player")));
+            w.setTime((long) (w.getTime() + this.sleepingPlayers.get(w).size() * ConfigAccessor.getFloat(getConfig(), "scale-per-player")));
         }
     });
 
@@ -55,12 +57,12 @@ public final class RealisticSleep extends PackageModule {
     @Override
     public void enable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
-        TaskService.global().timer("quark:rs:health", 1, this.getConfig().getInt("health-interval"), () -> {
+        TaskService.global().timer("quark:rs:health", 1, ConfigAccessor.getInt(this.getConfig(), "health-interval"), () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (!this.whateverSleepingPlayers.contains(p)) {
                     continue;
                 }
-                var health = p.getHealth() + this.getConfig().getFloat("health-amount");
+                var health = p.getHealth() + ConfigAccessor.getFloat(getConfig(), "health-amount");
                 var max = Objects.requireNonNull(p.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
 
                 p.setHealth(MathHelper.clamp(health, 0, max));
@@ -91,7 +93,7 @@ public final class RealisticSleep extends PackageModule {
         this.whateverSleepingPlayers.add(event.getPlayer());
         if (event.getPlayer().getWorld().isDayTime()) {
             this.daySleepingPlayers.add(event.getPlayer());
-            this.getLanguage().sendMessage(event.getPlayer(), "sleep-day");
+            MessageAccessor.send(this.getLanguage(), event.getPlayer(), "sleep-day");
             return;
         }
         this.getPlayerList(event.getPlayer()).add(event.getPlayer());
@@ -117,7 +119,7 @@ public final class RealisticSleep extends PackageModule {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
             this.getModule().daySleepingPlayers.remove(((Player) sender));
-            this.getLanguage().sendMessage(sender, "leave-bed");
+            MessageAccessor.send(this.getLanguage(), sender, "leave-bed");
         }
     }
 }

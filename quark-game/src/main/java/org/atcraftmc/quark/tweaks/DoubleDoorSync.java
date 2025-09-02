@@ -9,11 +9,11 @@ import org.bukkit.block.data.type.Door;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
 
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class DoubleDoorSync extends PackageModule {
     @EventHandler
@@ -47,7 +47,10 @@ public final class DoubleDoorSync extends PackageModule {
         if (isNotWoodenDoor(pair.getType())) {
             return;
         }
-        Door pairData = ((Door) pair.getBlockData());
+
+        if(!(pair.getBlockData() instanceof Door pairData)){
+            return;
+        }
 
         if (pairData.getHinge() == data.getHinge()) {
             return;

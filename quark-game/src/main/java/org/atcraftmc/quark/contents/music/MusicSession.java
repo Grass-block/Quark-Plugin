@@ -1,20 +1,20 @@
 package org.atcraftmc.quark.contents.music;
 
-import org.bukkit.entity.Player;
-import org.tbstcraft.quark.PlayerView;
 import org.atcraftmc.qlib.language.Language;
 import org.atcraftmc.qlib.texts.TextBuilder;
-import org.tbstcraft.quark.foundation.TextSender;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.bukkit.entity.Player;
+import org.atcraftmc.starlight.core.PlayerView;
+import org.atcraftmc.starlight.foundation.TextSender;
+import org.atcraftmc.starlight.core.LocaleService;
+import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.util.PlayerList;
 
 import java.text.DecimalFormat;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class MusicSession implements Runnable {
     private final MusicPlayer module;
-    private final Set<Player> players = new HashSet<>();
+    private final PlayerList players = new PlayerList();
     private final AtomicInteger currentTick = new AtomicInteger(-1);
 
     private MusicData next;
@@ -30,7 +30,7 @@ public final class MusicSession implements Runnable {
     }
 
     static String formatTime(long mss) {
-        DecimalFormat fmt = new DecimalFormat("00");
+        var fmt = new DecimalFormat("00");
 
         long minutes = (mss / (1000 * 60));
         long seconds = (mss % (1000 * 60)) / 1000;
@@ -84,6 +84,10 @@ public final class MusicSession implements Runnable {
     }
 
     private void renderUI(Player player) {
+        if (player == null) {
+            return;
+        }
+
         String template = Language.generateTemplate(this.module.getConfig(), "ui", (s) -> {
             if (this.pause) {
                 s = s.replace("{msg#playing}", "{msg#paused}");
@@ -91,10 +95,10 @@ public final class MusicSession implements Runnable {
             return s;
         });
         template = template.replace("{name}", currentMusic.getName().replace("_", " "))
-                .replace("{time}", formatTime(currentMusic.getMillsLength() * currentTick.get() / currentMusic.getTickLength() / 1000))
-                .replace("{total}", formatTime(currentMusic.getMillsLength() / 1000));
+                .replace("{time}", formatTime(currentMusic.getMillsLength() * currentTick.get() / currentMusic.getTickLength()))
+                .replace("{total}", formatTime(currentMusic.getMillsLength()));
 
-        String ui = this.module.getLanguage().buildTemplate(Language.locale(player), template);
+        String ui = this.module.getLanguage().inline(template, LocaleService.locale(player));
         TextSender.sendActionbarTitle(player, TextBuilder.build(ui));
     }
 
@@ -103,9 +107,7 @@ public final class MusicSession implements Runnable {
     public void playSelected(MusicData current) {
         var isFirstMusicPlayed = false;
 
-        for (Player p : this.players) {
-            render(p);
-        }
+        this.players.foreach(this::render);
 
         this.currentMusic = current;
         this.currentTick.set(0);
@@ -140,19 +142,24 @@ public final class MusicSession implements Runnable {
                     continue;
                 }
 
-                long delayMilliseconds = current.getMillsLength() * delayedTicks / current.getTickLength() / 1000;
+                var delayPercentage = ((float) delayedTicks) / current.getTickLength();
+                long delayMilliseconds = current.getTempo() != -1 ? (long) (current.getTempo() * delayedTicks) : (long) (current.getMillsLength() * delayPercentage);
+
                 try {
                     if (isFirstMusicPlayed) {
                         Thread.sleep(delayMilliseconds);
+
                     } else {
                         Thread.sleep(100);
                     }
                 } catch (InterruptedException ignored) {
                 }
+
                 delayedTicks = 0;
+
                 for (MusicNode node : current.getNodes().get(currentTick.get())) {
                     float power = node.getPower();
-                    this.module.playNode(this.players, node.getNode(), current.getOffset(), node.getInstrument(), power);
+                    this.module.playNode(this.players.getPlayerObjects(), node.getNode(), current.getOffset(), node.getInstrument(), power);
                     isFirstMusicPlayed = true;
                 }
             }

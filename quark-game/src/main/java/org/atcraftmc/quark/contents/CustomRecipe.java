@@ -7,22 +7,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Recipe;
-import org.tbstcraft.quark.data.assets.AssetGroup;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.crafting.RecipeDeserializer;
-import org.tbstcraft.quark.foundation.crafting.RecipeManager;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.data.assets.AssetGroup;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.crafting.RecipeDeserializer;
+import org.atcraftmc.starlight.foundation.crafting.RecipeManager;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-@QuarkModule(version = "1.2.6")
+@SLModule(version = "1.2.6")
 @CommandProvider(CustomRecipe.RecipeCommand.class)
 public final class CustomRecipe extends PackageModule {
     private final Set<Recipe> recipes = new HashSet<>();
@@ -92,11 +93,11 @@ public final class CustomRecipe extends PackageModule {
             switch (args[0]) {
                 case "reload" -> {
                     this.getModule().load();
-                    getLanguage().sendMessage(sender, "reload");
+                    MessageAccessor.send(this.getLanguage(), sender, "reload");
                 }
                 case "restore" -> {
                     this.getModule().restoreDefault();
-                    getLanguage().sendMessage(sender, "restore");
+                    MessageAccessor.send(this.getLanguage(), sender, "restore");
                 }
             }
         }

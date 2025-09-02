@@ -1,0 +1,6 @@
+database:
+  id: "starlight:default"
+  driver: 'H2'                     #JDBC driver type. options:[H2,MYSQL]
+  url: "{folder}/data/starlight" #JDBC URL: {folder} as plugin data folder.
+  user: root                       #Username for db connection.
+  password: starlight              #Password for db connection.

@@ -11,7 +11,7 @@ import me.gb2022.commons.container.ObjectContainer;
 import net.kyori.adventure.text.ComponentLike;
 import org.apache.logging.log4j.LogManager;
 import org.atcraftmc.qlib.PluginConcept;
-import org.atcraftmc.qlib.PluginPlatform;
+import org.atcraftmc.qlib.platform.PluginPlatform;
 import org.atcraftmc.qlib.config.ConfigContainer;
 import org.atcraftmc.qlib.config.StandaloneConfiguration;
 import org.atcraftmc.qlib.language.LanguageContainer;
@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 
-@Plugin(id = "quark-velocity", version = "2.0", authors = "GrassBlock2022", description = "quark-plugin velocity pack.")
+@Plugin(id = "quark-velocity", version = "2.0", authors = "GrassBlock2022", description = "quark-plugin velocity pack."/*, dependencies = @Dependency(id = "qlib-velocity")*/)
 public final class QuarkVelocity implements PluginConcept {
     public static final ObjectContainer<QuarkVelocity> INSTANCE = new ObjectContainer<>();
     private final APMRemoteMessenger messenger = new APMRemoteMessenger();
@@ -34,6 +34,7 @@ public final class QuarkVelocity implements PluginConcept {
 
     private final ModuleManager moduleManager = new ModuleManager(this);
     private final Config config0 = new Config(this);
+    private final LanguageContainer lang = new LanguageContainer();
 
     private final Logger logger;
     private final ProxyServer server;
@@ -46,6 +47,10 @@ public final class QuarkVelocity implements PluginConcept {
         this.logger = logger;
 
         INSTANCE.set(this);
+    }
+
+    public static LanguageContainer lang() {
+        return INSTANCE.get().lang;
     }
 
     @Subscribe
@@ -63,7 +68,7 @@ public final class QuarkVelocity implements PluginConcept {
             var pack = new StandaloneLanguagePack(locale, this);
             pack.load();
 
-            LanguageContainer.getInstance().inject(pack);
+            this.lang.inject(pack);
         }
 
         ConfigContainer.getInstance().inject(config);

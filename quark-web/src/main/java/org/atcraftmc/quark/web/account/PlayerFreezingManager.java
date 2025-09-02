@@ -1,13 +1,16 @@
 package org.atcraftmc.quark.web.account;
 
+import io.papermc.paper.event.player.AsyncChatEvent;
 import me.gb2022.commons.reflect.AutoRegister;
+import org.atcraftmc.quark.chat.ChatForwardingService;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.*;
-import org.tbstcraft.quark.framework.module.component.ModuleComponent;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.migration.MessageAccessor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +37,19 @@ public final class PlayerFreezingManager extends ModuleComponent<AccountActivati
     }
 
     @EventHandler
+    public void onPlayerChat(AsyncChatEvent event) {
+        this.checkPlayerAction(event, event.getPlayer(), false);
+    }
+
+    @EventHandler
+    public void onPlayerChat(ChatForwardingService.ChatForwardingEvent event) {
+        if(event.isSenderConsole()){
+            return;
+        }
+        this.checkPlayerAction(event, event.getSenderAsPlayer(), false);
+    }
+
+    @EventHandler
     public void onPlayerGamemodeChange(PlayerGameModeChangeEvent event) {
         this.checkPlayerAction(event, event.getPlayer(), true);
     }
@@ -56,7 +72,7 @@ public final class PlayerFreezingManager extends ModuleComponent<AccountActivati
         if (!sendMessage) {
             return;
         }
-        this.getLanguage().sendMessage(p, "interaction-block");
+        MessageAccessor.send(this.getLanguage(), p, "interaction-block");
     }
 
     public void freezePlayer(String name) {
@@ -65,5 +81,9 @@ public final class PlayerFreezingManager extends ModuleComponent<AccountActivati
 
     public void unfreezePlayer(String name) {
         this.whiteListedPlayers.add(name);
+    }
+
+    public Set<String> getWhiteList() {
+        return this.whiteListedPlayers;
     }
 }

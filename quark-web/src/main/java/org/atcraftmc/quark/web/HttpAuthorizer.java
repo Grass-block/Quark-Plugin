@@ -2,10 +2,11 @@ package org.atcraftmc.quark.web;
 
 import com.google.gson.JsonObject;
 import org.atcraftmc.quark.web.http.HttpHandlerContext;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.atcraftmc.quark.web_auth.PlayerAuthService;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
 
-@QuarkModule(version = "0.3-beta")
+@SLModule(version = "0.3-beta")
 public final class HttpAuthorizer extends PackageModule {
     @Override
     public void enable() {

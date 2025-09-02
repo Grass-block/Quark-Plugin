@@ -1,22 +1,20 @@
 package org.atcraftmc.quark.storage;
 
 import me.gb2022.commons.reflect.AutoRegister;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.component.Components;
-import org.tbstcraft.quark.framework.module.component.ModuleComponent;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.component.Components;
+import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
 
-@QuarkModule
+@SLModule
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @Components({PortableFunctionalBlocks.NetherUpdate.class, PortableFunctionalBlocks.VillageUpdate.class})
 public final class PortableFunctionalBlocks extends PackageModule {

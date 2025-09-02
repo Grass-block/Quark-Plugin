@@ -16,24 +16,26 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.SharedObjects;
+import org.atcraftmc.starlight.data.ModuleDataService;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.region.Region;
-import org.tbstcraft.quark.foundation.region.SimpleRegion;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.framework.record.RecordEntry;
-import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
+import org.atcraftmc.starlight.core.objects.Region;
+import org.atcraftmc.starlight.core.objects.SimpleRegion;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.data.record.RecordEntry;
+import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 
 import java.util.*;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({ProtectionArea.ProtectionAreaCommand.class})
-@QuarkModule(version = "1.3.4", recordFormat = {"Time", "Player", "World", "X", "Y", "Z", "Region"})
+@SLModule(version = "1.3.4", recordFormat = {"Time", "Player", "World", "X", "Y", "Z", "Region"})
 public final class ProtectionArea extends PackageModule {
     private final HashMap<String, SimpleRegion> regions = new HashMap<>();
 
@@ -108,9 +110,9 @@ public final class ProtectionArea extends PackageModule {
             for (Region s : this.regions.values()) {
                 if (s.asAABB().intersects(r.asAABB())) {
                     event.setCancelled(true);
-                    this.getLanguage().sendMessage(player, "interact_blocked_we");
+                    MessageAccessor.send(this.getLanguage(), player, "interact_blocked_we");
 
-                    if (!this.getConfig().getBoolean("record")) {
+                    if (!ConfigAccessor.getBool(this.getConfig(), "record")) {
                         return;
                     }
                     Player p = event.getPlayer();
@@ -140,9 +142,9 @@ public final class ProtectionArea extends PackageModule {
                     continue;
                 }
                 event.setCancelled(true);
-                this.getLanguage().sendMessage(player, "interact_blocked");
+                MessageAccessor.send(this.getLanguage(), player, "interact_blocked");
 
-                if (!this.getConfig().getBoolean("record")) {
+                if (!ConfigAccessor.getBool(this.getConfig(), "record")) {
                     return;
                 }
                 this.record.addLine(
@@ -170,7 +172,7 @@ public final class ProtectionArea extends PackageModule {
         public void onCommand(CommandSender sender, String[] args) {
             String operation = args[0];
             if (Objects.equals(operation, "list")) {
-                this.getLanguage().sendMessage(sender, "region_list");
+                MessageAccessor.send(this.getLanguage(), sender, "region_list");
                 Map<String, SimpleRegion> map = this.getModule().getRegions();
                 for (String s : map.keySet()) {
                     sender.sendMessage(PlaceHolderService.format("{#gold}%s {#gray}-> {#white}%s".formatted(s, map.get(s).toString())));
@@ -181,22 +183,22 @@ public final class ProtectionArea extends PackageModule {
             if (Objects.equals(operation, "add")) {
                 this.checkException(args.length == 9);
                 if (this.getModule().getRegions().containsKey(arg2)) {
-                    this.getLanguage().sendMessage(sender, "region_add_failed", arg2);
+                    MessageAccessor.send(this.getLanguage(), sender, "region_add_failed", arg2);
                     return;
                 }
                 this.getModule().getRegions().put(arg2, new SimpleRegion(Bukkit.getWorld(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]), Integer.parseInt(args[7]), Integer.parseInt(args[8])));
-                this.getLanguage().sendMessage(sender, "region_add", arg2);
+                MessageAccessor.send(this.getLanguage(), sender, "region_add", arg2);
                 this.getModule().saveRegions();
                 return;
             }
             if (Objects.equals(operation, "remove")) {
                 this.checkException(args.length == 2);
                 if (!this.getModule().getRegions().containsKey(arg2)) {
-                    this.getLanguage().sendMessage(sender, "region_remove_failed", arg2);
+                    MessageAccessor.send(this.getLanguage(), sender, "region_remove_failed", arg2);
                     throw new RuntimeException("???");
                 }
                 this.getModule().getRegions().remove(arg2);
-                this.getLanguage().sendMessage(sender, "region_remove", arg2);
+                MessageAccessor.send(this.getLanguage(), sender, "region_remove", arg2);
             }
         }
 

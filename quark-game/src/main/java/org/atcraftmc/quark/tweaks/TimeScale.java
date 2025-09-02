@@ -2,10 +2,10 @@ package org.atcraftmc.quark.tweaks;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
 
-@QuarkModule(version = "0.1", beta = true)
+@SLModule(version = "0.1", beta = true)
 public class TimeScale extends PackageModule {
     @Override
     public void enable() {

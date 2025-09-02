@@ -1,0 +1,81 @@
+language:
+  global-vars:
+    sys-info: "{#aqua}Server{#dark_aqua} > {#gray}"
+    sys-warning: "{#yellow}Server{#dark_aqua} > {#gray}"
+    sys-error: "{#red}Server{#dark_aqua} > {#gray}"
+    sys-success: "{#green}Server{#dark_aqua} > {#gray}"
+    sys-operation: "{#light-purple}Server{#dark_aqua} > {#gray}"
+    hint: "{#gray}[{#white}!{#gray}]{#gray}"
+    success: "{#gray}[{#green}!{#gray}]{#gray}"
+    info: "{#gray}[{#aqua}!{#gray}]{#gray}"
+    warning: "{#gray}[{#yellow}!{#gray}]{#gray}"
+    error: "{#gray}[{#red}!{#gray}]{#gray}"
+  command:
+    exception: "{global#sys-error}There is a syntax error or an internal error occurred while executing this command."
+    lack-permission: "{global#sys-error}Sorry, you do not have permission to execute this command ({#var})."
+    player-only: "{global#sys-error}This command can only be executed by a player."
+    sync-commands: "{global#sys-operation}Commands synchronized successfully."
+  module:
+    list: "{global#sys-operation}Here are all the modules: {#return}%s"
+    enable-all: "{global#sys-operation}All modules have been successfully enabled."
+    disable-all: "{global#sys-operation}All modules have been successfully disabled."
+    reload-all: "{global#sys-operation}All modules have been successfully reloaded."
+    enable: "{global#sys-operation}Module {#var} has been successfully enabled."
+    disable: "{global#sys-operation}Module {#var} has been successfully disabled."
+    reload: "{global#sys-operation}Module {#var} has been successfully reloaded."
+    not-found: "{global#sys-error}Module {#var} not found."
+    internal-error: "{global#sys-error}An internal error occurred while operating on module {#var}."
+    already-op: "{global#sys-error}Module {#var} is already in the requested state."
+    blocked-internal: "{global#sys-error}You cannot operate on the [built-in] module {#var} as this may cause errors."
+  package:
+    list: "{global#sys-operation}Here are all the extension packages: {#return}%s"
+    enable-all: "{global#sys-operation}All extension packages have been successfully enabled."
+    disable-all: "{global#sys-operation}All extension packages have been successfully disabled."
+    reload-all: "{global#sys-operation}All extension packages have been successfully reloaded."
+    enable: "{global#sys-operation}Extension package {#var} has been successfully enabled."
+    disable: "{global#sys-operation}Extension package {#var} has been successfully disabled."
+    reload: "{global#sys-operation}Extension package {#var} has been successfully reloaded."
+    not-found: "{global#sys-error}Extension package {#var} not found."
+    internal-error: "{global#sys-error}An internal error occurred while operating on extension package {#var}."
+    already-op: "{global#sys-error}Extension package {#var} is already in the requested state."
+    blocked-internal: "{global#sys-error}You cannot operate on the [built-in] package {#var} as this may cause errors."
+  config:
+    reload-all: "{global#sys-operation}All configuration files have been reloaded."
+    restore-all: "{global#sys-operation}All configuration files have been reset."
+    sync-all: "{global#sys-operation}All configuration files have been synchronized."
+    reload: "{global#sys-operation}Configuration file {#var} has been reloaded."
+    restore: "{global#sys-operation}Configuration file {#var} has been reset."
+    sync: "{global#sys-operation}Configuration file {#var} has been synchronized."
+  global-var:
+    reload: "{global#sys-operation}Global variables reloaded successfully."
+    restore: "{global#sys-operation}Global variables reset successfully."
+    sync: "{global#sys-operation}Global variables synchronized successfully."
+  language:
+    restore-all: "{global#sys-operation}All language files have been reset."
+    reload-all: "{global#sys-operation}All language files have been reloaded."
+    sync-all: "{global#sys-operation}All language files have been synchronized."
+    restore: "{global#sys-operation}Language file {#var} has been reset."
+    reload: "{global#sys-operation}Language file {#var} has been reloaded."
+    sync: "{global#sys-operation}Language file {#var} has been synchronized."
+  auth:
+    password-set: "{global#sys-info}Your password has been set to {#white}{#var}{#gray}. Please keep it safe. You can change it using /password."
+  about:
+    version: "{global#sys-info}Current version: {#var}"
+  reload:
+    platform-unsupported: "{global#sys-error}The current platform does not support reloading, please use {#gold}/reload{#white}"
+    fastboot-unsupported: "{global#sys-error}FastBoot does not support reloading, please use {#gold}/reload{#gray} or disable FastBoot."
+    complete: "{global#sys-operation}Successfully reloaded Starlight and all registered extension packages."
+  folia-compat:
+    disabled: "{global#sys-error}This feature cannot be used because Folia does not have the corresponding compatible API."
+    reload-warn: "{global#sys-error}Reloading Folia will cause all plugins and commands to fail to load properly. You should restart the server!"
+  version-log-viewer:
+    view: "{global#sys-info}Here are the release notes for Starlight version {#var}:"
+    not-found: "{global#sys-error}Release notes for Starlight version {#var} not found."
+  locale:
+    set: "{global#sys-info}Your server language has been set to {#var}. Some displays may need rejoin to update."
+    preset: "{global#sys-info}Detected your language to {#var}. If it's incorrect, please use {#gold}/locale [language]{#gray} to select."
+  version:
+    require: "{global#sys-info}New version find: {#var}, {click(link,%s)}{#white}[{#green}Get{#white}]{;}"
+    no-require: "{global#sys-info}You are at latest version {#var}, no update required."
+    exception: "{global#sys-info}Got an error when checking version, check your console."
+    checking: "{global#sys-info}Checking version..."

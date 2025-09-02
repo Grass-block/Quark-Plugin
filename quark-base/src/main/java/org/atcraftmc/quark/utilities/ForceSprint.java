@@ -4,19 +4,20 @@ import me.gb2022.commons.reflect.Inject;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.api.PluginStorage;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.api.PluginMessages;
+import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.framework.module.CommandModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @QuarkCommand(name = "sprint", playerOnly = true)
-@QuarkModule(version = "1.0")
+@SLModule(version = "1.0")
 public final class ForceSprint extends CommandModule {
     private final Set<String> players = new HashSet<>();
 
@@ -51,10 +52,10 @@ public final class ForceSprint extends CommandModule {
     public void onCommand(CommandSender sender, String[] args) {
         if (this.players.contains(sender.getName())) {
             this.players.remove(sender.getName());
-            getLanguage().sendMessage(sender, "disable");
+            MessageAccessor.send(this.getLanguage(), sender, "disable");
         } else {
             this.players.add(sender.getName());
-            getLanguage().sendMessage(sender, "enable");
+            MessageAccessor.send(this.getLanguage(), sender, "enable");
         }
     }
 }

@@ -23,14 +23,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3i;
-import org.tbstcraft.quark.SharedObjects;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.qlib.language.LanguageEntry;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.framework.record.RecordEntry;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.data.record.RecordEntry;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,7 +40,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @SuppressWarnings("DuplicatedCode")
-@QuarkModule(version = "1.2.5")
+@SLModule(version = "1.2.5")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class WESessionSizeLimit extends PackageModule {
 
@@ -58,7 +60,7 @@ public final class WESessionSizeLimit extends PackageModule {
 
     @EventHandler
     public void onSelect(WESessionPreEditEvent event) {
-        var limit = this.getConfig().getInt("max-selection-size");
+        var limit = ConfigAccessor.getInt(this.getConfig(), "max-selection-size");
         var box = event.getRegion().asAABB();
 
         var x = box.x1 - box.x0;
@@ -72,13 +74,13 @@ public final class WESessionSizeLimit extends PackageModule {
         var player = event.getPlayer();
         if (player.hasPermission(this.bypassCheck)) {
             if (event.getStage() == EditSession.Stage.BEFORE_CHANGE) {
-                this.language.sendMessage(player, "select-limited-warn", x, y, z, limit);
+                MessageAccessor.send(this.language, player, "select-limited-warn", x, y, z, limit);
             }
             return;
         }
 
         if (event.getStage() == EditSession.Stage.BEFORE_CHANGE) {
-            this.language.sendMessage(player, "select-limited", x, y, z, limit);
+            MessageAccessor.send(this.language, player, "select-limited", x, y, z, limit);
         }
 
         event.setCancelled(true);
@@ -91,7 +93,7 @@ public final class WESessionSizeLimit extends PackageModule {
             return;
         }
         var box = event.getRegion().asAABB();
-        var limit = this.getConfig().getInt("max-selection-size");
+        var limit = ConfigAccessor.getInt(this.getConfig(), "max-selection-size");
 
         var x = box.x1 - box.x0;
         var y = box.y1 - box.y0;
@@ -101,7 +103,7 @@ public final class WESessionSizeLimit extends PackageModule {
             return;
         }
 
-        this.language.sendMessage(event.getPlayer(), "select-limited-warn", x, y, z, limit);
+        MessageAccessor.send(this.language, event.getPlayer(), "select-limited-warn", x, y, z, limit);
     }
 
     @EventHandler
@@ -112,7 +114,7 @@ public final class WESessionSizeLimit extends PackageModule {
 
         var player = event.getPlayer();
         var cancel = !player.hasPermission(this.bypassCheck);
-        var limit = this.getConfig().getInt("max-edit-size");
+        var limit = ConfigAccessor.getInt(this.getConfig(), "max-edit-size");
 
         var region = WESessionTrackService.getRegion(player);
 
@@ -130,7 +132,7 @@ public final class WESessionSizeLimit extends PackageModule {
         var wrapper = new RadiusLimitedExtent(wrapped, cx, cy, cz, limit, cancel);
 
         wrapper.addAnnounce(() -> {
-            this.language.sendMessage(player, cancel ? "edit-limited" : "edit-limited-warn", limit);
+            MessageAccessor.send(this.language, player, cancel ? "edit-limited" : "edit-limited-warn", limit);
             this.record.addLine(SharedObjects.DATE_FORMAT.format(new Date()), "Edit", w, h, d, limit);
         });
 

@@ -1,4 +1,8 @@
 language:
+  -module-name:
+    vm-garbage-cleaner: 运行环境自动优化
+    garbage-cleaner: 嗲落伍自动清扫
+    auto-save: "[实验]自动保存"
   vm-garbage-cleaner:
     gc-start: "{global#sys-operation}内存回收开始..."
     gc-end: "{global#sys-operation}内存回收完成, 释放 %d MB。"

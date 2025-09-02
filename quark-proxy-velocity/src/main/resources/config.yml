@@ -11,6 +11,8 @@ config:
     server-transfer-message: true
     proxy-ping: true
     apm-service: true
+    mod-server-support: true
+    player-action-restriction: true
   apm-service:
     exchange: true #is connector exchange?
     host: '127.0.0.1' #host to bind connector
@@ -26,3 +28,5 @@ config:
     format: "{color(gold)}[%s{color(gold)}] {color(gray)}%s"
   chat-sync:
     template: "{color(gold)}[%s{color(gold)}] {color(gray)}%s: "
+  mod-server-support:
+    guns: "signpost:main"

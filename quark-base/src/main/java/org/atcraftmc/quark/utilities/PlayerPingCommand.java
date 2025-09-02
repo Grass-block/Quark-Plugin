@@ -4,17 +4,18 @@ import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.reflect.Inject;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.api.PluginStorage;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.api.PluginMessages;
+import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
+import org.atcraftmc.starlight.framework.module.CommandModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 
 import java.util.List;
 
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 @QuarkCommand(name = "ping", playerOnly = true)
 public final class PlayerPingCommand extends CommandModule {
     @Inject("tip")
@@ -39,6 +40,6 @@ public final class PlayerPingCommand extends CommandModule {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         PluginMessenger.broadcastListed("proxy-ping:update", List.of(sender));
-        this.getLanguage().sendMessage(sender, "ping-msg", getPing(sender));
+        MessageAccessor.send(this.getLanguage(), sender, "ping-msg", getPing(sender));
     }
 }

@@ -1,4 +1,6 @@
 language:
+  player-action-restriction:
+    restricted: '{global#sys-warning}在完成必要的验证之前，您的交互已被限制。'
   global-vars:
     sys-info: "{#aqua}系统{#dark_aqua} > {#gray}"
     sys-warning: "{#yellow}系统{#dark_aqua} > {#gray}"
@@ -44,3 +46,5 @@ language:
   server-statement-observer:
     online: "{global#sys-info}服务器 {#var} 已上线, 您可前往游玩。"
     offline: "{global#sys-info}服务器 {#var} 已离线，可能是计划关闭或者维护。"
+  mod-server-support:
+    message: "{global#sys-error}你需要一个特定的整合包来进入本服务器!"

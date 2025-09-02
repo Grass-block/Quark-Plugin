@@ -4,11 +4,12 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.Players;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.foundation.platform.Players;
+import org.atcraftmc.starlight.framework.module.CommandModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
 
-@QuarkModule(version = "1.0")
+@SLModule(version = "1.0")
 @QuarkCommand(name = "align", playerOnly = true)
 public final class PositionAlign extends CommandModule {
 
@@ -25,7 +26,7 @@ public final class PositionAlign extends CommandModule {
         loc.setPitch(0);
         Players.teleport(player, loc);
 
-        getLanguage().sendMessage(sender, "align", loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getYaw(), loc.getPitch());
+        MessageAccessor.send(this.getLanguage(), sender, "align", loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), loc.getYaw(), loc.getPitch());
     }
 
     public int getYaw(Player player) {

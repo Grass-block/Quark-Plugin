@@ -1,0 +1,37 @@
+language:
+  ac-potato-war:
+    title: 土豆战争排行榜
+    hint:
+      - "{#purple}土豆战争开始了!"
+      - "{#white}右键点击成熟的土豆进行收割，争夺土豆排行榜的首位。前三名将获得特殊奖励！"
+      - "{#white}时运和其他附魔均有效，使用 {#gold}/potato-war{#white}查询排行榜！"
+  ac-realistic-survival:
+    low-energy: "{#red}疲劳"
+    low-water: "{#aqua}脱水"
+    fracture: "{#red}骨折"
+
+    event-add-fracture: "{global#info}你感到腿部传来了疼痛...也许你需要休息一下"
+    event-remove-fracture: "{global#info}你的腿部似乎好些了。"
+  guns-dimension-liberation:
+    region-discovered: "{global#success}世界 %s 中的区域{#var},{#var}已被玩家{#var}解放!"
+    bossbar: "{#gray}正在解放 %s {#gray}维度 - {#aqua}%s {#gray}/ {#var} 个区域 [{#var}]"
+    stats: "%s{#aqua}: {#aqua}%s/ {#var} [{#var}]"
+    region-discovered-title: "区域已解放!"
+    region-discovered-subtitle: "{#gray} %s - {#var},{#var}"
+    title: "{#purple}「维度解放」{#white}行动"
+    announce: |
+      {#purple}「维度解放」{#white}行动:: {#gray}——每一格土地都是自由的勋章!
+      {#yellow}目标：
+        {#gray}协同推进 {#green}主世界、{#red}下界、{#purple}末地、{#aqua}天境{#gray} 四个维度的解放进度。
+        {#gray}当一个维度被解放区域满足目标要求则该维度将被完全解放。
+        {#gray}进入一个区域(.mca)范围的首位玩家将会解锁该区域。
+      {#yellow}全服基础奖励({#white}所有参与行动的玩家{#yellow}): 
+        {#gray}进度 {#purple}[探索的时光]{#gray} 和 {#white}50{#gray} 级经验等级。
+        {#gray}{#purple}[AR-23 {#aqua}‘解放者’{#gold}（纪念品）{#purple}]
+        {#gray}专属称号{#dark_aqua}[开拓者]{#gray}
+        {#gray}证书(记录您探索的区域数量和名次)
+      {#yellow}个人奖励(({#white}排行榜{#yellow}):
+       {#white} 第1: {#dark_aqua}[下界合金防弹衣] {#white}+ {#gray} 专属头衔{#gold}[资深开拓者]{#gray} {#white}+ {#gold}[AR-61'肉锤'|纪念品]
+       {#white} 第2: {#dark_aqua}[黑曜石防弹衣]{#gray} {#white}+ {#purple}[M-105'盟友'|纪念品]
+       {#white} 第3: {#blue}[AR-23P 穿甲'解放者'|纪念品]”
+       {#white} 前10:{#gray}称号{#aqua}[专业开拓者]{#gray} {#white}+ {#aqua}[R-63'勤勉'|纪念品]”

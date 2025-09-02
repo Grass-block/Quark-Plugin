@@ -1,37 +1,22 @@
 config:
-  tab-menu:
-    header-ui:
-      - '{#dark-gray}一一一一一一一一一一一一一一一一一一一一一一一一一一一一'
-      - '{#yellow}>> {#white} {msg#welcome-header} {#yellow} <<{#white}'
-      - '{msg#player}    {msg#max-player}'
-    footer-ui:
-      - ' '
-      - '{msg#tps}   {msg#mspt}   {msg#ping}'
-      - '{msg#date}'
-      - '{#dark-gray}一一一一一一一一一一一一一一一一一一一一一一一一一一一一'
-  custom-ban-message:
-    ui:
-      - '{#yellow}>> {msg#header} {#yellow}<<'
-      - '{#return}'
-      - '{#reset}{msg#@type}'
-      - '{msg#hint}{#return}'
-      - '{msg#reason}{#return}{#return}'
-      - '{msg#info}'
-      - '{msg#website-hint}'
   custom-kick-message:
     ui:
       - '{#yellow}>> {msg#header} {#yellow}<<'
       - '{#return}'
       - '{#reset}{reason}{#return}{#return}'
       - '{msg#website-hint}'
+    ban-ui:
+      - '{#yellow}>> {msg#ban-header} {#yellow}<<'
+      - '{#return}'
+      - '{#reset}{msg#@type}'
+      - '{msg#ban-hint}{#return}'
+      - '{msg#ban-reason}{#return}{#return}'
+      - '{msg#ban-info}'
+      - '{msg#website-hint}'
   bossbar-announcement:
     period: 1200
     bar-color: white
     ui: '{#purple}{#server-name-plain} {#yellow}>> {rand#text}'
-  chat-format:
-    world: "common:world:%s"
-    time: "<post>   {#gray}%s"
-    template: '[{#white}{world}{#white}]{0} {color(gold)}> {color(white)}{1} {time}'
   player-name-header:
     template: "[{#white}{header}{#white}] {player}"
     op-header: '{#dark-purple}管理'
@@ -46,23 +31,6 @@ config:
       - ' '
       - '  {msg#callback}'
       - "{#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一"
-  custom-scoreboard:
-    ui:
-      - ' '
-      - ' {msg#date}'
-      - ' {msg#time}'
-      - ' '
-      - ' {msg#player}'
-      - ' {msg#rank}'
-      - ' {msg#play-time}'
-      - ' {msg#world-time}'
-      - ' '
-      - ' {msg#player-count}'
-      - ' {msg#ping}'
-      - ' '
-      - ' {msg#qq-group}'
-      - ' {msg#website}'
-      - ' '
   chat-announce:
     period: 12000
     ui:

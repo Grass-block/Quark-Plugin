@@ -8,17 +8,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.framework.module.CommandModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 @QuarkCommand(name = "camera", permission = "-quark.camera", playerOnly = true)
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class CameraMovement extends CommandModule {
@@ -27,7 +28,7 @@ public final class CameraMovement extends CommandModule {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        getLanguage().sendMessage(sender, "cam-start", args[0]);
+        MessageAccessor.send(this.getLanguage(), sender, "cam-start", args[0]);
 
         Player player = ((Player) sender);
 

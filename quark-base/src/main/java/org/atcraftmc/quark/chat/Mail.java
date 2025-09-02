@@ -13,19 +13,21 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.data.PlayerDataService;
-import org.tbstcraft.quark.data.storage.StorageTable;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
-import org.tbstcraft.quark.util.BukkitSound;
+import org.atcraftmc.starlight.SharedObjects;
+import org.atcraftmc.starlight.data.PlayerDataService;
+import org.atcraftmc.starlight.data.storage.StorageTable;
+import org.atcraftmc.starlight.framework.module.CommandModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.util.BukkitSound;
 
 import java.util.HashSet;
 
 @QuarkCommand(name = "mail", playerOnly = true)
-@QuarkModule(id = "mail", version = "1.0.0")
+@SLModule(id = "mail", version = "1.0.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class Mail extends CommandModule {
 
@@ -44,7 +46,7 @@ public final class Mail extends CommandModule {
             if (size == 0) {
                 return;
             }
-            this.language.sendMessage(player, "view-hint", size);
+            MessageAccessor.send(this.language, player, "view-hint", size);
         });
     }
 
@@ -53,12 +55,12 @@ public final class Mail extends CommandModule {
         var keys = new HashSet<>(data.getTagMap().keySet());
 
         if (keys.isEmpty()) {
-            this.language.sendMessage(sender, "view-none", sb.toString());
+            MessageAccessor.send(this.language, sender, "view-none", sb.toString());
             return;
         }
 
         for (String s : keys) {
-            var template = this.getConfig().getString("template");
+            var template = this.getConfig().value("template").string();
             if (template == null) {
                 template = "%s@%s: %s";
             }
@@ -75,18 +77,18 @@ public final class Mail extends CommandModule {
         }
 
         data.save();
-        this.language.sendMessage(sender, "view", sb.toString());
+        MessageAccessor.send(this.language, sender, "view", sb.toString());
     }
 
     private void send(OfflinePlayer recipient, CommandSender sender, String content) {
         if (recipient.isOnline()) {
-            if (getConfig().getBoolean("sound")) {
+            if (getConfig().value("sound").bool()) {
                 BukkitSound.ANNOUNCE.play(recipient.getPlayer());
             }
 
-            if (this.getConfig().getBoolean("send-direct-to-online-player")) {
-                this.language.sendMessage(recipient, "receive-direct", sender.getName(), content);
-                this.language.sendMessage(sender, "send-success", recipient, content);
+            if (ConfigAccessor.getBool(this.getConfig(), "send-direct-to-online-player")) {
+                MessageAccessor.send(this.language, recipient.getPlayer(), "receive-direct", sender.getName(), content);
+                MessageAccessor.send(this.language, sender, "send-success", recipient, content);
                 return;
             }
         }
@@ -97,7 +99,7 @@ public final class Mail extends CommandModule {
         entry.setString(key, content);
         entry.save();
 
-        this.language.sendMessage(sender, "send-success", recipient, content);
+        MessageAccessor.send(this.language, sender, "send-success", recipient.getName(), content);
 
         if (recipient.isOnline()) {
             tryRemindPlayer(recipient.getPlayer());
@@ -114,7 +116,7 @@ public final class Mail extends CommandModule {
             TaskService.async().run(() -> view(context.getSender(), entry));
         }
 
-        var content = TextBuilder.EMPTY_COMPONENT + context.requireRemainAsParagraph(0, true) + TextBuilder.EMPTY_COMPONENT;
+        var content = TextBuilder.EMPTY_COMPONENT + context.requireRemainAsParagraph(1, true) + TextBuilder.EMPTY_COMPONENT;
         var recipient = context.requireOfflinePlayer(0);
 
         send(recipient, sender, content);

@@ -2,8 +2,8 @@ package org.atcraftmc.quark.web.http;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import org.tbstcraft.quark.framework.module.AbstractModule;
-import org.tbstcraft.quark.framework.module.ModuleManager;
+import org.atcraftmc.starlight.framework.module.AbstractModule;
+import org.atcraftmc.starlight.framework.module.ModuleManager;
 import me.gb2022.commons.TriState;
 
 import java.io.IOException;

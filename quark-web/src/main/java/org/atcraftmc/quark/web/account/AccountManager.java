@@ -1,7 +1,7 @@
 package org.atcraftmc.quark.web.account;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
-import org.tbstcraft.quark.data.PlayerDataService;
+import org.atcraftmc.starlight.data.PlayerDataService;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -22,11 +22,11 @@ interface AccountManager {
         return true;
     }
 
-    static String generateActivationLink(String prefix, Runnable callback) {
+    static String generateActivationLink(Runnable callback) {
         UUID randomUUID = UUID.randomUUID();
         String code = randomUUID.toString().replaceAll("-", "");
         CALLBACK.put(code, callback);
-        return prefix + "/account/verify?code=" + code;
+        return code;
     }
 
     static NBTTagCompound getEntry(String player) {
@@ -34,11 +34,15 @@ interface AccountManager {
     }
 
     static String getMail(String player) {
-        return getEntry(player).getString(MAIL);
+        try {
+            return getEntry(player).getString(MAIL);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     static boolean isValidMail(String player) {
-        String mail = getMail(player);
+        var mail = getMail(player);
         return mail != null && !mail.isEmpty() && !mail.isBlank();
     }
 

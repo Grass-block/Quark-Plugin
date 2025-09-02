@@ -3,9 +3,9 @@ package org.atcraftmc.quark.contents;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
-import org.tbstcraft.quark.framework.customcontent.CustomMeta;
-import org.tbstcraft.quark.framework.customcontent.block.CustomBlock;
-import org.tbstcraft.quark.framework.customcontent.block.QuarkBlock;
+import org.atcraftmc.starlight.core.custom.CustomMeta;
+import org.atcraftmc.starlight.core.custom.block.CustomBlock;
+import org.atcraftmc.starlight.core.custom.block.QuarkBlock;
 
 public class ChunkLoader {
 

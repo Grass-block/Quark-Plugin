@@ -1,23 +1,23 @@
 package org.atcraftmc.quark.automatic;
 
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.platform.APIProfile;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@QuarkModule(version = "1.0.0", beta = true, compatBlackList = {APIProfile.FOLIA})
+@SLModule(version = "1.0.0", beta = true, compatBlackList = {APIProfile.FOLIA})
 @CommandProvider(AutoSave.SaveWorldCommand.class)
 public final class AutoSave extends PackageModule implements Runnable {
     private final Map<World, Boolean> worlds = new HashMap<>();
@@ -27,7 +27,7 @@ public final class AutoSave extends PackageModule implements Runnable {
         this.worlds.clear();
         var config = this.getConfig();
 
-        for (String id : config.getList("worlds")) {
+        for (String id : config.value("worlds").list(String.class)) {
             World world = Bukkit.getWorld(id);
             if (world == null) {
                 continue;
@@ -36,8 +36,8 @@ public final class AutoSave extends PackageModule implements Runnable {
             world.setAutoSave(false);
         }
 
-        int delay = config.getInt("delay");
-        int period = config.getInt("period");
+        int delay = config.value("delay").intValue();
+        int period = config.value("period").intValue();
         TaskService.global().timer("quark://auto_save/timer", delay, period, this);
     }
 
@@ -50,17 +50,17 @@ public final class AutoSave extends PackageModule implements Runnable {
     }
 
     private void broadcast(World world, String msgId) {
-        if (this.getConfig().getBoolean("silent")) {
+        if (this.getConfig().value("silent").bool()) {
             return;
         }
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.getWorld() != world) {
                 continue;
             }
-            if (this.getConfig().getBoolean("broadcast-op-only") && !p.isOp()) {
+            if (this.getConfig().value("broadcast-op-only").bool() && !p.isOp()) {
                 continue;
             }
-            this.getLanguage().sendMessage(p, msgId, world.getName());
+            this.getLanguage().item(msgId).send(p, world.getName());
         }
     }
 
@@ -83,14 +83,14 @@ public final class AutoSave extends PackageModule implements Runnable {
         @Override
         public void onCommand(CommandSender sender, String[] args) {
             if (Objects.equals(args[0], "all")) {
-                this.getLanguage().sendMessage(sender, "command");
+                this.getLanguage().item("command").send(sender);
                 for (World w : Bukkit.getWorlds()) {
                     this.getModule().saveWorld(w);
                 }
                 return;
             }
             this.getModule().saveWorld(Bukkit.getWorld(args[0]));
-            this.getLanguage().sendMessage(sender, "command");
+            this.getLanguage().item("command").send(sender);
         }
 
         @Override

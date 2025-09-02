@@ -1,0 +1,46 @@
+menu:
+  id: "quark:example_menu"
+  title: { text: "{#purple}{#server-name-plain} {#gold}>> {#dark_aqua}主菜单" }
+  commands: [ "/menu" ]
+  permission: "+quark.gui.menu"
+  capacity: 54
+  open: [ "[sound]block.beacon.activate" ]
+  components:
+    53:
+      icon: { type: "redstone" }
+      name: { lang: "common:ui:close" }
+      left-click:
+        - "[sound]ui.button.click"
+        - "[close]"
+
+    #group: warps
+    10:
+      icon: { type: 'compass', enchanted: 'true' }
+      name: { text: "{#purple}传送系统" }
+      lore:
+        - { text: "{#gray}各类传送相关的功能合集。" }
+        - { text: "{#gray}右侧 | 快速访问部分功能" }
+        - { text: "{#gray}打开 | 完整访问全部功能" }
+        - { text: "{#gold}[点击打开]" }
+      any-click:
+        - "[close]"
+        - "[sound]ui.button.click"
+        - "[command]/warps-menu"
+    12: "back-to-home"
+    14: "back-to-death"
+    16: "open-servers-menu"
+
+    29: "open-music-player"
+    31: "enter-freecam"
+    33:
+      icon: {type: 'beacon'}
+      name: { text: "{#dark_green}刷新周围方块" }
+      lore:
+        - { text: "{#gray}重新发送你周围的方块信息。" }
+        - { text: "{#gray}对于假方块或陷入卡死来说，这十分有用" }
+        - { text: "{#gray}方块数据刷新可能锁定你的位置，请耐心等待" }
+        - { text: "{#gold}[点击执行]" }
+      any-click:
+        - "[close]"
+        - "[sound]ui.button.click"
+        - "[command]/refresh-area 7"

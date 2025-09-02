@@ -1,9 +1,9 @@
 package org.atcraftmc.quark.contents;
 
-import org.tbstcraft.quark.framework.service.QuarkService;
-import org.tbstcraft.quark.framework.service.Service;
+import org.atcraftmc.starlight.framework.service.SLService;
+import org.atcraftmc.starlight.framework.service.Service;
 
-@QuarkService(id = "points")
+@SLService(id = "points")
 public interface PointService extends Service {
     void add(String account, int amount);
 

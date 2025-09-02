@@ -2,18 +2,20 @@ package org.atcraftmc.quark.chat;
 
 import me.gb2022.commons.reflect.Inject;
 import org.apache.logging.log4j.Logger;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.tbstcraft.quark.data.assets.AssetGroup;
-import org.atcraftmc.qlib.language.Language;
-import org.atcraftmc.qlib.command.QuarkCommand;
-import org.atcraftmc.qlib.texts.TextBuilder;
-import org.tbstcraft.quark.foundation.TextSender;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.util.BukkitSound;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.data.assets.AssetGroup;
+import org.atcraftmc.starlight.foundation.TextSender;
+import org.atcraftmc.starlight.framework.module.CommandModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.core.LocaleService;
+import org.atcraftmc.starlight.util.BukkitSound;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @QuarkCommand(name = "npc-chat")
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 public final class NPCChat extends CommandModule {
     private final Map<String, ConfigurationSection> contexts = new HashMap<>();
     private final Map<String, Integer> audienceIndexes = new HashMap<>();
@@ -58,7 +60,7 @@ public final class NPCChat extends CommandModule {
             this.audienceIndexes.put(sender, 0);
             return 0;
         }
-        if (current - this.audienceChatRecord.get(sender) > this.getConfig().getInt("inactive-time")) {
+        if (current - this.audienceChatRecord.get(sender) > ConfigAccessor.getInt(this.getConfig(), "inactive-time")) {
             this.audienceChatRecord.put(sender, System.currentTimeMillis());
             this.audienceIndexes.put(sender, 0);
             return 0;
@@ -78,12 +80,12 @@ public final class NPCChat extends CommandModule {
     public void onCommand(CommandSender sender, String[] args) {
         ConfigurationSection conversation = this.contexts.get(args[0]);
         if (conversation == null) {
-            getLanguage().sendMessage(sender, "not-found");
+            MessageAccessor.send(this.getLanguage(), sender, "not-found");
             return;
         }
 
-        var template = Objects.requireNonNull(this.getConfig().getString("template"));
-        var locale = Objects.requireNonNull(Language.locale(Language.locale(sender)));
+        var template = Objects.requireNonNull(this.getConfig().value("template").string());
+        var locale = LocaleService.locale(sender).minecraft();
         var name = Objects.requireNonNull(conversation.getString("name." + locale));
         var texts = conversation.getStringList(locale);
 
@@ -92,7 +94,7 @@ public final class NPCChat extends CommandModule {
 
         TextSender.sendBlock(sender, TextBuilder.build(template.replace("{name}", name).replace("{text}", text)));
 
-        if (this.getConfig().getBoolean("sound") && sender instanceof Player) {
+        if (ConfigAccessor.getBool(this.getConfig(), "sound") && sender instanceof Player) {
             BukkitSound.ANNOUNCE.play(((Player) sender));
         }
     }

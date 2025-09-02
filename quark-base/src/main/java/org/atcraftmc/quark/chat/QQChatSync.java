@@ -6,21 +6,22 @@ import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.logging.log4j.Logger;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.atcraftmc.qlib.texts.TextBuilder;
-import org.tbstcraft.quark.foundation.ComponentSerializer;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.foundation.ComponentSerializer;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.net.ConnectException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-@QuarkModule(beta = true)
+@SLModule(beta = true)
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class QQChatSync extends PackageModule {
     @Inject
@@ -57,14 +58,14 @@ public final class QQChatSync extends PackageModule {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         TaskService.async().run(() -> {
-            var fmt = getConfig().getString("message");
+            var fmt = getConfig().value("message").string();
 
             var msg = fmt.formatted(event.getPlayer().getName(), event.getMessage());
-            var token = getConfig().getString("token");
-            var address = getConfig().getString("address");
+            var token = getConfig().value("token").string();
+            var address = getConfig().value("address").string();
             var message = ComponentSerializer.plain(TextBuilder.buildComponent(PlaceHolderService.formatPlayer(event.getPlayer(), msg)));
 
-            for (String target : getConfig().getList("targets")) {
+            for (var target : ConfigAccessor.configList(getConfig(), "targets", String.class)) {
                 send(address, token, target, message, this.logger);
             }
         });

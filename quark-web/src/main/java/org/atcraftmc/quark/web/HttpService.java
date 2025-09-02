@@ -2,9 +2,14 @@ package org.atcraftmc.quark.web;
 
 import org.atcraftmc.quark.web.http.HTTPServer;
 import org.atcraftmc.qlib.config.ConfigEntry;
-import org.tbstcraft.quark.framework.service.*;
+import org.atcraftmc.starlight.framework.service.SLService;
+import org.atcraftmc.starlight.framework.service.Service;
+import org.atcraftmc.starlight.framework.service.ServiceHolder;
+import org.atcraftmc.starlight.framework.service.ServiceProvider;
+import org.atcraftmc.starlight.framework.service.ServiceInject;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
 
-@QuarkService(id = "http-service")
+@SLService(id = "http-service")
 public interface HttpService extends Service {
     @ServiceInject
     ServiceHolder<HttpService> INSTANCE = new ServiceHolder<>();
@@ -30,10 +35,10 @@ public interface HttpService extends Service {
 
         @Override
         public void onEnable() {
-            String host = this.config.getString("host");
-            int port = this.config.getInt("port");
-            int backlog = this.config.getInt("backlog");
-            int threads = this.config.getInt("threads");
+            var host = this.config.value("host").string();
+            var port = ConfigAccessor.getInt(config, "port");
+            var backlog = ConfigAccessor.getInt(config,"backlog");
+            var threads = ConfigAccessor.getInt(config,"threads");
 
             this.server.init(host, port, backlog, threads);
         }

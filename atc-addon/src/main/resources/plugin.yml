@@ -1,0 +1,14 @@
+#identifier
+name: quark-atc-addon
+version: 1.0.0
+
+#api
+main: org.atcraftmc.atc_addons.ATCAddons
+api-version: 1.16
+load: POSTWORLD
+depend: [ "quark" ]
+
+#description
+authors: [ "GrassBlock2022","TBSTCraft","ATCraft Network" ]
+description: ATC addon pack for events
+prefix: ATCAddons

@@ -8,27 +8,28 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.api.PluginStorage;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.api.PluginMessages;
+import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageItem;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
-import org.tbstcraft.quark.foundation.platform.Players;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.util.BukkitSound;
+import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
+import org.atcraftmc.starlight.foundation.platform.Players;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.util.BukkitSound;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-@QuarkModule(version = "1.3.0")
+@SLModule(version = "1.3.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(BackToDeath.BackCommand.class)
-public final class BackToDeath extends PackageModule implements QuarkCommandExecutor {
+public final class BackToDeath extends PackageModule implements PluginCommandExecutor {
     private final Map<String, Location> deathPoints = new HashMap<>();
 
     @Inject("tip-back")
@@ -51,7 +52,7 @@ public final class BackToDeath extends PackageModule implements QuarkCommandExec
         if (!this.deathPoints.containsKey(event.getPlayer().getName())) {
             return;
         }
-        this.getLanguage().sendMessage(event.getPlayer(), "back-hint");
+        MessageAccessor.send(this.getLanguage(), event.getPlayer(), "back-hint");
     }
 
     @EventHandler
@@ -65,12 +66,12 @@ public final class BackToDeath extends PackageModule implements QuarkCommandExec
         var sender = context.getSender();
 
         if (!this.deathPoints.containsKey(sender.getName())) {
-            this.getLanguage().sendMessage(sender, "back-not-set");
+            MessageAccessor.send(this.getLanguage(), sender, "back-not-set");
             return;
         }
 
         Players.teleport(((Player) sender), this.deathPoints.get(sender.getName()));
-        this.getLanguage().sendMessage(sender, "back-tp-success");
+        MessageAccessor.send(this.getLanguage(), sender, "back-tp-success");
         BukkitSound.WARP.play(((Player) sender));
     }
 

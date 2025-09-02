@@ -1,0 +1,51 @@
+menu:
+  id: "quark:view-distance-menu"
+  title: { text: "{#dark_aqua}服务器渲染距离设置" }
+  commands: [ "/view-distance-menu" ]
+  permission: "+quark.gui.menu.vd"
+  capacity: 36
+  components:
+    33:
+      icon: { type: "paper" }
+      name: { text: "{#purple}服务器渲染距离调整" }
+      lore:
+        - { text: "{#gray}更改服务器想你发送的视野数据范围" }
+        - { text: "{#gray}如果遇到卡顿可以在此处适当降低渲染距离" }
+        - { text: "{#gray}注意: 这并非直接调整客户端，而是决定你能看到的上限" }
+    10:
+      icon: { type: 'ender_eye', amount: '2' }
+      name: { text: "{#dark_aqua}渲染距离 2" }
+      lore:
+        - { text: "{#gray}这是一个极端低的值" }
+        - { text: "{#gray}除非你真的很卡顿否则不建议使用" }
+        - { text: "{#gray}或者你在安装了“bobby”模组" }
+        - { text: "{#gold}[点击设置]" }
+      any-click: [ "[sound]ui.button.click","[close]","[command]/view-distance 2" ]
+    12:
+      icon: { type: 'ender_eye', amount: '6' }
+      name: { text: "{#dark_aqua}渲染距离 6" }
+      lore:
+        - { text: "{#gray}这是一个较低的值" }
+        - { text: "{#gray}适用于服务器网络较差或跑图需要" }
+        - { text: "{#gold}[点击设置]" }
+      any-click: [ "[sound]ui.button.click","[close]","[command]/view-distance 6" ]
+    14:
+      icon: { type: 'ender_eye', amount: '12' }
+      name: { text: "{#dark_aqua}渲染距离 12" }
+      lore:
+        - { text: "{#gray}这是一个正常的视野距离" }
+        - { text: "{#gray}适用于服务器网络情况正常且负载较低的情形" }
+        - { text: "{#gray}如果对网络或客户端有信心可以酌情开启" }
+        - { text: "{#gold}[点击设置]" }
+      any-click: [ "[sound]ui.button.click","[close]","[command]/view-distance 12" ]
+    16:
+      icon: { type: 'ender_eye', amount: '24' }
+      name: { text: "{#dark_aqua}渲染距离 24" }
+      lore:
+        - { text: "{#gray}这是一个极端大的视野距离" }
+        - { text: "{#gray}可能引发服务器网络系统卡顿" }
+        - { text: "{#gray}使用前请向管理员确认能否开启" }
+        - { text: "{#gold}[点击设置]" }
+      any-click: [ "[sound]ui.button.click","[close]","[command]/view-distance 24" ]
+    35: "return"
+    34: "close"

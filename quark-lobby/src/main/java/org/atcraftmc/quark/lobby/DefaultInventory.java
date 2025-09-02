@@ -16,15 +16,16 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.tbstcraft.quark.data.ModuleDataService;
+import org.atcraftmc.starlight.data.ModuleDataService;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.CommandModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.migration.MessageAccessor;
 
 import java.util.List;
 
-@QuarkModule(version = "1.0")
+@SLModule(version = "1.0")
 @QuarkCommand(name = "default-inventory", playerOnly = true)
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class DefaultInventory extends CommandModule {
@@ -95,7 +96,7 @@ public final class DefaultInventory extends CommandModule {
 
         this.save();
 
-        getLanguage().sendMessage(event.getPlayer(), "edit-complete");
+        MessageAccessor.send(this.getLanguage(), event.getPlayer(), "edit-complete");
     }
 
     private void save() {
@@ -122,11 +123,11 @@ public final class DefaultInventory extends CommandModule {
         switch (args[0]) {
             case "edit" -> {
                 ((Player) sender).openInventory(this.inventory);
-                getLanguage().sendMessage(sender, "edit-start");
+                MessageAccessor.send(this.getLanguage(), sender, "edit-start");
             }
             case "cover" -> {
                 cover((Player) sender);
-                getLanguage().sendMessage(sender, "cover");
+                MessageAccessor.send(this.getLanguage(), sender, "cover");
             }
         }
     }

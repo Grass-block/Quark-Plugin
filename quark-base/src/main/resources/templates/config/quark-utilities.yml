@@ -1,6 +1,0 @@
-config:
-  maintenance:
-    reload-ui:
-  dynamic-view-distance:
-    max: 32
-

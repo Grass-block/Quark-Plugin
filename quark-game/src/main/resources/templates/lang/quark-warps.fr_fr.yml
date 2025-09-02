@@ -1,0 +1,64 @@
+language:
+  -module-name:
+    tpa: Demande de téléportation
+    waypoint: Point de navigation
+    back-to-death: Retour au point de mort
+  waypoint:
+    exist: '{global#sys-error}Le point de navigation {#var} existe déjà.'
+    not-exist: '{global#sys-error}Le point de navigation {#var} n'existe pas.'
+    add-success: '{global#sys-operation}Point de navigation {#var} ajouté avec succès.'
+    remove-success: '{global#sys-operation}Point de navigation {#var} supprimé avec succès.'
+    tp-success: '{global#sys-success}Téléportation au point de navigation {#var} réussie.'
+    home-exist-warn: { global#sys-warning }Vous avez déjà défini un foyer. Utilisez {#gold}/sethome -f pour écraser
+    home-set-success: { global#sys-operation }Foyer défini avec succès.
+    home-not-set: { global#sys-error }Vous n'avez pas de foyer. Utilisez {#gold}/sethome{#gray} pour en définir un!
+    home-tp-success: { global#sys-success }Téléportation à votre foyer réussie.
+    tip: "{#gray}Utilisez {#gold}/waypoint{#gray} pour créer vos points de navigation ou utiliser les points publics."
+    tip-home: "{#gray}Utilisez {#gold}/sethome{#gray} pour définir un foyer et {#gold}/home{#gray} pour y retourner rapidement."
+    list: '{#aqua}Liste des points de navigation: '
+    list-item: '{ color(#44FFAA) }[ %s ]{ #white}%s: %s,%s,%s{color(white);click(command,/waypoint remove%s %s)} [{#red}X{#white}]'
+    list-hover: |-
+        {color(#44FFAA)}Nom: {#white}%s
+        Monde: {#white}%s
+        Coordonnées: {#white}[{#red}%s{#gray}, {#green}%s{#gray}, {#aqua}%s{#white}]
+        Angle: {#purple}[%s,%s]
+        {#gold}[Cliquez pour vous téléporter]
+  back-to-death:
+    back-not-set: "{ global#sys-error }Vous n'êtes pas encore mort."
+    back-tp-success: "{ global#sys-success }Téléportation au dernier point de mort réussie."
+    back-hint: { global#sys-info }Votre point de mort a été enregistré. Utilisez {#gold }/back{#gray} ou {click(command,/back)}{#white}[{#aqua}Cliquez pour vous téléporter{#white}]
+    tip-back: { #gray}Utilisez {#gold}/back{#gray} pour retourner rapidement à votre position de mort.
+  tpa:
+    tpahere-accept-btn: '{color(white)}[{color(green);click(command,/tpahere accept %s)}Accepter{color(white)}]'
+    tpahere-deny-btn: '{color(white)}[{color(red);click(command,/tpahere deny %s)}Refuser{color(white)}]'
+    tpahere-request-sender: { global#sys-info }Demande de téléportation vers vous envoyée au joueur {#var }.
+    tpahere-request-target: { global#sys-info }Le joueur {#var} vous a demandé à être téléporté vers lui. {msg#tpahere-accept-btn} {msg#tpahere-deny-btn}
+    tpahere-accept-sender: { global#sys-info }Demande de téléportation vers {#var} acceptée. Téléportation en cours...
+    tpahere-accept-target: { global#sys-info }{ #var} a accepté votre demande de téléportation.
+    tpahere-deny-sender: { global#sys-info }Demande de téléportation vers {#var } refusée.
+    tpahere-deny-target: { global#sys-info }{ #var} a refusé votre demande de téléportation.
+    tpahere-no-request: { global#sys-info }{ #var} ne vous a pas envoyé de demande de téléportation.
+
+    tpa-accept-btn: '{color(white)}[{color(green);click(command,/tpa accept %s)}Accepter{color(white)}]'
+    tpa-deny-btn: '{color(white)}[{color(red);click(command,/tpa deny %s)}Refuser{color(white)}]'
+    tpa-request-sender: { global#sys-info }Demande de téléportation envoyée au joueur {#var }.
+                                        tpa-request-target: { global#sys-info }Le joueur {#var } vous a demandé à être téléporté vers vous. {msg#tpa-accept-btn} {msg#tpa-deny-btn}
+    tpa-accept-sender: { global#sys-info }Demande de téléportation de {#var} acceptée.
+    tpa-accept-target: { global#sys-info }{ #var} a accepté votre demande de téléportation. Téléportation en cours...
+    tpa-deny-sender: { global#sys-info }Demande de téléportation de {#var } refusée.
+    tpa-deny-target: { global#sys-info }{ #var} a refusé votre demande de téléportation.
+                  tpa-no-request: { global#sys-info }{ #var} ne vous a pas envoyé de demande de téléportation.
+
+                    send: '{global#info}Demande de téléportation envoyée au joueur {#var}.'
+                      undo: '{global#info}Demande de téléportation vers {#var} annulée.'
+                      accept: '{global#success}Demande de téléportation de {#var} acceptée.'
+                      deny: '{global#info}Demande de téléportation de {#var} refusée.'
+                      send-announce: '{global#info}Le joueur {#var} vous a envoyé une demande de téléportation. {msg#accept-btn} {msg#deny-btn}'
+                      denied: '{global#error}{#var} a refusé votre demande de téléportation.'
+                      accepted: '{global#success}{#var} a accepté votre demande de téléportation. Téléportation en cours...'
+                      player-not-found: '{global#error}Joueur introuvable...'
+                      list: '{global#info}Demandes de téléportation en attente: {#return} {#var}'
+                      rtp:
+                        start: '{global#info}Téléportation aléatoire en cours, recherche d'une destination dans {#var } ticks...'
+                                    success: '{global#success}Téléportation aléatoire réussie! (Destination: [{#var},{#var},{#var}])'
+                                    failed: '{global#error}Impossible de trouver une destination valide dans le nombre d'essais autorisé.'

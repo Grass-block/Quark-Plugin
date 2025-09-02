@@ -17,16 +17,18 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.data.ModuleDataService;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.region.Region;
-import org.tbstcraft.quark.foundation.region.SimpleRegion;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.framework.record.RecordEntry;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.SharedObjects;
+import org.atcraftmc.starlight.data.ModuleDataService;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.core.objects.Region;
+import org.atcraftmc.starlight.core.objects.SimpleRegion;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.data.record.RecordEntry;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -35,7 +37,7 @@ import java.util.Objects;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({LimitedArea.LimitedAreaCommand.class})
-@QuarkModule(version = "1.3.0")
+@SLModule(version = "1.3.0")
 public final class LimitedArea extends PackageModule {
     private final HashMap<String, SimpleRegion> regions = new HashMap<>();
 
@@ -113,9 +115,9 @@ public final class LimitedArea extends PackageModule {
                 }
             }
             event.setCancelled(true);
-            this.getLanguage().sendMessage(p, "interact_blocked_we");
+            MessageAccessor.send(this.getLanguage(), p, "interact_blocked_we");
 
-            if (!this.getConfig().getBoolean("record")) {
+            if (!ConfigAccessor.getBool(this.getConfig(), "record")) {
                 return;
             }
             this.record.addLine(
@@ -140,8 +142,8 @@ public final class LimitedArea extends PackageModule {
             }
         }
         event.setCancelled(true);
-        this.getLanguage().sendMessage(p, "interact_blocked");
-        if (!this.getConfig().getBoolean("record")) {
+        MessageAccessor.send(this.getLanguage(), p, "interact_blocked");
+        if (!ConfigAccessor.getBool(this.getConfig(), "record")) {
             return;
         }
         this.record.addLine(
@@ -169,7 +171,7 @@ public final class LimitedArea extends PackageModule {
                 case "add" -> {
                     this.checkException(args.length == 9);
                     if (this.getModule().getRegions().containsKey(arg2)) {
-                        this.getLanguage().sendMessage(sender, "region_add_failed", arg2);
+                        MessageAccessor.send(this.getLanguage(), sender, "region_add_failed", arg2);
                         return;
                     }
                     this.getModule().getRegions().put(arg2, new SimpleRegion(
@@ -181,17 +183,17 @@ public final class LimitedArea extends PackageModule {
                             Integer.parseInt(args[7]),
                             Integer.parseInt(args[8])
                     ));
-                    this.getLanguage().sendMessage(sender, "region_add", arg2);
+                    MessageAccessor.send(this.getLanguage(), sender, "region_add", arg2);
                     this.getModule().saveRegions();
                 }
                 case "remove" -> {
                     this.checkException(args.length == 2);
                     if (!this.getModule().getRegions().containsKey(arg2)) {
-                        this.getLanguage().sendMessage(sender, "region_remove_failed", arg2);
+                        MessageAccessor.send(this.getLanguage(), sender, "region_remove_failed", arg2);
                         throw new RuntimeException("???");
                     }
                     this.getModule().getRegions().remove(arg2);
-                    this.getLanguage().sendMessage(sender, "region_remove", arg2);
+                    MessageAccessor.send(this.getLanguage(), sender, "region_remove", arg2);
                 }
             }
         }

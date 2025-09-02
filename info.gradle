@@ -23,7 +23,7 @@ processResources {
         filesMatching("**/plugin.yml") {
             expand([
                     'version'     : project.property("version"),
-                    'core_version': project(":quark").property("version")
+                    'core_version': project(":starlight-core").property("version")
             ])
         }
     }

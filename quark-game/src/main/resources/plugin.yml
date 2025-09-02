@@ -12,5 +12,5 @@ depend: ["quark"]
 #description
 authors: ["GrassBlock2022","TBSTMC"]
 website: https://quark.tbstmc.xyz
-description: Extension pack of Quark ecosystem, including game-tweaking and contents.
+description: Extension pack of Starlight ecosystem, including game-tweaking and contents.
 prefix: QuarkGame

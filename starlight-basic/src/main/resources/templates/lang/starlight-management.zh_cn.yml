@@ -1,0 +1,69 @@
+language:
+  -module-names:
+    maintenance: 维护模式
+    mute: 聊天禁言
+    chat-filter: 屏蔽词
+    chat-report: 聊天举报
+  ban:
+    msg-ban-complete: "{global#sys-success}已封禁玩家 {#var} 至 {#var},原因: {#var}。"
+    broadcast: "{global#sys-info}玩家{#var} 因 {#var} 被操作者 {#var} 封禁至 {#var}。"
+  maintenance:
+    start: "{global#sys-operation}维护开始。"
+    end: "{global#sys-operation}维护结束。"
+    allow: "{global#sys-operation}已允许 {#var}({#var})在维护期间进入服务器。"
+    disallow: "{global#sys-operation}已不再允许 {#var}({#var})在维护期间进入服务器。"
+    kick-message:
+      - '由于服务器正在维护,您暂时无法进入。'
+      - '维护需要一段时间,请您耐心等待,我们对此十分抱歉。'
+  mute:
+    message-banned: '{global#sys-info}你被禁言了, 您的禁言将在 {#var} 解除。'
+    add: '{global#sys-info}成功将玩家 {#var} 禁言至 {#var}, 原因是 {#var}。'
+    add-target: '{global#sys-info}你被 {#var} 因 {#var} 禁言至 {#var}!'
+    remove: '{global#sys-info}成功将玩家 {#var} 解除禁言。'
+    remove-target: '{global#sys-info}你被管理员 {#var} 解除禁言!'
+    message-unmuted: '{global#sys-error}错误: 玩家 {#var} 未被禁言!'
+  kick-on-reload:
+    reload-hint:
+      - "{#white}服务器正在重载。为保证游戏正常您已被暂时踢出。"
+      - "{#white}请在稍后重新加入。{#return}"
+    stop-hint:
+      - "{#white}因故障或维护需要，服务器现已关闭。"
+      - "{#white}很抱歉给您带来不便。{#return}"
+  advanced-plugin-command:
+    list: "{global#sys-operation}以下是所有插件: {#var}"
+    info: "{global#sys-operation}以下是关于 {#var} 插件的信息:{#return}%s"
+    info-name: "{#gold}名称{#white}: %s[%s]"
+    info-version: "{#gold}版本{#white}: %s"
+    info-author: "{#gold}作者{#white}: %s"
+    info-desc: "{#gold}简介{#white}: %s"
+    info-api: "{#gold}API版本{#white}: %s"
+    info-depend: "{#gold}前置{#white}: %s"
+    info-soft-depend: "{#gold}软前置{#white}: %s"
+    info-main: "{#gold}启动类{#white}: %s"
+    info-libs: "{#gold}依赖库{#white}:"
+    file-not-found: "{global#error}未找到插件文件 {#var}。"
+    plugin-not-found: "{global#error}未找到插件 {#var}。"
+    load-failed: "{global#error}未能成功加载插件 {#var}。"
+    unload-failed: "{global#error}未能成功卸载插件 {#var}。"
+    enable: "{global#operation}成功启用插件 {#var}。"
+    disable: "{global#operation}成功停用插件 {#var}。"
+    restart: "{global#operation}成功重启插件 {#var}。"
+    load: "{global#operation}成功加载插件 {#var}。"
+    unload: "{global#operation}成功卸载插件 {#var}。"
+    reload: "{global#operation}成功重载插件 {#var}。"
+  stop-confirm:
+    hint: "{#red} 你确定要关闭服务器吗?这可能会导致服务终止。如果确定的话,请使用{#yellow}/stop confirm"
+  tps-bar:
+    on: "{global#operation}已显示TPS条。"
+    off: "{global#operation}已隐藏TPS条。"
+  chat-filter:
+    reload: "{global#sys-success}成功重载规则文件。"
+    save: "{global#sys-success}成功保存默认规则文件。"
+    reported-warn: "{global#sys-warning}您的消息({#var})已被玩家举报并被系统认定为违规，请注意您的言行举止。"
+    outcome-warn: "{global#sys-success}您举报的玩家({#var})的消息({#var})已被系统认定为违规并警告处理。感谢您对社区秩序的维护。"
+    outcome-punished: "{global#sys-success}您举报的玩家({#var})的消息({#var})已被系统认定为违规并禁言处理。感谢您对社区秩序的维护。"
+  chat-report:
+    not-exist: "{global#sys-error}您要举报的聊天记录条目不存在, 或许它已经被举报过了。"
+    not-self: "{global#sys-error}您不能举报自己的聊天信息。"
+    success: "{global#sys-success}您已提交对 {#var} 的聊天举报 ({#var})。"
+    tip: '{#gray}如果一位玩家发送的信息包含了不合适的内容，你可以点击聊天文本后面的"[!]"进行举报。'

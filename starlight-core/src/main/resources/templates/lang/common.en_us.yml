@@ -1,0 +1,12 @@
+language:
+  world:
+    minecraft-world: "{#green}Overworld"
+    minecraft-world-nether: "{#red}Nether"
+    minecraft-world-the-end: "{#purple}TheEnd"
+  ui:
+    next: "{#aqua}Next Page"
+    prev: "{#yellow}Previous Page"
+    page: "{#white}Page: %s/%s"
+    close: "{#red}Close Window"
+    confirm: "{#green}Confirm"
+    cancel: "{#red}Cancel"

@@ -10,14 +10,15 @@ import me.gb2022.commons.reflect.Inject;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.bukkit.command.CommandSender;
-import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.api.PluginStorage;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.SharedObjects;
+import org.atcraftmc.starlight.api.PluginMessages;
+import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.language.LanguageItem;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.framework.module.CommandModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 @QuarkCommand(name = "chatgpt", permission = "+quark.chatgpt")
-@QuarkModule
+@SLModule
 public final class ChatGPT extends CommandModule {
     public static final String GPT35 = "api.alcex.cn/API/gpt-3.5/";
     public static final String GPT40 = "api.alcex.cn/API/gpt-4/";
@@ -101,7 +102,7 @@ public final class ChatGPT extends CommandModule {
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if (this.cooldown.contains(sender.getName())) {
-            this.language.sendMessage(sender, "cooldown", 10);
+            MessageAccessor.send(this.language, sender, "cooldown", 10);
             return;
         }
 
@@ -124,15 +125,15 @@ public final class ChatGPT extends CommandModule {
             String request = sb.toString().trim();
 
             if (model.equals(GPT40)) {
-                this.language.sendMessage(sender, "request-gpt4", "{;}" + request);
+                MessageAccessor.send(this.language, sender, "request-gpt4", "{;}" + request);
             } else {
-                this.language.sendMessage(sender, "request", "{;}" + request);
+                MessageAccessor.send(this.language, sender, "request", "{;}" + request);
             }
 
             chatgpt(
                     model,
                     request,
-                    (s) -> this.language.sendMessage(sender, "response", s),
+                    (s) -> MessageAccessor.send(this.language, sender, "response", s),
                     (line) -> this.logger.warn("pared bad response flow: " + line)
                    );
         });

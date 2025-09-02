@@ -1,6 +1,8 @@
 package org.atcraftmc.quark.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.language.MinecraftLocale;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,20 +14,19 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.atcraftmc.qlib.language.Language;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.customcontent.CustomMeta;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.core.custom.CustomMeta;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.LocaleService;
 
 import java.util.List;
-import java.util.Locale;
 
-@QuarkModule(version = "0.3")
+@SLModule(version = "0.3")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({ItemCustomName.ItemCommandCommand.class})
 public final class ItemCustomName extends PackageModule {
@@ -37,13 +38,13 @@ public final class ItemCustomName extends PackageModule {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(final PlayerJoinEvent event) {
-        refreshInventory(event.getPlayer().getInventory(), Language.locale(event.getPlayer()));
+        refreshInventory(event.getPlayer().getInventory(), LocaleService.locale(event.getPlayer()));
     }
 
     @EventHandler
     public void onHarvest(PlayerHarvestBlockEvent event) {
         for (ItemStack itemStack : event.getItemsHarvested()) {
-            refreshItem(itemStack, Language.locale(event.getPlayer()));
+            refreshItem(itemStack, LocaleService.locale(event.getPlayer()));
         }
     }
 
@@ -52,10 +53,10 @@ public final class ItemCustomName extends PackageModule {
         if (event.getClickedInventory() == null) {
             return;
         }
-        this.refreshInventory(event.getClickedInventory(), Language.locale(event.getWhoClicked()));
+        this.refreshInventory(event.getClickedInventory(), LocaleService.locale(event.getWhoClicked()));
     }
 
-    private void refreshInventory(Inventory inv, Locale locale) {
+    private void refreshInventory(Inventory inv, MinecraftLocale locale) {
         for (ItemStack stack : inv.getContents()) {
             if (stack == null) {
                 continue;
@@ -67,7 +68,7 @@ public final class ItemCustomName extends PackageModule {
         }
     }
 
-    private void refreshItem(ItemStack stack, Locale locale) {
+    private void refreshItem(ItemStack stack, MinecraftLocale locale) {
         ItemMeta meta = stack.getItemMeta();
         if (!CustomMeta.hasItemPDCProperty(stack, "custom_name")) {
             //meta.displayName(null);
@@ -77,7 +78,7 @@ public final class ItemCustomName extends PackageModule {
 
         String key = CustomMeta.getItemPDCProperty(stack, "custom_name");
 
-        meta.displayName(this.getLanguage().getMessageComponent(locale, key).asComponent());
+        meta.displayName(this.getLanguage().item(key).component(locale).asComponent());
         stack.setItemMeta(meta);
     }
 
@@ -88,13 +89,13 @@ public final class ItemCustomName extends PackageModule {
         public void onCommand(CommandSender sender, String[] args) {
             ItemStack stack = ((Player) sender).getInventory().getItemInMainHand();
             if (stack.getType() == Material.AIR) {
-                this.getLanguage().sendMessage(sender, "bind-failed");
+                MessageAccessor.send(this.getLanguage(), sender, "bind-failed");
                 return;
             }
             String id = stack.getType().getKey().getKey();
             if (args[0].equals("none")) {
                 CustomMeta.removeItemPDCProperty(stack, "custom_name");
-                this.getLanguage().sendMessage(sender, "unbind", id);
+                MessageAccessor.send(this.getLanguage(), sender, "unbind", id);
             } else {
                 StringBuilder sb = new StringBuilder();
                 for (String s : args) {
@@ -103,10 +104,10 @@ public final class ItemCustomName extends PackageModule {
                 String cmdLine = sb.substring(0, sb.length() - 1);
 
                 CustomMeta.setItemPDCProperty(stack, "custom_name", cmdLine);
-                this.getLanguage().sendMessage(sender, "bind", id, cmdLine);
+                MessageAccessor.send(this.getLanguage(), sender, "bind", id, cmdLine);
             }
 
-            this.getModule().refreshItem(stack, Language.locale(sender));
+            this.getModule().refreshItem(stack, LocaleService.locale(sender));
         }
 
         @Override

@@ -1,6 +1,0 @@
-language:
-  world:
-    minecraft:world: "{#green}主世界"
-    minecraft:world-nether: "{#red}下界"
-    minecraft:world-the-end: "{#purple}末地"
-    aether:aether: "{#aqua}天境"

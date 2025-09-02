@@ -1,9 +1,18 @@
 package org.atcraftmc.quark.display;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedServerPing;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.language.LanguageEntry;
+import org.atcraftmc.qlib.texts.ComponentBlock;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -11,28 +20,33 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.util.CachedServerIcon;
-import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.api.QueryPingEvent;
-import org.tbstcraft.quark.data.assets.Asset;
-import org.atcraftmc.qlib.language.LanguageEntry;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
-import org.atcraftmc.qlib.texts.ComponentBlock;
-import org.atcraftmc.qlib.texts.TextBuilder;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.SharedObjects;
+import org.atcraftmc.starlight.api.event.QueryPingEvent;
+import org.atcraftmc.starlight.data.assets.Asset;
+import org.atcraftmc.starlight.foundation.ComponentSerializer;
+import org.atcraftmc.starlight.foundation.TextSender;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.component.Components;
+import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.migration.MessageAccessor;
 
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@QuarkModule(version = "1.0.2")
+@SLModule(version = "1.0.2")
 @CommandProvider({CustomMotd.MotdCommand.class})
 @AutoRegister(ServiceType.EVENT_LISTEN)
-public final class CustomMotd extends PackageModule implements QuarkCommandExecutor {
+@Components(CustomMotd.ProtocolLibSender.class)
+public final class CustomMotd extends PackageModule implements PluginCommandExecutor {
     public static final Pattern PATTERN = Pattern.compile("\\{[a-z]+}");
 
     private CachedServerIcon cachedServerIcon;
@@ -84,13 +98,13 @@ public final class CustomMotd extends PackageModule implements QuarkCommandExecu
             throw new RuntimeException("invalid config!");
         }
 
-        String template = root.getString("motd-title") + "\n{#reset}" + root.getString("motd-subtitle");
+        var template = root.getString("motd-title") + "\n{#reset}" + root.getString("motd-subtitle");
 
         Matcher matcher = PATTERN.matcher(template);
 
         while (matcher.find()) {
-            String raw = matcher.group();
-            String key = raw.replace("{", "").replace("}", "");
+            var raw = matcher.group();
+            var key = raw.replace("{", "").replace("}", "");
 
             String content;
 
@@ -115,7 +129,11 @@ public final class CustomMotd extends PackageModule implements QuarkCommandExecu
 
     @EventHandler
     public void onPing(ServerListPingEvent e) {
-        e.setMotd(getMessage().toString());
+        try {
+            e.motd(getMessage().toSingleLine());
+        } catch (Error ex) {
+            e.setMotd(getMessage().toString());
+        }
 
         if (this.cachedServerIcon == null) {
             return;
@@ -139,15 +157,15 @@ public final class CustomMotd extends PackageModule implements QuarkCommandExecu
         switch (args[0]) {
             case "refresh-icon" -> {
                 refreshIcon();
-                this.language.sendMessage(sender, "icon-refresh");
+                MessageAccessor.send(this.language, sender, "icon-refresh");
             }
             case "refresh-text" -> {
                 this.refreshText();
-                this.language.sendMessage(sender, "text-refresh");
+                MessageAccessor.send(this.language, sender, "text-refresh");
             }
             case "text" -> {
-                this.language.sendMessage(sender, "motd-command");
-                getMessage().send(sender);
+                MessageAccessor.send(this.language, sender, "motd-command");
+                TextSender.sendMessage(sender, getMessage());
             }
         }
     }
@@ -168,4 +186,31 @@ public final class CustomMotd extends PackageModule implements QuarkCommandExecu
             this.setExecutor(module);
         }
     }
+
+    public static final class ProtocolLibSender extends ModuleComponent<CustomMotd> {
+        private PacketAdapter handler;
+
+        @Override
+        public void checkCompatibility() throws APIIncompatibleException {
+            Compatibility.requireClass(() -> Class.forName("com.comphenix.protocol.ProtocolLibrary"));
+        }
+
+        @Override
+        public void enable() {
+            this.handler = new PacketAdapter(this.parent.getOwnerPlugin(), PacketType.Status.Server.OUT_SERVER_INFO) {
+                @Override
+                public void onPacketSending(PacketEvent e) {
+                    WrappedServerPing ping = e.getPacket().getServerPings().read(0);
+                    ping.setMotD(WrappedChatComponent.fromJson(ComponentSerializer.json(parent.getMessage())));
+                }
+            };
+            ProtocolLibrary.getProtocolManager().addPacketListener(this.handler);
+        }
+
+        @Override
+        public void disable() {
+            ProtocolLibrary.getProtocolManager().removePacketListener(this.handler);
+        }
+    }
+
 }

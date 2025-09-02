@@ -23,6 +23,8 @@ public final class ModuleManager {
         this.modules.put("motd-sync", new MotdSync());
         this.modules.put("chat-sync", new ChatSync());
         this.modules.put("tab-sync", new TabSync());
+        this.modules.put("mod-server-support", new ModdedServerSupport());
+        this.modules.put("player-action-restriction", new PlayerActionRestriction());
     }
 
     public void enable() {

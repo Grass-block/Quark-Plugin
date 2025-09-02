@@ -12,25 +12,26 @@ import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.Inject;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
+import org.atcraftmc.starlight.Starlight;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
-import org.tbstcraft.quark.Quark;
-import org.tbstcraft.quark.data.PlayerDataService;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.data.PlayerDataService;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
 
-@QuarkModule(version = "1.0-beta", beta = true)
+@SLModule(version = "1.0-beta", beta = true)
 @CommandProvider(Nickname.NickNameCommand.class)
-public class Nickname extends PackageModule implements QuarkCommandExecutor {
+public class Nickname extends PackageModule implements PluginCommandExecutor {
     private final ProtocolManager service = ProtocolLibrary.getProtocolManager();
 
-    private final PacketListener playerData = new PacketAdapter(Quark.getInstance(), PacketType.Play.Server.PLAYER_INFO) {
+    private final PacketListener playerData = new PacketAdapter(Starlight.instance(), PacketType.Play.Server.PLAYER_INFO) {
         @Override
         public void onPacketSending(PacketEvent event) {
             var packet = event.getPacket();
@@ -101,7 +102,7 @@ public class Nickname extends PackageModule implements QuarkCommandExecutor {
         entry.setString("value", name);
         PlayerDataService.save(player.getName());
 
-        getLanguage().sendMessage(context.getSender(), isSelf ? "set-self" : "set-other", player.getName(), name);
+        MessageAccessor.send(this.getLanguage(), context.getSender(), isSelf ? "set-self" : "set-other", player.getName(), name);
     }
 
     @QuarkCommand(name = "nickname", permission = "+quark.nickname")

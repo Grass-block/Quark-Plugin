@@ -10,21 +10,12 @@ config:
     sound: true #is sound effect will be play when player receives a mail
     template: '{#white}[{#gold}%s{#white}] {#aqua}%s{#white}: %s' #message template for viewing
     send-direct-to-online-player: false
-  chat-report:
-    append: '{click(command,/chat-report %s);color(red)}[!]' #report interactive text
   chat-translator:
     append: '{click(command,/translate %s);color(aqua)}[T]'
   npc-chat:
     template: "{#gray}[NPC]{#white}{name} {#gold}: {#gray}{text}" #npc conversation line format
     inactive-time: 8000 #how long before the session expires
     sound: true #is sound effect will be play when conversation happens
-  chat-filter:
-    except-player: true #player name will be excepted from process.
-    cover: false #detected keywords will not be replaced, but still be detected.
-    cover-char: '*' #using this char to replace keyword.
-    handled-commands: [ "say","tell","mail" ] #commands will be handled as they attempt to send message.
-    punish: true #will punish player.
-    punish-command: "mute {player} 3600 {#yellow}[quark]{#red}BadChatBehavior" #punish player using this command. support other plugins.
   qq-chat-sync:
     message: "大厅 | [{#rank}] %s > %s" #template
     token: "114514" #token

@@ -10,20 +10,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.tbstcraft.quark.PlayerView;
-import org.tbstcraft.quark.SharedObjects;
-import org.tbstcraft.quark.foundation.TextSender;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.APIProfile;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.LocaleService;
-import org.tbstcraft.quark.internal.placeholder.PlaceHolderService;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.core.PlayerView;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.SharedObjects;
+import org.atcraftmc.starlight.foundation.TextSender;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.APIProfile;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.LocaleService;
+import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
+import org.atcraftmc.starlight.core.TaskService;
 
-@QuarkModule
+@SLModule
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class ActionBarHUD extends PackageModule {
     @Inject
@@ -43,12 +44,19 @@ public final class ActionBarHUD extends PackageModule {
         var biome_n = block.getBiome().getKey().getNamespace();
         var biome_k = block.getBiome().getKey().getKey();
 
-        var p = this.language.getMessage(locale, "position", loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-        var b = this.language.getMessage(locale, "biome", biome_n, biome_k);
-        var t = this.language.getMessage(locale, "time");
-        var f = this.language.getMessage(locale, "face", SharedObjects.NUMBER_FORMAT.format(loc.getYaw()), SharedObjects.NUMBER_FORMAT.format(loc.getPitch()));
+        var p = MessageAccessor.getMessage(this.language, locale, "position", loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+        var b = MessageAccessor.getMessage(this.language, locale, "biome", biome_n, biome_k);
+        var t = MessageAccessor.getMessage(this.language, locale, "time");
+        var f = MessageAccessor.getMessage(
+                this.language,
+                locale,
+                "face",
+                SharedObjects.NUMBER_FORMAT.format(loc.getYaw()),
+                SharedObjects.NUMBER_FORMAT.format(loc.getPitch())
+        );
 
-        var template = getConfig().getString("template")
+        var template = getConfig().value("template")
+                .string()
                 .replace("{position}", p)
                 .replace("{biome}", b)
                 .replace("{time}", t)
@@ -58,12 +66,10 @@ public final class ActionBarHUD extends PackageModule {
     }
 
     private void startRender(Player player) {
-        PlayerView.getInstance(player)
-                .getActionbar()
-                .addChannel("quark:actionbar-hud", -10, 3, TaskService.async(), (p, c) -> {
-                    var comp = TextBuilder.buildComponent(render(p));
-                    TextSender.sendActionbarTitle(p, comp);
-                });
+        PlayerView.getInstance(player).getActionbar().addChannel("quark:actionbar-hud", -10, 3, TaskService::entity, (p, c) -> {
+            var comp = TextBuilder.buildComponent(render(p));
+            TextSender.sendActionbarTitle(p, comp);
+        });
     }
 
     private void stopRender(Player player) {
@@ -75,13 +81,6 @@ public final class ActionBarHUD extends PackageModule {
     public void enable() {
         for (var player : Bukkit.getOnlinePlayers()) {
             startRender(player);
-        }
-    }
-
-    @Override
-    public void disable() {
-        for (var player : Bukkit.getOnlinePlayers()) {
-            stopRender(player);
         }
     }
 

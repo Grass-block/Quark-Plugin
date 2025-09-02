@@ -1,6 +1,0 @@
-language:
-  world:
-    minecraft:world: "{#green}Overworld"
-    minecraft:world-nether: "{#red}Nether"
-    minecraft:world-the-end: "{#purple}TheEnd"
-    aether:aether: "{#aqua}TheAether"

@@ -9,18 +9,18 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.tbstcraft.quark.data.assets.AssetGroup;
+import org.atcraftmc.starlight.data.assets.AssetGroup;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommandManager;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class CommandFunction extends PackageModule {
     private final Set<AdapterCommand> commands = new HashSet<>();
@@ -45,7 +45,7 @@ public final class CommandFunction extends PackageModule {
             for (String tagName : dom.getKeys(false)) {
                 AdapterCommand adapter = new AdapterCommand(tagName, dom.getStringList(tagName));
                 this.commands.add(adapter);
-                QuarkCommandManager.getInstance().register(adapter);
+                StarlightCommandManager.getInstance().register(adapter);
             }
 
             this.logger.info("loaded function provider file %s.".formatted(cfg));
@@ -55,7 +55,7 @@ public final class CommandFunction extends PackageModule {
     @Override
     public void disable() {
         for (AdapterCommand command : this.commands) {
-            QuarkCommandManager.getInstance().unregister(command);
+            StarlightCommandManager.getInstance().unregister(command);
         }
     }
 
@@ -84,6 +84,8 @@ public final class CommandFunction extends PackageModule {
                 for (int i = 0; i < args.length; i++) {
                     pattern = pattern.replace("{arg%d}".formatted(i), args[i]);
                 }
+                //todo
+
                 ((Player) sender).performCommand(pattern);
             }
         }

@@ -1,5 +1,7 @@
 package org.atcraftmc.quark.automatic;
 
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -8,18 +10,18 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.atcraftmc.qlib.language.LanguageEntry;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.*;
 
 //todo:config countdown
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 @CommandProvider({GarbageCleaner.CleanCommand.class})
 @SuppressWarnings("ClassCanBeRecord")
 public final class GarbageCleaner extends PackageModule implements Runnable {
@@ -30,17 +32,17 @@ public final class GarbageCleaner extends PackageModule implements Runnable {
     @Override
     public void enable() {
         var config = this.getConfig();
-        this.whitelistedWorlds = config.getList("world-whitelist");
+        this.whitelistedWorlds = config.value("world-whitelist").list(String.class);
         this.cleaners.clear();
-        if (config.getBoolean("clean-drops")) {
-            boolean b1 = config.getBoolean("ignore-enchant-item");
-            this.addCleaner(new DropCleaner(config.getList("item-whitelist"), b1));
+        if (ConfigAccessor.getBool(config, "clean-drops")) {
+            boolean b1 = ConfigAccessor.getBool(config, "ignore-enchant-item");
+            this.addCleaner(new DropCleaner(config.value("item-whitelist").list(String.class), b1));
 
         }
-        if (config.getBoolean("clean-dense-entity")) {
-            this.addCleaner(new DenseEntityCleaner(config.getInt("dense-entity-max-count")));
+        if (ConfigAccessor.getBool(config, "clean-dense-entity")) {
+            this.addCleaner(new DenseEntityCleaner(ConfigAccessor.getInt(config, "dense-entity-max-count")));
         }
-        TaskService.async().timer("cleaner::timer", 0, this.getConfig().getInt("clean-interval"), this);
+        TaskService.async().timer("cleaner::timer", 0, ConfigAccessor.getInt(this.getConfig(), "clean-interval"), this);
     }
 
     @Override
@@ -69,7 +71,7 @@ public final class GarbageCleaner extends PackageModule implements Runnable {
 
     private Runnable cleanTask() {
         return () -> {
-            this.getLanguage().broadcastMessage(false,false, "restart");
+            MessageAccessor.broadcast(this.getLanguage(), false, false, "restart");
             for (World world : Bukkit.getWorlds()) {
                 if (this.whitelistedWorlds.contains(world.getName())) {
                     continue;
@@ -79,7 +81,7 @@ public final class GarbageCleaner extends PackageModule implements Runnable {
                     cleaner.clean(world);
                 }
             }
-            this.getLanguage().broadcastMessage(false,false, "complete");
+            MessageAccessor.broadcast(this.getLanguage(), false, false, "complete");
         };
     }
 
@@ -173,7 +175,7 @@ public final class GarbageCleaner extends PackageModule implements Runnable {
 
         @Override
         public void run() {
-            this.entry.broadcastMessage(false,false, "remain", this.remain);
+            this.entry.item("remain").broadcast(false, false, this.remain);
         }
     }
 

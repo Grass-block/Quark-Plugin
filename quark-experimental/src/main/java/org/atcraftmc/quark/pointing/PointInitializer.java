@@ -1,9 +1,9 @@
 package org.atcraftmc.quark.pointing;
 
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
 
-@QuarkModule
+@SLModule
 public final class PointInitializer extends PackageModule {
 
 

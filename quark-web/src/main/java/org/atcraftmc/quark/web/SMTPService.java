@@ -1,23 +1,27 @@
 package org.atcraftmc.quark.web;
 
-import org.tbstcraft.quark.Quark;
 import org.atcraftmc.qlib.config.ConfigEntry;
-import org.tbstcraft.quark.framework.service.Service;
-import org.tbstcraft.quark.framework.service.*;
+import org.atcraftmc.starlight.framework.service.SLService;
+import org.atcraftmc.starlight.framework.service.ServiceHolder;
+import org.atcraftmc.starlight.framework.service.ServiceProvider;
+import org.bukkit.configuration.ConfigurationSection;
+import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.Configurations;
+import org.atcraftmc.starlight.framework.service.Service;
+import org.atcraftmc.starlight.framework.service.ServiceInject;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Properties;
 
-@QuarkService(id = "smtp-service")
+@SLService(id = "smtp-service")
 public interface SMTPService extends Service {
     @ServiceInject
     ServiceHolder<SMTPService> INSTANCE = new ServiceHolder<>();
 
     @ServiceProvider
     static SMTPService create(ConfigEntry section) {
-        return new ServiceImplementation(section);
+        return new ServiceImplementation(Configurations.secret("smtp"));
     }
 
 
@@ -29,51 +33,56 @@ public interface SMTPService extends Service {
 
 
     final class ServiceImplementation implements SMTPService {
-        private final ConfigEntry config;
+        private final ConfigurationSection config;
 
-        public ServiceImplementation(ConfigEntry config) {
+        public ServiceImplementation(ConfigurationSection config) {
             this.config = config;
         }
 
         @Override
         public boolean sendMail(String subject, String content, String... recipients) {
-            String from = this.config.getString("username");
-            String host = this.config.getString("server");
-            String password = this.config.getString("password");
+            var host = this.config.getString("server-host");
+            var port = this.config.getInt("server-port");
+            var username = this.config.getString("username");
+            var password = this.config.getString("password");
 
-            Properties properties = System.getProperties();
+            var properties = System.getProperties();
             if (host == null) {
                 return false;
             }
-            if (from == null) {
+            if (username == null) {
                 return false;
             }
 
-            Properties props = System.getProperties();
-            properties.setProperty("mail.smtp.host", host.split(":")[0]);
-            properties.setProperty("mail.smtp.port", host.split(":")[1]);
-            props.put("mail.smtp.socketFactory.port", host.split(":")[1]);
-            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            var auth = this.config.getBoolean("smtp-auth");
+            var starttls = this.config.getBoolean("smtp-starttls");
 
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true");
-            Session session = Session.getDefaultInstance(props, SMTPAuth.get(from, password));
+            var props = System.getProperties();
+            properties.setProperty("mail.smtp.host", host);
+            properties.setProperty("mail.smtp.port", String.valueOf(port));
+            props.put("mail.smtp.socketFactory.port", port);
+            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            props.put("mail.smtp.auth", String.valueOf(auth));
+            props.put("mail.smtp.starttls.enable", String.valueOf(starttls));
+
+            var session = Session.getDefaultInstance(props, SMTPAuth.get(username, password));
 
             try {
-                MimeMessage message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(from));
+                var message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(username));
                 for (String address : recipients) {
                     message.addRecipient(Message.RecipientType.TO, new InternetAddress(address));
                 }
 
                 message.setSubject(subject);
                 message.setContent(content, "text/html; charset=UTF-8");
+
                 Transport.send(message);
 
                 return true;
             } catch (Throwable mex) {
                 mex.printStackTrace();
-                Quark.getInstance().getLogger().severe(mex.getMessage());
+                Starlight.instance().getLogger().severe(mex.getMessage());
                 return false;
             }
         }

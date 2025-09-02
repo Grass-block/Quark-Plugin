@@ -1,0 +1,36 @@
+menu:
+  id: "quark:warps-menu"
+  title: { text: "{#dark_aqua}传送系统" }
+  commands: [ "/warps-menu" ]
+  permission: "+quark.gui.menu.warp"
+  capacity: 54
+  components:
+    51:
+      icon: { type: "paper" }
+      name: { text: "{#purple}传送系统" }
+      lore:
+        - { text: "{#gray}提供不同的传送功能" }
+    52: "return"
+    53: "close"
+
+    10: "back-to-home"
+    12: "back-to-death"
+    14: "open-servers-menu"
+    16: "random-tp"
+    29: "open-waypoint-list"
+    31:
+      icon: { type: 'player_head' }
+      name: { text: "{#dark_aqua}传送到他人" }
+      lore:
+        - { text: "{#gray}发起传送到他人的请求" }
+        - { text: "{#gray}对方同意后即可进行传送" }
+        - { text: "{#gold}[点击选择玩家]" }
+      any-click: [ "[sound]ui.button.click","[close]","[command]/tpa gui" ]
+    33:
+      icon: { type: 'player_head' }
+      name: { text: "{#dark_aqua}请求传送到自己" }
+      lore:
+        - { text: "{#gray}发起邀请他人到自己所在位置的请求" }
+        - { text: "{#gray}对方同意后即可进行传送" }
+        - { text: "{#gold}[点击选择玩家]" }
+      any-click: [ "[sound]ui.button.click","[close]","[command]/tpahere gui" ]

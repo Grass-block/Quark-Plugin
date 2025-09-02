@@ -6,15 +6,14 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.atcraftmc.quark.web.http.HttpHandlerContext;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.profile.PlayerProfile;
 import org.bukkit.util.CachedServerIcon;
-import org.tbstcraft.quark.api.QueryPingEvent;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
+import org.atcraftmc.starlight.api.event.QueryPingEvent;
+import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
 
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 public final class ServerQueries extends PackageModule {
 
     @Override
@@ -33,7 +32,7 @@ public final class ServerQueries extends PackageModule {
             player.addProperty("uuid", p.getUniqueId().toString());
             player.addProperty("display_name", PlainTextComponentSerializer.plainText().serialize(p.displayName()));
 
-            PlayerProfile profile = p.getPlayerProfile();
+            var profile = p.getPlayerProfile();
 
             if (profile.getTextures().getSkin() != null) {
                 player.addProperty("skin", profile.getTextures().getSkin().toString());

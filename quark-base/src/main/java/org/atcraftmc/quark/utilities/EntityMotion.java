@@ -10,16 +10,17 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import org.tbstcraft.quark.foundation.platform.APIIncompatibleException;
-import org.tbstcraft.quark.foundation.platform.Compatibility;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.CommandModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.function.Consumer;
 
-@QuarkModule
+@SLModule
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @QuarkCommand(name = "motion", permission = "-quark.util.motion")
 public final class EntityMotion extends CommandModule {
@@ -58,7 +59,7 @@ public final class EntityMotion extends CommandModule {
         if (!(context.getSender() instanceof Player)) {
             return;
         }
-        getLanguage().sendMessage(context.getSender(), "hint", target.size(), time, mode, x, y, z);
+        MessageAccessor.send(this.getLanguage(), context.getSender(), "hint", target.size(), time, mode, x, y, z);
     }
 
     private void attempt(Entity e, int time, Vector value, boolean add) {

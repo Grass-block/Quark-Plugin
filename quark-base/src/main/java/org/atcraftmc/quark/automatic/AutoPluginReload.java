@@ -2,16 +2,16 @@ package org.atcraftmc.quark.automatic;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.core.TaskService;
 
-@QuarkModule(version = "0.3", beta = true)
+@SLModule(version = "0.3", beta = true)
 public final class AutoPluginReload extends PackageModule {
     @Override
     public void enable() {
-        ConfigurationSection reloadItems = this.getConfig().getSection("reload-items");
-        String template = this.getConfig().getString("reload-command");
+        ConfigurationSection reloadItems = this.getConfig().value("reload-items").section();
+        String template = this.getConfig().value("reload-command").string();
         if (template == null) {
             return;
         }
@@ -20,7 +20,7 @@ public final class AutoPluginReload extends PackageModule {
         }
         for (String s : reloadItems.getKeys(false)) {
             String tid = "plugin_reload:" + s;
-            int delay = this.getConfig().getInt(s);
+            int delay = this.getConfig().value(s).intValue();
             TaskService.global().timer(tid, delay / 2, delay, new ReloadTask(template, s));
         }
     }

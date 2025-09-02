@@ -4,31 +4,33 @@ import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.atcraftmc.qlib.language.LanguageEntry;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.tbstcraft.quark.foundation.command.QuarkCommandExecutor;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@QuarkModule
+@SLModule
 @CommandProvider(ItemDropSecure.DropInsecureUnlockCommand.class)
 @AutoRegister(ServiceType.EVENT_LISTEN)
-public final class ItemDropSecure extends PackageModule implements QuarkCommandExecutor {
+public final class ItemDropSecure extends PackageModule implements PluginCommandExecutor {
     private final Set<String> unlocks = new HashSet<>();
 
     @Inject
     private LanguageEntry language;
-    
+
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
         var drop = event.getItemDrop();
@@ -43,12 +45,12 @@ public final class ItemDropSecure extends PackageModule implements QuarkCommandE
             return;
         }
 
-        for (var s : getConfig().getList("list")) {
+        for (var s : ConfigAccessor.configList(getConfig(), "list", String.class)) {
             if (!id.contains(s)) {
                 continue;
             }
             event.setCancelled(true);
-            this.language.sendMessage(player, "warn");
+            MessageAccessor.send(this.language, player, "warn");
             return;
         }
     }
@@ -56,13 +58,13 @@ public final class ItemDropSecure extends PackageModule implements QuarkCommandE
     @Override
     public void execute(CommandExecution context) {
         var player = context.requireSenderAsPlayer();
-        var ticks = getConfig().getInt("unlock-time");
+        var ticks = ConfigAccessor.getInt(getConfig(), "unlock-time");
 
         this.unlocks.add(player.getName());
-        this.language.sendMessage(player, "unlock", ticks / 20);
+        MessageAccessor.send(this.language, player, "unlock", ticks / 20);
         TaskService.global().delay(ticks, () -> {
             this.unlocks.remove(player.getName());
-            this.language.sendMessage(player, "unlock-end");
+            MessageAccessor.send(this.language, player, "unlock-end");
         });
     }
 

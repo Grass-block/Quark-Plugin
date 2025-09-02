@@ -1,0 +1,66 @@
+language:
+  -module-name:
+    tpa: Teleport Request
+    waypoint: Waypoint
+    back-to-death: Back to Death Point
+  waypoint:
+    exist: '{global#sys-error}Waypoint {#var} already exists.'
+    not-exist: '{global#sys-error}Waypoint {#var} does not exist.'
+    add-success: '{global#sys-operation}Successfully added waypoint {#var}.'
+    remove-success: '{global#sys-operation}Successfully removed waypoint {#var}.'
+    tp-success: '{global#sys-success}You have been teleported to waypoint {#var}.'
+    home-exist-warn: "{global#sys-warning}You already have a home set. Use {#gold}/sethome -f{#gray} to overwrite it."
+    home-set-success: "{global#sys-operation}Home set successfully."
+    home-not-set: "{global#sys-error}You haven't set a home yet. Use {#gold}/sethome{#gray} to set one!"
+    home-tp-success: "{global#sys-success}You have been teleported home."
+    tip: "{#gray}Use {#gold}/waypoint{#gray} to create your own waypoints or use public waypoints."
+    tip-home: "{#gray}Use {#gold}/sethome{#gray} to set a home, and {#gold}/home{#gray} to teleport back quickly."
+    list: '{#aqua}Waypoint List: '
+    list-item: "{color(#44FFAA)}[%s]{#white}%s: %s,%s,%s{color(white);click(command,/waypoint remove%s %s)} [{#red}X{#white}]"
+    list-hover: |-
+      {color(#44FFAA)}Name: {#white}%s
+       World: {#white}%s
+       Coordinates: {#white}[{#red}%s{#gray}, {#green}%s{#gray}, {#aqua}%s{#white}]
+       Angle: {#purple}[%s,%s]
+       {#gold}[Click to Teleport]
+  back-to-death:
+    back-not-set: "{global#sys-error}You haven't died yet."
+    back-tp-success: "{global#sys-success}You have been teleported to your last death location."
+    back-hint: "{global#sys-info}Your death location has been recorded. Use {#gold}/back{#gray} or {click(command,/back)}{#white}[{#aqua}Click to Teleport{#white}]"
+    tip-back: "{#gray}Use {#gold}/back{#gray} to quickly return to your death location."
+  tpa:
+    tpahere-accept-btn: '{color(white)}[{color(green);click(command,/tpahere accept %s)}Accept{color(white)}]'
+    tpahere-deny-btn: '{color(white)}[{color(red);click(command,/tpahere deny %s)}Deny{color(white)}]'
+    tpahere-request-sender: "{global#sys-info}You have sent a teleport-to-you request to player {#var}."
+    tpahere-request-target: "{global#sys-info}Player {#var} has sent you a teleport-to-them request. {msg#tpahere-accept-btn} {msg#tpahere-deny-btn}"
+    tpahere-accept-sender: "{global#sys-info}You have accepted {#var}'s teleport-to-you request, teleporting..."
+    tpahere-accept-target: "{global#sys-info}{#var} has accepted their teleport-to-you request."
+    tpahere-deny-sender: "{global#sys-info}You have denied {#var}'s teleport-to-you request."
+    tpahere-deny-target: "{global#sys-info}{#var} has denied their teleport-to-you request."
+    tpahere-no-request: "{global#sys-info}{#var} hasn't sent you a teleport-to-them request."
+
+    tpa-accept-btn: '{color(white)}[{color(green);click(command,/tpa accept %s)}Accept{color(white)}]'
+    tpa-deny-btn: '{color(white)}[{color(red);click(command,/tpa deny %s)}Deny{color(white)}]'
+    tpa-request-sender: "{global#sys-info}You have sent a teleport-to-them request to player {#var}."
+    tpa-request-target: "{global#sys-info}Player {#var} has sent you a teleport-to-you request. {msg#tpa-accept-btn} {msg#tpa-deny-btn}"
+    tpa-accept-sender: "{global#sys-info}You have accepted {#var}'s teleport-to-you request."
+    tpa-accept-target: "{global#sys-info}{#var} has accepted your teleport-to-them request, teleporting..."
+    tpa-deny-sender: "{global#sys-info}You have denied {#var}'s teleport-to-you request."
+    tpa-deny-target: "{global#sys-info}{#var} has denied your teleport-to-them request."
+    tpa-no-request: "{global#sys-info}{#var} hasn't sent you a teleport-to-you request."
+
+    accept-btn: '{color(white)}[{color(green);click(command,/tpa accept %s)}Accept{color(white)}]'
+    deny-btn: '{color(white)}[{color(red);click(command,/tpa deny %s)}Deny{color(white)}]'
+    send: '{global#info}You have sent a teleport request to player {#var}.'
+    undo: '{global#info}You have canceled your teleport request to player {#var}.'
+    accept: "{global#success}You have accepted {#var}'s teleport request."
+    deny: "{global#info}You have denied {#var}'s teleport request."
+    send-announce: '{global#info}Player {#var} has sent you a teleport request. {msg#accept-btn} {msg#deny-btn}'
+    denied: '{global#error}{#var} has denied your teleport request.'
+    accepted: '{global#success}{#var} has accepted your teleport request, teleporting...'
+    player-not-found: '{global#error}Player not found...'
+    list: '{global#info}Here are your pending teleport requests: {#return} {#var}'
+  rtp:
+    start: '{global#info}Random teleport attempt started, searching for destination within {#var} ticks...'
+    success: '{global#success}Random teleport successful! (Destination: [{#var},{#var},{#var}])'
+    failed: '{global#error}Failed to find a valid destination within allowed attempts, teleport failed.'

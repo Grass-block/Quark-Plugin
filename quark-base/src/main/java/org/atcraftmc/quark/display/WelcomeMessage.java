@@ -3,25 +3,26 @@ package org.atcraftmc.quark.display;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import net.kyori.adventure.text.ComponentLike;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.language.Language;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.tbstcraft.quark.data.PlayerDataService;
-import org.atcraftmc.qlib.language.Language;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
-import org.atcraftmc.qlib.command.QuarkCommand;
-import org.atcraftmc.qlib.texts.TextBuilder;
-import org.tbstcraft.quark.foundation.TextSender;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.data.PlayerDataService;
+import org.atcraftmc.starlight.foundation.TextSender;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.LocaleService;
+import org.atcraftmc.starlight.core.TaskService;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({WelcomeMessage.WelcomeMessageCommand.class})
-@QuarkModule(version = "0.1.0")
+@SLModule(version = "0.1.0")
 public final class WelcomeMessage extends PackageModule {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -36,10 +37,14 @@ public final class WelcomeMessage extends PackageModule {
     }
 
     private void sendWelcomeMessage(Player player) {
-        String msg = this.getLanguage().buildTemplate(Language.locale(player), Language.generateTemplate(this.getConfig(), "ui"));
-        msg = msg.replace("{player}", player.getName());
-        ComponentLike component = TextBuilder.buildComponent(msg);
-        TextSender.sendMessage(player, component);
+        try {
+            var msg = this.getLanguage().inline(Language.generateTemplate(this.getConfig(), "ui"), LocaleService.locale(player));
+            msg = msg.replace("{player}", player.getName());
+            ComponentLike component = TextBuilder.buildComponent(msg);
+            TextSender.sendMessage(player, component);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @QuarkCommand(name = "welcome-message")

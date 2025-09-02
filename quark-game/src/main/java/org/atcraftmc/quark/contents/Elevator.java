@@ -3,6 +3,8 @@ package org.atcraftmc.quark.contents;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import net.kyori.adventure.text.ComponentLike;
+import org.atcraftmc.qlib.language.MinecraftLocale;
+import org.atcraftmc.starlight.Starlight;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -20,29 +22,28 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.tbstcraft.quark.api.PluginMessages;
-import org.tbstcraft.quark.api.PluginStorage;
+import org.atcraftmc.starlight.api.PluginMessages;
+import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageItem;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.crafting.RecipeBuilder;
-import org.tbstcraft.quark.foundation.crafting.RecipeManager;
-import org.tbstcraft.quark.foundation.platform.BukkitUtil;
-import org.tbstcraft.quark.foundation.platform.Players;
-import org.tbstcraft.quark.framework.customcontent.CustomMeta;
-import org.tbstcraft.quark.framework.customcontent.item.CustomItem;
-import org.tbstcraft.quark.framework.customcontent.item.QuarkItem;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.foundation.crafting.RecipeBuilder;
+import org.atcraftmc.starlight.foundation.crafting.RecipeManager;
+import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
+import org.atcraftmc.starlight.foundation.platform.Players;
+import org.atcraftmc.starlight.core.custom.CustomMeta;
+import org.atcraftmc.starlight.core.custom.item.CustomItem;
+import org.atcraftmc.starlight.core.custom.item.QuarkItem;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
 
-import java.util.Locale;
 import java.util.Objects;
 
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider({Elevator.ElevatorItemCommand.class})
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 @SuppressWarnings("deprecation")
 public final class Elevator extends PackageModule {
     public static final Recipe RECIPE = RecipeBuilder.shaped("elevator", "@#@;#*#;@#@",
@@ -202,13 +203,13 @@ public final class Elevator extends PackageModule {
     public static final class ElevatorItem extends CustomItem {
 
         @Override
-        public ComponentLike renderDisplayName(ItemStack stack, Locale locale) {
-            return getLanguageKey().getMessageComponent(locale);
+        public ComponentLike renderDisplayName(ItemStack stack, MinecraftLocale locale) {
+            return getLanguageKey().component(locale);
         }
 
         @Override
         public LanguageItem getLanguageKey() {
-            return new LanguageItem(null, "elevator", "item-name");
+            return new LanguageItem(Starlight.lang(), "quark-contents:elevator:item-name");
         }
     }
 }

@@ -11,15 +11,15 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityUnleashEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.tbstcraft.quark.framework.module.PackageModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.framework.module.services.ServiceType;
-import org.tbstcraft.quark.internal.task.TaskService;
+import org.atcraftmc.starlight.framework.module.PackageModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.HashSet;
 import java.util.Objects;
 
-@QuarkModule(version = "0.3", beta = true)
+@SLModule(version = "0.3", beta = true)
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class EntityLeash extends PackageModule {
     public static final String VIRTUAL_ENTITY_ID = "quark:ve:leash";

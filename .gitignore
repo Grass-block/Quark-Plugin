@@ -3,6 +3,10 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 **/src/build/
 
+/documents/node_modules
+
+/atc-addon/*
+
 **/build
 **/gradle
 /productions

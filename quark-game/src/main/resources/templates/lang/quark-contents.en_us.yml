@@ -1,10 +1,10 @@
 language:
   -module-name:
-    custom-recipe: CustomRecipeLoader
-    elevator: ElevatorBlock
-    realistic-minecart: RealisticMinecart
-    music-player: MusicPlayer
-    stair-seat: StairSeat
+    custom-recipe: Custom Recipe Loader
+    elevator: Elevator Block
+    realistic-minecart: Realistic Minecart
+    music-player: Music Player
+    stair-seat: Stair Seat
     hats: Hats
   stair-seat:
     tip: "{#gray}right-click a stair block to sit down."
@@ -17,8 +17,8 @@ language:
     speed: "Speed: "
     level: "Power: "
   music-player:
-    playing: "Now Playing:"
-    paused: "Paused:"
+    playing: "Now Playing"
+    paused: "Paused"
     play: "{global#sys-info}Player {#var} has played music {#var}(fix value:{#var})"
     pause: "{global#sys-info}Player {#var}has {#yellow}paused{#gray}current playing."
     resume: "{global#sys-info}Player {#var}has {#blue}recovered {#gray}current playing."
@@ -28,9 +28,15 @@ language:
     unsupported-format: "{global#sys-error}Unsupported file format of {#var}."
     timeout: "{global#sys-error}Cannot download {#var} from content provider server."
     restore-defaults: "{global#sys-info}Successfully saved example music files."
+    ui-title: "{#dark-aqua}Music Player {#white}(%s pages total)"
+    ui-click: "{#gold}[Click to Play]"
+    ui-legacy-control-open: "{#purple}Legacy Parsing: [ON]"
+    ui-legacy-control-close: "{#gray}Legacy Parsing: [OFF]"
+    trim: "{global#sys-info}Fixed {#var} files' name format."
   custom-recipe:
     reload: "{global#sys-info}Successfully reloaded recipe groups."
     restore: "{global#sys-info}Successfully saved template recipe groups."
+    ui-cancel: "{#red}Stop playing"
   item-counter:
   hats:
     empty: "{global#error}You didn't hold anything."

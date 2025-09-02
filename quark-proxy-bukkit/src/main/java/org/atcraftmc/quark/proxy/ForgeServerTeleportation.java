@@ -3,13 +3,13 @@ package org.atcraftmc.quark.proxy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.tbstcraft.quark.foundation.command.CommandProvider;
-import org.tbstcraft.quark.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.tbstcraft.quark.foundation.platform.Players;
-import org.tbstcraft.quark.framework.module.CommandModule;
-import org.tbstcraft.quark.framework.module.QuarkModule;
-import org.tbstcraft.quark.internal.permission.PermissionService;
+import org.atcraftmc.starlight.foundation.platform.Players;
+import org.atcraftmc.starlight.framework.module.CommandModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.core.permission.PermissionService;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,7 +19,7 @@ import java.util.Objects;
 */
 @CommandProvider(ForgeServerTeleportation.HubCommand.class)
 @QuarkCommand(name = "teleport-server", permission = "+quark.stp")
-@QuarkModule(version = "1.0.0")
+@SLModule(version = "1.0.0")
 public final class ForgeServerTeleportation extends CommandModule {
     public static final String PREFIX = "{$client:connect}";
 
@@ -37,7 +37,7 @@ public final class ForgeServerTeleportation extends CommandModule {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        ConfigurationSection section = this.getConfig().getSection("servers");
+        ConfigurationSection section = this.getConfig().value("servers").section();
 
         String host = args[0];
 
@@ -58,7 +58,7 @@ public final class ForgeServerTeleportation extends CommandModule {
 
     @Override
     public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-        ConfigurationSection section = this.getConfig().getSection("servers");
+        ConfigurationSection section = this.getConfig().value("servers").section();
         if (buffer.length == 1) {
             tabList.addAll(Objects.requireNonNull(section).getKeys(false));
         }
