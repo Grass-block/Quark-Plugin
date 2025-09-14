@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+}
+
+apply from: "../gbuild.gradle"
+apply from: "../github-packages.gradle"
+
+applyGlobalScript("Publish/MinecraftServerTest.gradle")
+applyGlobalScript("Publish/ProjectOutput.gradle")
+applyGlobalScript("Repo/MinecraftPlugins.gradle")
+applyGlobalScript("Dependencies.gradle")
+
+//platform libraries
+dependencies {
+    compileOnly 'org.jetbrains:annotations:24.0.0'
+    compileOnly 'net.kyori:adventure-api:4.17.0'
+
+    compileOnly 'me.gb2022.commons:commons-nbt:1.0'
+    compileOnly 'me.gb2022.commons:commons-math:1.0'
+    compileOnly 'me.gb2022.commons:commons-container:1.0'
+    compileOnly 'me.gb2022.commons:commons-general:1.0'
+
+    compileOnly "org.apache.logging.log4j:log4j-core:2.8.1"
+    compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT'
+    compileOnly 'com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT'
+
+    compileOnly gbuildLib('org.atcraftmc.qlib:qlib-bukkit')
+    compileOnly gbuildLib('me.gb2022.apm:apm-remote')
+    compileOnly gbuildLib('me.gb2022.apm:apm-plugin')
+}
+
+repositories {
+    maven { url = 'https://maven.enginehub.org/repo/' }
+}
+
+//api
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
+    compileOnly 'io.netty:netty-buffer:4.1.25.Final'
+    compileOnly project(":starlight-core")
+
+    compileOnly projectLib("ProtocolLib")
+    implementation projectLib("paper-logger")
+
+    //provided
+    compileOnly "org.ahocorasick:ahocorasick:0.6.3"
+}
+
+apply from: rootDir.getAbsolutePath()+"/info.gradle"
+
+tasks.named('build').get().dependsOn(':starlight-core:build')
+
