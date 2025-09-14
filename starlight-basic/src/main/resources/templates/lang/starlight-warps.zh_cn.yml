@@ -7,7 +7,7 @@ language:
     exist: '{global#sys-error}已存在导航点 {#var}。'
     not-exist: '{global#sys-error}不存在导航点 {#var}。'
     add-success: '{global#sys-operation}成功添加了导航点 {#var}。'
-    remove-success: '{global#sys-operation}成功移除了导航点 {#var}。'
+    remove: '{global#sys-operation}成功移除了导航点 {#var}。'
     remove-failed: '{global#sys-error}权限不足: 你不是 {#var} 的所有者, 且你没有starlight.waypoint.admin权限组。'
     tp-success: '{global#sys-success}已将你传送到导航点 {#var}。'
     allow: '{global#sys-success}成功向玩家 {#var} 开放了 {#var} 导航点的访问。'

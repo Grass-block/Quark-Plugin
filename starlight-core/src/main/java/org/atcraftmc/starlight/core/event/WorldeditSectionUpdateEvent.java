@@ -2,7 +2,7 @@ package org.atcraftmc.starlight.core.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.atcraftmc.starlight.core.objects.SimpleRegion;
+import org.atcraftmc.starlight.core.SimpleRegion;
 
 @SLEvent(async = false)
 public class WorldeditSectionUpdateEvent extends CustomEvent {

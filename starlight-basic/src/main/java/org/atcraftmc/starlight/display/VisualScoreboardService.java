@@ -144,7 +144,7 @@ public interface VisualScoreboardService extends Service {
 
         @Override
         public void setTabColumn(Player target, int value, Component title) {
-            TaskService.global().run(()->{
+            TaskService.global().run(() -> {
                 var tab = getObjective(PLAYER_LIST);
                 tab.setDisplaySlot(DisplaySlot.PLAYER_LIST);
                 tab.getScore(target).setScore(value);

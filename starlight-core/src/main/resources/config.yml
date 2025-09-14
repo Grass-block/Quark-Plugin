@@ -1,10 +1,18 @@
 config:
   plugin:
-    fast-boot: false
-    debug: false
-    metrics: true
+    fast-boot: false # will we not to load all jar before startup？?
+    debug: false # provide a messy but detailed console output for debug.
+    metrics: true # will we enable metric stats? thank u if u enabled it while disabling it will be ok.
   default-status:
-    module: true
-    package: true
+    module: true # default status of newly registered module
+    package: true # default status of newly registered package
+  dependency:
+    maven-repo: ALICLOUD
+    # accept any maven repo URLS, or:
+    #  - 'ALICLOUD' (AliCloud maven central)
+    #  - 'HUAWEI' (Huawei maven repo)
+    #  - 'TENCENT' (TencentCloud maven repo)
+    #  - 'TSINGHUA' (Tsinghua University maven repository)
+    #  - 'CENTRAL' (Maven Central repo, Capable for non-China users.)
   environment:
-    proxy: false
+    proxy: false # global define if plugin is working in proxy server environment.

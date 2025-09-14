@@ -1,0 +1,10 @@
+language:
+  entity-motion:
+    hint: "{global#sys-success}已为{#var}个实体持续{#var}ticks设置动量: {#var}({#var},{#var},{#var})"
+  command-exec:
+    hint: "{global#sys-success}已为{#var}个实体执行指令: {#var}"
+  item-command:
+    bind: "{global#sys-info}已将物品 {#var} 绑定到命令行 {#var}。"
+    unbind: "{global#sys-info}已将清除物品 {#var} 的命令行绑定。"
+    bind-fail: "{global#sys-error}无法将命令行绑定到空手。"
+    tip: "{#gray}使用{#gold}/item-command{#gray}可以将命令绑定在你的物品上，使用物品即可快速执行该命令。"

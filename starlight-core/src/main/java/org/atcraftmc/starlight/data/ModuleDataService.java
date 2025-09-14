@@ -12,13 +12,13 @@ public interface ModuleDataService extends Service {
     ServiceHolder<ModuleDataService> INSTANCE = new ServiceHolder<>();
 
     @ServiceInject
-    static void start() {
+    static void start() throws Exception {
         INSTANCE.set(create(FilePath.slDataFolder() + "/data/module"));
         INSTANCE.get().onEnable();
     }
 
     @ServiceInject
-    static void stop() {
+    static void stop() throws Exception {
         INSTANCE.get().onDisable();
     }
 

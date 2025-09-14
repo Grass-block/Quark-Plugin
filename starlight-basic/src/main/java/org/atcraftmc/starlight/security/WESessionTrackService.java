@@ -28,7 +28,7 @@ import org.atcraftmc.qlib.config.ConfigEntry;
 import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.core.objects.SimpleRegion;
+import org.atcraftmc.starlight.core.SimpleRegion;
 import org.atcraftmc.starlight.framework.service.ServiceInject;
 
 import java.util.HashMap;

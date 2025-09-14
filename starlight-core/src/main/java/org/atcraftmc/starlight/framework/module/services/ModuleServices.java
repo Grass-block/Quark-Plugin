@@ -10,11 +10,16 @@ import org.atcraftmc.qlib.command.AbstractCommand;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.starlight.Starlight;
-import org.bukkit.event.Listener;
-import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.Plugin;
+import org.atcraftmc.starlight.core.JDBCService;
+import org.atcraftmc.starlight.core.RemoteMessageService;
+import org.atcraftmc.starlight.core.data.FlexibleMapService;
+import org.atcraftmc.starlight.core.data.RegionService;
+import org.atcraftmc.starlight.core.data.WaypointService;
+import org.atcraftmc.starlight.core.permission.PermissionService;
 import org.atcraftmc.starlight.data.assets.Asset;
 import org.atcraftmc.starlight.data.assets.AssetGroup;
+import org.atcraftmc.starlight.data.record.RecordEntry;
+import org.atcraftmc.starlight.data.record.RecordService;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
@@ -25,11 +30,11 @@ import org.atcraftmc.starlight.framework.module.AbstractModule;
 import org.atcraftmc.starlight.framework.module.component.Components;
 import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
 import org.atcraftmc.starlight.framework.packages.IPackage;
-import org.atcraftmc.starlight.data.record.RecordEntry;
-import org.atcraftmc.starlight.data.record.RecordService;
-import org.atcraftmc.starlight.core.RemoteMessageService;
-import org.atcraftmc.starlight.core.permission.PermissionService;
+import org.bukkit.event.Listener;
+import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.Plugin;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -150,6 +155,41 @@ public interface ModuleServices {
 
                 return RecordService.create(id, format);
             });
+
+            registerInjector(RegionService.class, (a, m) -> {
+                var service = new RegionService(a[1]);
+                try {
+                    service.init(JDBCService.getDB(a[0]).orElseThrow());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                return service;
+            });
+
+            registerInjector(WaypointService.class, (a, m) -> {
+                var service = new WaypointService(a[1]);
+                try {
+                    service.init(JDBCService.getDB(a[0]).orElseThrow());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                return service;
+            });
+
+            registerInjector(FlexibleMapService.class, (a, m) -> {
+                var service = new FlexibleMapService(a[1]);
+                try {
+                    service.init(JDBCService.getDB(a[0]).orElseThrow());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                return service;
+            });
+        }
+
+        @Override
+        public <T> T createInjection(Class<T> type, AbstractModule owner, String argument) {
+            return super.createInjection(type, owner, argument.replace("/", ";"));
         }
     }
 

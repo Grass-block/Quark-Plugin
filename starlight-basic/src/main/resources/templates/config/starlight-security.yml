@@ -7,3 +7,9 @@ config:
     auto-ban-hour-time: 0
     auto-ban-minute-time: 10
     auto-ban-second-time: 0
+  explosion-defender:
+    override-explosion: true
+    record: true
+    broadcast: true
+  permission-manager:
+    default-group: --player

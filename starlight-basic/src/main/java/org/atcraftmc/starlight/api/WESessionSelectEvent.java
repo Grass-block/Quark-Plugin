@@ -3,7 +3,7 @@ package org.atcraftmc.starlight.api;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
-import org.atcraftmc.starlight.core.objects.Region;
+import org.atcraftmc.starlight.core.Region;
 import org.atcraftmc.starlight.core.event.CustomEvent;
 import org.atcraftmc.starlight.core.event.SLEvent;
 

@@ -16,7 +16,7 @@ import org.atcraftmc.starlight.framework.module.SLModule;
 import org.atcraftmc.starlight.framework.module.services.ServiceType;
 import org.atcraftmc.starlight.core.permission.PermissionService;
 
-@SLModule(version = "1.0")
+@SLModule(version = "1.1")
 @AutoRegister(ServiceType.EVENT_LISTEN)
 public final class AdvancedPermissionControl extends PackageModule {
     @Inject("+quark.player.chat")

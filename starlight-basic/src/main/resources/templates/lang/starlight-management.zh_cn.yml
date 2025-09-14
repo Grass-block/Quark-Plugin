@@ -24,14 +24,17 @@ language:
     message-unmuted: '{global#sys-error}错误: 玩家 {#var} 未被禁言!'
   kick-on-reload:
     reload-hint:
-      - "{#white}服务器正在重载。为保证游戏正常您已被暂时踢出。"
+      - "{#white}服务器正在重载。为保证游戏正常运行, 您已被暂时踢出。"
       - "{#white}请在稍后重新加入。{#return}"
     stop-hint:
       - "{#white}因故障或维护需要，服务器现已关闭。"
       - "{#white}很抱歉给您带来不便。{#return}"
-  advanced-plugin-command:
+  plugin-manager-command:
     list: "{global#sys-operation}以下是所有插件: {#var}"
-    info: "{global#sys-operation}以下是关于 {#var} 插件的信息:{#return}%s"
+    info:
+      - "{#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一"
+      - "{#gray}>>{#aqua} %s: {#return}%s"
+      - "{#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一"
     info-name: "{#gold}名称{#white}: %s[%s]"
     info-version: "{#gold}版本{#white}: %s"
     info-author: "{#gold}作者{#white}: %s"
@@ -51,8 +54,6 @@ language:
     load: "{global#operation}成功加载插件 {#var}。"
     unload: "{global#operation}成功卸载插件 {#var}。"
     reload: "{global#operation}成功重载插件 {#var}。"
-  stop-confirm:
-    hint: "{#red} 你确定要关闭服务器吗?这可能会导致服务终止。如果确定的话,请使用{#yellow}/stop confirm"
   tps-bar:
     on: "{global#operation}已显示TPS条。"
     off: "{global#operation}已隐藏TPS条。"

@@ -6,17 +6,17 @@ import org.atcraftmc.qlib.config.ConfigEntry;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.language.MinecraftLocale;
 import org.atcraftmc.starlight.Starlight;
-import org.bukkit.plugin.Plugin;
-import org.atcraftmc.starlight.framework.FeatureAvailability;
+import org.atcraftmc.starlight.data.record.EmptyRecordEntry;
+import org.atcraftmc.starlight.data.record.RecordEntry;
+import org.atcraftmc.starlight.data.record.RecordService;
 import org.atcraftmc.starlight.foundation.platform.APIProfile;
+import org.atcraftmc.starlight.framework.FeatureAvailability;
 import org.atcraftmc.starlight.framework.FunctionalComponent;
 import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
 import org.atcraftmc.starlight.framework.module.services.ModuleServices;
 import org.atcraftmc.starlight.framework.packages.IPackage;
-import org.atcraftmc.starlight.data.record.EmptyRecordEntry;
-import org.atcraftmc.starlight.data.record.RecordEntry;
-import org.atcraftmc.starlight.data.record.RecordService;
 import org.atcraftmc.starlight.util.Identifiers;
+import org.bukkit.plugin.Plugin;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -36,7 +36,7 @@ public abstract class AbstractModule implements FunctionalComponent {
     private Logger logger;
     private RecordEntry record;
 
-    public final void enableModule() {
+    public final void enableModule() throws Exception {
         this.language = this.createLanguage();
         this.config = this.createConfig();
         this.l4jLogger = createL4JLogger();
@@ -53,7 +53,7 @@ public abstract class AbstractModule implements FunctionalComponent {
         }
     }
 
-    public final void disableModule() {
+    public final void disableModule() throws Exception {
         for (var component : this.components.values()) {
             component.disable();
         }
@@ -219,7 +219,7 @@ public abstract class AbstractModule implements FunctionalComponent {
     public final String getDisplayName(MinecraftLocale locale) {
         var lang = Starlight.lang().access(this.getParent().getId());
 
-        if (!lang.handle().hasAny(this.getParent().getId(),"-module-name", this.getId())) {
+        if (!lang.handle().hasAny(this.getParent().getId(), "-module-name", this.getId())) {
             return this.getId();
         }
 

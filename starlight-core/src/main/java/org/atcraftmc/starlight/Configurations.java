@@ -72,8 +72,7 @@ public interface Configurations {
                     o.write((commentPrefix + " This file is for example/defaults of this group.\n").getBytes(StandardCharsets.UTF_8));
                     o.write((commentPrefix + " It is auto saved by Starlight plugin.\n").getBytes(StandardCharsets.UTF_8));
                     o.write((commentPrefix + " You COULD rather edit or clear this file.\n").getBytes(StandardCharsets.UTF_8));
-                    o.write((commentPrefix + " To make this file re-appear, just delete it.\n").getBytes(
-                            StandardCharsets.UTF_8));
+                    o.write((commentPrefix + " To make this file re-appear, just delete it.\n").getBytes(StandardCharsets.UTF_8));
                     o.write(in.readAllBytes());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -117,7 +116,7 @@ public interface Configurations {
 
             try (var i = new FileInputStream(f)) {
                 var s = new String(i.readAllBytes());
-                result.put(f.getName(), removeComments(s, commentPrefix));
+                result.put(f.getName(), extensionName.contains("yml") ? s : removeComments(s, commentPrefix));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -144,6 +143,9 @@ public interface Configurations {
                 c.loadFromString(v);
             } catch (InvalidConfigurationException e) {
                 throw new RuntimeException(e);
+            }
+            if (!c.contains(name)) {
+                return;
             }
             result.put(k, c.getConfigurationSection(name));
         });

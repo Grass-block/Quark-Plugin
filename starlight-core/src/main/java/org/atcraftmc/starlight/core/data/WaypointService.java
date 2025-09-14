@@ -107,7 +107,7 @@ public final class WaypointService extends JDBCBasedDataService<Waypoint> {
     }
 
     public boolean existName(String name) throws SQLException {
-        try (var p = connection.prepareStatement("SELECT uuid FROM _waypoint_ WHERE name = ?")) {
+        try (var p = connection.prepareStatement("SELECT uuid FROM _waypoint_ WHERE name = ? LIMIT 1")) {
             p.setString(1, name);
             try (var rs = p.executeQuery()) {
                 return rs.next();
@@ -211,12 +211,12 @@ public final class WaypointService extends JDBCBasedDataService<Waypoint> {
     public Optional<Waypoint> byName(String name) throws SQLException {
         try (var p = connection.prepareStatement("SELECT * FROM _waypoint_ WHERE name = ?")) {
             p.setString(1, name);
-            var rs = p.executeQuery();
-
-            if (rs.next()) {
-                return Optional.ofNullable(decode(rs));
+            try (var rs = p.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(decode(rs));
+                }
+                return Optional.empty();
             }
-            return Optional.empty();
         }
     }
 }

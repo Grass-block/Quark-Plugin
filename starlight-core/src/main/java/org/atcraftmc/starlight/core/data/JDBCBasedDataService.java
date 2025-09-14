@@ -13,8 +13,8 @@ import java.util.concurrent.Executor;
 
 public abstract class JDBCBasedDataService<I> {
     public static final Logger LOGGER = LogManager.getLogger("SQL-Compiler");
-    private final UUID sessionUUID = UUID.randomUUID();
     protected final String table;
+    private final UUID sessionUUID = UUID.randomUUID();
     public Connection connection;
 
     protected JDBCBasedDataService(String table) {
@@ -44,6 +44,11 @@ public abstract class JDBCBasedDataService<I> {
         this.connection = new WrappedConnection(connection, this.table, getTableNamePlaceholder());
         try (var stmt = this.attemptCreateTable(this.connection)) {
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getMessage().toLowerCase().contains("exist")) {
+                return;
+            }
+            throw e;
         }
     }
 
@@ -75,7 +80,7 @@ public abstract class JDBCBasedDataService<I> {
         @Override
         public PreparedStatement prepareStatement(String sql) throws SQLException {
             if (Starlight.instance().isDebug()) {
-                LOGGER.info("Compiled[{}]: {}",this.table, sql.replace(this.placeholder, this.table));
+                LOGGER.info("Compiled[{}]: {}", this.table, sql.replace(this.placeholder, this.table));
             }
             return this.connection.prepareStatement(sql.replace(this.placeholder, this.table));
         }

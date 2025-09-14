@@ -3,3 +3,6 @@ groups:
     tags: [ ]
     permissions:
       - "+deluxemenus.open"
+  --operator:
+    tags: [ ]
+    permissions: [ ]

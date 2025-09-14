@@ -114,6 +114,10 @@ public final class TagMapService extends JDBCBasedDataService<String> {
     }
 
     public void add(UUID uuid, String data) throws SQLException {
+        if (has(uuid, data)) {
+            return;
+        }
+
         if (!hasEntry(uuid)) {
             var sql = "INSERT INTO _tagmap_ (uuid,payload_a,payload_b,payload_c,payload_d) values ( ?,';_init_;',';_init_;',';_init_;',';_init_;' )";
             try (var p = this.connection.prepareStatement(sql)) {

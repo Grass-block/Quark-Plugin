@@ -1,8 +1,4 @@
 config:
-  explosion-defender:
-    override-explosion: true
-    record: true
-    broadcast: true
   protection-area:
     record: true
     broadcast: false
@@ -23,5 +19,3 @@ config:
   we-session-size-limit:
     max-selection-size: 128
     max-edit-size: 384
-  permission-manager:
-    default-group: player

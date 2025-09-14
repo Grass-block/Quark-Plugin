@@ -8,7 +8,7 @@ import org.atcraftmc.starlight.api.WESessionSelectEvent;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.core.data.FlexibleMapService;
 import org.atcraftmc.starlight.core.data.flex.TableColumn;
-import org.atcraftmc.starlight.core.objects.SimpleRegion;
+import org.atcraftmc.starlight.core.SimpleRegion;
 import org.atcraftmc.starlight.data.PlayerDataService;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;

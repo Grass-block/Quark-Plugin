@@ -21,18 +21,10 @@ repositories {
     mavenCentral()
     papermcRepo()
     spigotmcRepo()
+    papiRepo()
 }
 
-compileJava {
-    sourceCompatibility = 17
-    targetCompatibility = 17
-}
-
-repositories {
-    maven {
-        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
-    }
-}
+setJavaCompatibility(17)
 
 //implemented by platform
 dependencies {
@@ -52,16 +44,18 @@ dependencies {
     implementation 'me.gb2022.commons:commons-event:1.0'
     implementation 'me.gb2022.commons:commons-reflection:1.0'
 
-    implementation('org.fusesource.leveldbjni:leveldbjni-all:1.8')
     implementation localStorage("me.gb2022.pluginsX-lib")
 
-    implementation("net.kyori:adventure-platform-bukkit:4.3.4")
+    //implementation("net.kyori:adventure-platform-bukkit:4.3.4")
 
     implementation gbuildLib("org.atcraftmc.qlib:qlib-bukkit")
     implementation gbuildLib("me.gb2022.apm:apm-remote")
     implementation gbuildLib("me.gb2022.apm:apm-plugin")
 
-    implementation 'com.h2database:h2:2.3.232'
+    //provided by starlight dependency loader.
+    compileOnly 'org.fusesource.leveldbjni:leveldbjni-all:1.8'
+    compileOnly 'com.h2database:h2:2.3.232'
+    compileOnly 'org.mongodb:bson:5.6.0'
 }
 
 //platform api reference

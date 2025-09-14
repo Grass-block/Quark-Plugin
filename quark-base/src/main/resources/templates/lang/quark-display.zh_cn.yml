@@ -18,10 +18,6 @@ language:
     welcone-message: 自定义欢迎信息
     nickname: "[实验]自定义游戏名称"
     hover-display: 悬浮文本
-  custom-motd:
-    motd-command: '{global#info}服务器MOTD信息: '
-    icon-refresh: '{global#success}成功刷新MOTD图片缓存。'
-    text-refresh: '{global#success}成功刷新MOTD文字缓存。'
   join-quit-message:
     join: '{global#sys-info}{#gray}玩家 {#white}{#var}{#gray} 加入了服务器，欢迎。'
     leave: '{global#sys-info}玩家 {#white}{#var}{#gray} 离开了服务器。'
@@ -50,10 +46,6 @@ language:
     set-header: '{global#sys-operation}将 {#var} 的头衔设置为 {#var}。'
     clear-header: '{global#sys-operation}将 {#var} 的头衔清除。'
     announce: '{global#sys-info}玩家 {#var} 获得了头衔 {#var}。'
-  welcome-message:
-    title: '{#gold}欢迎!'
-    content: '{#white}欢迎来到{#server-name}{#white}服务器,祝你玩得开心!'
-    callback: '{#gray}(本消息可用{#gold}/welcome-message{#gray}再次呼出)'
   chat-announce:
     title: '提示:'
     type-tip: '{#green}技巧:'
@@ -82,13 +74,4 @@ language:
     delete-all: "{global#info}已清除全部悬浮文本。"
     edit: "{global#info}成功编辑悬浮文本 {#var}。"
     teleport: "{global#info}悬浮文本 {#var} 已被传送到您的位置。"
-  afk:
-    left: "{global#info}玩家{#var}暂时离开了。"
-    left-self: "{global#info}你暂时离开了。"
-    back: "{global#info}玩家{#var}在暂时离开{#var}后回来了。"
-    back-self: "{global#info}你在暂时离开{#var}后回来了"
-  action-bar-hud:
-    time: "{#dark-aqua}世界时间: {#aqua}{#world-time}"
-    position: "{#dark-purple}位置: {#purple}%s{#gray},{#purple}%s{#gray},{#purple}%s{#gray}"
-    biome: "{#dark-green}生物群系: {translate;color(green)}biome.%s.%s{;}"
-    face: "{#dark-blue}朝向: {#blue}%s(俯仰),%s(水平)"
+

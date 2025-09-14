@@ -1,0 +1,36 @@
+#file: noinspection YAMLSchemaValidation
+recipes:
+  stick-batch: #recipe id
+    type: 'shaped' #shaped/stone-cutter/shapeless
+    map: #symbol for each material
+      '#': '#minecraft:logs'
+    output:
+      type: 'minecraft:stick'
+      amount: 16
+    shape: '#;#' #shape grid in column; format
+  planks-slab-combine:
+    type: 'shaped'
+    shape: '#;#'
+    output: 'minecraft:{#type}_planks*1' #shortened way
+    map:
+      '#': 'minecraft:{#type}_slab'
+    repeat: [ 'oak','spruce','acacia','dark_oak','birch','jungle' ]
+  quartz-split:
+    output: 'minecraft:quartz*4'
+    requirements: [ 'minecraft:quartz_block' ]
+    type: 'shapeless'
+  planks-cutting:
+    type: 'stone-cutter' #stonecutter recipe can not work and i have no f***ing idea.
+    input: 'minecraft:{#type}_log'
+    output: 'minecraft:{#type}_planks*8'
+    repeat: [ 'oak','spruce','acacia','dark_oak','birch','jungle' ]
+  planks-slab-cutting:
+    type: 'stone-cutter'
+    input: 'minecraft:{#type}_planks'
+    output: 'minecraft:{#type}_slab*2'
+    repeat: [ 'oak','spruce','acacia','dark_oak','birch','jungle' ]
+  planks-stairs-cutting:
+    type: 'stone-cutter'
+    input: 'minecraft:{#type}_planks'
+    output: 'minecraft:{#type}_stairs*2'
+    repeat: [ 'oak','spruce','acacia','dark_oak','birch','jungle' ]

@@ -45,11 +45,11 @@ public interface Service extends FunctionalComponent {
     }
 
 
-    default void onEnable() {
+    default void onEnable() throws Exception {
         this.enable();
     }
 
-    default void onDisable() {
+    default void onDisable() throws Exception {
         this.disable();
     }
 }

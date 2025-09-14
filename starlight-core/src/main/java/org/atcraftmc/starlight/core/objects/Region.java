@@ -1,156 +1,162 @@
 package org.atcraftmc.starlight.core.objects;
 
-import me.gb2022.commons.math.AABB;
-import me.gb2022.commons.nbt.NBTTagCompound;
+import org.bson.BsonDocument;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.joml.Vector3d;
 
-public abstract class Region {
-    private Location point0;
-    private Location point1;
-    private World world;
+import java.util.UUID;
 
+/**
+ * separated xyz coordinate is ONLY for acceleration.
+ */
+public final class Region {
+    private final UUID uuid;
+    private final BsonDocument extraMetadata;
+    private final String world;
+    private final Vector3d point0;
+    private final Vector3d point1;
 
-    public Region(World world, int x0, int y0, int z0, int x1, int y1, int z1) {
+    private double x0;
+    private double y0;
+    private double z0;
+    private double x1;
+    private double y1;
+    private double z1;
+    private String name;
+
+    /**
+     * We don't care the position since we sort them correctly
+     *
+     * @param world world
+     * @param p0    point1
+     * @param p1    point2
+     */
+    public Region(String name, World world, Location p0, Location p1) {
+        this.world = world.getName();
+        this.point0 = new Vector3d(p0.getX(), p0.getY(), p0.getZ());
+        this.point1 = new Vector3d(p1.getX(), p1.getY(), p1.getZ());
+        this.renderXYZ(p0, p1);
+
+        this.uuid = UUID.randomUUID();
+        this.extraMetadata = new BsonDocument();
+        this.name = name;
+    }
+
+    public Region(String name, String world, Vector3d p0, Vector3d p1) {
         this.world = world;
-        this.point0 = new Location(world, x0, y0, z0);
-        this.point1 = new Location(world, x1, y1, z1);
+        this.point0 = p0;
+        this.point1 = p1;
+        this.renderXYZ(p0, p1);
+
+        this.uuid = UUID.randomUUID();
+        this.extraMetadata = new BsonDocument();
+        this.name = name;
     }
 
-    public Region(World world) {
+    public Region(UUID uuid, String name, String world, Vector3d p0, Vector3d p1, BsonDocument extraMetadata) {
         this.world = world;
-        this.point0 = null;
-        this.point1 = null;
+        this.point0 = p0;
+        this.point1 = p1;
+        this.renderXYZ(p0, p1);
+        this.extraMetadata = extraMetadata;
+        this.uuid = uuid;
+        this.name = name;
     }
 
-    public Region(NBTTagCompound tag) {
-        this(
-                Bukkit.getWorld(tag.getString("world")),
-                tag.getInteger("x0"),
-                tag.getInteger("y0"),
-                tag.getInteger("z0"),
-                tag.getInteger("x1"),
-                tag.getInteger("y1"),
-                tag.getInteger("z1")
-        );
-        this.readAdditionData(tag.getCompoundTag("addition"));
+    public void renderXYZ(Location p0, Location p1) {
+        var xx0 = p0.getX();
+        var yy0 = p0.getY();
+        var zz0 = p0.getZ();
+        var xx1 = p1.getX();
+        var yy1 = p1.getY();
+        var zz1 = p1.getZ();
+
+        resize(xx0, yy0, zz0, xx1, yy1, zz1);
     }
 
+    public void renderXYZ(Vector3d p0, Vector3d p1) {
+        var xx0 = p0.x();
+        var yy0 = p0.y();
+        var zz0 = p0.z();
+        var xx1 = p1.x();
+        var yy1 = p1.y();
+        var zz1 = p1.z();
 
-    public abstract void readAdditionData(NBTTagCompound addition);
-
-    public abstract void writeAdditionData(NBTTagCompound addition);
-
-
-    public NBTTagCompound serialize() {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setString("world", this.world.getName());
-
-        int minX = (int) Math.min(point0.getX(), point1.getX());
-        int minY = (int) Math.min(point0.getY(), point1.getY());
-        int minZ = (int) Math.min(point0.getZ(), point1.getZ());
-        int maxX = (int) Math.max(point0.getX(), point1.getX());
-        int maxY = (int) Math.max(point0.getY(), point1.getY());
-        int maxZ = (int) Math.max(point0.getZ(), point1.getZ());
-
-        tag.setInteger("x0", minX);
-        tag.setInteger("y0", minY);
-        tag.setInteger("z0", minZ);
-        tag.setInteger("x1", maxX);
-        tag.setInteger("y1", maxY);
-        tag.setInteger("z1", maxZ);
-
-
-        NBTTagCompound addition = new NBTTagCompound();
-        this.writeAdditionData(addition);
-        tag.setCompoundTag("addition", addition);
-
-        return tag;
+        resize(xx0, yy0, zz0, xx1, yy1, zz1);
     }
 
+    private void resize(double xx0, double yy0, double zz0, double xx1, double yy1, double zz1) {
+        this.x0 = Math.min(xx0, xx1);
+        this.y0 = Math.min(yy0, yy1);
+        this.z0 = Math.min(zz0, zz1);
+        this.x1 = Math.max(xx0, xx1);
+        this.y1 = Math.max(yy0, yy1);
+        this.z1 = Math.max(zz0, zz1);
+    }
+
+    public World getWorld() {
+        return Bukkit.getWorld(this.world);
+    }
 
     public Location getPoint0() {
-        return point0;
-    }
-
-    public void setPoint0(Location location) {
-        point0 = location;
+        return new Location(getWorld(), this.point0.x(), this.point0.y(), this.point0.z());
     }
 
     public Location getPoint1() {
-        return point1;
+        return new Location(getWorld(), this.point1.x(), this.point1.y(), this.point1.z());
     }
 
-    public void setPoint1(Location location) {
-        point1 = location;
+    public void setPoint0(Location point0) {
+        this.point0.set(point0.getX(), point0.getY(), point0.getZ());
+        this.renderXYZ(this.point0, this.point1);
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean isComplete() {
-        return point0 != null && point1 != null;
+    public void setPoint1(Location point1) {
+        this.point1.set(point1.getX(), point1.getY(), point1.getZ());
+        this.renderXYZ(this.point0, this.point1);
     }
 
-    public boolean inBound(Location location) {
-        if (!isComplete()) {
-            return false;
-        }
-
-        double x = location.getX();
-        double y = location.getY();
-        double z = location.getZ();
-
-        double minX = Math.min(point0.getX(), point1.getX());
-        double minY = Math.min(point0.getY(), point1.getY());
-        double minZ = Math.min(point0.getZ(), point1.getZ());
-        double maxX = Math.max(point0.getX(), point1.getX());
-        double maxY = Math.max(point0.getY(), point1.getY());
-        double maxZ = Math.max(point0.getZ(), point1.getZ());
-
-        return x >= minX && x <= maxX && y >= minY && y <= maxY && z >= minZ && z <= maxZ;
+    public Location getMinPoint() {
+        return new Location(getWorld(), this.x0, this.y0, this.z0);
     }
 
-    public void clear() {
-        point0 = null;
-        point1 = null;
+    public Location getMaxPoint() {
+        return new Location(getWorld(), this.x1, this.y1, this.z1);
     }
 
-
-    public void setWorld(World world) {
-        this.world = world;
+    public BsonDocument getExtraMetadata() {
+        return extraMetadata;
     }
 
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
     public String toString() {
-        return "[%d %d %d] -> [%d %d %d] @%s".formatted(
-                (int) Math.min(point0.getX(), point1.getX()),
-                (int) Math.min(point0.getY(), point1.getY()),
-                (int) Math.min(point0.getZ(), point1.getZ()),
-                (int) Math.max(point0.getX(), point1.getX()),
-                (int) Math.max(point0.getY(), point1.getY()),
-                (int) Math.max(point0.getZ(), point1.getZ()),
-                this.world.getName()
-        );
+        var sb = new StringBuilder("Region{");
+        sb.append("world=").append(this.world);
+        sb.append(", x0=").append(this.x0);
+        sb.append(", y0=").append(this.y0);
+        sb.append(", z0=").append(this.z0);
+        sb.append(", x1=").append(this.x1);
+        sb.append(", y1=").append(this.y1);
+        sb.append(", z1=").append(this.z1);
+        sb.append('}');
+        return sb.toString();
     }
 
-    public AABB asAABB() {
-        return new AABB(
-                this.getPoint0().getX(),
-                this.getPoint0().getY(),
-                this.getPoint0().getZ(),
-                this.getPoint1().getX(),
-                this.getPoint1().getY(),
-                this.getPoint1().getZ()
-        );
-    }
-
-    public boolean contains(Location location) {
-        if (location.getWorld() != this.getPoint0().getWorld()) {
-            return false;
-        }
-        return this.asAABB().isVectorInside(location.getX(), location.y(), location.getZ());
-    }
-
-    public void write(NBTTagCompound tag) {
-
+    public String getWorldId() {
+        return this.world;
     }
 }

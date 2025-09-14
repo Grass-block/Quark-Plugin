@@ -37,3 +37,18 @@ config:
     world: "common:world:%s"
     time: "<post>   {#gray}%s"
     template: '[{#white}{world}{#white}]{0} {color(gold)}> {color(white)}{1} {time}'
+  custom-death-message:
+    prefix: "{#gray}[{#red}X{#gray}]{#reset}"
+    suffix: ""
+  action-bar-hud:
+    template: "{biome}{#yellow} | {position} {#yellow} | {time}"
+  afk:
+    timeout: 3600
+  welcome-message:
+    ui:
+      - "{#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一"
+      - "{msg#title}"
+      - '  {msg#content}'
+      - ' '
+      - '  {msg#callback}'
+      - "{#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一"

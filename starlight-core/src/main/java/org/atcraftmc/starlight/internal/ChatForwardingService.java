@@ -49,7 +49,7 @@ public interface ChatForwardingService extends Service {
                 var msg = event.renderer().render(event.getPlayer(), event.getPlayer().displayName(), event.message(), player);
 
                 var e = new ChatForwardingEvent(player, event.getPlayer(), msg);
-                Bukkit.getPluginManager().callEvent(e);
+                BukkitUtil.callEvent(e);
 
                 if (e.isCancelled()) {
                     continue;
@@ -59,7 +59,7 @@ public interface ChatForwardingService extends Service {
             }
 
             var e = new ChatForwardingEvent(Bukkit.getConsoleSender(), event.getPlayer(), event.message());
-            Bukkit.getPluginManager().callEvent(e);
+            BukkitUtil.callEvent(e);
 
             if (e.isCancelled()) {
                 return;
@@ -81,7 +81,7 @@ public interface ChatForwardingService extends Service {
                 var msg = event.getFormat().formatted(event.getPlayer(), event.getMessage());
 
                 var e = new ChatForwardingEvent(player, event.getPlayer(), Component.text(msg));
-                Bukkit.getPluginManager().callEvent(e);
+                BukkitUtil.callEvent(e);
 
                 if (e.isCancelled()) {
                     continue;
@@ -93,7 +93,7 @@ public interface ChatForwardingService extends Service {
             var msg = event.getFormat().formatted(event.getPlayer(), event.getMessage());
 
             var e = new ChatForwardingEvent(Bukkit.getConsoleSender(), event.getPlayer(), Component.text(msg));
-            Bukkit.getPluginManager().callEvent(e);
+            BukkitUtil.callEvent(e);
 
             if (e.isCancelled()) {
                 return;

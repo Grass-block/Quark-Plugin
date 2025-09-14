@@ -1,0 +1,8 @@
+permission-groups:
+  --player:
+    tags: [ ]
+    permissions:
+      - "+deluxemenus.open"
+  --operator:
+    tags: [ ]
+    permissions: [ ]

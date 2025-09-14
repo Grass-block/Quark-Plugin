@@ -8,6 +8,13 @@ project.ext.jitpackRepo = { return project.repositories.maven { name = 'jitpack-
 project.ext.spigotmcRepo = { return project.repositories.maven { name = 'spigotmc-repo'; url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" } }
 project.ext.papermcRepo = { return project.repositories.maven { name = 'papermc-repo'; url = 'https://repo.papermc.io/repository/maven-public/' } }
 project.ext.sonatypeRepo = { return project.repositories.maven { name = "sonatype"; url = "https://oss.sonatype.org/content/groups/public/" } }
+project.ext.papiRepo = { return project.repositories.maven { name = "placeholder-api"; url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' } }
+
+project.ext.setJavaCompatibility = { version ->
+    project.compileJava.sourceCompatibility = version
+    project.compileJava.targetCompatibility = version
+}
+
 
 //dependencies:
 project.ext.projectLib = { lib -> return files("${rootDir.getAbsolutePath()}/libraries/${lib}.jar") }

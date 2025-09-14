@@ -99,4 +99,8 @@ public interface FilePath {
         }
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
     }
+
+    static String cache() {
+        return slDataFolder()+"/cache";
+    }
 }

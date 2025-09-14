@@ -4,6 +4,13 @@ language:
     surrounding-refresh: 环境方块刷新
     player-ping-command: 玩家延迟查询
     calculator: 计算器
+  player-position-lock:
+    lock: '{global#sys-info}您的位置已被锁定。'
+    unlock: '{global#sys-info}您的位置已被解锁。'
+    lock-player: '{global#sys-operation}您已锁定 {#var} 的位置。'
+    unlock-player: '{global#sys-operation}您已解锁 {#var} 的位置。'
+  position-align:
+    align: "{global#sys-success}已将您的坐标调整至 [{#var},{#var},{#var}] [{#var}|{#var}]。"
   chat-component:
     tip:
       - '{#gray}在聊天，告示牌和命令（部分支持）中，您可以使用富文本标签对文字添加更多效果。'
@@ -30,11 +37,6 @@ language:
     tip:
       - "{#gray}您可以使用{#gold}/view-distance [玩家名字] [距离] {#gray}设置您的服务器渲染距离。"
       - "{#gray}如果您感觉到卡顿(高延迟)，您可以尝试降低您的服务器渲染距离。"
-  player-position-lock:
-    lock: '{global#sys-info}您的位置已被锁定。'
-    unlock: '{global#sys-info}您的位置已被解锁。'
-    lock-player: '{global#sys-operation}您已锁定 {#var} 的位置。'
-    unlock-player: '{global#sys-operation}您已解锁 {#var} 的位置。'
   camera-movement:
     cam-start: '{global#sys-info}镜头路径开始({#var} ticks)'
     cam-end: '{global#sys-info}镜头路径结束。'

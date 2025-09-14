@@ -50,7 +50,7 @@ public final class IPDefender extends PackageModule implements PluginCommandExec
             "ip-log",
             new RecordField<>("player", TextRenderer.literal("Player"), DataRenderer.PLAYER),
             new RecordField<>("old-ip", TextRenderer.literal("Old-IP"), DataRenderer.STRING),
-            new RecordField<>("old-ip", TextRenderer.literal("Old-IP"), DataRenderer.STRING)
+            new RecordField<>("new-ip", TextRenderer.literal("Current-IP"), DataRenderer.STRING)
     );
 
     @Inject

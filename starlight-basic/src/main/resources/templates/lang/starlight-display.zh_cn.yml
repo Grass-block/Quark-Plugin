@@ -31,3 +31,23 @@ language:
     mode-update: "{global#sys-info}WorldEdit选区渲染模式已设为 [{#white}更新时{#gray}]"
     mode-off: "{global#sys-info}WorldEdit选区渲染模式已设为 [{#white}关{#gray}]"
     render: "{global#sys-success}您的WorldEdit选区已渲染（高亮）。"
+  afk:
+    left: "{global#info}玩家{#var}暂时离开了。"
+    left-self: "{global#info}你暂时离开了。"
+    back: "{global#info}玩家{#var}在暂时离开{#var}后回来了。"
+    back-self: "{global#info}你在暂时离开{#var}后回来了"
+  action-bar-hud:
+    time: "{#dark-aqua}世界时间: {#aqua}{#world-time}"
+    position: "{#dark-purple}位置: {#red}%.3f{#gray},{#green}%.3f{#gray},{#aqua}%.3f{#gray}"
+    biome: "{#dark-green}生物群系: {translate;color(green)}biome.%s.%s{;}"
+    face: "{#dark-blue}朝向: {#blue}%.3f(俯仰),%.3f(水平)"
+  welcome-message:
+    title: '{#gold}欢迎!'
+    content: '{#white}欢迎来到{#server-name}{#white}服务器,祝你玩得开心!'
+    callback: '{#gray}(本消息可用{#gold}/welcome-message{#gray}再次呼出)'
+  custom-motd:
+    motd-command: '{global#info}服务器MOTD信息: '
+    icon-refresh: '{global#success}成功刷新MOTD图片缓存。'
+    text-refresh: '{global#success}成功刷新MOTD文字缓存。'
+  drop-item-info:
+    template: "{#red}{amount}{#yellow}x{translate;color(aqua)}{id}{;}"

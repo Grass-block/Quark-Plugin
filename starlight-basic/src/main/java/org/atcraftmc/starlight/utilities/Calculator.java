@@ -89,13 +89,13 @@ public final class Calculator extends CommandModule {
     }
 
     @Override
-    public void enable() {
+    public void enable() throws Exception {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
         super.enable();
     }
 
     @Override
-    public void disable() {
+    public void disable() throws Exception {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
         super.disable();
     }

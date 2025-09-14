@@ -4,3 +4,16 @@ language:
     warn: '{global#warning}检测到您的IP属地为{#var},与上次的位置发生变化,您的ip变化已被记录。'
     check: '{global#sys-info}您的IP属地为{#var} 。(该信息只对您可见)'
     auto-ban-reason: '由于您的IP变化,我们怀疑您的账户出现了安全问题。'
+  explosion-defender:
+    exploded: '{global#warning}在 {#var} 世界中的 {#var},{#var},{#var} 发生了 {#var} 爆炸。'
+    region-list: '{global#sys-operation}以下是全部爆炸白名区域: '
+    region-add: '{global#sys-operation}已添加爆炸白名区域{#var}。'
+    region-add-failed: '{global#sys-error}爆炸白名区域{#var}已经存在。'
+    region-remove: '{global#sys-operation}{#gray}已移除爆炸白名区域{#var}。'
+    region-remove-failed: '{global#sys-error}未找到爆炸白名区域{#var}。'
+  permission-manager:
+    cmd-group-set: "{global#sys-operation}已将玩家 {#var} 所属的权限组更改为 {#var}。"
+    cmd-perm-set: "{global#sys-operation}已将玩家 {#var} 的权限节点 {#var} 的值改为 {#var}。"
+    cmd-player-not-found: "{global#sys-operation}无法找到指定的玩家。"
+    cmd-tag-add: "{global#sys-operation}已向玩家 {#var} 添加权限标签 {#var}。"
+    cmd-tag-remove: "{global#sys-operation}已向玩家 {#var} 移除权限标签 {#var}。"

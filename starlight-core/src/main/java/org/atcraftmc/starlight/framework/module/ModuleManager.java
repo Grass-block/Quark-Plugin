@@ -2,18 +2,18 @@ package org.atcraftmc.starlight.framework.module;
 
 import me.gb2022.commons.TriState;
 import org.atcraftmc.starlight.Starlight;
-import org.atcraftmc.starlight.framework.service.*;
-import org.bukkit.plugin.Plugin;
 import org.atcraftmc.starlight.api.event.ModuleEvent;
 import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.APIProfile;
 import org.atcraftmc.starlight.foundation.platform.APIProfileTest;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
 import org.atcraftmc.starlight.framework.FunctionalComponentStatus;
+import org.atcraftmc.starlight.framework.service.*;
 import org.atcraftmc.starlight.migration.DataFix;
 import org.atcraftmc.starlight.util.ExceptionUtil;
 import org.atcraftmc.starlight.util.FilePath;
 import org.atcraftmc.starlight.util.ObjectOperationResult;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,14 +28,12 @@ public final class ModuleManager implements Service {
 
     public static final String DATA_FILE = "%s/data/modules.properties";
 
-    private final String parentName;
     private final Logger logger;
     private final Map<String, AbstractModule> moduleMap = new HashMap<>();
     private final Properties statusMap = new Properties();
     private final Map<String, ModuleMeta> metas = new HashMap<>();
 
     public ModuleManager(Plugin parent) {
-        this.parentName = parent.getName();
         this.logger = parent.getLogger();
     }
 
@@ -44,13 +42,13 @@ public final class ModuleManager implements Service {
     }
 
     @ServiceInject
-    public static void start() {
+    public static void start() throws Exception {
         INSTANCE.set(new ModuleManager(Starlight.instance()));
         INSTANCE.get().onEnable();
     }
 
     @ServiceInject
-    public static void stop() {
+    public static void stop() throws Exception {
         INSTANCE.get().onDisable();
     }
 

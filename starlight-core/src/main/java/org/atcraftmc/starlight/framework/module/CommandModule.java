@@ -11,12 +11,12 @@ public abstract class CommandModule extends PackageModule implements PluginComma
     private final AbstractCommand commandAdapter = new AdapterCommand<>(this);
 
     @Override
-    public void enable() {
+    public void enable() throws Exception {
         this.getHandle().register(this.commandAdapter);
     }
 
     @Override
-    public void disable() {
+    public void disable() throws Exception {
         this.getHandle().unregister(this.commandAdapter);
     }
 

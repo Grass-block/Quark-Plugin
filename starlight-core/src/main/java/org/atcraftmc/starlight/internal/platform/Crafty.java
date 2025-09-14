@@ -1,5 +1,3 @@
-
-
 package org.atcraftmc.starlight.internal.platform;
 
 import java.lang.invoke.MethodHandle;

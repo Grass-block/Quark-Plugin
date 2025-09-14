@@ -20,8 +20,10 @@ import org.atcraftmc.qlib.platform.PluginPlatform;
 import org.atcraftmc.starlight.api.event.CoreEvent;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.core.TaskService;
-import org.atcraftmc.starlight.foundation.TextExaminer;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
+import org.atcraftmc.starlight.util.dependency.LibraryManager;
+import org.atcraftmc.starlight.util.dependency.MavenRepo;
+import org.atcraftmc.starlight.foundation.TextExaminer;
 import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
 import org.atcraftmc.starlight.foundation.platform.APIProfileTest;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
@@ -32,6 +34,8 @@ import org.atcraftmc.starlight.framework.service.ServiceLayer;
 import org.atcraftmc.starlight.framework.service.ServiceManager;
 import org.atcraftmc.starlight.internal.command.InternalCommands;
 import org.atcraftmc.starlight.metrics.Metrics;
+import org.atcraftmc.starlight.util.FilePath;
+import org.atcraftmc.starlight.util.ProductMetadata;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -58,6 +62,8 @@ public final class Starlight extends BukkitPluginConcept {
     public final LanguageContainer language = new LanguageContainer(this, ProductInfo.CORE_ID);
     private final BundledPackageProvider bundledPackageLoader = new BundledPackageProvider();
     private final CommandManager commandManager = new StarlightCommandManager(this);
+    private final ProductMetadata metadata = ProductMetadata.createFromResource(this);
+    private LibraryManager libraryManager;
     private String uuid;
     private Metrics metrics;
     private boolean fastBoot;
@@ -263,7 +269,7 @@ public final class Starlight extends BukkitPluginConcept {
 
                 var className = entry.getName().replace("/", ".").replaceAll("\\.class$", "");
 
-                if(className.contains("Utils21")){
+                if (className.contains("Utils21")) {
                     continue;
                 }
 
@@ -311,6 +317,18 @@ public final class Starlight extends BukkitPluginConcept {
 
         BukkitUtil.callEventDirect(new CoreEvent.Launch(this));
 
+        operation("loading libraries...", () -> {
+            var repo = getConfig().getString("config.dependency.maven-repo");
+            assert repo != null;
+            if (!repo.startsWith("http")) {
+                repo = MavenRepo.valueOf(repo).getUrl();
+            }
+
+            this.libraryManager = new LibraryManager(repo, FilePath.cache());
+            this.libraryManager.resolveDependencies(this.metadata.getDependencies());
+            this.libraryManager.injectLibraries(this);
+        });
+
         if (!this.fastBoot) {
             this.loadFullJar();
         }
@@ -333,7 +351,7 @@ public final class Starlight extends BukkitPluginConcept {
 
     @Override
     public void onDisable() {
-        if(!this.initialized){
+        if (!this.initialized) {
             InternalCommands.unregister();
             return;
         }
@@ -394,6 +412,10 @@ public final class Starlight extends BukkitPluginConcept {
 
     public CommandManager getCommandManager() {
         return commandManager;
+    }
+
+    public LibraryManager getLibraryManager() {
+        return this.libraryManager;
     }
 
     private static final class StarlightBukkitPlatform extends ForwardingPluginPlatform {

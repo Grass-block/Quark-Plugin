@@ -32,13 +32,13 @@ public interface PlayerDataService extends IDataService {
     ServiceHolder<PlayerDataService> INSTANCE = new ServiceHolder<>();
 
     @ServiceInject
-    static void start() {
+    static void start() throws Exception {
         INSTANCE.set(create(FilePath.pluginFolder("Starlight") + "/data/player"));
         INSTANCE.get().onEnable();
     }
 
     @ServiceInject
-    static void stop() {
+    static void stop() throws Exception {
         INSTANCE.get().onDisable();
     }
 

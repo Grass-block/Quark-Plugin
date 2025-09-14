@@ -68,7 +68,7 @@ public final class PlayerNameHeader extends CommandModule {
     private Logger logger;
 
     @Override
-    public void enable() {
+    public void enable() throws Exception {
         super.enable();
 
         for (var p : Bukkit.getOnlinePlayers()) {
@@ -79,7 +79,7 @@ public final class PlayerNameHeader extends CommandModule {
     }
 
     @Override
-    public void disable() {
+    public void disable() throws Exception {
         super.disable();
         for (Player p : Bukkit.getOnlinePlayers()) {
             this.detach(p);
@@ -138,7 +138,7 @@ public final class PlayerNameHeader extends CommandModule {
         SET_NAME_HEADER.invoke(p, name);
 
         for (var viewer : Bukkit.getOnlinePlayers()) {
-            var prefix = getPlayerPrefix(p);//todo: render with locale
+            var prefix = getPlayerPrefix(p);
             var postfix = getPlayerSuffix(p);
 
             VisualScoreboardService.instance().visualScoreboard(viewer).setNameTag(p, prefix, postfix);

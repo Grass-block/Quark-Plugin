@@ -1,0 +1,10 @@
+{
+  "build-time": "${build-time}",
+  "version": "${version}",
+  "api-version": 30,
+  "libraries": [
+    "com.h2database:h2:2.3.232",
+    "org.mongodb:bson:5.6.0",
+    "org.fusesource.leveldbjni:leveldbjni-all:1.8"
+  ]
+}

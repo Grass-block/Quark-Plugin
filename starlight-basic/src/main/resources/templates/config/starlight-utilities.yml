@@ -1,10 +1,13 @@
 config:
-  maintenance:
-    reload-ui:
   dynamic-view-distance:
     max: 32
     calc-period: 100000
-  frpc-holder:
-    command: frpc-custom.exe -c frpc-roy-server_tc.toml
-    path: D:/Services/[32767]CustomFrpc
-
+  chat-at:
+    title-fadein: 10 #the title control time (ticks)
+    title-fadeout: 10
+    title-stay: 20
+    at-template: "{#green}@{player}{#reset}" #the @somebody template in chatline
+    at-title-template: "{#green}{player}: {#reset}{message}" #title shown on screen
+    sound: true #will sound be send to someone bing AT
+  position-align:
+    fix-spawn-position: true

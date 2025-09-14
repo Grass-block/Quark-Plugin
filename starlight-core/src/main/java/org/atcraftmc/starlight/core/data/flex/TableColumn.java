@@ -38,6 +38,10 @@ public abstract class TableColumn<I> {
         return new CustomColumn<>(id, defaultValue, maxLength, codec);
     }
 
+    public static TableColumn<Boolean> bool(String id, boolean defaultValue) {
+        return new BooleanColumn(id, defaultValue);
+    }
+
 
     //privates
     private DBInstance<I> getDBInstance(FlexibleMapService ds) {
@@ -143,6 +147,27 @@ public abstract class TableColumn<I> {
         @Override
         public void encodeStatement(PreparedStatement ps, Integer value) throws SQLException {
             ps.setInt(1, value);
+        }
+    }
+
+    private static final class BooleanColumn extends TableColumn<Boolean> {
+        public BooleanColumn(String name, boolean defaultValue) {
+            super(name, defaultValue);
+        }
+
+        @Override
+        public PreparedStatement createColumn(Connection conn) throws SQLException {
+            return conn.prepareStatement("ALTER TABLE _table_ ADD COLUMN _col_ BOOL DEFAULT " + defaultValue);
+        }
+
+        @Override
+        public Boolean dispatchResult(ResultSet rs) throws SQLException {
+            return rs.getBoolean(1);
+        }
+
+        @Override
+        public void encodeStatement(PreparedStatement ps, Boolean value) throws SQLException {
+            ps.setBoolean(1, value);
         }
     }
 

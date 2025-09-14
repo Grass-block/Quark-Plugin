@@ -7,6 +7,7 @@ import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.starlight.api.PluginMessages;
 import org.atcraftmc.starlight.api.PluginStorage;
+import org.atcraftmc.starlight.core.data.WaypointService;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
@@ -27,6 +28,8 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 @AutoRegister(ServiceType.EVENT_LISTEN)
 @CommandProvider(BackToDeath.BackCommand.class)
 public final class BackToDeath extends PackageModule implements PluginCommandExecutor {
+    private final WaypointService service = new WaypointService("sl_deaths");
+
     private final PlayerMap<Location> deaths = new PlayerMap<>();
 
 
@@ -34,13 +37,13 @@ public final class BackToDeath extends PackageModule implements PluginCommandExe
     private LanguageItem tipBack;
 
     @Override
-    public void enable() {
+    public void enable() throws Exception {
         super.enable();
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tipBack));
     }
 
     @Override
-    public void disable() {
+    public void disable() throws Exception {
         super.disable();
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tipBack));
     }

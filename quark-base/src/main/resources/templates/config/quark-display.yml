@@ -23,14 +23,6 @@ config:
     player-header: '{#dark-aqua}玩家'
     below-name: " {msg#custom-scoreboard:play-time}  {msg#custom-scoreboard:ping}"
     below-name-enable: false
-  welcome-message:
-    ui:
-      - "{#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一"
-      - "{msg#title}"
-      - '  {msg#content}'
-      - ' '
-      - '  {msg#callback}'
-      - "{#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一"
   chat-announce:
     period: 12000
     ui:
@@ -42,12 +34,3 @@ config:
     proxy: /{$proxy}
     sound: true
     volume: 0.25
-  custom-death-message:
-    prefix: "{#gray}[{#red}X{#gray}]{#reset}"
-    suffix: ""
-  action-bar-hud:
-    template: "{biome}{#yellow} | {position} {#yellow} | {time}"
-    position: "%s,%s,%s"
-    biome: "{translate;color(green)}biome.%s.%s{;}"
-  afk:
-    timeout: 3600

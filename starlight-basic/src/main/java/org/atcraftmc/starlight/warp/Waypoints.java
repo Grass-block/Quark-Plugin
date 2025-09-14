@@ -11,7 +11,6 @@ import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.qlib.platform.PluginPlatform;
 import org.atcraftmc.starlight.api.PluginMessages;
 import org.atcraftmc.starlight.api.PluginStorage;
-import org.atcraftmc.starlight.core.JDBCService;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.core.data.WaypointService;
 import org.atcraftmc.starlight.core.objects.Waypoint;
@@ -31,9 +30,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.WorldInfo;
 import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -44,8 +45,6 @@ import java.util.stream.Collectors;
 @CommandProvider({Waypoints.WaypointCommand.class})
 @AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.CLIENT_MESSAGE})
 public final class Waypoints extends CommandModule {
-    private final WaypointService service = new WaypointService("sl_waypoints");
-
     private final SetHomeCommand setHomeCommand = new SetHomeCommand(this);
     private final WarpHomeCommand warpHomeCommand = new WarpHomeCommand(this);
 
@@ -64,14 +63,11 @@ public final class Waypoints extends CommandModule {
     @Inject("tip-home")
     private LanguageItem tipHome;
 
-    @Override
-    public void enable() {
-        try {
-            this.service.init(JDBCService.getDB(JDBCService.SL_LOCAL).orElseThrow());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    @Inject("starlight:default/sl_waypoints")
+    private WaypointService service;
 
+    @Override
+    public void enable() throws Exception {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
 
         if (ConfigAccessor.getBool(this.getConfig(), "home")) {
@@ -83,7 +79,7 @@ public final class Waypoints extends CommandModule {
     }
 
     @Override
-    public void disable() {
+    public void disable() throws Exception {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
 
         if (ConfigAccessor.getBool(this.getConfig(), "home")) {
@@ -202,7 +198,7 @@ public final class Waypoints extends CommandModule {
         var list = this.getLanguage().item("list").component(locale);
 
         try {
-            this.service.listAccessible(sender.getUniqueId()).forEach((w) -> {
+            this.service.listAccessible(sender.getUniqueId()).stream().filter((w) -> !w.getName().endsWith("#home")).forEach((w) -> {
                 var name = w.getName();
                 var owner = w.getOwner();
                 var uuid = w.getUuid();
@@ -225,6 +221,21 @@ public final class Waypoints extends CommandModule {
         sender.sendMessage(PluginPlatform.global().globalFormatMessage("{#line}"));
     }
 
+    private Optional<Waypoint> getForEdit(CommandExecution context, String name, Player player, UUID owner) throws SQLException {
+        var lang = getLanguage();
+
+        if (!this.service.existName(name)) {
+            lang.item("not-exist").send(context.getSender(), name);
+            return Optional.empty();
+        }
+        if (!this.service.hasControl(owner, name) && !player.hasPermission(this.adminPermission)) {
+            lang.item("no-permission").send(context.getSender(), name);
+            return Optional.empty();
+        }
+
+        return this.service.byName(name);
+    }
+
     private void allow(CommandExecution context, String data) {
         var name = context.requireArgumentAt(1);
         var lang = getLanguage();
@@ -232,31 +243,24 @@ public final class Waypoints extends CommandModule {
             var player = context.requireSenderAsPlayer();
             var owner = player.getUniqueId();
 
-            if (!this.service.existName(name)) {
-                lang.item("not-exist").send(context.getSender(), name);
-                return;
-            }
-            if (!this.service.hasControl(owner, name) && !player.hasPermission(this.adminPermission)) {
-                lang.item("no-permission").send(context.getSender(), name);
-                return;
-            }
+            this.getForEdit(context, name, player, owner).ifPresent((wp) -> {
+                var d1 = data == null ? context.requireArgumentAt(2) : data;
 
-            var wp = this.service.byName(name).orElseThrow();
+                if (!Objects.equals(d1, "all")) {
+                    var p = Objects.requireNonNull(context.requireOfflinePlayer(2));
+                    wp.getAllowed().add(Objects.requireNonNull(p.getUniqueId()).toString());
+                    lang.item("allow").send(context.getSender(), p.getName(), name);
+                } else {
+                    wp.getAllowed().add("all");
+                    lang.item("allow-all").send(context.getSender(), name);
+                }
 
-            if (data == null) {
-                data = context.requireArgumentAt(2);
-            }
-
-            if (!Objects.equals(data, "all")) {
-                var p = Objects.requireNonNull(context.requireOfflinePlayer(2));
-                wp.getAllowed().add(Objects.requireNonNull(p.getUniqueId()).toString());
-                lang.item("allow").send(context.getSender(), p.getName(), name);
-            } else {
-                wp.getAllowed().add("all");
-                lang.item("allow-all").send(context.getSender(), name);
-            }
-
-            this.service.update(wp);
+                try {
+                    this.service.update(wp);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -268,27 +272,22 @@ public final class Waypoints extends CommandModule {
         var owner = player.getUniqueId();
         var lang = getLanguage();
         try {
-            if (!this.service.existName(name)) {
-                lang.item("not-exist").send(context.getSender(), name);
-                return;
-            }
-            if (!this.service.hasControl(owner, name) && !player.hasPermission(this.adminPermission)) {
-                lang.item("no-permission").send(context.getSender(), name);
-                return;
-            }
+            this.getForEdit(context, name, player, owner).ifPresent((wp) -> {
+                if (!Objects.equals(context.requireArgumentAt(2), "all")) {
+                    var p = Objects.requireNonNull(context.requireOfflinePlayer(2));
+                    wp.getAllowed().remove(Objects.requireNonNull(p.getUniqueId()).toString());
+                    lang.item("disallow").send(context.getSender(), p.getName(), name);
+                } else {
+                    wp.getAllowed().remove("all");
+                    lang.item("disallow-all").send(context.getSender(), name);
+                }
 
-            var wp = this.service.byName(name).orElseThrow();
-
-            if (!Objects.equals(context.requireArgumentAt(2), "all")) {
-                var p = Objects.requireNonNull(context.requireOfflinePlayer(2));
-                wp.getAllowed().remove(Objects.requireNonNull(p.getUniqueId()).toString());
-                lang.item("disallow").send(context.getSender(), p.getName(), name);
-            } else {
-                wp.getAllowed().remove("all");
-                lang.item("disallow-all").send(context.getSender(), name);
-            }
-
-            this.service.update(wp);
+                try {
+                    this.service.update(wp);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -337,11 +336,12 @@ public final class Waypoints extends CommandModule {
 
             Consumer<CommandSuggestion> list = (ctx) -> {
                 try {
-                    ctx.suggest(1,
-                                getModule().service.listNameAccessible(suggestion.getSenderAsPlayer().getUniqueId())
-                                        .stream()
-                                        .filter((s) -> !s.contains("#home"))
-                                        .collect(Collectors.toSet())
+                    ctx.suggest(
+                            1,
+                            getModule().service.listNameAccessible(suggestion.getSenderAsPlayer().getUniqueId())
+                                    .stream()
+                                    .filter((s) -> !s.contains("#home"))
+                                    .collect(Collectors.toSet())
                     );
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
@@ -379,6 +379,20 @@ public final class Waypoints extends CommandModule {
             this.init();
         }
 
+        private static @NotNull Waypoint dispatchWaypoint(CommandExecution context, String id) {
+            var player = context.requireSenderAsPlayer();
+            var uuid = player.getUniqueId();
+            var x = player.getLocation().getX();
+            var y = player.getLocation().getY();
+            var z = player.getLocation().getZ();
+            var yaw = player.getLocation().getYaw();
+            var pitch = player.getLocation().getPitch();
+            var world = player.getWorld().getName();
+
+            var wp = new Waypoint(uuid, id, world, x, y, z, yaw, pitch, uuid, Set.of());
+            return wp;
+        }
+
         @Override
         public void execute(CommandExecution context) {
             try {
@@ -392,16 +406,7 @@ public final class Waypoints extends CommandModule {
 
                 service.delete(id);
 
-                var player = context.requireSenderAsPlayer();
-                var uuid = player.getUniqueId();
-                var x = player.getLocation().getX();
-                var y = player.getLocation().getY();
-                var z = player.getLocation().getZ();
-                var yaw = player.getLocation().getYaw();
-                var pitch = player.getLocation().getPitch();
-                var world = player.getWorld().getName();
-
-                var wp = new Waypoint(uuid, id, world, x, y, z, yaw, pitch, uuid, Set.of());
+                var wp = dispatchWaypoint(context, id);
 
                 service.add(wp);
 

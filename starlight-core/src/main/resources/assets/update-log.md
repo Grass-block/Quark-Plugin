@@ -29,6 +29,8 @@
 - [mod] PlayerNameHeader: will no longer inject to harm main scoreboard.
 - [mod] PlayerNameHeader: now user shared database to save data.
 - [mod] CustomScoreboard: will no longer inject to harm main scoreboard.
+- [fix] KickOnReload: will no longer wrongly discard command action.
+- [mod] DropItemInfo: template is now configurable.
 
 ### 0.70.10
 

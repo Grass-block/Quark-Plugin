@@ -6,10 +6,6 @@ import org.atcraftmc.quark.storage.ItemDropSecure;
 import org.atcraftmc.quark.storage.PortableFunctionalBlocks;
 import org.atcraftmc.quark.storage.PortableShulkerBox;
 import org.atcraftmc.quark.tweaks.*;
-import org.atcraftmc.quark.warps.BackToDeath;
-import org.atcraftmc.quark.warps.RTP;
-import org.atcraftmc.quark.warps.TPA;
-import org.atcraftmc.quark.warps.Waypoint;
 import org.atcraftmc.starlight.framework.FeatureAvailability;
 import org.atcraftmc.starlight.framework.packages.initializer.PackageBuilderInitializer;
 import org.atcraftmc.starlight.framework.packages.initializer.PackageInitializer;
@@ -40,7 +36,6 @@ public final class QuarkGame extends MultiPackageProvider {
                     i.module("elevator", Elevator.class);
                     i.module("stair-seat", StairSeat.class);
                     i.module("realistic-minecart", RealisticMinecart.class);
-                    i.module("custom-recipe", CustomRecipe.class);
                     i.module("114514", _114514.class);
                     i.module("neko", Neko.class);
                     i.module("elytra-aeronautics", ElytraAeronautics.class);
@@ -58,16 +53,6 @@ public final class QuarkGame extends MultiPackageProvider {
                     i.module("item-drop-secure", ItemDropSecure.class);
                     i.language("quark-storage", "zh_cn");
                     i.config("quark-storage");
-                }),
-                PackageBuilderInitializer.of("quark-warps", FeatureAvailability.BOTH, (i) -> {
-                    i.module("waypoint", Waypoint.class);
-                    i.module("back-to-death", BackToDeath.class);
-                    i.module("rtp", RTP.class);
-                    i.module("tpa", TPA.class);
-
-                    i.language("quark-warps", "zh_cn");
-                    i.language("quark-warps", "en_us");
-                    i.config("quark-warps");
                 })
         );
     }

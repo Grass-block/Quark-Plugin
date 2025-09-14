@@ -11,12 +11,20 @@ public abstract class StandaloneModuleProvider extends JavaPlugin implements IPa
     @Override
     public void onEnable() {
         this.module = get();
-        this.module.enableModule();
+        try {
+            this.module.enableModule();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void onDisable() {
-        this.module.disableModule();
+        try {
+            this.module.disableModule();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public abstract StandaloneModule get();

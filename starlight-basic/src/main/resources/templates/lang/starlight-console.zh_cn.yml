@@ -3,3 +3,5 @@ language:
     execute: "{global#sys-operation}已提交命令行: {#var}"
   clear-console:
     execute: "{global#sys-operation}已清除控制台命令缓冲区。"
+  stop-confirm:
+    hint: "{#red} 你确定要关闭服务器吗?这可能会导致服务终止。如果确定的话,请使用{#yellow}/stop confirm"
