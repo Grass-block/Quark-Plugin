@@ -4,36 +4,37 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.method.MethodHandle;
 import me.gb2022.commons.reflect.method.MethodHandleRO0;
+import me.gb2022.modular.APIIncompatibleException;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
+import me.gb2022.modular.subcomponent.ComponentProvider;
+import org.atcraftmc.qlib.config.ConfigContainer;
 import org.atcraftmc.qlib.texts.TextBuilder;
+import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.starlight.api.CustomChatRenderer;
+import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
+import org.atcraftmc.starlight.foundation.ComponentSerializer;
+import org.atcraftmc.starlight.foundation.TextExaminer;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import org.atcraftmc.starlight.framework.module.SLModuleComponent;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
+import org.atcraftmc.starlight.util.TemplateExpansion;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.atcraftmc.starlight.SharedObjects;
-import org.atcraftmc.starlight.foundation.ComponentSerializer;
-import org.atcraftmc.starlight.foundation.TextExaminer;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
-import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.component.Components;
-import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
-import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
-import org.atcraftmc.starlight.util.TemplateExpansion;
 
 import java.util.Date;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule(version = "1.2.0")
-@Components(ChatFormat.PaperChatListener.class)
-public final class ChatFormat extends PackageModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(id = "chat-format", version = "1.2.0")
+@ComponentProvider(ChatFormat.PaperChatListener.class)
+public final class ChatFormat extends SLPackageModule {
     MethodHandleRO0<World, String> getDimensionId = MethodHandle.select((ctx) -> {
         ctx.attempt(() -> World.class.getMethod("getKey"), (w) -> {
             var origin = w.getKey().toString();
-            return origin.replace(":", "-").replace("_", "-").replace(".","-");
+            return origin.replace(":", "-").replace("_", "-").replace(".", "-");
         });
         ctx.dummy((w) -> "minecraft-" + w.getName()
                 .replace("world", "overworld")
@@ -61,24 +62,24 @@ public final class ChatFormat extends PackageModule {
 
 
     public String getTemplate(Player player) {
-        if (this.getConfig().value("template").string() == null) {
+        if (this.config().value("template").string() == null) {
             return "<{0}> {1}";
         }
 
         var wid = this.getDimensionId.invoke(player.getWorld()).replace("_", "-");
-        var world = TextExaminer.examinableText(this.getConfig().value("world").string().formatted(wid));
-        var template = this.getConfig().value("template").string();
+        var world = TextExaminer.examinableText(this.config().value("world").string().formatted(wid));
+        var template = this.config().value("template").string();
 
         return PlaceHolderService.formatPlayer(player, template.replace("{world}", world));
     }
 
     public String getTime() {
-        return this.getConfig().value("time").string().formatted(SharedObjects.TIME_FORMAT.format(new Date()));
+        return this.config().value("time").string().formatted(SharedObjects.TIME_FORMAT.format(new Date()));
     }
 
 
-    @AutoRegister(ServiceType.EVENT_LISTEN)
-    public static final class PaperChatListener extends ModuleComponent<ChatFormat> {
+    @AutoRegister(Registrations.SERVER_EVENT)
+    public static final class PaperChatListener extends SLModuleComponent<ChatFormat> {
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requireClass(() -> Class.forName("io.papermc.paper.event.player.AsyncChatEvent"));

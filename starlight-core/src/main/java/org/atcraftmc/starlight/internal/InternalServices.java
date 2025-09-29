@@ -11,15 +11,15 @@ import org.bukkit.event.server.TabCompleteEvent;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
 import org.atcraftmc.starlight.api.event.CommandEvent;
 import org.atcraftmc.starlight.api.event.CommandTabEvent;
-import org.atcraftmc.starlight.framework.service.SLService;
-import org.atcraftmc.starlight.framework.service.Service;
-import org.atcraftmc.starlight.framework.service.ServiceHolder;
-import org.atcraftmc.starlight.framework.service.ServiceInject;
+import me.gb2022.modular.service.ApplicationService;
+import org.atcraftmc.starlight.framework.SLService;
+import me.gb2022.modular.service.ServiceHolder;
+import me.gb2022.modular.service.injection.ServiceInject;
 import org.atcraftmc.starlight.internal.command.InternalCommands;
 
 public interface InternalServices {
-    @SLService(id = "internal#bungee-channel-supplier")
-    interface BungeeChannelSupplier extends Service {
+    @ApplicationService(id = "internal#bungee-channel-supplier")
+    interface BungeeChannelSupplier extends SLService {
         String BUNGEE_CHANNEL_ID = "BungeeCord";
 
         @ServiceInject
@@ -33,8 +33,8 @@ public interface InternalServices {
         }
     }
 
-    @SLService(id = "internal#command-provider")
-    interface InternalCommandsProvider extends Service {
+    @ApplicationService(id = "internal#command-provider")
+    interface InternalCommandsProvider extends SLService {
         @ServiceInject
         static void start() {
             InternalCommands.register();
@@ -46,8 +46,8 @@ public interface InternalServices {
         }
     }
 
-    @SLService(id = "internal#command-event", impl = CommandEventService.CommandEventAdapter.class)
-    interface CommandEventService extends Service {
+    @ApplicationService(id = "internal#command-event", impl = CommandEventService.CommandEventAdapter.class)
+    interface CommandEventService extends SLService {
 
         @ServiceInject
         ServiceHolder<CommandEventAdapter> INSTANCE = new ServiceHolder<>();

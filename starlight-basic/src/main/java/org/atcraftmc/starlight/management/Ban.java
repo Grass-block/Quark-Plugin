@@ -1,11 +1,13 @@
 package org.atcraftmc.starlight.management;
 
+import me.gb2022.commons.reflect.Inject;
 import org.atcraftmc.qlib.command.LegacyCommandManager;
 import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.util.CachedInfo;
@@ -17,9 +19,13 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
-@SLModule(version = "1.0.0")
+@ApplicationModule(id="ban",version = "1.0.0")
 @QuarkCommand(name = "ban")
-public final class Ban extends CommandModule {
+public final class Ban extends SLCommandModule {
+
+    @Inject
+    private LanguageEntry language;
+
     private static Calendar getCalendarForBan(String[] args) {
         var calender = Calendar.getInstance();
 
@@ -59,14 +65,14 @@ public final class Ban extends CommandModule {
 
         Players.banPlayer(player, BanList.Type.NAME, reason, calender.getTime(), sender.getName());
 
-        MessageAccessor.send(this.getLanguage(), sender, "msg-ban-complete",
+        MessageAccessor.send(this.language, sender, "msg-ban-complete",
                              player,
                              date,
                              reason
         );
 
-        if (ConfigAccessor.getBool(this.getConfig(), "broadcast")) {
-            MessageAccessor.broadcast(this.getLanguage(), false, false, "broadcast", player, reason, sender.getName(), date);
+        if (ConfigAccessor.getBool(this.config(), "broadcast")) {
+            MessageAccessor.broadcast(this.language, false, false, "broadcast", player, reason, sender.getName(), date);
         }
     }
 

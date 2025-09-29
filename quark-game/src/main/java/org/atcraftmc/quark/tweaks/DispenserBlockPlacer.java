@@ -3,6 +3,8 @@ package org.atcraftmc.quark.tweaks;
 import io.papermc.paper.event.block.BlockPreDispenseEvent;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Material;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.data.Directional;
@@ -12,13 +14,11 @@ import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.starlight.foundation.platform.BukkitDataAccess;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 
-@SLModule(version = "1.0.0")
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class DispenserBlockPlacer extends PackageModule {
+@ApplicationModule(version = "1.0.0")
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class DispenserBlockPlacer extends SLPackageModule {
 
     @Inject("tip")
     private LanguageItem tip;

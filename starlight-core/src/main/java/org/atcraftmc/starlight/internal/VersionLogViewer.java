@@ -1,14 +1,16 @@
 package org.atcraftmc.starlight.internal;
 
+import me.gb2022.commons.reflect.Inject;
 import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.language.LanguageEntry;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.atcraftmc.starlight.ProductInfo;
 import org.atcraftmc.starlight.foundation.command.CoreCommand;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
 import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import me.gb2022.modular.module.ApplicationModule;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,9 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SLModule(id = "version-log-viewer")
-public final class VersionLogViewer extends PackageModule implements PluginCommandExecutor {
+@ApplicationModule(id = "version-log-viewer")
+public final class VersionLogViewer extends SLPackageModule implements PluginCommandExecutor {
     private final Map<String, List<String>> versions = new HashMap<>();
+
+    @Inject
+    private LanguageEntry language;
 
     @Override
     public void enable() {
@@ -52,11 +57,11 @@ public final class VersionLogViewer extends PackageModule implements PluginComma
         List<String> info = this.versions.get(version);
 
         if (info == null) {
-            this.getLanguage().item("not-found").send(sender,version);
+            this.language.item("not-found").send(sender, version);
             return;
         }
 
-        this.getLanguage().item("view").send(sender,version);
+        this.language.item("view").send(sender, version);
         for (String s : info) {
             sender.sendMessage(s);
         }

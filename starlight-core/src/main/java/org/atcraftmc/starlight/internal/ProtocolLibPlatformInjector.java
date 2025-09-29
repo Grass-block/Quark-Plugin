@@ -3,16 +3,16 @@ package org.atcraftmc.starlight.internal;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import me.gb2022.modular.module.ApplicationModule;
 import net.kyori.adventure.text.ComponentLike;
 import org.atcraftmc.qlib.platform.ForwardingPluginPlatform;
 import org.atcraftmc.qlib.platform.PluginPlatform;
 import org.atcraftmc.starlight.foundation.ComponentSerializer;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.entity.Player;
 
-@SLModule(internal = true, description = "Create more compatible message sending via ProtocolLib.")
-public final class ProtocolLibPlatformInjector extends PackageModule {
+@ApplicationModule(id = "protocol-lib-injector", internal = true, description = "Create more compatible message sending via ProtocolLib.")
+public final class ProtocolLibPlatformInjector extends SLPackageModule {
 
     @Override
     public void enable() {
@@ -41,7 +41,7 @@ public final class ProtocolLibPlatformInjector extends PackageModule {
             try {
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
     }

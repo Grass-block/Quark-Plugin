@@ -2,6 +2,8 @@ package org.atcraftmc.quark.contents;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,19 +27,17 @@ import org.bukkit.util.Vector;
 import org.atcraftmc.starlight.api.PluginMessages;
 import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageItem;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import me.gb2022.modular.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 
 import java.util.HashMap;
 import java.util.Objects;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule(version = "2.0.1")
-public final class StairSeat extends PackageModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(version = "2.0.1")
+public final class StairSeat extends SLPackageModule {
     public static final String CHAIR_ENTITY_ID = "quark_chair_entity";
     private final HashMap<String, Entity> entityMapping = new HashMap<>();
     private final HashMap<String, Location> locationMapping = new HashMap<>();

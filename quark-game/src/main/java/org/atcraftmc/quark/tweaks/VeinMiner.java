@@ -2,6 +2,8 @@ package org.atcraftmc.quark.tweaks;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Axis;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -15,18 +17,16 @@ import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.api.PluginMessages;
 import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageItem;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import me.gb2022.modular.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule(id = "vein_miner")
-public final class VeinMiner extends PackageModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(id = "vein_miner")
+public final class VeinMiner extends SLPackageModule {
     private final Set<String> breakingSession = new HashSet<>();
 
     @Inject("tip")
@@ -42,7 +42,7 @@ public final class VeinMiner extends PackageModule {
     @Override
     public void enable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
-        this.pattern = this.getConfig().value("regex").getRegex();
+        this.pattern = this.config().value("regex").getRegex();
     }
 
     @Override
@@ -86,7 +86,7 @@ public final class VeinMiner extends PackageModule {
             return;
         }
 
-        if (currentDeep >= ConfigAccessor.getInt(getConfig(), "max-iterations")) {
+        if (currentDeep >= ConfigAccessor.getInt(config(), "max-iterations")) {
             return;
         }
 

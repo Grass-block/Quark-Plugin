@@ -6,9 +6,11 @@ import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import me.gb2022.commons.reflect.method.MethodHandle;
 import me.gb2022.commons.reflect.method.MethodHandleO2;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.language.Language;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.texts.TextBuilder;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,12 +31,9 @@ import org.atcraftmc.starlight.core.PlayerView;
 import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.starlight.foundation.TextSender;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.component.Components;
-import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
-import org.atcraftmc.starlight.framework.module.services.Registers;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
+import me.gb2022.modular.subcomponent.ComponentProvider;
+import org.atcraftmc.starlight.framework.module.SLModuleComponent;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
@@ -46,10 +45,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 //todo: test folia
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule
-@Components(RealisticMinecart.PlayerWorldCache.class)
-public final class RealisticMinecart extends PackageModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule
+@ComponentProvider(RealisticMinecart.PlayerWorldCache.class)
+public final class RealisticMinecart extends SLPackageModule {
     private static final String GLOBAL_TASK_ID = "quark:minecart:simulate";
     private static final double MAX_SAFE_SPEED = 0.6;
     private static final double SIMULATED_GRAVITY = 0.05;
@@ -150,7 +149,7 @@ public final class RealisticMinecart extends PackageModule {
 
         view.addChannel("quark:realistic-minecart:ui", 999, 2, (a, t) -> {
             var thrustLevel = p.getInventory().getHeldItemSlot() - 4;
-            var acceleration = ConfigAccessor.getFloat(getConfig(), "thrust-" + thrustLevel + "-acceleration");
+            var acceleration = ConfigAccessor.getFloat(config(), "thrust-" + thrustLevel + "-acceleration");
             var speed = m.getMaxSpeed();
 
             this.renderUI(p, speed, acceleration, thrustLevel);
@@ -160,7 +159,7 @@ public final class RealisticMinecart extends PackageModule {
     private void renderUI(Player p, double speed, double acceleration, int thrustLevel) {
         var fmt = SharedObjects.NUMBER_FORMAT;
         var locale = LocaleService.locale(p);
-        var template = Language.generateTemplate(this.getConfig(), "ui");
+        var template = Language.generateTemplate(this.config(), "ui");
         var accelerationColumn = String.valueOf(fmt.format(acceleration * 20));
         var speedColumn = "%sm/s(%skm/h)".formatted(fmt.format(speed * 20), fmt.format(speed * 72));
         var thrustLevelColumn = String.valueOf(thrustLevel);
@@ -178,7 +177,7 @@ public final class RealisticMinecart extends PackageModule {
             runMode = MessageAccessor.getMessage(this.language, locale, "run-mode-stop");
         }
 
-        if (speed == ConfigAccessor.getFloat(getConfig(), "max-speed")) {
+        if (speed == ConfigAccessor.getFloat(config(), "max-speed")) {
             runMode = MessageAccessor.getMessage(this.language, locale, "run-mode-run");
         }
 
@@ -219,9 +218,9 @@ public final class RealisticMinecart extends PackageModule {
             var agent = VirtualMinecartAgent.get(this, p);
             agent.tick();
             var thrustLevel = p.getInventory().getHeldItemSlot() - 4;
-            var acceleration = ConfigAccessor.getFloat(getConfig(), "thrust-" + thrustLevel + "-acceleration");
+            var acceleration = ConfigAccessor.getFloat(config(), "thrust-" + thrustLevel + "-acceleration");
 
-            agent.setSpeedLimit(ConfigAccessor.getFloat(getConfig(), "max-speed"));
+            agent.setSpeedLimit(ConfigAccessor.getFloat(config(), "max-speed"));
             agent.setAcceleration(acceleration / 20f);
 
             if (agent.expectedMaxSpeed == 0 && thrustLevel <= 0) {
@@ -253,8 +252,8 @@ public final class RealisticMinecart extends PackageModule {
         return vector;
     }
 
-    @AutoRegister(Registers.BUKKIT_EVENT)
-    public static class PlayerWorldCache extends ModuleComponent<RealisticMinecart> {
+    @AutoRegister(Registrations.SERVER_EVENT)
+    public static class PlayerWorldCache extends SLModuleComponent<RealisticMinecart> {
         private final Map<UUID, World> playerWorldTable = new HashMap<>();
 
         @Override
@@ -351,7 +350,7 @@ public final class RealisticMinecart extends PackageModule {
             var railed = isRail(b1.getType()) || isRail(b2.getType());
             var velocity = new Vector(dx, dy, dz);
 
-            if (velocity.length() > 0 && this.holder.getConfig().value("auto-align").bool()) {
+            if (velocity.length() > 0 && this.holder.config().value("auto-align").bool()) {
                 var yaw = Math.atan2(-velocity.getX(), velocity.getZ()) * (180 / Math.PI);
                 var pitch = Math.atan2(
                         -velocity.getY(),

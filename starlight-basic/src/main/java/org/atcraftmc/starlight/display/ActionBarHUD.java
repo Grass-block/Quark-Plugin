@@ -2,6 +2,9 @@ package org.atcraftmc.starlight.display;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.APIIncompatibleException;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.texts.TextBuilder;
@@ -10,12 +13,9 @@ import org.atcraftmc.starlight.core.PlayerView;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 import org.atcraftmc.starlight.foundation.TextSender;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.APIProfile;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -23,9 +23,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-@SLModule
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class ActionBarHUD extends PackageModule {
+@ApplicationModule(id = "action-bar-hud")
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class ActionBarHUD extends SLPackageModule {
     @Inject
     private LanguageEntry language;
 
@@ -48,7 +48,7 @@ public final class ActionBarHUD extends PackageModule {
         var t = MessageAccessor.getMessage(this.language, locale, "time");
         var f = MessageAccessor.getMessage(this.language, locale, "face", loc.getYaw(), loc.getPitch());
 
-        var template = getConfig().value("template")
+        var template = config().value("template")
                 .string()
                 .replace("{position}", p)
                 .replace("{biome}", b)

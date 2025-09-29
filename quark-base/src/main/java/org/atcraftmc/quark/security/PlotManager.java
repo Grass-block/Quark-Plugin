@@ -2,6 +2,8 @@ package org.atcraftmc.quark.security;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,16 +17,14 @@ import org.atcraftmc.starlight.foundation.platform.Players;
 import org.atcraftmc.starlight.core.Region;
 import org.atcraftmc.starlight.foundation.RegionDataManager;
 import org.atcraftmc.starlight.core.RegionManager;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 
 import java.util.*;
 
 @Deprecated(since = "//没做完，但是他们说不需要了")
-@SLModule
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public class PlotManager extends PackageModule {
+@ApplicationModule
+@AutoRegister(Registrations.SERVER_EVENT)
+public class PlotManager extends SLPackageModule {
     private final Map<String, PlotRegion> editModePlayers = new HashMap<>();
     private RegionManager<PlotRegion> regionManager;
 
@@ -48,7 +48,7 @@ public class PlotManager extends PackageModule {
         if (this.editModePlayers.containsKey(player.getName())) {
             event.setCancelled(true);
             if (region != null) {
-                MessageAccessor.send(this.getLanguage(), event.getPlayer(), "edit-conflict");
+                MessageAccessor.send(this.language, event.getPlayer(), "edit-conflict");
                 return;
             }
 
@@ -59,11 +59,11 @@ public class PlotManager extends PackageModule {
             }
             if (event.getAction().isLeftClick()) {
                 edit.setPoint0(Objects.requireNonNull(event.getClickedBlock()).getLocation());
-                MessageAccessor.send(this.getLanguage(), event.getPlayer(), "edit-p0");
+                MessageAccessor.send(this.language, event.getPlayer(), "edit-p0");
             }
             if (event.getAction().isRightClick()) {
                 edit.setPoint1(Objects.requireNonNull(event.getClickedBlock()).getLocation());
-                MessageAccessor.send(this.getLanguage(), event.getPlayer(), "edit-p1");
+                MessageAccessor.send(this.language, event.getPlayer(), "edit-p1");
             }
 
             Players.show3DBox(event.getPlayer(), edit.getPoint0(), edit.getPoint1());
@@ -72,18 +72,18 @@ public class PlotManager extends PackageModule {
 
 
         if (region == null) {
-            if (ConfigAccessor.getBool(this.getConfig(), "allow-access-public-area")) {
+            if (ConfigAccessor.getBool(this.config(), "allow-access-public-area")) {
                 return;
             }
             event.setCancelled(true);
-            MessageAccessor.send(this.getLanguage(), event.getPlayer(), "deny-public-area");
+            MessageAccessor.send(this.language, event.getPlayer(), "deny-public-area");
             return;
         }
         if (region.canAccess(event.getPlayer().getName())) {
             return;
         }
         event.setCancelled(true);
-        MessageAccessor.send(this.getLanguage(), event.getPlayer(), "deny-inside-area", region.getOwner());
+        MessageAccessor.send(this.language, event.getPlayer(), "deny-inside-area", region.getOwner());
     }
 
     private void startEditing(Player player) {
@@ -99,10 +99,10 @@ public class PlotManager extends PackageModule {
         if (!region.isComplete()) {
             return EditResult.NOT_COMPLETE;
         }
-        if (region.asAABB().getMaxWidth() > ConfigAccessor.getInt(this.getConfig(), "own-count")) {
+        if (region.asAABB().getMaxWidth() > ConfigAccessor.getInt(this.config(), "own-count")) {
             return EditResult.TOO_BIG;
         }
-        if (this.regionManager.filter((r) -> Objects.equals(r.getOwner(), player.getName())).size() > ConfigAccessor.getInt(this.getConfig(),
+        if (this.regionManager.filter((r) -> Objects.equals(r.getOwner(), player.getName())).size() > ConfigAccessor.getInt(this.config(),
                                                                                                                             "own-count")) {
             return EditResult.CANNOT_ALLOCATE;
         }

@@ -1,0 +1,56 @@
+inventory-ui-component:
+  open-waypoint-list:
+    icon: { type: "oak_sign" }
+    name: { text: "{#aqua}导航点传送" }
+    lore:
+      - { text: "{#gray}快速前往不同的地标" }
+      - { text: "{#gold}[点击打开]" }
+    left-click:
+      - "[sound]ui.button.click"
+      - "[close]"
+      - "[command]/waypoint gui"
+  open-music-player:
+    icon: { type: "note_block" }
+    name: { text: "{#yellow}音乐播放器" }
+    lore:
+      - { text: "{#gray}和全服玩家一起听你想听的音乐" }
+      - { text: "{#gray}无需任何额外客户端模组和修改" }
+      - { text: "{#gold}[左键点击打开]" }
+    left-click:
+      - "[close]"
+      - "[sound]ui.button.click"
+      - "[command]/music gui"
+  open-warps-menu:
+    icon: { type: "compass" }
+    name: { text: "{#purple}传送系统" }
+    lore:
+      - { text: "{#gray}提供不同的传送功能" }
+      - { text: "{#gray}左键 | 打开二级菜单(全部功能)" }
+      - { text: "{#gray}右侧 | 快速访问" }
+    left-click:
+      - "[sound]ui.button.click"
+      - "[close]"
+      - "[command]/warp-menu"
+  open-servers-menu:
+    icon: { type: "end_portal_frame" }
+    name: { text: "{#purple}世界传送" }
+    lore:
+      - { text: "{#gray}前往不同的「世界」" }
+      - { text: "{#gray}注: 在不同的服务器之间传送" }
+      - { text: "{#gray}“别问这是为什么，问就是「开拓」之力”" }
+      - { text: "{#gold}[点击打开]" }
+    any-click:
+      - "[sound]ui.button.click"
+      - "[close]"
+      - "[command]/servers-menu"
+  open-view-distance-menu:
+    icon: { type: "ender_eye" }
+    name: { text: "{#purple}服务器渲染距离调整" }
+    lore:
+      - { text: "{#gray}调整你的服务器渲染距离" }
+      - { text: "{#gray}决定你能看到的范围上限" }
+      - { text: "{#gold}[点击打开]" }
+    any-click:
+      - "[sound]ui.button.click"
+      - "[close]"
+      - "[command]/view-distance-menu"

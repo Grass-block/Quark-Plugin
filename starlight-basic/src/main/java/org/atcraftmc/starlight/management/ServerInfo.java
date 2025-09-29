@@ -1,20 +1,20 @@
 package org.atcraftmc.starlight.management;
 
+import me.gb2022.modular.APIIncompatibleException;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.qlib.texts.TextBuilder;
 import org.atcraftmc.starlight.foundation.TextSender;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 @QuarkCommand(name = "system", permission = "-quark.management.system")
-@SLModule
-public final class ServerInfo extends CommandModule {
+@ApplicationModule(id = "server-info")
+public final class ServerInfo extends SLCommandModule {
     @Override
     public void checkCompatibility() throws APIIncompatibleException {
         Compatibility.requireMethod(() -> World.class.getMethod("getChunkCount"));

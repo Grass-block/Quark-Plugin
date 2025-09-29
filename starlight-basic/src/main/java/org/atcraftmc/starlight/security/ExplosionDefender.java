@@ -1,28 +1,26 @@
 package org.atcraftmc.starlight.security;
 
 import me.gb2022.apm.local.PluginMessenger;
-import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.starlight.core.SimpleRegion;
 import org.atcraftmc.starlight.core.data.RegionService;
 import org.atcraftmc.starlight.core.objects.Region;
-import org.atcraftmc.starlight.data.ModuleDataService;
 import org.atcraftmc.starlight.data.record.RecordEntry;
 import org.atcraftmc.starlight.data.record.registry.RecordField;
 import org.atcraftmc.starlight.data.record.registry.RecordRegistry;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import me.gb2022.modular.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.component.Components;
-import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
-import org.atcraftmc.starlight.framework.module.services.Registers;
+import me.gb2022.modular.module.ApplicationModule;
+import me.gb2022.modular.subcomponent.ComponentProvider;
+import org.atcraftmc.starlight.framework.module.SLModuleComponent;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.Bukkit;
@@ -37,14 +35,13 @@ import org.joml.Vector3d;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-@AutoRegister(Registers.BUKKIT_EVENT)
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider(ExplosionDefender.ExplosionWhitelistCommand.class)
-@SLModule(version = "1.3.3")
-@Components(ExplosionDefender.BlockExplosionListener.class)
-public final class ExplosionDefender extends PackageModule {
+@ApplicationModule(id="explosion-defender",version = "1.4.3")
+@ComponentProvider(ExplosionDefender.BlockExplosionListener.class)
+public final class ExplosionDefender extends SLPackageModule {
     private static final RecordRegistry.A5<String, Number, Number, Number, String> RECORD = new RecordRegistry.A5<>(
             "explosions",
             RecordField.WORLD,
@@ -54,27 +51,8 @@ public final class ExplosionDefender extends PackageModule {
             RecordField.TYPE
     );
 
-    private final HashMap<String, SimpleRegion> whiteListedRegions = new HashMap<>();
-
     @Inject("starlight:default/explosion_whitelist")
     private RegionService service;
-
-    @Inject("explosion-defender;Time,World,X,Y,Z,Type")
-    private RecordEntry record;
-
-    @Override
-    public void enable() {
-        this.record.open();
-    }
-
-    @Override
-    public void disable() {
-        this.record.close();
-    }
-
-    public HashMap<String, SimpleRegion> getWhiteListedRegions() {
-        return whiteListedRegions;
-    }
 
     public boolean matchRegion(Location loc) {
         try {
@@ -97,12 +75,12 @@ public final class ExplosionDefender extends PackageModule {
 
     public void handle(Location loc, String explodedId) {
         PluginMessenger.broadcastMapped("quark:explosion", (b) -> b.put("loc", loc));
-        if (ConfigAccessor.getBool(this.getConfig(), "override-explosion")) {
+        if (ConfigAccessor.getBool(this.config(), "override-explosion")) {
             Objects.requireNonNull(loc.getWorld()).createExplosion(loc, 4f, false, false);
         }
-        if (ConfigAccessor.getBool(this.getConfig(), "broadcast")) {
+        if (ConfigAccessor.getBool(this.config(), "broadcast")) {
             MessageAccessor.broadcast(
-                    this.getLanguage(),
+                    this.handle().getLanguage(),
                     true,
                     false,
                     "exploded",
@@ -113,7 +91,7 @@ public final class ExplosionDefender extends PackageModule {
                     explodedId
             );
         }
-        if (ConfigAccessor.getBool(this.getConfig(), "record")) {
+        if (ConfigAccessor.getBool(this.config(), "record")) {
             RECORD.render(Objects.requireNonNull(loc.getWorld()).getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), explodedId);
         }
     }
@@ -202,8 +180,8 @@ public final class ExplosionDefender extends PackageModule {
         }
     }
 
-    @AutoRegister(Registers.BUKKIT_EVENT)
-    public static final class BlockExplosionListener extends ModuleComponent<ExplosionDefender> {
+    @AutoRegister(Registrations.SERVER_EVENT)
+    public static final class BlockExplosionListener extends SLModuleComponent<ExplosionDefender> {
 
         @Override
         public void checkCompatibility() throws APIIncompatibleException {

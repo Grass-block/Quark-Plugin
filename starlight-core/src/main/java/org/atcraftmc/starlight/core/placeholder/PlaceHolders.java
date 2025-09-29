@@ -12,7 +12,7 @@ import org.atcraftmc.starlight.data.ModuleDataService;
 import org.atcraftmc.starlight.data.PlayerDataService;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.ModuleManager;
+import org.atcraftmc.starlight.framework.SLModuleManager;
 import org.atcraftmc.starlight.core.LocaleService;
 
 import java.util.Date;
@@ -101,10 +101,10 @@ public interface PlaceHolders {
     static GloballyPlaceHolder quarkStats() {
         GloballyPlaceHolder holder = new GloballyPlaceHolder();
 
-        holder.register("module-installed", GlobalPlaceHolder.object(() -> ModuleManager.getInstance().getModules().size()));
+        holder.register("module-installed", GlobalPlaceHolder.object(() -> SLModuleManager.getInstance().getModules().size()));
         holder.register(
                 "module-enabled",
-                GlobalPlaceHolder.object(() -> ModuleManager.getInstance().getIdsByStatus(TriState.FALSE).size())
+                GlobalPlaceHolder.object(() -> SLModuleManager.getInstance().getIdsByStatus(TriState.FALSE).size())
         );
         holder.register("player-data-count", GlobalPlaceHolder.object(PlayerDataService::entryCount));
         holder.register("module-data-count", GlobalPlaceHolder.object(ModuleDataService::getEntryCount));

@@ -1,18 +1,19 @@
 rootProject.name = 'Starlight'
 
-include 'starlight-core'
 include 'quark-base'
 include 'quark-game'
-include 'quark-web'
+//include 'quark-web'
 
 include 'quark-proxy-bukkit'
 include 'quark-proxy-velocity'
 
-include 'quark-lobby'
-include 'quark-bundler'
-include 'quark-experimental'
+//include 'quark-bundler'
+//include 'quark-experimental'
 include 'atc-addon'
 
 include 'starlight-all'
+include 'starlight-core'
 include 'starlight-basic'
 
+include 'starlight-extensions:starlight-ext-lobby'
+include 'starlight-extensions:starlight-ext-music'

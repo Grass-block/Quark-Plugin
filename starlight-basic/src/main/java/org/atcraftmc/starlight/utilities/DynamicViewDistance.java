@@ -2,12 +2,14 @@ package org.atcraftmc.starlight.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.assertion.NumberLimitation;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.utilities.viewdistance.CustomSettingStrategy;
 import org.atcraftmc.starlight.utilities.viewdistance.PlayerCountStrategy;
 import org.atcraftmc.starlight.utilities.viewdistance.ViewDistanceStrategy;
@@ -25,18 +27,16 @@ import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider(DynamicViewDistance.ViewDistanceCommand.class)
-@SLModule(version = "1.0.0")
-public final class DynamicViewDistance extends PackageModule implements PluginCommandExecutor {
+@ApplicationModule(id="dynamic-view-distance",version = "1.0.0")
+public final class DynamicViewDistance extends SLPackageModule implements PluginCommandExecutor {
     private final List<ViewDistanceStrategy> pipeline = new ArrayList<>();
 
     @Inject
@@ -56,7 +56,7 @@ public final class DynamicViewDistance extends PackageModule implements PluginCo
         this.pipeline.add(new PlayerCountStrategy());
         this.pipeline.add(new CustomSettingStrategy());
 
-        TaskService.async().timer("view-distance:calc", 1, getConfig().value("calc-period").intValue(), () -> {
+        TaskService.async().timer("view-distance:calc", 1, config().value("calc-period").intValue(), () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 calculatePlayerViewDistance(p, false, false);
             }

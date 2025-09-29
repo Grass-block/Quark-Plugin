@@ -1,6 +1,10 @@
 package org.atcraftmc.starlight.core.permission;
 
-import org.atcraftmc.starlight.framework.service.*;
+import me.gb2022.modular.service.ServiceHolder;
+import me.gb2022.modular.service.injection.ServiceInject;
+import me.gb2022.modular.service.ServiceLayer;
+import me.gb2022.modular.service.ApplicationService;
+import org.atcraftmc.starlight.framework.SLService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
@@ -10,8 +14,8 @@ import org.atcraftmc.starlight.Starlight;
 import java.util.HashMap;
 import java.util.Map;
 
-@SLService(id = "permission", impl = PermissionService.Impl.class, layer = ServiceLayer.FOUNDATION)
-public interface PermissionService extends Service {
+@ApplicationService(id = "permission", impl = PermissionService.Impl.class, layer = ServiceLayer.FOUNDATION)
+public interface PermissionService extends SLService {
 
     @ServiceInject
     ServiceHolder<PermissionService> INSTANCE = new ServiceHolder<>();
@@ -75,7 +79,7 @@ public interface PermissionService extends Service {
         private final Map<String, Permission> map = new HashMap<>();
 
         @Override
-        public void onDisable() {
+        public void disable() {
             for (Permission m : this.map.values()) {
                 Bukkit.getPluginManager().removePermission(m);
             }

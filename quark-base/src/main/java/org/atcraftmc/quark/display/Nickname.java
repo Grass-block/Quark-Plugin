@@ -13,6 +13,7 @@ import me.gb2022.commons.reflect.Inject;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.atcraftmc.starlight.migration.MessageAccessor;
@@ -21,14 +22,13 @@ import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import me.gb2022.modular.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import me.gb2022.modular.module.ApplicationModule;
 
-@SLModule(version = "1.0-beta", beta = true)
+@ApplicationModule(version = "1.0-beta", beta = true)
 @CommandProvider(Nickname.NickNameCommand.class)
-public class Nickname extends PackageModule implements PluginCommandExecutor {
+public class Nickname extends SLPackageModule implements PluginCommandExecutor {
     private final ProtocolManager service = ProtocolLibrary.getProtocolManager();
 
     private final PacketListener playerData = new PacketAdapter(Starlight.instance(), PacketType.Play.Server.PLAYER_INFO) {
@@ -102,7 +102,7 @@ public class Nickname extends PackageModule implements PluginCommandExecutor {
         entry.setString("value", name);
         PlayerDataService.save(player.getName());
 
-        MessageAccessor.send(this.getLanguage(), context.getSender(), isSelf ? "set-self" : "set-other", player.getName(), name);
+        MessageAccessor.send(this.language, context.getSender(), isSelf ? "set-self" : "set-other", player.getName(), name);
     }
 
     @QuarkCommand(name = "nickname", permission = "+quark.nickname")

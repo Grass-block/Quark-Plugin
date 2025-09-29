@@ -2,9 +2,9 @@ package org.atcraftmc.starlight.core.placeholder;
 
 import org.bukkit.entity.Player;
 import org.atcraftmc.starlight.data.GlobalVars;
-import org.atcraftmc.starlight.framework.service.SLService;
-import org.atcraftmc.starlight.framework.service.Service;
-import org.atcraftmc.starlight.framework.service.ServiceInject;
+import me.gb2022.modular.service.ApplicationService;
+import org.atcraftmc.starlight.framework.SLService;
+import me.gb2022.modular.service.injection.ServiceInject;
 import org.atcraftmc.qlib.texts.placeholder.GloballyPlaceHolder;
 import org.atcraftmc.qlib.texts.placeholder.ObjectivePlaceHolder;
 import org.atcraftmc.qlib.texts.placeholder.PlaceHolder;
@@ -13,8 +13,8 @@ import org.atcraftmc.qlib.texts.placeholder.StringExtraction;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-@SLService(id = "place-holder")
-public interface PlaceHolderService extends Service {
+@ApplicationService(id = "place-holder")
+public interface PlaceHolderService extends SLService {
     StringExtraction PATTERN = new StringExtraction(Pattern.compile("\\{#(.*?)}"), 2, 1);
     GlobalVars EXTERNAL_VARS = new GlobalVars();
 

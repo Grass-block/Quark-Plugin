@@ -2,6 +2,7 @@ package org.atcraftmc.starlight.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.language.LanguageItem;
@@ -9,9 +10,8 @@ import org.atcraftmc.starlight.api.PluginMessages;
 import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.Registers;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,10 +24,10 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 
 import java.util.List;
 
-@SLModule
+@ApplicationModule(id="surrounding-refresh")
 @QuarkCommand(name = "refresh-area", permission = "+starlight.world.refresh", playerOnly = true)
-@AutoRegister(Registers.BUKKIT_EVENT)
-public final class SurroundingRefresh extends CommandModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class SurroundingRefresh extends SLCommandModule {
 
     @Inject
     private LanguageEntry language;
@@ -96,6 +96,10 @@ public final class SurroundingRefresh extends CommandModule {
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
+        if(!this.config().value("update-on-explode").bool()){
+            return;
+        }
+
         TaskService.async().delay(3, () -> {
             var loc = event.getLocation();
 
@@ -113,6 +117,10 @@ public final class SurroundingRefresh extends CommandModule {
 
     @EventHandler
     public void onBlockExplode(BlockExplodeEvent event) {
+        if(!this.config().value("update-on-explode").bool()){
+            return;
+        }
+
         TaskService.async().delay(3, () -> {
             var loc = event.getBlock().getLocation();
 

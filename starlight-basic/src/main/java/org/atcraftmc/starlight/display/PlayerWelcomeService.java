@@ -4,15 +4,15 @@ import org.atcraftmc.starlight.api.PlayerFirstJoinEvent;
 import org.atcraftmc.starlight.core.data.flex.TableColumn;
 import org.atcraftmc.starlight.data.PlayerDataService;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
-import org.atcraftmc.starlight.framework.service.SLService;
-import org.atcraftmc.starlight.framework.service.Service;
-import org.atcraftmc.starlight.framework.service.ServiceInject;
+import me.gb2022.modular.service.ApplicationService;
+import org.atcraftmc.starlight.framework.SLService;
+import me.gb2022.modular.service.injection.ServiceInject;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-@SLService(id = "player-welcome")
-public interface PlayerWelcomeService extends Service {
+@ApplicationService(id = "player-welcome")
+public interface PlayerWelcomeService extends SLService {
     EventListener EVENT_LISTENER = new EventListener();
 
     @ServiceInject

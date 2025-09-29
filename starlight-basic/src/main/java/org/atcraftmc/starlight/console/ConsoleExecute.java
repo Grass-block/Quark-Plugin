@@ -1,24 +1,29 @@
 package org.atcraftmc.starlight.console;
 
+import me.gb2022.commons.reflect.Inject;
 import org.atcraftmc.qlib.command.LegacyCommandManager;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.atcraftmc.starlight.migration.MessageAccessor;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
+import me.gb2022.modular.module.ApplicationModule;
 
 @QuarkCommand(name = "console", permission = "-starlight.console.execute")
-@SLModule(version = "1.0.0")
-public final class ConsoleExecute extends CommandModule {
+@ApplicationModule(id="console-execute",version = "1.0.0")
+public final class ConsoleExecute extends SLCommandModule {
+    @Inject
+    private LanguageEntry language;
+
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         StringBuilder sb = new StringBuilder();
         for (String s : args) {
             sb.append(s).append(" ");
         }
-        MessageAccessor.send(this.getLanguage(), sender, "execute", sb.toString());
+        MessageAccessor.send(this.language, sender, "execute", sb.toString());
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), sb.toString());
     }
 

@@ -4,7 +4,8 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import me.gb2022.commons.math.SHA;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.qlib.texts.TextBuilder;
@@ -23,21 +24,20 @@ import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.platform.APIProfile;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.BlacklistPlatform;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.*;
 
-@SLModule(version = "1.0.0", compatBlackList = {APIProfile.SPIGOT, APIProfile.BUKKIT, APIProfile.ARCLIGHT})
+@ApplicationModule(id = "chat-report", version = "1.0.0")
 @CommandProvider(ChatReport.ChatReportCommand.class)
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class ChatReport extends PackageModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+@BlacklistPlatform({APIProfile.SPIGOT, APIProfile.BUKKIT, APIProfile.ARCLIGHT})
+public final class ChatReport extends SLPackageModule {
     private static final RecordRegistry.A5<String, String, String, String, String> RECORD = new RecordRegistry.A5<>(
             "chat-report",
             new RecordField<>("op-id", TextRenderer.literal("Operation ID"), DataRenderer.STRING),
@@ -76,7 +76,7 @@ public final class ChatReport extends PackageModule {
         var uuid = hash(content);
         this.records.put(uuid, "%s;%s;%s;%s".formatted(time, sender, content, shorted));
 
-        var template = Objects.requireNonNull(getConfig().value("append").string()).formatted(uuid);
+        var template = Objects.requireNonNull(config().value("append").string()).formatted(uuid);
         CustomChatRenderer.renderer(event).postfixNearest(TextBuilder.buildComponent(template));
     }
 
@@ -99,7 +99,7 @@ public final class ChatReport extends PackageModule {
             }
 
             handle.records.remove(args[0]);
-            handle.getLanguage().item("success").send(sender, rec[1], rec[3]);
+            handle.language().item("success").send(sender, rec[1], rec[3]);
             RecordService.record(RECORD.render(args[0], sender.getName(), rec[1], rec[0], rec[2]));
 
             BukkitUtil.callEvent(new ChatReportedEvent(rec[1], rec[2], rec[3], args[0]), (e) -> {

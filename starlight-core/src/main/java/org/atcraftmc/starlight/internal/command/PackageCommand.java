@@ -1,21 +1,21 @@
 package org.atcraftmc.starlight.internal.command;
 
 import me.gb2022.commons.TriState;
+import me.gb2022.modular.ObjectOperationResult;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
+import org.atcraftmc.starlight.foundation.TextSender;
+import org.atcraftmc.starlight.foundation.command.CoreCommand;
+import org.atcraftmc.starlight.framework.packages.SLPackageManager;
+import org.atcraftmc.starlight.framework.packages.SLPackage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
-import org.atcraftmc.starlight.foundation.TextSender;
-import org.atcraftmc.starlight.foundation.command.CoreCommand;
-import org.atcraftmc.starlight.framework.packages.IPackage;
-import org.atcraftmc.starlight.framework.packages.PackageManager;
-import org.atcraftmc.starlight.util.ObjectOperationResult;
 
 import java.util.*;
 
@@ -31,9 +31,9 @@ public final class PackageCommand extends CoreCommand {
         };
     }
 
-    private static @NotNull String getPackageDisplayHover(IPackage pkg, String owner, String ownerVer) {
-        var service = pkg.getServiceRegistry();
-        var module = pkg.getModuleRegistry();
+    private static @NotNull String getPackageDisplayHover(SLPackage pkg, String owner, String ownerVer) {
+        var service = pkg.serviceRegistry();
+        var module = pkg.moduleRegistry();
         return """
                 &7ID: &b%s
                 &7Owner: &a%s
@@ -57,9 +57,9 @@ public final class PackageCommand extends CoreCommand {
     public void suggest(CommandSuggestion suggestion) {
         suggestion.suggest(0, "enable", "disable", "list");
         suggestion.matchArgument(0, "list", (c) -> c.suggest(1, "<search meta>"));
-        suggestion.matchArgument(0, "list", (c) -> c.suggest(1, PackageManager.getInstance().getPackages().keySet()));
-        suggestion.matchArgument(0, "enable", (c) -> c.suggest(1, PackageManager.getIdsByStatus(TriState.TRUE)));
-        suggestion.matchArgument(0, "disable", (c) -> c.suggest(1, PackageManager.getIdsByStatus(TriState.FALSE)));
+        suggestion.matchArgument(0, "list", (c) -> c.suggest(1, SLPackageManager.getInstance().getPackages().keySet()));
+        suggestion.matchArgument(0, "enable", (c) -> c.suggest(1, SLPackageManager.getIdsByStatus(TriState.TRUE)));
+        suggestion.matchArgument(0, "disable", (c) -> c.suggest(1, SLPackageManager.getIdsByStatus(TriState.FALSE)));
     }
 
     @Override
@@ -70,23 +70,23 @@ public final class PackageCommand extends CoreCommand {
         switch (context.requireEnum(0, "list", "info", "enable", "disable", "reload", "enable-all", "disable-all", "reload-all")) {
             case "list" -> list(sender, !context.hasArgumentAt(1) ? "" : context.requireArgumentAt(1));
             case "enable-all" -> {
-                PackageManager.enableAllPackages();
+                SLPackageManager.enableAllPackages();
                 this.getLanguage().item("enable-all").send(sender);
             }
             case "disable-all" -> {
-                PackageManager.disableAllPackages();
+                SLPackageManager.disableAllPackages();
                 this.getLanguage().item("disable-all").send(sender);
             }
-            case "enable" -> sendMessage(sender, messageId(PackageManager.enablePackage(id), "enable"), id);
-            case "disable" -> sendMessage(sender, messageId(PackageManager.disablePackage(id), "disable"), id);
+            case "enable" -> sendMessage(sender, messageId(SLPackageManager.enablePackage(id), "enable"), id);
+            case "disable" -> sendMessage(sender, messageId(SLPackageManager.disablePackage(id), "disable"), id);
         }
     }
 
     private void listPackages(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
         HashMap<String, List<String>> map = new HashMap<>();
-        for (String s : PackageManager.getAllPackages().keySet().stream().sorted().toList()) {
-            String namespace = PackageManager.getPackage(s).getOwner().getName();
+        for (String s : SLPackageManager.getAllPackages().keySet().stream().sorted().toList()) {
+            String namespace = SLPackageManager.getPackage(s).getOwner().getName();
             if (!map.containsKey(namespace)) {
                 map.put(namespace, new ArrayList<>());
             }
@@ -104,7 +104,7 @@ public final class PackageCommand extends CoreCommand {
                     .append("):\n");
             for (String id : list) {
                 sb.append(ChatColor.RESET).append(" - ");
-                if (PackageManager.getPackageStatus(id) == TriState.FALSE) {
+                if (SLPackageManager.getPackageStatus(id) == TriState.FALSE) {
                     sb.append(ChatColor.GREEN);
                 } else {
                     sb.append(ChatColor.GRAY);
@@ -117,8 +117,8 @@ public final class PackageCommand extends CoreCommand {
         this.getLanguage().item("list").send(sender, sb.toString());
     }
 
-    private Component buildModuleInfo(IPackage pkg) {
-        var state = PackageManager.isPackageEnabled(pkg.getId()) ? "&aE" : "&cD";
+    private Component buildModuleInfo(SLPackage pkg) {
+        var state = SLPackageManager.isPackageEnabled(pkg.getId()) ? "&aE" : "&cD";
         var owner = pkg.getOwner().getName();
         var ownerVer = pkg.getOwner().getDescription().getVersion();
         var line = "&f[%s&f]%s".formatted(state, pkg.getId());
@@ -132,7 +132,7 @@ public final class PackageCommand extends CoreCommand {
     }
 
     private void list(CommandSender sender, String prefix) {
-        var nodes = PackageManager.getInstance()
+        var nodes = SLPackageManager.getInstance()
                 .getPackages()
                 .values()
                 .stream()
@@ -141,7 +141,7 @@ public final class PackageCommand extends CoreCommand {
                 .toList();
         getLanguage().item("list").send(sender, "");
         for (var meta : nodes) {
-            Component msg = buildModuleInfo(meta);
+            Component msg = buildModuleInfo((SLPackage) meta);
             TextSender.sendMessage(sender, msg);
         }
     }

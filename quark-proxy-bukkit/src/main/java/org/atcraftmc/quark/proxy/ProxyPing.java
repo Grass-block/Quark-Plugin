@@ -3,16 +3,16 @@ package org.atcraftmc.quark.proxy;
 import me.gb2022.apm.local.ListedBroadcastEvent;
 import me.gb2022.apm.local.PluginMessageHandler;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.texts.placeholder.StringObjectPlaceHolder;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.RemoteMessageService;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 import org.atcraftmc.starlight.core.TaskService;
@@ -22,14 +22,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@SLModule(defaultEnable = false)
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class ProxyPing extends PackageModule {
+@ApplicationModule(defaultEnable = false)
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class ProxyPing extends SLPackageModule {
     private final Map<String, Integer> ping = new HashMap<>();
 
     @Override
     public void enable() {
-        int interval = ConfigAccessor.getInt(getConfig(), "interval");
+        int interval = ConfigAccessor.getInt(config(), "interval");
         TaskService.async().timer("quark:proxy-ping:update", interval, interval, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 refreshPing(p);

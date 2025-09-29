@@ -4,16 +4,16 @@ import me.gb2022.commons.http.HttpMethod;
 import me.gb2022.commons.http.HttpRequest;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.texts.TextBuilder;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.foundation.ComponentSerializer;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 import org.atcraftmc.starlight.core.TaskService;
 
@@ -21,9 +21,9 @@ import java.net.ConnectException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-@SLModule(beta = true)
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class QQChatSync extends PackageModule {
+@ApplicationModule(beta = true)
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class QQChatSync extends SLPackageModule {
     @Inject
     private org.apache.logging.log4j.Logger logger;
 
@@ -58,14 +58,14 @@ public final class QQChatSync extends PackageModule {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         TaskService.async().run(() -> {
-            var fmt = getConfig().value("message").string();
+            var fmt = config().value("message").string();
 
             var msg = fmt.formatted(event.getPlayer().getName(), event.getMessage());
-            var token = getConfig().value("token").string();
-            var address = getConfig().value("address").string();
+            var token = config().value("token").string();
+            var address = config().value("address").string();
             var message = ComponentSerializer.plain(TextBuilder.buildComponent(PlaceHolderService.formatPlayer(event.getPlayer(), msg)));
 
-            for (var target : ConfigAccessor.configList(getConfig(), "targets", String.class)) {
+            for (var target : ConfigAccessor.configList(config(), "targets", String.class)) {
                 send(address, token, target, message, this.logger);
             }
         });

@@ -1,9 +1,9 @@
 package org.atcraftmc.quark.storage;
 
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import me.gb2022.modular.module.ApplicationModule;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 
-@SLModule(version = "1.0.0")
-public class ItemTransfer extends PackageModule {
+@ApplicationModule(version = "1.0.0")
+public class ItemTransfer extends SLPackageModule {
 
 }

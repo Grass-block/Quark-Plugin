@@ -2,8 +2,10 @@ package org.atcraftmc.quark.commands;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.AbstractCommand;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -12,17 +14,15 @@ import org.jetbrains.annotations.NotNull;
 import org.atcraftmc.starlight.data.assets.AssetGroup;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@SLModule(version = "1.0.0")
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class CommandFunction extends PackageModule {
+@ApplicationModule(version = "1.0.0")
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class CommandFunction extends SLPackageModule {
     private final Set<AdapterCommand> commands = new HashSet<>();
 
     @Inject("function;false")

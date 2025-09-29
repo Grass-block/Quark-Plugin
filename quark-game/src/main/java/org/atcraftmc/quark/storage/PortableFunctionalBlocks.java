@@ -1,23 +1,23 @@
 package org.atcraftmc.quark.storage;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import me.gb2022.modular.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.component.Components;
-import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
+import me.gb2022.modular.subcomponent.ComponentProvider;
+import org.atcraftmc.starlight.framework.module.SLModuleComponent;
 
-@SLModule
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@Components({PortableFunctionalBlocks.NetherUpdate.class, PortableFunctionalBlocks.VillageUpdate.class})
-public final class PortableFunctionalBlocks extends PackageModule {
+@ApplicationModule
+@AutoRegister(Registrations.SERVER_EVENT)
+@ComponentProvider({PortableFunctionalBlocks.NetherUpdate.class, PortableFunctionalBlocks.VillageUpdate.class})
+public final class PortableFunctionalBlocks extends SLPackageModule {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -32,7 +32,7 @@ public final class PortableFunctionalBlocks extends PackageModule {
             //case ANVIL -> event.getPlayer().openInventory(Bukkit.createInventory(null, InventoryType.ANVIL)); bugggy
             case ENDER_CHEST -> event.getPlayer().openInventory(event.getPlayer().getEnderChest());
             default -> {
-                for (ModuleComponent<?> c : this.getComponents().values()) {
+                for (SLModuleComponent<?> c : this.getComponents().values()) {
                     if (!((InventoryActionHandler) c).handle(event.getPlayer(), event.getItem().getType())) {
                         continue;
                     }
@@ -47,7 +47,7 @@ public final class PortableFunctionalBlocks extends PackageModule {
         boolean handle(Player player, Material holding);
     }
 
-    public static final class NetherUpdate extends ModuleComponent<PortableFunctionalBlocks> implements InventoryActionHandler {
+    public static final class NetherUpdate extends SLModuleComponent<PortableFunctionalBlocks> implements InventoryActionHandler {
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requireClass(() -> Class.forName("org.bukkit.inventory.SmithingInventory"));
@@ -63,7 +63,7 @@ public final class PortableFunctionalBlocks extends PackageModule {
         }
     }
 
-    public static final class VillageUpdate extends ModuleComponent<PortableFunctionalBlocks> implements InventoryActionHandler {
+    public static final class VillageUpdate extends SLModuleComponent<PortableFunctionalBlocks> implements InventoryActionHandler {
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requireClass(() -> Class.forName("org.bukkit.inventory.LoomInventory"));

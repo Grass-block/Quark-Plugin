@@ -1,20 +1,18 @@
 package org.atcraftmc.starlight;
 
 import me.gb2022.commons.TriState;
+import org.atcraftmc.qlib.texts.TextBuilder;
+import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
+import org.atcraftmc.starlight.core.placeholder.PlaceHolders;
+import org.atcraftmc.starlight.foundation.TextSender;
+import org.atcraftmc.starlight.framework.SLModuleManager;
+import org.atcraftmc.starlight.framework.SLServiceManager;
+import org.atcraftmc.starlight.framework.packages.SLPackageManager;
+import org.atcraftmc.starlight.internal.ProductService;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.atcraftmc.starlight.data.ModuleDataService;
-import org.atcraftmc.starlight.data.PlayerDataService;
-import org.atcraftmc.qlib.texts.TextBuilder;
-import org.atcraftmc.starlight.foundation.TextSender;
-import org.atcraftmc.starlight.framework.module.ModuleManager;
-import org.atcraftmc.starlight.framework.packages.PackageManager;
-import org.atcraftmc.starlight.framework.service.ServiceManager;
-import org.atcraftmc.starlight.internal.ProductService;
-import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
-import org.atcraftmc.starlight.core.placeholder.PlaceHolders;
 
 import java.util.Properties;
 
@@ -25,7 +23,7 @@ public interface ProductInfo {
     int BSTATS_ID = 22683;
     String PLUGIN_ID = "starlight";
     String CORE_ID = "starlight-core";
-    String CORE_UA = "starlight/sl-beta-0.80.1[cv10]";
+    String CORE_UA = "starlight/sl-beta-0.80.1[cv10-higgsfield]";
 
     static String version() {
         return Starlight.instance().getDescription().getVersion();
@@ -59,13 +57,15 @@ public interface ProductInfo {
 
     static String logo(JavaPlugin p) {
         return ChatColor.translateAlternateColorCodes('&', """
-                &d ______   __  __   ______   ______   __  __
-                &d/\\  __ \\ /\\ \\/\\ \\ /\\  __ \\ /\\  == \\ /\\ \\/ /
-                &d\\ \\ \\/\\_\\\\ \\ \\_\\ \\\\ \\  __ \\\\ \\  __< \\ \\  _"-.
-                &d \\ \\___\\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\ \\_\\\\ \\_\\ \\_\\
-                &d  \\/___/_/ \\/_____/ \\/_/\\/_/ \\/_/ /_/ \\/_/\\/_/     &fv%s
-                &e ------------------------------------------------------------
-                &7 Artifact by &fGrassBlock2022, &7Copyright &f[C]TBSTMC 2024.
+                &d一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一
+                &d&l      ____ __              __ _        __   __\s
+                &d&l    / __// /_ ___ _ ____ / /(_)___ _ / /  / /_
+                &d&l   _\\ \\ / __// _ `// __// // // _ `// _ \\/ __/
+                &d&l  /___/ \\__/ \\_,_//_/  /_//_/ \\_, //_//_/\\__/\s
+                &d&l                         /___/                    -&fv%s
+                
+                &7 Artifact by &fGrassBlock2022, &7Copyright &f[C]ATCraftMC 2025.
+                &d一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一
                 """.formatted(p.getDescription().getVersion()));
     }
 
@@ -78,8 +78,7 @@ public interface ProductInfo {
                   &7Modules: &b%d&7/&f%d {click(command,/quark module list);color(gold)}[view]{;}
                   &7Packages: &b%d&7/&f%d {click(command,/quark package list);color(gold)}[view]{;}
                   &7Services: &b%d&7
-                  &7PlayerData: &f%d
-                  &7ModuleData: &f%d
+                
                   &7CoreUA: &f%s 
                   &7InstanceID: {click(copy,%s);color(gold)}[copy]{;}
                   &7ProductID: {click(copy,%s);color(gold)}[copy]{;}
@@ -89,41 +88,39 @@ public interface ProductInfo {
         var text = ChatColor.translateAlternateColorCodes('&', dom.formatted(
                 version() + "/api_" + apiMajorVersion() + "." + apiMinorVersion(),
                 ProductInfo.METADATA.getProperty("build-time"),
-                ModuleManager.getInstance().getIdsByStatus(TriState.FALSE).size(),
-                ModuleManager.getInstance().getKnownModuleMetas().size(),
-                PackageManager.getIdsByStatus(TriState.FALSE).size(),
-                PackageManager.getAllPackages().size(),
-                ServiceManager.all().size(),
-                PlayerDataService.entryCount(),
-                ModuleDataService.getEntryCount(),
+                SLModuleManager.getInstance().getIdsByStatus(TriState.TRUE).size(),
+                SLModuleManager.getInstance().getModules().size(),
+                SLPackageManager.getIdsByStatus(TriState.TRUE).size(),
+                SLPackageManager.getAllPackages().size(),
+                SLServiceManager.all().size(),
                 CORE_UA,
                 Starlight.instance().getInstanceUUID(),
                 ProductService.getSystemIdentifier()
-                                                                            ));
+        ));
         TextSender.sendBlock(sender, TextBuilder.build(PlaceHolderService.format(text, PlaceHolders.quarkStats())));
     }
 
     static void sendInfoDisplay(CommandSender sender) {
         String s = """
                 {logo}
-                                
+                
                  强大的Minecraft服务器综合管理插件。
-
+                
                  官方网站: {color(aqua);underline;click(link,https://playat.cn/quark-plugin)}https://playat.cn/quark-plugin{none}
                  联系我们: {#aqua}tbstmc@163.com{none}
-                                
+                
                  测试服务器: ATCraft Network
                  开发: GrassBlock2022
-
+                
                  {#red}[{#white}特别感谢{#red}]{#white}
                   - Mipa: Folia平台测试
                   - Modrinth: 提供更新服务
                   - OpenAI: ChatGPT用于多语言翻译和API解读             
-                  
+                
                  {#red}[{#white}第三方库{#red}]{#white}
                   - LevelDB: 数据存储
                   - AdventureAPI: 玩家界面实现
-                                
+                
                  {#white}Copyright @ATCraft Network(TBSTMC)(China). All Right Reserved.
                 {#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一
                 """;

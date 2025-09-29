@@ -1,11 +1,11 @@
 package org.atcraftmc.starlight.management;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.language.MinecraftLocale;
 import org.atcraftmc.starlight.core.LocaleService;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -15,9 +15,9 @@ import org.bukkit.event.server.ServerCommandEvent;
 
 import java.util.function.Function;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule(version = "1.0.0")
-public final class KickOnReload extends PackageModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(id="kick-on-reload",version = "1.0.0")
+public final class KickOnReload extends SLPackageModule {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
@@ -40,18 +40,18 @@ public final class KickOnReload extends PackageModule {
 
     public void handle(String command) {
         if (command.equalsIgnoreCase("reload")) {
-            kick((locale) -> this.getLanguage().item("reload-hint").message(locale));
+            kick((locale) -> this.handle().getLanguage().item("reload-hint").message(locale));
         }
         if (command.equalsIgnoreCase("stop")) {
             for (var p : Bukkit.getOnlinePlayers()) {
-                p.kickPlayer(this.getLanguage().item("stop-hint").message(LocaleService.locale(p)));
+                p.kickPlayer(this.handle().getLanguage().item("stop-hint").message(LocaleService.locale(p)));
             }
         }
     }
 
     public void kick(Function<MinecraftLocale, String> builder) {
         for (var p : Bukkit.getOnlinePlayers()) {
-            if (ConfigAccessor.getBool(this.getConfig(), "op-ignore") && p.isOp()) {
+            if (ConfigAccessor.getBool(this.config(), "op-ignore") && p.isOp()) {
                 continue;
             }
             p.kickPlayer(builder.apply(LocaleService.locale(p)));

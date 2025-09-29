@@ -2,7 +2,9 @@ package org.atcraftmc.atc_addons.modules;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
@@ -13,9 +15,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.atcraftmc.starlight.data.ModuleDataService;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.LocaleService;
 
 import java.util.ArrayList;
@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SLModule(version = "1.0")
-@AutoRegister(ServiceType.EVENT_LISTEN)
+@ApplicationModule(version = "1.0")
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider(AC_PotatoWar.QueryCommand.class)
-public final class AC_PotatoWar extends PackageModule {
+public final class AC_PotatoWar extends SLPackageModule {
     Map<String, Integer> counts = new HashMap<>();
 
     @Override
@@ -48,8 +48,8 @@ public final class AC_PotatoWar extends PackageModule {
 
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent event) {
-        String temp = getLanguage().buildTemplate(LocaleService.locale(event.getPlayer()), "announce-ui");
-        this.getLanguage().sendTemplate(event.getPlayer(), temp);
+        String temp =this.language.buildTemplate(LocaleService.locale(event.getPlayer()), "announce-ui");
+        this.language.sendTemplate(event.getPlayer(), temp);
     }
 
     @EventHandler

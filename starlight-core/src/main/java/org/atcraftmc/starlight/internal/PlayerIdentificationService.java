@@ -1,8 +1,12 @@
 package org.atcraftmc.starlight.internal;
 
+import me.gb2022.modular.service.*;
+import me.gb2022.modular.service.injection.Export;
+import me.gb2022.modular.service.injection.ServiceInject;
+import me.gb2022.modular.service.injection.ServiceProvider;
 import org.atcraftmc.qlib.config.ConfigEntry;
 import org.atcraftmc.starlight.Starlight;
-import org.atcraftmc.starlight.framework.service.*;
+import org.atcraftmc.starlight.framework.SLService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -10,10 +14,10 @@ import org.atcraftmc.starlight.util.Identifiers;
 
 import java.util.Objects;
 
-@SLService(id = "hashing")
-public interface PlayerIdentificationService extends Service {
+@ApplicationService(id = "hashing")
+public interface PlayerIdentificationService extends SLService {
 
-    @RegisterAsGlobal
+    @Export
     @ServiceInject
     ServiceHolder<PlayerIdentificationService> INSTANCE = new ServiceHolder<>();
 

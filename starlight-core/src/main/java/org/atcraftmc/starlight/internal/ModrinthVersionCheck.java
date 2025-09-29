@@ -4,6 +4,8 @@ import me.gb2022.commons.TriState;
 import me.gb2022.commons.http.HTTPUtil;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.language.LanguageEntry;
@@ -11,9 +13,7 @@ import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.function.BiConsumer;
 
-@SLModule(internal = true)
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class ModrinthVersionCheck extends PackageModule implements PluginCommandExecutor {
+@ApplicationModule(id = "modrinth-version-check", internal = true)
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class ModrinthVersionCheck extends SLPackageModule implements PluginCommandExecutor {
     public static final String API = "https://api.modrinth.com/v2/project/quark-plugin/version";
     public static final String VERSION_PAGE = "https://modrinth.com/plugin/quark-plugin/version/%s";
 
@@ -43,7 +43,7 @@ public final class ModrinthVersionCheck extends PackageModule implements PluginC
 
     @Override
     public void enable() {
-        getHandle().getCommand("starlight").registerSubCommand(new CheckVersionCommand(this));
+        this.handle().getCommand("starlight").registerSubCommand(new CheckVersionCommand(this));
 
         check((state, version) -> {
         });
@@ -63,7 +63,7 @@ public final class ModrinthVersionCheck extends PackageModule implements PluginC
                 var latest = arr.get(0).getAsJsonObject();
 
                 var latestVersion = latest.get("version_number").getAsString();
-                var currentVersion = getOwnerPlugin().getDescription().getVersion();
+                var currentVersion = ownerPlugin().getDescription().getVersion();
 
                 this.cachedVersion = latestVersion;
 

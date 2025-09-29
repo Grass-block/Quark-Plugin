@@ -15,27 +15,28 @@ import org.atcraftmc.starlight.api.WEAction;
 import org.atcraftmc.starlight.api.WESessionEditEvent;
 import org.atcraftmc.starlight.api.WESessionPreEditEvent;
 import org.atcraftmc.starlight.api.WESessionSelectEvent;
-import org.atcraftmc.starlight.framework.service.SLService;
-import org.atcraftmc.starlight.framework.service.Service;
-import org.atcraftmc.starlight.framework.service.ServiceHolder;
-import org.atcraftmc.starlight.framework.service.ServiceProvider;
+import me.gb2022.modular.service.ApplicationService;
+import org.atcraftmc.starlight.framework.SLService;
+import me.gb2022.modular.service.ServiceHolder;
+import me.gb2022.modular.service.injection.ServiceProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.atcraftmc.qlib.config.ConfigEntry;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import me.gb2022.modular.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
 import org.atcraftmc.starlight.core.SimpleRegion;
-import org.atcraftmc.starlight.framework.service.ServiceInject;
+import me.gb2022.modular.service.injection.ServiceInject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
-@SLService(id = "we-session-track")
-public interface WESessionTrackService extends Service {
+@ApplicationService(id = "we-session-track")
+public interface WESessionTrackService extends SLService {
     @ServiceInject
     ServiceHolder<WESessionTrackService> INSTANCE = new ServiceHolder<>();
 
@@ -64,18 +65,18 @@ public interface WESessionTrackService extends Service {
     WEAction getPlayerLatestAction(Player p);
 
     final class ServiceImplementation implements WESessionTrackService, Listener {
-        private final Map<Player, SimpleRegion> regions = new HashMap<>();
-        private final Map<Player, WEAction> latestActions = new HashMap<>();
+        private final Map<UUID, SimpleRegion> regions = new HashMap<>();
+        private final Map<UUID, WEAction> latestActions = new HashMap<>();
 
         //lifetime
         @Override
-        public void onEnable() {
+        public void enable() {
             WorldEdit.getInstance().getEventBus().register(this);
             BukkitUtil.registerEventListener(this);
         }
 
         @Override
-        public void onDisable() {
+        public void disable() {
             WorldEdit.getInstance().getEventBus().unregister(this);
             BukkitUtil.unregisterEventListener(this);
         }
@@ -89,11 +90,11 @@ public interface WESessionTrackService extends Service {
         //api impl
         @Override
         public SimpleRegion getPlayerRegion(Player p) {
-            if (!this.regions.containsKey(p) || this.regions.get(p) == null) {
-                this.regions.put(p, getPlayerRegionNatively(p));
+            if (!this.regions.containsKey(p.getUniqueId()) || this.regions.get(p.getUniqueId()) == null) {
+                this.regions.put(p.getUniqueId(), getPlayerRegionNatively(p));
             }
 
-            return regions.get(p);
+            return regions.get(p.getUniqueId());
         }
 
         @Override
@@ -198,7 +199,7 @@ public interface WESessionTrackService extends Service {
                 var p2 = BukkitAdapter.adapt(player1.getWorld(), region.getBoundingBox().getMaximumPoint());
                 var r = new SimpleRegion(p1, p2);
 
-                this.regions.put(player1, r);
+                this.regions.put(player1.getUniqueId(), r);
             } catch (IncompleteRegionException ignored) {
             }
 
@@ -211,18 +212,18 @@ public interface WESessionTrackService extends Service {
         @EventHandler
         public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
             if (e.getMessage().startsWith("//stack") || e.getMessage().startsWith("/worldedit:/stack")) {
-                this.latestActions.put(e.getPlayer(), WEAction.STACK);
+                this.latestActions.put(e.getPlayer().getUniqueId(), WEAction.STACK);
                 return;
             }
             if (e.getMessage().startsWith("//paste") || e.getMessage().startsWith("/worldedit:/paste")) {
-                this.latestActions.put(e.getPlayer(), WEAction.PASTE);
+                this.latestActions.put(e.getPlayer().getUniqueId(), WEAction.PASTE);
                 return;
             }
             if (e.getMessage().startsWith("//set") || e.getMessage().startsWith("/worldedit:/set")) {
-                this.latestActions.put(e.getPlayer(), WEAction.FILL);
+                this.latestActions.put(e.getPlayer().getUniqueId(), WEAction.FILL);
                 return;
             }
-            this.latestActions.put(e.getPlayer(), WEAction.OTHER);
+            this.latestActions.put(e.getPlayer().getUniqueId(), WEAction.OTHER);
         }
     }
 }

@@ -21,7 +21,8 @@ import java.util.List;
         GlobalVarsCommand.class,
         PackageCommand.class,
         StarlightPluginCommand.ReloadCommand.class,
-        DebugCommand.class
+        DebugCommand.class,
+        LibraryCommand.class,
 })
 public final class StarlightPluginCommand extends CoreCommand {
 

@@ -2,6 +2,7 @@ package org.atcraftmc.quark.tweaks;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.language.LanguageItem;
 import org.bukkit.Bukkit;
@@ -19,18 +20,17 @@ import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.api.PluginMessages;
 import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.internal.PlayerIdentificationService;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule(version = "1.0.0")
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(version = "1.0.0")
 @QuarkCommand(name = "freecam", playerOnly = true)
-public final class FreeCam extends CommandModule {
+public final class FreeCam extends SLCommandModule {
     private final Map<String, GameMode> gameModes = new HashMap<>();
     private final Map<String, Location> locations = new HashMap<>();
 
@@ -64,7 +64,7 @@ public final class FreeCam extends CommandModule {
         Players.teleport(player, this.locations.get(id));
         this.gameModes.remove(id);
         this.locations.remove(id);
-        MessageAccessor.send(this.getLanguage(), player, "reset");
+        MessageAccessor.send(this.language, player, "reset");
     }
 
     public void start(Player player) {
@@ -75,7 +75,7 @@ public final class FreeCam extends CommandModule {
         this.locations.put(id, player.getLocation());
         this.gameModes.put(id, player.getGameMode());
         player.setGameMode(GameMode.SPECTATOR);
-        MessageAccessor.send(this.getLanguage(), player, "start");
+        MessageAccessor.send(this.language, player, "start");
     }
 
     public void toggle(Player p) {
@@ -110,7 +110,7 @@ public final class FreeCam extends CommandModule {
         if(event.getMessage().contains("freecam")){
             return;
         }
-        if(!ConfigAccessor.getBool(this.getConfig(), "anti-cheat")){
+        if(!ConfigAccessor.getBool(this.config(), "anti-cheat")){
             return;
         }
         if(event.getPlayer().hasPermission(this.bypassPermission)){
@@ -118,7 +118,7 @@ public final class FreeCam extends CommandModule {
         }
         if (this.inSession(event.getPlayer())) {
             event.setCancelled(true);
-            MessageAccessor.send(this.getLanguage(), event.getPlayer(), "anti-cheat");
+            MessageAccessor.send(this.language, event.getPlayer(), "anti-cheat");
         }
     }
 }

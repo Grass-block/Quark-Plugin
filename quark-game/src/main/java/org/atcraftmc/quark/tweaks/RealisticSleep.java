@@ -3,7 +3,21 @@ package org.atcraftmc.quark.tweaks;
 import me.gb2022.commons.math.MathHelper;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.language.LanguageItem;
+import org.atcraftmc.starlight.api.PluginMessages;
+import org.atcraftmc.starlight.api.PluginStorage;
+import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.platform.APIProfile;
+import org.atcraftmc.starlight.framework.module.BlacklistPlatform;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.util.TaskHandle;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
@@ -13,26 +27,14 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
-import org.atcraftmc.starlight.migration.ConfigAccessor;
-import org.atcraftmc.starlight.migration.MessageAccessor;
-import org.atcraftmc.starlight.api.PluginMessages;
-import org.atcraftmc.starlight.api.PluginStorage;
-import org.atcraftmc.qlib.language.LanguageItem;
-import org.atcraftmc.starlight.foundation.command.CommandProvider;
-import org.atcraftmc.starlight.foundation.command.ModuleCommand;
-import org.atcraftmc.starlight.foundation.platform.APIProfile;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
-import org.atcraftmc.starlight.core.TaskService;
-import org.atcraftmc.starlight.util.TaskHandle;
 
 import java.util.*;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule(beta = true, compatBlackList = {APIProfile.ARCLIGHT, APIProfile.BUKKIT, APIProfile.BUKKIT})
+@ApplicationModule(beta = true)
+@AutoRegister(Registrations.SERVER_EVENT)
+@BlacklistPlatform({APIProfile.ARCLIGHT, APIProfile.BUKKIT})
 @CommandProvider(RealisticSleep.LeaveBedCommand.class)
-public final class RealisticSleep extends PackageModule {
+public final class RealisticSleep extends SLPackageModule {
     private final Map<World, Set<Player>> sleepingPlayers = new HashMap<>();
 
     private final Set<Player> daySleepingPlayers = new HashSet<>();
@@ -47,7 +49,7 @@ public final class RealisticSleep extends PackageModule {
                 this.sleepingPlayers.put(w, new HashSet<>());
             }
 
-            w.setTime((long) (w.getTime() + this.sleepingPlayers.get(w).size() * ConfigAccessor.getFloat(getConfig(), "scale-per-player")));
+            w.setTime((long) (w.getTime() + this.sleepingPlayers.get(w).size() * ConfigAccessor.getFloat(config(), "scale-per-player")));
         }
     });
 
@@ -57,12 +59,12 @@ public final class RealisticSleep extends PackageModule {
     @Override
     public void enable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
-        TaskService.global().timer("quark:rs:health", 1, ConfigAccessor.getInt(this.getConfig(), "health-interval"), () -> {
+        TaskService.global().timer("quark:rs:health", 1, ConfigAccessor.getInt(this.config(), "health-interval"), () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (!this.whateverSleepingPlayers.contains(p)) {
                     continue;
                 }
-                var health = p.getHealth() + ConfigAccessor.getFloat(getConfig(), "health-amount");
+                var health = p.getHealth() + ConfigAccessor.getFloat(config(), "health-amount");
                 var max = Objects.requireNonNull(p.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue();
 
                 p.setHealth(MathHelper.clamp(health, 0, max));
@@ -93,7 +95,7 @@ public final class RealisticSleep extends PackageModule {
         this.whateverSleepingPlayers.add(event.getPlayer());
         if (event.getPlayer().getWorld().isDayTime()) {
             this.daySleepingPlayers.add(event.getPlayer());
-            MessageAccessor.send(this.getLanguage(), event.getPlayer(), "sleep-day");
+            MessageAccessor.send(this.language, event.getPlayer(), "sleep-day");
             return;
         }
         this.getPlayerList(event.getPlayer()).add(event.getPlayer());

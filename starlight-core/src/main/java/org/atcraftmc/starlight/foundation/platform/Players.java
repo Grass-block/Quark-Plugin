@@ -9,7 +9,7 @@ import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.core.event.BanMessageFetchEvent;
 import org.atcraftmc.starlight.foundation.ComponentSerializer;
-import org.atcraftmc.starlight.framework.module.ModuleManager;
+import org.atcraftmc.starlight.framework.SLModuleManager;
 import org.atcraftmc.starlight.internal.PlatformPatcher;
 import org.atcraftmc.starlight.internal.platform.SpigotReflection;
 import org.bukkit.*;
@@ -128,7 +128,7 @@ public interface Players {
                     LocaleService.saveGetMCPlayerLocale(player)
             );
             BukkitUtil.callEvent(e, (ev -> TaskService.entity(player).run(() -> {
-                if (ModuleManager.getInstance().getStatus("quark-display:custom-kick-message") != TriState.TRUE) {
+                if (SLModuleManager.getInstance().getStatus("quark-display:custom-kick-message") != TriState.TRUE) {
                     KICK.invoke(player, TextBuilder.buildComponent("\u0002" + ev.getMessage()));
                 } else {
                     KICK.invoke(player, TextBuilder.buildComponent(ev.getMessage()));

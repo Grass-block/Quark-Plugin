@@ -31,5 +31,3 @@ language:
     view-hint: "{global#sys-info}您在离线期间收到了 {#var} 条留言，使用命令{#gold}/mail view{#gray} 或 {click(command,/mail view)}{#white}[{#aqua}点击查看{#white}]"
     view-none: "{global#sys-info}您在离线期间未收到任何留言。"
     tip: '{#gray}如果一个玩家不在线，你可以用{#gold}/mail [玩家] [内容]进行留言。'
-  hitokoto:
-    sentence: "{hover(text,文字来自 {#red}[{#white}一言{#red}]{#gray}(https://hitokoto.cn/))}{#red}[{#white}每日一言{#red}] {#white}%s {#gray}——%s({#var})"

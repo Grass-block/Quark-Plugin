@@ -4,9 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.starlight.Configurations;
 import org.atcraftmc.starlight.core.data.TagMapService;
-import org.atcraftmc.starlight.framework.service.SLService;
-import org.atcraftmc.starlight.framework.service.ServiceInject;
-import org.atcraftmc.starlight.framework.service.ServiceLayer;
+import me.gb2022.modular.service.ApplicationService;
+import me.gb2022.modular.service.injection.ServiceInject;
+import me.gb2022.modular.service.ServiceLayer;
 import org.atcraftmc.starlight.util.FilePath;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +16,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
 
-@SLService(id = "jdbc", layer = ServiceLayer.FOUNDATION)
+@ApplicationService(id = "jdbc", layer = ServiceLayer.FOUNDATION)
 public interface JDBCService {
     Logger LOGGER = LogManager.getLogger("JDBCService");
     Map<String, JDBCDatabase> REGISTRY = new HashMap<>();

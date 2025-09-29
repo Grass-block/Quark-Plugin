@@ -5,6 +5,10 @@ import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import me.gb2022.commons.reflect.method.MethodHandle;
 import me.gb2022.commons.reflect.method.MethodHandleO1;
+import me.gb2022.modular.APIIncompatibleException;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
+import me.gb2022.modular.subcomponent.ComponentProvider;
 import net.kyori.adventure.text.Component;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
@@ -20,13 +24,9 @@ import org.atcraftmc.starlight.core.data.flex.TableColumn;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 import org.atcraftmc.starlight.data.PlayerDataService;
 import org.atcraftmc.starlight.foundation.ComponentSerializer;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.component.Components;
-import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
+import org.atcraftmc.starlight.framework.module.SLModuleComponent;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.util.CachedInfo;
 import org.bukkit.Bukkit;
@@ -40,11 +40,11 @@ import org.bukkit.scoreboard.DisplaySlot;
 import java.util.*;
 
 @SuppressWarnings("deprecation")
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(id = "player-name-header")
 @QuarkCommand(name = "header", permission = "-starlight.name.header")
-@Components({PlayerNameHeader.BelowNameColumns.class})
-public final class PlayerNameHeader extends CommandModule {
+@ComponentProvider({PlayerNameHeader.BelowNameColumns.class})
+public final class PlayerNameHeader extends SLCommandModule {
     public static final TableColumn<String> PLAYER_HEADER = TableColumn.string("name_header", 16, "unset");
     private final Map<UUID, String> cache = new HashMap<>();
     MethodHandleO1<Player, Component> SET_NAME_HEADER = MethodHandle.select(ctx -> {
@@ -165,11 +165,11 @@ public final class PlayerNameHeader extends CommandModule {
             return data;
         } else {
             if (player.isOp()) {
-                var h = getConfig().value("op-header").string();
+                var h = config().value("op-header").string();
                 this.cache.put(player.getUniqueId(), h);
                 return h;
             } else {
-                var h = getConfig().value("player-header").string();
+                var h = config().value("player-header").string();
                 this.cache.put(player.getUniqueId(), h);
                 return h;
             }
@@ -178,7 +178,7 @@ public final class PlayerNameHeader extends CommandModule {
 
     public Component getPlayerName(Player player) {
         String header = getHeader(player);
-        String template = this.getConfig().value("template").string();
+        String template = this.config().value("template").string();
         if (template == null) {
             return Component.text(player.getName());
         }
@@ -188,7 +188,7 @@ public final class PlayerNameHeader extends CommandModule {
 
     public Component getPlayerSuffix(Player player) {
         var header = getHeader(player);
-        var template = Objects.requireNonNull(this.getConfig().value("template").string()).split("\\{player}");
+        var template = Objects.requireNonNull(this.config().value("template").string()).split("\\{player}");
         if (template.length == 1) {
             return Component.text("");
         }
@@ -197,12 +197,12 @@ public final class PlayerNameHeader extends CommandModule {
 
     public Component getPlayerPrefix(Player player) {
         var header = getHeader(player);
-        var template = Objects.requireNonNull(this.getConfig().value("template").string()).split("\\{player}");
+        var template = Objects.requireNonNull(this.config().value("template").string()).split("\\{player}");
         return TextBuilder.buildComponent(PlaceHolderService.format(template[0].replace("{header}", header)));
     }
 
 
-    public static final class BelowNameColumns extends ModuleComponent<PlayerNameHeader> {
+    public static final class BelowNameColumns extends SLModuleComponent<PlayerNameHeader> {
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requireClass(() -> Class.forName("io.papermc.paper.scoreboard.numbers.NumberFormat"));
@@ -210,9 +210,9 @@ public final class PlayerNameHeader extends CommandModule {
         }
 
         public Component build(Player player, MinecraftLocale locale) {
-            String template = Language.generateTemplate(this.getConfig(), "below-name");
+            String template = Language.generateTemplate(this.parent.config(), "below-name");
 
-            String ui = MessageAccessor.buildTemplate(getLanguage(), locale, template);
+            String ui = MessageAccessor.buildTemplate(this.parent.language(), locale, template);
             ui = PlaceHolderService.formatPlayer(player, ui);
 
             return TextBuilder.buildComponent(ui);

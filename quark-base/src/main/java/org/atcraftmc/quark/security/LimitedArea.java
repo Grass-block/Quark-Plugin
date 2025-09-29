@@ -3,7 +3,9 @@ package org.atcraftmc.quark.security;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,9 +27,7 @@ import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.core.Region;
 import org.atcraftmc.starlight.core.SimpleRegion;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.data.record.RecordEntry;
 
 import java.util.Date;
@@ -35,10 +35,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider({LimitedArea.LimitedAreaCommand.class})
-@SLModule(version = "1.3.0")
-public final class LimitedArea extends PackageModule {
+@ApplicationModule(version = "1.3.0")
+public final class LimitedArea extends SLPackageModule {
     private final HashMap<String, SimpleRegion> regions = new HashMap<>();
 
     @Inject("limited-area;Time,Player,World,X,Y,Z,Region")
@@ -56,7 +56,7 @@ public final class LimitedArea extends PackageModule {
     }
 
     public void loadRegions() {
-        NBTTagCompound tag = ModuleDataService.getEntry(this.getId());
+        NBTTagCompound tag = ModuleDataService.getEntry(this.id());
         this.regions.clear();
         for (String s : tag.getTagMap().keySet()) {
             this.regions.put(s, new SimpleRegion(tag.getCompoundTag(s)));
@@ -64,11 +64,11 @@ public final class LimitedArea extends PackageModule {
     }
 
     public void saveRegions() {
-        NBTTagCompound tag = ModuleDataService.getEntry(this.getId());
+        NBTTagCompound tag = ModuleDataService.getEntry(this.id());
         for (String s : this.regions.keySet()) {
             tag.setCompoundTag(s, this.regions.get(s).serialize());
         }
-        ModuleDataService.save(this.getId());
+        ModuleDataService.save(this.id());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -115,9 +115,9 @@ public final class LimitedArea extends PackageModule {
                 }
             }
             event.setCancelled(true);
-            MessageAccessor.send(this.getLanguage(), p, "interact_blocked_we");
+            MessageAccessor.send(this.language, p, "interact_blocked_we");
 
-            if (!ConfigAccessor.getBool(this.getConfig(), "record")) {
+            if (!ConfigAccessor.getBool(this.config(), "record")) {
                 return;
             }
             this.record.addLine(
@@ -142,8 +142,8 @@ public final class LimitedArea extends PackageModule {
             }
         }
         event.setCancelled(true);
-        MessageAccessor.send(this.getLanguage(), p, "interact_blocked");
-        if (!ConfigAccessor.getBool(this.getConfig(), "record")) {
+        MessageAccessor.send(this.language, p, "interact_blocked");
+        if (!ConfigAccessor.getBool(this.config(), "record")) {
             return;
         }
         this.record.addLine(

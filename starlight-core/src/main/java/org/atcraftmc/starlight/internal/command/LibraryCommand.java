@@ -1,40 +1,53 @@
 package org.atcraftmc.starlight.internal.command;
 
-import net.kyori.adventure.text.event.ClickEvent;
+import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.platform.PluginPlatform;
+import org.atcraftmc.starlight.SharedObjects;
+import org.atcraftmc.starlight.Starlight;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.foundation.TextSender;
 import org.atcraftmc.starlight.foundation.command.CoreCommand;
 
-import java.sql.SQLException;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.util.Date;
 
-public class LibraryCommand extends CoreCommand {
+@QuarkCommand(name = "libraries", permission = "-starlight.core.libs")
+public final class LibraryCommand extends CoreCommand {
+
+    @Override
+    public void execute(CommandExecution context) {
+        list(context);
+    }
+
     public void list(CommandExecution context) {
+        var paths = Starlight.instance().getLibraryManager().getLoadedURLs();
         var sender = context.requireSenderAsPlayer();
         var locale = LocaleService.locale(sender);
-        var list = this.getLanguage().item("list-libraries").component(locale);
+        var list = this.getLanguage().item("list").component(locale);
 
-        var path
+        paths.forEach((id, lib) -> {
+            File file;
+            try {
+                file = new File(lib.toURI());
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
 
-        try {
-            this.service.listAccessible(sender.getUniqueId()).stream().filter((w) -> !w.getName().endsWith("#home")).forEach((w) -> {
-                var name = w.getName();
-                var owner = w.getOwner();
-                var uuid = w.getUuid();
-                var component = getLanguage().item("list-item")
-                        .component(locale, name, w.getWorld(), ((int) w.getX()), ((int) w.getY()), ((int) w.getZ()), name);
-                var hover = getLanguage().item("list-hover")
-                        .component(locale, name, w.getWorld(), w.getX(), w.getY(), w.getZ(), w.getYaw(), w.getPitch(), owner, uuid);
-                var line = component.asComponent()
-                        .hoverEvent(hover.asComponent().asHoverEvent())
-                        .clickEvent(ClickEvent.runCommand("/waypoint tp %s".formatted(name)));
+            var component = getLanguage().item("list-item").component(locale, id);
+            var hover = getLanguage().item("list-hover").component(
+                    locale,
+                    id,
+                    file.getName(),
+                    file.length() / 1024,
+                    SharedObjects.DATE_FORMAT.format(new Date(file.lastModified())),
+                    file.getAbsolutePath()
+            );
 
-                list.add(line);
-            });
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+            var line = component.asComponent().hoverEvent(hover.asComponent().asHoverEvent());
+            list.add(line);
+        });
 
         sender.sendMessage(PluginPlatform.global().globalFormatMessage("{#line}"));
         TextSender.sendMessage(sender, list);

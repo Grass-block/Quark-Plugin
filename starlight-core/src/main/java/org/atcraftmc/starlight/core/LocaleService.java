@@ -16,10 +16,10 @@ import org.atcraftmc.starlight.foundation.TextSender;
 import org.atcraftmc.starlight.foundation.command.CoreCommand;
 import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
-import org.atcraftmc.starlight.framework.service.SLService;
-import org.atcraftmc.starlight.framework.service.Service;
-import org.atcraftmc.starlight.framework.service.ServiceInject;
-import org.atcraftmc.starlight.framework.service.ServiceLayer;
+import me.gb2022.modular.service.ApplicationService;
+import org.atcraftmc.starlight.framework.SLService;
+import me.gb2022.modular.service.injection.ServiceInject;
+import me.gb2022.modular.service.ServiceLayer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
@@ -33,8 +33,8 @@ import org.bukkit.plugin.ServicePriority;
 import java.sql.SQLException;
 import java.util.*;
 
-@SLService(id = "locale", layer = ServiceLayer.FRAMEWORK)
-public interface LocaleService extends Service {
+@ApplicationService(id = "locale", layer = ServiceLayer.FRAMEWORK)
+public interface LocaleService extends SLService {
     TableColumn<String> TESTED_LOCALE = TableColumn.string("lang_tested", 16, "unknown");
     TableColumn<String> CUSTOM_LOCALE = TableColumn.string("lang_custom", 16, "auto");
 

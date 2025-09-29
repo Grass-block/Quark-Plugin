@@ -1,6 +1,7 @@
 package org.atcraftmc.starlight.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
@@ -10,9 +11,8 @@ import org.atcraftmc.starlight.foundation.TextSender;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.Registers;
+import me.gb2022.modular.module.ApplicationModule;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -24,10 +24,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.util.HashSet;
 import java.util.Objects;
 
-@AutoRegister(Registers.BUKKIT_EVENT)
-@SLModule(id = "chat-at", version = "1.2")
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(id = "chat-at", version = "1.2")
 @CommandProvider(ChatAt.AtCommand.class)
-public final class ChatAt extends PackageModule {
+public final class ChatAt extends SLPackageModule {
 
     @Override
     public void enable() throws Exception {
@@ -72,7 +72,7 @@ public final class ChatAt extends PackageModule {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
-        var cfg = this.getConfig();
+        var cfg = this.config();
         var msg = event.getMessage();
 
         var titleBuilder = new StringBuilder();
@@ -127,14 +127,14 @@ public final class ChatAt extends PackageModule {
     }
 
     public String generateAtMessage(String column) {
-        var cfg = this.getConfig();
+        var cfg = this.config();
         var target = column.replaceFirst("@", "");
         var completedTemplate = cfg.value("at-template").string().replace("{player}", target);
         return PlaceHolderService.format(completedTemplate);
     }
 
     public String generateTitleMessage(String msg, Player p) {
-        var cfg = this.getConfig();
+        var cfg = this.config();
         var template = Objects.requireNonNull(cfg.value("at-title-template").string());
         var completedTemplate = template.replace("{player}", p.getName()).replace("{message}", msg);
         return PlaceHolderService.format(completedTemplate);

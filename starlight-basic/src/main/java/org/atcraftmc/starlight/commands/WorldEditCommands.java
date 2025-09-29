@@ -1,19 +1,19 @@
 package org.atcraftmc.starlight.commands;
 
+import me.gb2022.modular.APIIncompatibleException;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 
-@SLModule
+@ApplicationModule(id = "world-edit-commands")
 @CommandProvider({WorldEditCommands.MirrorCommand.class, WorldEditCommands.DrainWaterCommand.class, WorldEditCommands.FastBrushCommand.class})
-public final class WorldEditCommands extends PackageModule {
+public final class WorldEditCommands extends SLPackageModule {
     @Override
     public void checkCompatibility() throws APIIncompatibleException {
         Compatibility.requirePlugin("WorldEdit");

@@ -1,11 +1,11 @@
 package org.atcraftmc.starlight.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.Registers;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -13,10 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
-@SLModule
+@ApplicationModule(id = "position-align")
 @QuarkCommand(name = "align", playerOnly = true, permission = "+starlight.command.align")
-@AutoRegister(Registers.BUKKIT_EVENT)
-public final class PositionAlign extends CommandModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class PositionAlign extends SLCommandModule {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
@@ -32,7 +32,7 @@ public final class PositionAlign extends CommandModule {
         Players.teleport(player, loc);
 
         MessageAccessor.send(
-                this.getLanguage(),
+                this.language(),
                 sender,
                 "align",
                 loc.getBlockX(),
@@ -45,7 +45,7 @@ public final class PositionAlign extends CommandModule {
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        if (getConfig().value("fix-spawn-position").bool()) {
+        if (config().value("fix-spawn-position").bool()) {
             var p = event.getPlayer().getWorld().getSpawnLocation();
             var rp = event.getRespawnLocation();
             if (p.getX() == rp.getX() && p.getY() == rp.getY() && p.getZ() == rp.getZ()) {

@@ -12,11 +12,5 @@ config:
     thrust--2-acceleration: -0.29
     thrust--3-acceleration: -0.32
     thrust--4-acceleration: -0.5
-  music-player:
-    ui: "{#white}{msg#playing} {#yellow}: {#aqua}{name} {#yellow}|{#white} {time}{#gray} / {#white}{total}"
-    remote: /{$proxy}
-    cdn-server: lobby
-    pitch-offsets:
-      "Kiss_The_Rain.mid": -1
   item-counter:
     postfix: "{#red} | {#white}StatTrak™"

@@ -11,14 +11,14 @@ import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
+import me.gb2022.modular.module.ApplicationModule;
 
 import java.util.List;
 
-@SLModule
+@ApplicationModule
 @QuarkCommand(name = "hat", permission = "+quark.hat.command", playerOnly = true)
-public final class Hats extends CommandModule {
+public final class Hats extends SLCommandModule {
 
     @Inject("-quark.hat.other")
     private Permission setOtherPermission;

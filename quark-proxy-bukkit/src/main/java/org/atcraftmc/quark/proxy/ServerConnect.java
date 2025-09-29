@@ -2,6 +2,7 @@ package org.atcraftmc.quark.proxy;
 
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,16 +11,15 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.atcraftmc.starlight.Starlight;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import me.gb2022.modular.module.ApplicationModule;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-@SLModule
+@ApplicationModule
 @CommandProvider(ServerConnect.ConnectCommand.class)
-public class ServerConnect extends PackageModule {
+public class ServerConnect extends SLPackageModule {
     private final Map<String, String> originRecords = new HashMap<>();
 
     static void connect(Player player, String target) {

@@ -2,9 +2,11 @@ package org.atcraftmc.quark.contents;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import net.kyori.adventure.text.ComponentLike;
 import org.atcraftmc.qlib.language.MinecraftLocale;
 import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -35,17 +37,15 @@ import org.atcraftmc.starlight.foundation.platform.Players;
 import org.atcraftmc.starlight.core.custom.CustomMeta;
 import org.atcraftmc.starlight.core.custom.item.CustomItem;
 import org.atcraftmc.starlight.core.custom.item.QuarkItem;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 
 import java.util.Objects;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider({Elevator.ElevatorItemCommand.class})
-@SLModule(version = "1.0.0")
+@ApplicationModule(version = "1.0.0")
 @SuppressWarnings("deprecation")
-public final class Elevator extends PackageModule {
+public final class Elevator extends SLPackageModule {
     public static final Recipe RECIPE = RecipeBuilder.shaped("elevator", "@#@;#*#;@#@",
             createElevatorItem(1),
             RecipeBuilder.symbol('#', Material.IRON_INGOT),

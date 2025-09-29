@@ -1,23 +1,25 @@
 package org.atcraftmc.starlight.management;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.assertion.NumberLimitation;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.starlight.data.ModuleDataService;
 import org.atcraftmc.starlight.data.PlayerDataService;
 import org.atcraftmc.starlight.data.storage.StorageTable;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import me.gb2022.modular.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.component.Components;
-import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
-import org.atcraftmc.starlight.framework.module.services.Registers;
+import me.gb2022.modular.module.ApplicationModule;
+import me.gb2022.modular.subcomponent.ComponentProvider;
+import org.atcraftmc.starlight.framework.module.SLModuleComponent;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.util.CachedInfo;
 import org.bukkit.Bukkit;
@@ -34,11 +36,14 @@ import java.util.Date;
 import java.util.Objects;
 
 @CommandProvider({Mute.MuteCommand.class, Mute.UnmuteCommand.class})
-@SLModule(id = "chat-mute", version = "1.0.2")
-@Components(Mute.PaperListener.class)
-@AutoRegister(Registers.BUKKIT_EVENT)
-public final class Mute extends PackageModule implements Listener {
+@ApplicationModule(id = "mute", version = "1.0.2")
+@ComponentProvider(Mute.PaperListener.class)
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class Mute extends SLPackageModule implements Listener {
     public static final String DATA_ENTRY_ID = "starlight:mute";
+
+    @Inject
+    private LanguageEntry language;
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChatting(AsyncPlayerChatEvent event) {
@@ -94,7 +99,7 @@ public final class Mute extends PackageModule implements Listener {
             return;
         }
 
-        MessageAccessor.send(this.getLanguage(), Objects.requireNonNull(p.getPlayer()), "message-banned", expired);
+        MessageAccessor.send(this.language, Objects.requireNonNull(p.getPlayer()), "message-banned", expired);
     }
 
 
@@ -114,13 +119,13 @@ public final class Mute extends PackageModule implements Listener {
             expired = "9999-12-31 23:59:59";
         }
 
-        this.getLanguage().item("add").send(operator.getName(), name, expired, reason);
+        this.language.item("add").send(operator.getName(), name, expired, reason);
 
         if (player == null || player.getName().equals(operator.getName())) {
             return;
         }
 
-        this.getLanguage().item("add-target").send(player, operator.getName(), reason, expired);
+        this.language.item("add-target").send(player, operator.getName(), reason, expired);
     }
 
     public boolean unmute(String name, CommandSender operator) {
@@ -135,10 +140,10 @@ public final class Mute extends PackageModule implements Listener {
 
         var player = Bukkit.getPlayerExact(name);
         if (player != null && !player.getName().equals(operator.getName())) {
-            this.getLanguage().item("remove-target").send(player, operator.getName());
+            this.language.item("remove-target").send(player, operator.getName());
         }
 
-        this.getLanguage().item("remove").send(operator.getName(), name);
+        this.language.item("remove").send(operator.getName(), name);
 
         return true;
     }
@@ -190,8 +195,8 @@ public final class Mute extends PackageModule implements Listener {
         }
     }
 
-    @AutoRegister(Registers.BUKKIT_EVENT)
-    public static final class PaperListener extends ModuleComponent<Mute> {
+    @AutoRegister(Registrations.SERVER_EVENT)
+    public static final class PaperListener extends SLModuleComponent<Mute> {
 
         @Override
         public void checkCompatibility() throws APIIncompatibleException {

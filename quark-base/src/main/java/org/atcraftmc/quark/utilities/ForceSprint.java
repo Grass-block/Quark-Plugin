@@ -9,16 +9,16 @@ import org.atcraftmc.starlight.api.PluginMessages;
 import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @QuarkCommand(name = "sprint", playerOnly = true)
-@SLModule(version = "1.0")
-public final class ForceSprint extends CommandModule {
+@ApplicationModule(version = "1.0")
+public final class ForceSprint extends SLCommandModule {
     private final Set<String> players = new HashSet<>();
 
     @Inject("tip")
@@ -52,10 +52,10 @@ public final class ForceSprint extends CommandModule {
     public void onCommand(CommandSender sender, String[] args) {
         if (this.players.contains(sender.getName())) {
             this.players.remove(sender.getName());
-            MessageAccessor.send(this.getLanguage(), sender, "disable");
+            MessageAccessor.send(this.language, sender, "disable");
         } else {
             this.players.add(sender.getName());
-            MessageAccessor.send(this.getLanguage(), sender, "enable");
+            MessageAccessor.send(this.language, sender, "enable");
         }
     }
 }

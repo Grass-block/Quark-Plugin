@@ -2,19 +2,19 @@ package org.atcraftmc.starlight.warp;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.starlight.api.PluginMessages;
 import org.atcraftmc.starlight.api.PluginStorage;
-import org.atcraftmc.starlight.core.data.WaypointService;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.util.BukkitSound;
 import org.atcraftmc.starlight.util.PlayerMap;
@@ -24,14 +24,14 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 
-@SLModule(version = "1.3.0")
-@AutoRegister(ServiceType.EVENT_LISTEN)
+@ApplicationModule(id = "back-to-death", version = "1.3.0")
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider(BackToDeath.BackCommand.class)
-public final class BackToDeath extends PackageModule implements PluginCommandExecutor {
-    private final WaypointService service = new WaypointService("sl_deaths");
-
+public final class BackToDeath extends SLPackageModule implements PluginCommandExecutor {
     private final PlayerMap<Location> deaths = new PlayerMap<>();
 
+    @Inject
+    private LanguageEntry language;
 
     @Inject("tip-back")
     private LanguageItem tipBack;
@@ -53,7 +53,7 @@ public final class BackToDeath extends PackageModule implements PluginCommandExe
         if (!this.deaths.contains(event.getPlayer())) {
             return;
         }
-        MessageAccessor.send(this.getLanguage(), event.getPlayer(), "back-hint");
+        MessageAccessor.send(this.language, event.getPlayer(), "back-hint");
     }
 
     @EventHandler
@@ -67,12 +67,12 @@ public final class BackToDeath extends PackageModule implements PluginCommandExe
         var sender = context.requireSenderAsPlayer();
 
         if (!this.deaths.contains(sender)) {
-            MessageAccessor.send(this.getLanguage(), sender, "back-not-set");
+            MessageAccessor.send(this.language, sender, "back-not-set");
             return;
         }
 
         Players.teleport(sender, this.deaths.get(sender)).thenAccept((b) -> {
-            MessageAccessor.send(this.getLanguage(), sender, "back-tp-success");
+            MessageAccessor.send(this.language, sender, "back-tp-success");
             BukkitSound.WARP.play(sender);
             this.deaths.remove(sender);
         });

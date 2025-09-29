@@ -2,21 +2,21 @@ package org.atcraftmc.starlight.internal;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.gb2022.modular.APIIncompatibleException;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.platform.ForwardingPluginPlatform;
 import org.atcraftmc.qlib.platform.PluginPlatform;
 import org.atcraftmc.starlight.Starlight;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SLModule(internal = true)
-public final class PAPISupport extends PackageModule {
+@ApplicationModule(id = "papi-support", internal = true)
+public final class PAPISupport extends SLPackageModule {
     private final PlaceholderSwapExtension extension = new PlaceholderSwapExtension();
 
     @Override

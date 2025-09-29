@@ -1,13 +1,13 @@
 package org.atcraftmc.quark.automatic;
 
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
-import org.atcraftmc.starlight.framework.module.PackageModule;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class AutoRestart extends PackageModule implements Runnable {
+public class AutoRestart extends SLPackageModule implements Runnable {
     @Override
     public void enable() {
 
@@ -21,7 +21,7 @@ public class AutoRestart extends PackageModule implements Runnable {
 
     @Override
     public void run() {
-        String s = this.getConfig().value("restart_command").string();
+        String s = this.config().value("restart_command").string();
         if (s == null) {
             return;
         }

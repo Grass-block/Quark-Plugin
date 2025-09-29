@@ -1,23 +1,23 @@
 package org.atcraftmc.quark.contents;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.HashMap;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule(version = "1.0.0", beta = true)
-public final class _114514 extends PackageModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(version = "1.0.0", beta = true)
+public final class _114514 extends SLPackageModule {
     private final HashMap<String, Integer> maps = new HashMap<>();
     private final HashMap<String, Long> timestamps = new HashMap<>();
 
@@ -33,7 +33,7 @@ public final class _114514 extends PackageModule {
                 if (!shouldChat(p)) {
                     continue;
                 }
-                p.chat(this.getLanguage().item("message").message(LocaleService.locale(p)));
+                p.chat(this.language.item("message").message(LocaleService.locale(p)));
             }
         });
     }

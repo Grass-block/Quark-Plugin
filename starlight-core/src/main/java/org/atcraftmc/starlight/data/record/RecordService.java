@@ -1,15 +1,15 @@
 package org.atcraftmc.starlight.data.record;
 
 import org.atcraftmc.starlight.data.record.registry.RecordData;
-import org.atcraftmc.starlight.framework.service.SLService;
-import org.atcraftmc.starlight.framework.service.Service;
-import org.atcraftmc.starlight.framework.service.ServiceHolder;
-import org.atcraftmc.starlight.framework.service.ServiceInject;
+import me.gb2022.modular.service.ApplicationService;
+import org.atcraftmc.starlight.framework.SLService;
+import me.gb2022.modular.service.ServiceHolder;
+import me.gb2022.modular.service.injection.ServiceInject;
 
 import java.util.HashMap;
 
-@SLService(id = "record", impl = RecordService.ServiceImplementation.class)
-public interface RecordService extends Service {
+@ApplicationService(id = "record", impl = RecordService.ServiceImplementation.class)
+public interface RecordService extends SLService {
     @ServiceInject
     ServiceHolder<RecordService> INSTANCE = new ServiceHolder<>();
 
@@ -37,7 +37,7 @@ public interface RecordService extends Service {
         private final HashMap<String, RecordEntry> entries = new HashMap<>();
 
         @Override
-        public void onDisable() {
+        public void disable() {
             for (RecordEntry entry : this.entries.values()) {
                 entry.close();
             }

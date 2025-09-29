@@ -6,15 +6,15 @@ import org.atcraftmc.starlight.api.event.ChatForwardingEvent;
 import org.atcraftmc.starlight.foundation.ComponentSerializer;
 import org.atcraftmc.starlight.foundation.TextSender;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
-import org.atcraftmc.starlight.framework.service.SLService;
-import org.atcraftmc.starlight.framework.service.Service;
-import org.atcraftmc.starlight.framework.service.ServiceInject;
+import me.gb2022.modular.service.ApplicationService;
+import org.atcraftmc.starlight.framework.SLService;
+import me.gb2022.modular.service.injection.ServiceInject;
 import org.bukkit.Bukkit;
 import org.bukkit.event.*;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-@SLService(id = "chat-forwarding")
-public interface ChatForwardingService extends Service {
+@ApplicationService(id = "chat-forwarding")
+public interface ChatForwardingService extends SLService {
     Listener EVENT_HANDLER = createImplementation();
 
     @ServiceInject

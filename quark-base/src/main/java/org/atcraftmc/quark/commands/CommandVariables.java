@@ -1,9 +1,11 @@
 package org.atcraftmc.quark.commands;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -12,9 +14,7 @@ import org.atcraftmc.starlight.data.ModuleDataService;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,10 +22,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-@SLModule
+@ApplicationModule
 @CommandProvider(CommandVariables.VariableCommand.class)
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public class CommandVariables extends PackageModule implements PluginCommandExecutor {
+@AutoRegister(Registrations.SERVER_EVENT)
+public class CommandVariables extends SLPackageModule implements PluginCommandExecutor {
     public static final Pattern EXTRACT_VARIABLES = Pattern.compile("\\$\\[.*?]");
 
     private final Map<String, DataStorage> storages = new HashMap<>();
@@ -112,15 +112,15 @@ public class CommandVariables extends PackageModule implements PluginCommandExec
             case "set" -> {
                 var value = context.requireRemainAsParagraph(3, true);
                 data.set(name, value);
-                MessageAccessor.send(this.getLanguage(), sender, "set", sid, name, value);
+                MessageAccessor.send(this.language, sender, "set", sid, name, value);
             }
             case "get" -> {
                 var v = Objects.requireNonNullElse(data.get(name),"[null]");
-                MessageAccessor.send(this.getLanguage(), sender, "get", sid, name, v);
+                MessageAccessor.send(this.language, sender, "get", sid, name, v);
             }
             case "delete" -> {
                 data.clear(name);
-                MessageAccessor.send(this.getLanguage(), sender, "delete", sid, name);
+                MessageAccessor.send(this.language, sender, "delete", sid, name);
             }
         }
     }

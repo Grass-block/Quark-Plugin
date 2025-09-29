@@ -24,24 +24,6 @@ language:
     chat-postfix: '喵~'
     to: '{global#sys-operation}已将 {#var} 变成猫娘。'
     back: '{global#sys-operation}已将 {#var} 变回人类。'
-  music-player:
-    playing: "正在播放"
-    paused: "暂停"
-    play: "{global#sys-info}玩家{#var}播放了音乐{#var}(修正值:{#var})"
-    pause: "{global#sys-info}玩家{#var}已{#yellow}暂停{#gray}当前播放。"
-    resume: "{global#sys-info}玩家{#var}已{#blue}恢复{#gray}当前播放。"
-    cancel: "{global#sys-info}玩家{#var}已{#red}取消{#gray}当前播放。"
-    not-found: "{global#sys-error}无法找到指定的文件 {#var}。"
-    error-resolving: "{global#sys-error}无法解析指定的文件 {#var}。"
-    unsupported-format: "{global#sys-error}不支持的文件 {#var}。"
-    timeout: "{global#sys-error}无法从内容服务器下载文件 {#var}。"
-    restore-defaults: "{global#sys-info}成功保存样例音乐文件。"
-    trim: "{global#sys-info}已修正 {#var} 个文件的名称格式。"
-    ui-title: "{#dark-aqua}音乐播放 {#white}(共 %s 页)"
-    ui-click: "{#gold}[点击播放]"
-    ui-legacy-control-open: "{#purple}启用旧版解析: [开]"
-    ui-legacy-control-close: "{#gray}启用旧版解析: [关]"
-    ui-cancel: "{#red}停止播放"
   custom-recipe:
     reload: "{global#sys-info}成功重载配方组。"
     restore: "{global#sys-info}成功保存样例配方组。"

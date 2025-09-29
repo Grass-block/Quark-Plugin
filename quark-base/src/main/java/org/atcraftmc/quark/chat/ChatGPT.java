@@ -16,8 +16,8 @@ import org.atcraftmc.starlight.api.PluginMessages;
 import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.language.LanguageItem;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.HashSet;
@@ -27,8 +27,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 @QuarkCommand(name = "chatgpt", permission = "+quark.chatgpt")
-@SLModule
-public final class ChatGPT extends CommandModule {
+@ApplicationModule
+public final class ChatGPT extends SLCommandModule {
     public static final String GPT35 = "api.alcex.cn/API/gpt-3.5/";
     public static final String GPT40 = "api.alcex.cn/API/gpt-4/";
     public static final String PROMPT = "(请使用尽量简短的文字回答,给出的文字中将用“$$”代表一个空格,请使用纯文本回答)";

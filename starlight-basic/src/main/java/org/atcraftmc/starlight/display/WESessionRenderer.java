@@ -1,23 +1,23 @@
 package org.atcraftmc.starlight.display;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.APIIncompatibleException;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.starlight.api.WESessionSelectEvent;
+import org.atcraftmc.starlight.core.SimpleRegion;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.core.data.FlexibleMapService;
 import org.atcraftmc.starlight.core.data.flex.TableColumn;
-import org.atcraftmc.starlight.core.SimpleRegion;
 import org.atcraftmc.starlight.data.PlayerDataService;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.security.WESessionTrackService;
 import org.bukkit.Bukkit;
@@ -27,10 +27,10 @@ import org.bukkit.event.EventHandler;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@SLModule(version = "1.0.0")
-@AutoRegister(ServiceType.EVENT_LISTEN)
+@ApplicationModule(id = "we-session-renderer", version = "1.0.0")
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider(WESessionRenderer.WESessionRenderCommand.class)
-public final class WESessionRenderer extends PackageModule implements FlexibleMapService.Codec<WESessionRenderer.RenderMode> {
+public final class WESessionRenderer extends SLPackageModule implements FlexibleMapService.Codec<WESessionRenderer.RenderMode> {
     private final TableColumn<RenderMode> RENDER_MODE = TableColumn.custom("we_render_mode", 24, RenderMode.UPDATE, this);
 
     @Override

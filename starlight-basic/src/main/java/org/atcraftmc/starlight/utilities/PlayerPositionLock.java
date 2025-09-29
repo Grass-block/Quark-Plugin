@@ -1,12 +1,12 @@
 package org.atcraftmc.starlight.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.util.CachedInfo;
 import org.bukkit.Bukkit;
@@ -19,10 +19,10 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import java.util.HashSet;
 import java.util.List;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule(version = "1.0.0")
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(id = "player-position-lock", version = "1.0.0")
 @CommandProvider(PlayerPositionLock.LockPositionCommand.class)
-public final class PlayerPositionLock extends PackageModule {
+public final class PlayerPositionLock extends SLPackageModule {
     private final HashSet<String> lockedPlayers = new HashSet<>();
 
 
@@ -44,10 +44,10 @@ public final class PlayerPositionLock extends PackageModule {
         }
         if (this.isLocked(name)) {
             this.lockedPlayers.remove(name);
-            MessageAccessor.send(this.getLanguage(), p, "unlock");
+            MessageAccessor.send(this.handle().getLanguage(), p, "unlock");
         } else {
             this.lockedPlayers.add(name);
-            MessageAccessor.send(this.getLanguage(), p, "lock");
+            MessageAccessor.send(this.handle().getLanguage(), p, "lock");
         }
     }
 

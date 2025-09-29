@@ -6,6 +6,8 @@ import me.gb2022.commons.reflect.Inject;
 import me.gb2022.commons.reflect.method.MethodHandle;
 import me.gb2022.commons.reflect.method.MethodHandleO2;
 import me.gb2022.commons.reflect.method.MethodHandleRO1;
+import me.gb2022.modular.APIIncompatibleException;
+import me.gb2022.modular.Registrations;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.atcraftmc.qlib.Pipeline;
@@ -21,11 +23,10 @@ import org.atcraftmc.starlight.core.placeholder.PlaceHolders;
 import org.atcraftmc.starlight.core.ui.InventoryUI;
 import org.atcraftmc.starlight.foundation.ComponentSerializer;
 import org.atcraftmc.starlight.foundation.platform.*;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.component.Components;
-import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
+import me.gb2022.modular.subcomponent.ComponentProvider;
+import org.atcraftmc.starlight.framework.module.SLModuleComponent;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.SignChangeEvent;
@@ -38,10 +39,10 @@ import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@Components({ChatComponent.PaperChatListener.class, ChatComponent.PaperSignChangeListener.class})
-@SLModule(id = "chat-component", version = "1.3.0")
-public final class ChatComponent extends PackageModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+@ComponentProvider({ChatComponent.PaperChatListener.class, ChatComponent.PaperSignChangeListener.class})
+@ApplicationModule(id = "chat-component", version = "1.3.0")
+public final class ChatComponent extends SLPackageModule {
     private final Pipeline<BiFunction<Player, String, String>> pipeline = new Pipeline<>();
     private final GloballyPlaceHolder chatPH = PlaceHolders.chat();
 
@@ -140,13 +141,13 @@ public final class ChatComponent extends PackageModule {
         return input;
     }
 
-    @AutoRegister(ServiceType.EVENT_LISTEN)
-    public static final class PaperSignChangeListener extends ModuleComponent<ChatComponent> {
+    @AutoRegister(Registrations.SERVER_EVENT)
+    public static final class PaperSignChangeListener extends SLModuleComponent<ChatComponent> {
         private MethodHandleO2<SignChangeEvent, Integer, Component> setLine;
         private MethodHandleRO1<SignChangeEvent, String, Integer> getLine;
 
         @Override
-        public void checkCompatibility() throws APIIncompatibleException {
+        public void checkCompatibility() throws me.gb2022.modular.APIIncompatibleException {
             Compatibility.requireClass(() -> Class.forName("org.bukkit.event.block.SignChangeEvent"));
         }
 
@@ -189,8 +190,8 @@ public final class ChatComponent extends PackageModule {
         }
     }
 
-    @AutoRegister(ServiceType.EVENT_LISTEN)
-    public static final class PaperChatListener extends ModuleComponent<ChatComponent> {
+    @AutoRegister(Registrations.SERVER_EVENT)
+    public static final class PaperChatListener extends SLModuleComponent<ChatComponent> {
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requireClass(() -> Class.forName("io.papermc.paper.event.player.AsyncChatEvent"));

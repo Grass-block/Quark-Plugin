@@ -1,9 +1,9 @@
 package org.atcraftmc.starlight.internal;
 
 import me.gb2022.commons.math.SHA;
-import org.atcraftmc.starlight.framework.service.SLService;
-import org.atcraftmc.starlight.framework.service.Service;
-import org.atcraftmc.starlight.framework.service.ServiceInject;
+import me.gb2022.modular.service.ApplicationService;
+import org.atcraftmc.starlight.framework.SLService;
+import me.gb2022.modular.service.injection.ServiceInject;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -11,8 +11,8 @@ import java.util.Base64;
 
 
 //激活：发送mac地址和访问码，远端服务器返回激活信息，并删除所有旧设备的激活信息。
-@SLService(id = "product")
-public interface ProductService extends Service {
+@ApplicationService(id = "product")
+public interface ProductService extends SLService {
     Activator ACTIVATOR = new DevActivator();
 
     @ServiceInject

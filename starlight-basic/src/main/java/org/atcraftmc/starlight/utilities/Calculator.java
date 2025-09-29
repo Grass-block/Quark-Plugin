@@ -1,13 +1,14 @@
 package org.atcraftmc.starlight.utilities;
 
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.starlight.api.PluginMessages;
 import org.atcraftmc.starlight.api.PluginStorage;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 
 import java.util.Stack;
@@ -15,9 +16,12 @@ import java.util.Stack;
 /**
  * special thanks to ChatGPT.
  */
-@SLModule(version = "1.0.0")
+@ApplicationModule(id = "calculator", version = "1.0.0")
 @QuarkCommand(name = "calc")
-public final class Calculator extends CommandModule {
+public final class Calculator extends SLCommandModule {
+
+    @Inject
+    private LanguageEntry language;
 
     @Inject("tip")
     private LanguageItem tip;
@@ -103,6 +107,6 @@ public final class Calculator extends CommandModule {
     @Override
     public void execute(CommandExecution context) {
         var exp = context.requireArgumentAt(0);
-        MessageAccessor.send(this.getLanguage(), context.getSender(), "calc", exp, calculate(exp));
+        MessageAccessor.send(this.language, context.getSender(), "calc", exp, calculate(exp));
     }
 }

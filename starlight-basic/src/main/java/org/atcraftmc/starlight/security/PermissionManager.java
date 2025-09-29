@@ -2,6 +2,8 @@ package org.atcraftmc.starlight.security;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.bukkit.util.permission.PermissionEventHandler;
 import org.atcraftmc.qlib.bukkit.util.permission.PlayerPermissionManager;
@@ -19,9 +21,7 @@ import org.atcraftmc.starlight.core.permission.PermissionEntry;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.Registers;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -35,10 +35,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-@AutoRegister(Registers.BUKKIT_EVENT)
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider({PermissionManager.PermissionCommand.class})
-@SLModule(version = "1.0.3")
-public final class PermissionManager extends PackageModule implements PluginCommandExecutor, PermissionEventHandler {
+@ApplicationModule(id = "permission-manager", version = "1.0.3")
+public final class PermissionManager extends SLPackageModule implements PluginCommandExecutor, PermissionEventHandler {
     private final PlayerPermissionManager service = new PlayerPermissionManager(Starlight.instance(), this);
     private final Map<String, List<String>> tags = new HashMap<>();
     private final Map<String, ConfigurationSection> groups = new HashMap<>();

@@ -1,23 +1,23 @@
 package org.atcraftmc.starlight.management;
 
 import me.gb2022.commons.math.MathHelper;
-import org.atcraftmc.qlib.platform.PluginPlatform;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.platform.PluginPlatform;
+import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.util.TemplateExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.atcraftmc.starlight.migration.MessageAccessor;
-import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.core.TaskService;
-import org.atcraftmc.starlight.util.TemplateExpansion;
 
-@SLModule
+@ApplicationModule(id = "tps-bar")
 @QuarkCommand(name = "tpsbar", permission = "-starlight.monitor.tpsbar")
-public final class TPSBar extends CommandModule {
+public final class TPSBar extends SLCommandModule {
     public static final TemplateExpansion TEMPLATE_EXPANSION = TemplateExpansion.build((b) -> b.replacement("tps").replacement("mspt"));
 
     private final BossBar bar = Bukkit.createBossBar("_tpsbar", BarColor.PURPLE, BarStyle.SEGMENTED_20);
@@ -31,7 +31,7 @@ public final class TPSBar extends CommandModule {
             var msptValue = BukkitUtil.getMSPT();
             var mspt = BukkitUtil.formatMSPT(msptValue);
 
-            var line = TEMPLATE_EXPANSION.expand(getConfig().value("line").string(), tps, mspt);
+            var line = TEMPLATE_EXPANSION.expand(config().value("line").string(), tps, mspt);
 
             if (!this.bar.getPlayers().isEmpty()) {
                 this.bar.setTitle(PluginPlatform.global().globalFormatMessage(line));
@@ -61,11 +61,11 @@ public final class TPSBar extends CommandModule {
 
         if (this.bar.getPlayers().contains(player)) {
             this.bar.removePlayer(player);
-            MessageAccessor.send(this.getLanguage(), player, "false");
+            MessageAccessor.send(this.handle().getLanguage(), player, "false");
             return;
         }
 
         this.bar.addPlayer(player);
-        MessageAccessor.send(this.getLanguage(), player, "true");
+        MessageAccessor.send(this.handle().getLanguage(), player, "true");
     }
 }

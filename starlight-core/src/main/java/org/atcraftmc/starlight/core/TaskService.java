@@ -4,16 +4,16 @@ import me.gb2022.commons.container.ObjectContainer;
 import org.atcraftmc.qlib.bukkit.task.TaskManager;
 import org.atcraftmc.qlib.bukkit.task.TaskScheduler;
 import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.framework.SLService;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.atcraftmc.starlight.framework.service.SLService;
-import org.atcraftmc.starlight.framework.service.Service;
-import org.atcraftmc.starlight.framework.service.ServiceInject;
+import me.gb2022.modular.service.ApplicationService;
+import me.gb2022.modular.service.injection.ServiceInject;
 
 
-@SLService(id = "task")
-public interface TaskService extends Service {
+@ApplicationService(id = "task")
+public interface TaskService extends SLService {
     ObjectContainer<TaskManager> CONTAINER = new ObjectContainer<>();
 
     @ServiceInject

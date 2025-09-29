@@ -17,3 +17,5 @@ language:
     cmd-player-not-found: "{global#sys-operation}无法找到指定的玩家。"
     cmd-tag-add: "{global#sys-operation}已向玩家 {#var} 添加权限标签 {#var}。"
     cmd-tag-remove: "{global#sys-operation}已向玩家 {#var} 移除权限标签 {#var}。"
+  advanced-permission-control:
+    no-perm: '{global/#error}你没有权限这样做!(缺失权限节点{#var})'

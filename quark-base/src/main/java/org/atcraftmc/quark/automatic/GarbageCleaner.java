@@ -2,6 +2,7 @@ package org.atcraftmc.quark.automatic;
 
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.language.LanguageEntry;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -14,24 +15,23 @@ import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.*;
 
 //todo:config countdown
-@SLModule(version = "1.0.0")
+@ApplicationModule(version = "1.0.0")
 @CommandProvider({GarbageCleaner.CleanCommand.class})
 @SuppressWarnings("ClassCanBeRecord")
-public final class GarbageCleaner extends PackageModule implements Runnable {
+public final class GarbageCleaner extends SLPackageModule implements Runnable {
     private static final int[] REMAIN = new int[]{120, 60, 30, 20, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
     private final Set<Cleaner> cleaners = new HashSet<>(4);
     private List<String> whitelistedWorlds;
 
     @Override
     public void enable() {
-        var config = this.getConfig();
+        var config = this.config();
         this.whitelistedWorlds = config.value("world-whitelist").list(String.class);
         this.cleaners.clear();
         if (ConfigAccessor.getBool(config, "clean-drops")) {
@@ -42,7 +42,7 @@ public final class GarbageCleaner extends PackageModule implements Runnable {
         if (ConfigAccessor.getBool(config, "clean-dense-entity")) {
             this.addCleaner(new DenseEntityCleaner(ConfigAccessor.getInt(config, "dense-entity-max-count")));
         }
-        TaskService.async().timer("cleaner::timer", 0, ConfigAccessor.getInt(this.getConfig(), "clean-interval"), this);
+        TaskService.async().timer("cleaner::timer", 0, ConfigAccessor.getInt(this.config(), "clean-interval"), this);
     }
 
     @Override
@@ -64,14 +64,14 @@ public final class GarbageCleaner extends PackageModule implements Runnable {
 
     public void submit() {
         for (int i : REMAIN) {
-            TaskService.async().delay((120 - i) * 20, new WarningCallback(i, this.getLanguage()));
+            TaskService.async().delay((120 - i) * 20, new WarningCallback(i, this.language));
         }
         TaskService.global().delay(120 * 20, cleanTask());
     }
 
     private Runnable cleanTask() {
         return () -> {
-            MessageAccessor.broadcast(this.getLanguage(), false, false, "restart");
+            MessageAccessor.broadcast(this.language, false, false, "restart");
             for (World world : Bukkit.getWorlds()) {
                 if (this.whitelistedWorlds.contains(world.getName())) {
                     continue;
@@ -81,7 +81,7 @@ public final class GarbageCleaner extends PackageModule implements Runnable {
                     cleaner.clean(world);
                 }
             }
-            MessageAccessor.broadcast(this.getLanguage(), false, false, "complete");
+            MessageAccessor.broadcast(this.language, false, false, "complete");
         };
     }
 

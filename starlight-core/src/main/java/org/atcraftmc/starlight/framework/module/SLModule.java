@@ -1,46 +1,29 @@
 package org.atcraftmc.starlight.framework.module;
 
-import org.atcraftmc.starlight.framework.FeatureAvailability;
-import org.atcraftmc.starlight.foundation.platform.APIProfile;
-import org.atcraftmc.starlight.framework.module.standalone.StandaloneModuleProvider;
+import me.gb2022.modular.module.IModule;
+import org.atcraftmc.qlib.config.ConfigEntry;
+import org.atcraftmc.qlib.language.LanguageEntry;
+import org.atcraftmc.starlight.framework.packages.SLPackage;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.io.InputStream;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface SLModule {
-    /**
-     * recommended to fill but acceptable if empty
-     */
-    String version() default "1.0";
+public interface SLModule extends IModule<SLPackage, SLModuleHandle>, Listener {
+    Plugin ownerPlugin();
 
-    /**
-     * not required except using {@link StandaloneModuleProvider}
-     */
-    String id() default "null";
+    default LanguageEntry language() {
+        return this.handle().getLanguage();
+    }
 
-    boolean beta() default false;
+    default ConfigEntry config() {
+        return this.handle().getConfig();
+    }
 
-    boolean useLanguage() default true;
-
-    APIProfile[] compatBlackList() default {};
-
-    FeatureAvailability available() default FeatureAvailability.INHERIT;
-
-    boolean internal() default false;
-
-    boolean defaultEnable() default true;
-
-    String description() default "No description provided.";
-
-
-    /**
-     * do not care it unless using record.<br>
-     * deprecated, please use @Inject("Name;Format(,)") instead.
-     */
-    @Deprecated
-    String[] recordFormat() default {};
+    default InputStream getResource(String path) {
+        if (!path.startsWith("/")) {
+            path = path + "/";
+        }
+        return this.getClass().getResourceAsStream("/assets" + path);
+    }
 }

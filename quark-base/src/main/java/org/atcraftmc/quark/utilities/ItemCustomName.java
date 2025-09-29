@@ -1,8 +1,10 @@
 package org.atcraftmc.quark.utilities;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.language.MinecraftLocale;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,17 +21,15 @@ import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
 import org.atcraftmc.starlight.core.custom.CustomMeta;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.LocaleService;
 
 import java.util.List;
 
-@SLModule(version = "0.3")
-@AutoRegister(ServiceType.EVENT_LISTEN)
+@ApplicationModule(version = "0.3")
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider({ItemCustomName.ItemCommandCommand.class})
-public final class ItemCustomName extends PackageModule {
+public final class ItemCustomName extends SLPackageModule {
 
     @Override
     public void checkCompatibility() {
@@ -78,7 +78,7 @@ public final class ItemCustomName extends PackageModule {
 
         String key = CustomMeta.getItemPDCProperty(stack, "custom_name");
 
-        meta.displayName(this.getLanguage().item(key).component(locale).asComponent());
+        meta.displayName(this.language.item(key).component(locale).asComponent());
         stack.setItemMeta(meta);
     }
 

@@ -3,12 +3,14 @@ package org.atcraftmc.quark.display;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.qlib.language.Language;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.language.LanguageItem;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,18 +25,16 @@ import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.starlight.data.ModuleDataService;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.*;
 
-@SLModule(version = "0.3.0")
-@AutoRegister(ServiceType.EVENT_LISTEN)
+@ApplicationModule(version = "0.3.0")
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider(ChatAnnounce.HintCommand.class)
-public final class ChatAnnounce extends PackageModule {
+public final class ChatAnnounce extends SLPackageModule {
     private Set<Player> sessions = new HashSet<>();
 
     private long index;
@@ -48,7 +48,7 @@ public final class ChatAnnounce extends PackageModule {
         this.sessions.addAll(Bukkit.getOnlinePlayers());
 
         this.tick();
-        int p = ConfigAccessor.getInt(this.getConfig(), "period");
+        int p = ConfigAccessor.getInt(this.config(), "period");
         TaskService.async().timer("chat-announce:tick", p, p, this::tick);
     }
 
@@ -90,7 +90,7 @@ public final class ChatAnnounce extends PackageModule {
         var msg = this.getContents(sender).get((int) (this.index % this.getContents(sender).size()));
         var mode = MessageAccessor.getMessage(this.language, locale, "type-hint");
 
-        MessageAccessor.sendTemplate(this.language, sender, Language.generateTemplate(this.getConfig(), "ui", (s) -> s.formatted(mode, msg)));
+        MessageAccessor.sendTemplate(this.language, sender, Language.generateTemplate(this.config(), "ui", (s) -> s.formatted(mode, msg)));
     }
 
     private void sendAnnounce(CommandSender sender) {
@@ -104,7 +104,7 @@ public final class ChatAnnounce extends PackageModule {
         var msg = tag.getString("announce");
         var mode = MessageAccessor.getMessage(this.language, locale, "type-announce");
 
-        MessageAccessor.sendTemplate(this.language, sender, Language.generateTemplate(this.getConfig(), "ui", (s) -> s.formatted(mode, msg)));
+        MessageAccessor.sendTemplate(this.language, sender, Language.generateTemplate(this.config(), "ui", (s) -> s.formatted(mode, msg)));
     }
 
     private void sendTip(CommandSender sender) {
@@ -124,7 +124,7 @@ public final class ChatAnnounce extends PackageModule {
             MessageAccessor.sendTemplate(
                     this.language,
                     sender,
-                    Language.generateTemplate(this.getConfig(), "ui", (ss) -> ss.formatted(mode + "  " + btn, msg))
+                    Language.generateTemplate(this.config(), "ui", (ss) -> ss.formatted(mode + "  " + btn, msg))
             );
         });
     }
@@ -148,7 +148,7 @@ public final class ChatAnnounce extends PackageModule {
             MessageAccessor.sendTemplate(
                     this.language,
                     sender,
-                    Language.generateTemplate(this.getConfig(), "ui", (ss) -> ss.formatted((Object[]) msg.split("::")))
+                    Language.generateTemplate(this.config(), "ui", (ss) -> ss.formatted((Object[]) msg.split("::")))
             );
         });
     }

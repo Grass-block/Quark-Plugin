@@ -6,19 +6,19 @@ import org.atcraftmc.quark.storage.ItemDropSecure;
 import org.atcraftmc.quark.storage.PortableFunctionalBlocks;
 import org.atcraftmc.quark.storage.PortableShulkerBox;
 import org.atcraftmc.quark.tweaks.*;
-import org.atcraftmc.starlight.framework.FeatureAvailability;
-import org.atcraftmc.starlight.framework.packages.initializer.PackageBuilderInitializer;
-import org.atcraftmc.starlight.framework.packages.initializer.PackageInitializer;
+import me.gb2022.modular.FeatureAvailability;
+import org.atcraftmc.starlight.framework.packages.SLPackageBuilder;
+import org.atcraftmc.starlight.framework.packages.SLPackageInitializer;
 import org.atcraftmc.starlight.framework.packages.provider.MultiPackageProvider;
-import org.atcraftmc.starlight.framework.packages.provider.QuarkPackageProvider;
+import org.atcraftmc.starlight.framework.packages.provider.SLPackageProvider;
 
 import java.util.Set;
 
-@QuarkPackageProvider
+@SLPackageProvider
 public final class QuarkGame extends MultiPackageProvider {
-    public static Set<PackageInitializer> initializers() {
+    public static Set<SLPackageInitializer> initializers() {
         return Set.of(
-                PackageBuilderInitializer.of("quark-tweaks", FeatureAvailability.BOTH, (i) -> {
+                SLPackageBuilder.of("quark-tweaks", FeatureAvailability.BOTH, (i) -> {
                     i.module("time-scale", TimeScale.class);
                     i.module("vein-miner", VeinMiner.class);
                     i.module("fly-speed-modifier", FlySpeedModifier.class);
@@ -32,7 +32,7 @@ public final class QuarkGame extends MultiPackageProvider {
                     i.language("quark-tweaks", "zh_cn");
                     i.config("quark-tweaks");
                 }),
-                PackageBuilderInitializer.of("quark-contents", FeatureAvailability.BOTH, (i) -> {
+                SLPackageBuilder.of("quark-contents", FeatureAvailability.BOTH, (i) -> {
                     i.module("elevator", Elevator.class);
                     i.module("stair-seat", StairSeat.class);
                     i.module("realistic-minecart", RealisticMinecart.class);
@@ -47,7 +47,7 @@ public final class QuarkGame extends MultiPackageProvider {
                     i.language("quark-contents", "en_us");
                     i.config("quark-contents");
                 }),
-                PackageBuilderInitializer.of("quark-storage", FeatureAvailability.BOTH, (i) -> {
+                SLPackageBuilder.of("quark-storage", FeatureAvailability.BOTH, (i) -> {
                     i.module("portable-shulker-box", PortableShulkerBox.class);
                     i.module("portable-functional-blocks", PortableFunctionalBlocks.class);
                     i.module("item-drop-secure", ItemDropSecure.class);
@@ -58,7 +58,7 @@ public final class QuarkGame extends MultiPackageProvider {
     }
 
     @Override
-    public Set<PackageInitializer> createInitializers() {
+    public Set<SLPackageInitializer> createInitializers() {
         return initializers();
     }
 

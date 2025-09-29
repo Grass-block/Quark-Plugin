@@ -1,25 +1,25 @@
 package org.atcraftmc.starlight.data;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.modular.service.ServiceHolder;
+import me.gb2022.modular.service.injection.ServiceInject;
+import me.gb2022.modular.service.ServiceLayer;
+import me.gb2022.modular.service.ApplicationService;
+import me.gb2022.modular.service.injection.ServiceProvider;
 import org.atcraftmc.starlight.data.storage.DataEntry;
-import org.atcraftmc.starlight.framework.service.*;
+import org.atcraftmc.starlight.framework.SLService;
 import org.atcraftmc.starlight.util.FilePath;
 
 import java.io.File;
 
-@SLService(id = "module-data",layer = ServiceLayer.FOUNDATION)
-public interface ModuleDataService extends Service {
+@ApplicationService(id = "module-data",layer = ServiceLayer.FOUNDATION)
+public interface ModuleDataService extends SLService {
+    @ServiceInject
     ServiceHolder<ModuleDataService> INSTANCE = new ServiceHolder<>();
 
-    @ServiceInject
-    static void start() throws Exception {
-        INSTANCE.set(create(FilePath.slDataFolder() + "/data/module"));
-        INSTANCE.get().onEnable();
-    }
-
-    @ServiceInject
-    static void stop() throws Exception {
-        INSTANCE.get().onDisable();
+    @ServiceProvider
+    static ModuleDataService create(){
+        return create(FilePath.slDataFolder() + "/data/module");
     }
 
     static NBTTagCompound getEntry(String id) {
@@ -57,13 +57,13 @@ public interface ModuleDataService extends Service {
         }
 
         @Override
-        public void onEnable() {
+        public void enable() {
             //DataFix.moveFolder("/module_data", "/data/module");
             this.open();
         }
 
         @Override
-        public void onDisable() {
+        public void disable() {
             this.close();
         }
 

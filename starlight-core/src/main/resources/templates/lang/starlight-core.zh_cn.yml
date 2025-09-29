@@ -97,3 +97,12 @@ language:
     no-require: "{global#sys-info}您的版本已经为最新版 {#var}，无需进行更新。"
     exception: "{global#sys-info}检查版本时出现错误，请查看控制台。"
     checking: "{global#sys-info}正在检查版本..."
+  libraries:
+    list: '{#aqua}已加载的第三方依赖库: '
+    list-item: "{color(#44FFAA)}[%s]"
+    list-hover: |-
+      {color(#44FFAA)} %s
+      {#gray}文件名称: {#white}%s
+      {#gray}文件大小: {#white}%s KiB
+      {#gray}下载日期: {#white}%s
+      {#gray}完整路径: {#white}%s

@@ -6,9 +6,13 @@ import me.gb2022.apm.remote.RemoteQuery;
 import me.gb2022.apm.remote.connector.RemoteConnector;
 import me.gb2022.apm.remote.event.MessengerEventChannel;
 import me.gb2022.apm.remote.event.channel.MessageChannel;
+import me.gb2022.modular.service.*;
+import me.gb2022.modular.service.injection.Export;
+import me.gb2022.modular.service.injection.ServiceInject;
+import me.gb2022.modular.service.injection.ServiceProvider;
 import org.atcraftmc.starlight.Configurations;
 import org.atcraftmc.starlight.Starlight;
-import org.atcraftmc.starlight.framework.service.*;
+import org.atcraftmc.starlight.framework.SLService;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -16,11 +20,11 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-@SLService(id = "remote-message-service")
-public class RemoteMessageService implements Service {
+@ApplicationService(id = "remote-message-service")
+public class RemoteMessageService implements SLService {
     public static final Runnable EMPTY_ACTION = () -> {};
 
-    @RegisterAsGlobal
+    @Export
     @ServiceInject
     public static final ServiceHolder<RemoteMessageService> INSTANCE = new ServiceHolder<>();
 
@@ -141,7 +145,7 @@ public class RemoteMessageService implements Service {
         }
 
         @Override
-        public void onDisable() {
+        public void disable() {
             this.messenger.stop();
         }
 

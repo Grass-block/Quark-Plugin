@@ -6,6 +6,9 @@ import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import me.gb2022.commons.reflect.method.MethodHandle;
 import me.gb2022.commons.reflect.method.MethodHandleO1;
+import me.gb2022.modular.APIIncompatibleException;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import net.kyori.adventure.text.Component;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
@@ -20,12 +23,9 @@ import org.atcraftmc.starlight.foundation.ComponentSerializer;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.BukkitCodec;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.Registers;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -37,10 +37,10 @@ import org.bukkit.entity.EntityType;
 
 import java.util.*;
 
-@SLModule
-@AutoRegister(Registers.BUKKIT_EVENT)
+@ApplicationModule(id = "hover-display")
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider(HoverDisplay.HoverDisplayCommand.class)
-public final class HoverDisplay extends PackageModule implements PluginCommandExecutor {
+public final class HoverDisplay extends SLPackageModule implements PluginCommandExecutor {
     private final Map<String, ArmorStandGroup> stands = new HashMap<>();
 
     @Inject

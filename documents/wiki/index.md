@@ -2,21 +2,22 @@
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
 hero:
-  name: "ATCraft Wiki"
-  text: "ATCraft相关内容及服务器Wiki"
-  tagline: "ATCraftMC 总Wiki"
-  image:
-  src: ./logo2.png
+  name: "Starlight"
+  text: "&nbsp;&nbsp;&nbsp;&nbsp;—「星辰」"
+  tagline: "下一代服务器综合与管理插件"
   alt: ATC
   actions:
       - theme: brand
         text: 快速开始
-        link: /server/about
+        link: /content
       - theme: alt
-        text: 反馈问题
-        link: https://github.com/ATCraftMC
+        text: 扩展开发
+        link: /dev
+  image:
+    src: /vitepress-logo-large.svg
+    alt: VitePress
 features:
-  - title: 关于 ATCraftMC 服务器
+  - title: 
     icon: <img src="http://localhost:5173/logo2.png" />
     details:
       关于服务器的说明，介绍和一些基本信息，可供玩家阅读并快速疑难解答。<br><br>

@@ -1,12 +1,12 @@
 package org.atcraftmc.quark.tweaks;
 
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import me.gb2022.modular.module.ApplicationModule;
 
-@SLModule(version = "0.1", beta = true)
-public class TimeScale extends PackageModule {
+@ApplicationModule(version = "0.1", beta = true)
+public class TimeScale extends SLPackageModule {
     @Override
     public void enable() {
         for (World world : Bukkit.getWorlds()) {

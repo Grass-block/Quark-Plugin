@@ -1,21 +1,21 @@
 package org.atcraftmc.quark.automatic;
 
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.Objects;
 
-@SLModule(version = "1.0.0")
-public final class AutoRunCommand extends PackageModule {
+@ApplicationModule(version = "1.0.0")
+public final class AutoRunCommand extends SLPackageModule {
 
     @Override
     public void enable() {
-        ConfigurationSection configs = Objects.requireNonNull(this.getConfig().value("commands").section());
+        ConfigurationSection configs = Objects.requireNonNull(this.config().value("commands").section());
         for (String name : configs.getKeys(false)) {
             ConfigurationSection command = configs.getConfigurationSection(name);
             if (command == null) {
@@ -32,7 +32,7 @@ public final class AutoRunCommand extends PackageModule {
 
     @Override
     public void disable() {
-        ConfigurationSection configs = Objects.requireNonNull(this.getConfig().value("commands").section());
+        ConfigurationSection configs = Objects.requireNonNull(this.config().value("commands").section());
         for (String name : configs.getKeys(false)) {
             String taskId = "quark://auto_run_command/" + name;
             TaskService.global().cancel(taskId);

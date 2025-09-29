@@ -1,19 +1,19 @@
 package org.atcraftmc.quark.commands;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.LegacyCommandManager;
+import org.atcraftmc.starlight.core.TaskService;
+import me.gb2022.modular.APIIncompatibleException;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import me.gb2022.modular.module.ApplicationModule;
+import me.gb2022.modular.subcomponent.ComponentProvider;
+import org.atcraftmc.starlight.framework.module.SLModuleComponent;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
+import org.atcraftmc.starlight.util.FilePath;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.server.TabCompleteEvent;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
-import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.component.Components;
-import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
-import org.atcraftmc.starlight.core.TaskService;
-import org.atcraftmc.starlight.util.FilePath;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-@SLModule(version = "1.2.0")
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@Components({CommandTabFix.WEAddition.class,})
-public final class CommandTabFix extends PackageModule {
+@ApplicationModule(version = "1.2.0")
+@AutoRegister(Registrations.SERVER_EVENT)
+@ComponentProvider({CommandTabFix.WEAddition.class,})
+public final class CommandTabFix extends SLPackageModule {
     public static boolean isCommandNameMatch(TabCompleteEvent event, String... names) {
         for (var name : names) {
             if (event.getBuffer().startsWith(name) || event.getBuffer().startsWith("/" + name)) {
@@ -100,8 +100,8 @@ public final class CommandTabFix extends PackageModule {
         LegacyCommandManager.sync();
     }
 
-    @AutoRegister(ServiceType.EVENT_LISTEN)
-    public static final class WEAddition extends ModuleComponent<CommandTabFix> {
+    @AutoRegister(Registrations.SERVER_EVENT)
+    public static final class WEAddition extends SLModuleComponent<CommandTabFix> {
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requirePlugin("WorldEdit");
@@ -122,18 +122,18 @@ public final class CommandTabFix extends PackageModule {
                 });
             }
 
-            if (isCommandNameMatch(event, "set") && getArguments(event).length <= 2) {
+            if (isCommandNameMatch(event, "/set") && getArguments(event).length <= 2) {
                 handleCompletion(event, (list) -> list.add("hand"));
             }
 
-            if (isCommandNameMatch(event, "replace") && getArguments(event).length <= 3) {
+            if (isCommandNameMatch(event, "/replace") && getArguments(event).length <= 3) {
                 handleCompletion(event, (list) -> list.add("hand"));
             }
         }
     }
 
-    @AutoRegister(ServiceType.EVENT_LISTEN)
-    public static final class MVAddition extends ModuleComponent<CommandTabFix> {
+    @AutoRegister(Registrations.SERVER_EVENT)
+    public static final class MVAddition extends SLModuleComponent<CommandTabFix> {
         @Override
         public void checkCompatibility() throws APIIncompatibleException {
             Compatibility.requirePlugin("Multiverse-Core");

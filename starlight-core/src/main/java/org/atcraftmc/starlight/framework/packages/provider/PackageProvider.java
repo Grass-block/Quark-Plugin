@@ -2,9 +2,9 @@ package org.atcraftmc.starlight.framework.packages.provider;
 
 import org.atcraftmc.starlight.ProductInfo;
 import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.framework.packages.SLAbstractPackage;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.atcraftmc.starlight.framework.packages.AbstractPackage;
 
 import java.util.Objects;
 import java.util.Set;
@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public interface PackageProvider {
-    Set<AbstractPackage> createPackages();
+    Set<SLAbstractPackage> createPackages();
 
     default boolean isCoreContextMatch() {
         Plugin quarkInstance = Bukkit.getPluginManager().getPlugin(ProductInfo.CORE_ID);
@@ -34,7 +34,7 @@ public interface PackageProvider {
         try {
             Class.forName("org.atcraftmc.starlight.Starlight");
         } catch (ClassNotFoundException e) {
-            logger.severe("cannot detect running quark core. consider reload your server.");
+            logger.severe("cannot detect running core. consider reload your server.");
             return false;
         }
 

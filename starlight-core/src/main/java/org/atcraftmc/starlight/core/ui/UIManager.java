@@ -1,20 +1,23 @@
 package org.atcraftmc.starlight.core.ui;
 
 import me.gb2022.commons.container.ObjectContainer;
+import me.gb2022.modular.service.ApplicationService;
+import me.gb2022.modular.service.ServiceHolder;
+import me.gb2022.modular.service.injection.ServiceInject;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.atcraftmc.starlight.core.ui.builder.UIBuilder;
 import org.atcraftmc.starlight.foundation.command.CoreCommand;
 import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
-import org.atcraftmc.starlight.framework.service.SLService;
-import org.atcraftmc.starlight.framework.service.Service;
+import org.atcraftmc.starlight.framework.SLService;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
-@SLService(id = "ui", impl = UIManager.Impl.class)
-public interface UIManager extends Service {
-    ObjectContainer<UIManager> INSTANCE = new ObjectContainer<>();
+@ApplicationService(id = "ui", impl = UIManager.Impl.class)
+public interface UIManager extends SLService {
+    @ServiceInject
+    ServiceHolder<UIManager> INSTANCE = new ServiceHolder<>();
 
     static void init() {
         StarlightCommandManager.getInstance().register(new UICommand());

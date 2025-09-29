@@ -15,10 +15,12 @@ import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.quark.security.event.WEAction;
 import org.atcraftmc.quark.security.event.WESessionEditEvent;
 import org.atcraftmc.quark.security.event.WESessionPreEditEvent;
 import org.atcraftmc.quark.security.event.WESessionSelectEvent;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.event.EventHandler;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.Nullable;
@@ -27,11 +29,9 @@ import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.qlib.language.LanguageEntry;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import me.gb2022.modular.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.data.record.RecordEntry;
 
 import java.util.ArrayList;
@@ -40,9 +40,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @SuppressWarnings("DuplicatedCode")
-@SLModule(version = "1.2.5")
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class WESessionSizeLimit extends PackageModule {
+@ApplicationModule(version = "1.2.5")
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class WESessionSizeLimit extends SLPackageModule {
 
     @Inject("!quark.we.size.bypass")
     public Permission bypassCheck;
@@ -60,7 +60,7 @@ public final class WESessionSizeLimit extends PackageModule {
 
     @EventHandler
     public void onSelect(WESessionPreEditEvent event) {
-        var limit = ConfigAccessor.getInt(this.getConfig(), "max-selection-size");
+        var limit = ConfigAccessor.getInt(this.config(), "max-selection-size");
         var box = event.getRegion().asAABB();
 
         var x = box.x1 - box.x0;
@@ -93,7 +93,7 @@ public final class WESessionSizeLimit extends PackageModule {
             return;
         }
         var box = event.getRegion().asAABB();
-        var limit = ConfigAccessor.getInt(this.getConfig(), "max-selection-size");
+        var limit = ConfigAccessor.getInt(this.config(), "max-selection-size");
 
         var x = box.x1 - box.x0;
         var y = box.y1 - box.y0;
@@ -114,7 +114,7 @@ public final class WESessionSizeLimit extends PackageModule {
 
         var player = event.getPlayer();
         var cancel = !player.hasPermission(this.bypassCheck);
-        var limit = ConfigAccessor.getInt(this.getConfig(), "max-edit-size");
+        var limit = ConfigAccessor.getInt(this.config(), "max-edit-size");
 
         var region = WESessionTrackService.getRegion(player);
 

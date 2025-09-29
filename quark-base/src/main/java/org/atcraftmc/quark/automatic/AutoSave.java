@@ -1,6 +1,8 @@
 package org.atcraftmc.quark.automatic;
 
 import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.starlight.framework.module.BlacklistPlatform;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -8,8 +10,7 @@ import org.bukkit.entity.Player;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.platform.APIProfile;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.HashMap;
@@ -17,15 +18,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@SLModule(version = "1.0.0", beta = true, compatBlackList = {APIProfile.FOLIA})
+@ApplicationModule(version = "1.0.0", beta = true)
+@BlacklistPlatform({APIProfile.FOLIA})
 @CommandProvider(AutoSave.SaveWorldCommand.class)
-public final class AutoSave extends PackageModule implements Runnable {
+public final class AutoSave extends SLPackageModule implements Runnable {
     private final Map<World, Boolean> worlds = new HashMap<>();
 
     @Override
     public void enable() {
         this.worlds.clear();
-        var config = this.getConfig();
+        var config = this.config();
 
         for (String id : config.value("worlds").list(String.class)) {
             World world = Bukkit.getWorld(id);
@@ -50,17 +52,17 @@ public final class AutoSave extends PackageModule implements Runnable {
     }
 
     private void broadcast(World world, String msgId) {
-        if (this.getConfig().value("silent").bool()) {
+        if (this.config().value("silent").bool()) {
             return;
         }
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.getWorld() != world) {
                 continue;
             }
-            if (this.getConfig().value("broadcast-op-only").bool() && !p.isOp()) {
+            if (this.config().value("broadcast-op-only").bool() && !p.isOp()) {
                 continue;
             }
-            this.getLanguage().item(msgId).send(p, world.getName());
+            this.language.item(msgId).send(p, world.getName());
         }
     }
 

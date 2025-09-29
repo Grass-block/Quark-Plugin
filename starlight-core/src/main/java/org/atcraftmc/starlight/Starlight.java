@@ -21,6 +21,8 @@ import org.atcraftmc.starlight.api.event.CoreEvent;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
+import org.atcraftmc.starlight.framework.SLService;
+import org.atcraftmc.starlight.framework.SLServiceManager;
 import org.atcraftmc.starlight.util.dependency.LibraryManager;
 import org.atcraftmc.starlight.util.dependency.MavenRepo;
 import org.atcraftmc.starlight.foundation.TextExaminer;
@@ -28,10 +30,8 @@ import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
 import org.atcraftmc.starlight.foundation.platform.APIProfileTest;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
 import org.atcraftmc.starlight.foundation.platform.PluginUtil;
-import org.atcraftmc.starlight.framework.packages.PackageManager;
-import org.atcraftmc.starlight.framework.service.Service;
-import org.atcraftmc.starlight.framework.service.ServiceLayer;
-import org.atcraftmc.starlight.framework.service.ServiceManager;
+import org.atcraftmc.starlight.framework.packages.SLPackageManager;
+import me.gb2022.modular.service.ServiceLayer;
 import org.atcraftmc.starlight.internal.command.InternalCommands;
 import org.atcraftmc.starlight.metrics.Metrics;
 import org.atcraftmc.starlight.util.FilePath;
@@ -82,8 +82,8 @@ public final class Starlight extends BukkitPluginConcept {
             var locale = LocaleService.locale(audience);
             var msg = Starlight.instance().language().item("starlight-core.reload.complete").component(locale);
 
-            var serverPacks = PackageManager.getSubPacksFromServer();
-            var folderPacks = PackageManager.getSubPacksFromFolder();
+            var serverPacks = SLPackageManager.getSubPacksFromServer();
+            var folderPacks = SLPackageManager.getSubPacksFromFolder();
             var modernPluginManager = PluginUtil.INSTANCE;
             var coreFile = modernPluginManager.getFile(ProductInfo.CORE_ID);
 
@@ -168,7 +168,7 @@ public final class Starlight extends BukkitPluginConcept {
         this.hasBundler = this.bundledPackageLoader.isPresent();
         PLUGIN = this;
         PluginUtil.CORE_REF.set(this);
-        LANGUAGE = this.language().access(ProductInfo.CORE_ID);
+        LANGUAGE = this.language.access(ProductInfo.CORE_ID);
 
         LOGGER.info(" - platform: {}", APIProfileTest.getAPIProfile().toString());
         LOGGER.info(" - region scheduler: {}", threadedRegions);
@@ -334,8 +334,8 @@ public final class Starlight extends BukkitPluginConcept {
         }
 
         operation("starting services...", () -> {
-            Service.initBase();
-            SLInternalPackage.register(PackageManager.INSTANCE.get());
+            SLService.initBase();
+            SLInternalPackage.register(SLPackageManager.INSTANCE.get());
         });
 
         if (this.hasBundler) {
@@ -366,9 +366,9 @@ public final class Starlight extends BukkitPluginConcept {
             this.bundledPackageLoader.onDisable();
         }
 
-        operation("unloading user services...", () -> ServiceManager.unregisterAll(ServiceLayer.USER));
-        operation("unloading framework services...", () -> ServiceManager.unregisterAll(ServiceLayer.FRAMEWORK));
-        operation("unloading foundation services...", () -> ServiceManager.unregisterAll(ServiceLayer.FOUNDATION));
+        operation("unloading user services...", () -> SLServiceManager.unregisterAll(ServiceLayer.USER));
+        operation("unloading framework services...", () -> SLServiceManager.unregisterAll(ServiceLayer.FRAMEWORK));
+        operation("unloading foundation services...", () -> SLServiceManager.unregisterAll(ServiceLayer.FOUNDATION));
 
         try {
             this.getMetrics().shutdown();

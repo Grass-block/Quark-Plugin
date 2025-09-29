@@ -1,0 +1,16 @@
+#identifier
+name: starlight-ext-lobby
+version: '${core_version}'
+
+#api
+main: org.atcraftmc.quark.SLLobbyPackage
+api-version: 1.14
+folia-supported: true
+load: POSTWORLD
+depend: [ "starlight-core" ]
+
+#description
+authors: [ "GrassBlock2022","TBSTMC" ]
+website: https://atcraftmc.cn
+description: lobby functions extension pack.
+prefix: Starlight/Lobby

@@ -1,6 +1,7 @@
 package org.atcraftmc.starlight.warp;
 
 import me.gb2022.commons.container.RequestStorage;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
@@ -8,16 +9,15 @@ import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-@SLModule(version = "1.0.2")
-public final class TPA extends PackageModule {
+@ApplicationModule(id = "tpa", version = "1.0.2")
+public final class TPA extends SLPackageModule {
     private final TPACommand tpa = new TPACommand();
     private final TPAHereCommand tpaHere = new TPAHereCommand();
 

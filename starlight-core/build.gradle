@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-project.setProperty("version", "0.70.10")
+project.setProperty("version", "0.80.0")
 
 apply from: rootDir.getAbsolutePath() + "/gbuild.gradle"
 apply from: "../github-packages.gradle"
@@ -51,6 +51,7 @@ dependencies {
     implementation gbuildLib("org.atcraftmc.qlib:qlib-bukkit")
     implementation gbuildLib("me.gb2022.apm:apm-remote")
     implementation gbuildLib("me.gb2022.apm:apm-plugin")
+    implementation gbuildLib("me.gb2022:modular-main")
 
     //provided by starlight dependency loader.
     compileOnly 'org.fusesource.leveldbjni:leveldbjni-all:1.8'

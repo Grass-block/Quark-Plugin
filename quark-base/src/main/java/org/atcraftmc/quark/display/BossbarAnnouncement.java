@@ -3,9 +3,11 @@ package org.atcraftmc.quark.display;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.atcraftmc.qlib.language.MinecraftLocale;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -24,23 +26,21 @@ import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import me.gb2022.modular.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.APIProfileTest;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
 import org.atcraftmc.qlib.texts.TextBuilder;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.*;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider(BossbarAnnouncement.BossbarAnnounceCommand.class)
-@SLModule(version = "1.1.0")
-public final class BossbarAnnouncement extends PackageModule {
+@ApplicationModule(version = "1.1.0")
+public final class BossbarAnnouncement extends SLPackageModule {
     public static final String TASK_UPDATE_TID = "quark-display:custom_bossbar:update";
     private final HashMap<MinecraftLocale, BossbarWrapper> bars = new HashMap<>();
     private String content = null;
@@ -57,9 +57,9 @@ public final class BossbarAnnouncement extends PackageModule {
 
     @Override
     public void enable() {
-        var config = this.getConfig();
+        var config = this.config();
 
-        NBTTagCompound tag = ModuleDataService.getEntry(this.getId());
+        NBTTagCompound tag = ModuleDataService.getEntry(this.id());
         if (tag.hasKey("custom")) {
             this.content = tag.getString("custom");
         }
@@ -120,18 +120,18 @@ public final class BossbarAnnouncement extends PackageModule {
     }
 
     private BossbarWrapper generateBossbar(MinecraftLocale locale) {
-        String msg = getLanguage().inline(Language.generateTemplate(this.getConfig(), "ui"),locale);
+        String msg =this.language.inline(Language.generateTemplate(this.config(), "ui"), locale);
 
         BossbarWrapper wrapper = BossbarWrapper.create();
 
-        wrapper.color(this.getConfig().value("bar-color").string());
+        wrapper.color(this.config().value("bar-color").string());
         wrapper.title(TextBuilder.buildComponent(msg));
         return wrapper;
     }
 
     public void updateBossbar() {
         for (var locale : this.bars.keySet()) {
-            String msg = getLanguage().inline(Language.generateTemplate(this.getConfig(), "ui"),locale);
+            String msg =this.language.inline(Language.generateTemplate(this.config(), "ui"), locale);
             BossbarWrapper bar = this.bars.get(locale);
             if (this.content != null) {
                 bar.title(TextBuilder.buildComponent(this.content));

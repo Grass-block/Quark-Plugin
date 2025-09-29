@@ -8,8 +8,8 @@ import org.atcraftmc.qlib.language.LanguagePack;
 import org.atcraftmc.starlight.Starlight;
 import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.starlight.data.assets.AssetGroup;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import me.gb2022.modular.module.ApplicationModule;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 
 import java.io.File;
 import java.io.InputStream;
@@ -22,8 +22,8 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-@SLModule
-public final class CustomLanguagePackLoader extends PackageModule {
+@ApplicationModule(id = "custom-language-pack-loader")
+public final class CustomLanguagePackLoader extends SLPackageModule {
     public static final String PACK_SCHEME = "CB723E2A-873D-5435-8CF2-9DEC5D09BDBD";
 
     private final Set<LanguagePack> registeredPacks = new HashSet<>();
@@ -93,7 +93,7 @@ public final class CustomLanguagePackLoader extends PackageModule {
                 packs.add(new ThirdPartyLanguagePack(
                         packInfos[0],
                         packInfos[1],
-                        Starlight.SubPackPluginConceptWrapper.of(this.getOwnerPlugin()),
+                        Starlight.SubPackPluginConceptWrapper.of(this.ownerPlugin()),
                         uuid,
                         packInput
                 ));

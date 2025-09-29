@@ -2,11 +2,14 @@ package org.atcraftmc.starlight.warp;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.assertion.NumberLimitation;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.qlib.platform.PluginPlatform;
 import org.atcraftmc.starlight.api.PluginMessages;
@@ -19,9 +22,7 @@ import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.util.BukkitSound;
@@ -41,12 +42,15 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @QuarkCommand(name = "waypoint")
-@SLModule(version = "2.0.4")
+@ApplicationModule(id = "waypoint", version = "2.0.4")
 @CommandProvider({Waypoints.WaypointCommand.class})
-@AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.CLIENT_MESSAGE})
-public final class Waypoints extends CommandModule {
+@AutoRegister({Registrations.SERVER_EVENT, Registrations.CLIENT_MESSAGE})
+public final class Waypoints extends SLCommandModule {
     private final SetHomeCommand setHomeCommand = new SetHomeCommand(this);
     private final WarpHomeCommand warpHomeCommand = new WarpHomeCommand(this);
+
+    @Inject
+    private LanguageEntry language;
 
     @Inject("-starlight.waypoint.public")
     private Permission editPublicPermission;
@@ -70,7 +74,7 @@ public final class Waypoints extends CommandModule {
     public void enable() throws Exception {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
 
-        if (ConfigAccessor.getBool(this.getConfig(), "home")) {
+        if (ConfigAccessor.getBool(this.config(), "home")) {
             StarlightCommandManager.getInstance().register(this.setHomeCommand);
             StarlightCommandManager.getInstance().register(this.warpHomeCommand);
 
@@ -82,7 +86,7 @@ public final class Waypoints extends CommandModule {
     public void disable() throws Exception {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
 
-        if (ConfigAccessor.getBool(this.getConfig(), "home")) {
+        if (ConfigAccessor.getBool(this.config(), "home")) {
             StarlightCommandManager.getInstance().unregister(this.setHomeCommand);
             StarlightCommandManager.getInstance().unregister(this.warpHomeCommand);
 
@@ -91,16 +95,15 @@ public final class Waypoints extends CommandModule {
     }
 
     public void teleport(Player player, String name) {
-        var lang = getLanguage();
 
         try {
             if (!this.service.existName(name)) {
-                lang.item("not-exist").send(player, name);
+                this.language.item("not-exist").send(player, name);
                 return;
             }
 
             if (!this.service.hasAccess(player.getUniqueId(), name)) {
-                lang.item("no-access").send(player, name);
+                this.language.item("no-access").send(player, name);
                 return;
             }
 
@@ -111,7 +114,7 @@ public final class Waypoints extends CommandModule {
 
             Players.teleport(player, location).thenAccept((b) -> {
                 BukkitSound.WARP.play(player);
-                getLanguage().item("tp-success").send(player, name);
+                this.language.item("tp-success").send(player, name);
             });
 
         } catch (SQLException e) {
@@ -121,7 +124,7 @@ public final class Waypoints extends CommandModule {
 
     public void add(CommandExecution context) {
         var name = context.requireArgumentAt(1);
-        var lang = getLanguage();
+        var lang = this.language;
         try {
             if (this.service.existName(name)) {
                 lang.item("exist").send(context.getSender(), name);
@@ -171,7 +174,7 @@ public final class Waypoints extends CommandModule {
     }
 
     public void delete(CommandExecution context) {
-        var lang = getLanguage();
+        var lang = this.language;
         var name = context.requireArgumentAt(1);
         var player = context.requireSenderAsPlayer();
 
@@ -195,16 +198,16 @@ public final class Waypoints extends CommandModule {
     public void list(CommandExecution context) {
         var sender = context.requireSenderAsPlayer();
         var locale = LocaleService.locale(sender);
-        var list = this.getLanguage().item("list").component(locale);
+        var list = this.language.item("list").component(locale);
 
         try {
             this.service.listAccessible(sender.getUniqueId()).stream().filter((w) -> !w.getName().endsWith("#home")).forEach((w) -> {
                 var name = w.getName();
                 var owner = w.getOwner();
                 var uuid = w.getUuid();
-                var component = getLanguage().item("list-item")
+                var component = this.language.item("list-item")
                         .component(locale, name, w.getWorld(), ((int) w.getX()), ((int) w.getY()), ((int) w.getZ()), name);
-                var hover = getLanguage().item("list-hover")
+                var hover = this.language.item("list-hover")
                         .component(locale, name, w.getWorld(), w.getX(), w.getY(), w.getZ(), w.getYaw(), w.getPitch(), owner, uuid);
                 var line = component.asComponent()
                         .hoverEvent(hover.asComponent().asHoverEvent())
@@ -222,7 +225,7 @@ public final class Waypoints extends CommandModule {
     }
 
     private Optional<Waypoint> getForEdit(CommandExecution context, String name, Player player, UUID owner) throws SQLException {
-        var lang = getLanguage();
+        var lang = this.language;
 
         if (!this.service.existName(name)) {
             lang.item("not-exist").send(context.getSender(), name);
@@ -238,7 +241,7 @@ public final class Waypoints extends CommandModule {
 
     private void allow(CommandExecution context, String data) {
         var name = context.requireArgumentAt(1);
-        var lang = getLanguage();
+        var lang = this.language;
         try {
             var player = context.requireSenderAsPlayer();
             var owner = player.getUniqueId();
@@ -270,7 +273,7 @@ public final class Waypoints extends CommandModule {
         var name = context.requireArgumentAt(1);
         var player = context.requireSenderAsPlayer();
         var owner = player.getUniqueId();
-        var lang = getLanguage();
+        var lang = this.language;
         try {
             this.getForEdit(context, name, player, owner).ifPresent((wp) -> {
                 if (!Objects.equals(context.requireArgumentAt(2), "all")) {
@@ -389,8 +392,7 @@ public final class Waypoints extends CommandModule {
             var pitch = player.getLocation().getPitch();
             var world = player.getWorld().getName();
 
-            var wp = new Waypoint(uuid, id, world, x, y, z, yaw, pitch, uuid, Set.of());
-            return wp;
+            return new Waypoint(uuid, id, world, x, y, z, yaw, pitch, uuid, Set.of());
         }
 
         @Override

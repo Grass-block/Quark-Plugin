@@ -3,10 +3,10 @@ package org.atcraftmc.starlight.console;
 import me.gb2022.apm.local.ListedBroadcastEvent;
 import me.gb2022.apm.local.PluginMessageHandler;
 import me.gb2022.commons.reflect.AutoRegister;
-import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -17,23 +17,21 @@ import org.apache.logging.log4j.core.config.*;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent;
 import org.apache.logging.log4j.message.MessageFormatMessage;
 import org.apache.logging.log4j.util.StringMap;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.Registers;
 import org.atcraftmc.starlight.core.GameTestService;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@SLModule(defaultEnable = false)
-@AutoRegister(Registers.PLUGIN_MESSAGE)
-public final class LogColorPatch extends PackageModule {
+@ApplicationModule(id = "log-color-patch", defaultEnable = false)
+@AutoRegister(Registrations.PLUGIN_MESSAGE)
+public final class LogColorPatch extends SLPackageModule {
     private final Map<String, Log4jConfiguration> configurations = new HashMap<>();
     private final Set<String> injections = new HashSet<>();
 
-    private Configuration config() {
+    private Configuration loggerConfig() {
         var ctx = (LoggerContext) LogManager.getContext(false);
         return ctx.getConfiguration();
     }
@@ -50,7 +48,7 @@ public final class LogColorPatch extends PackageModule {
     }
 
     private void reloadAppenders() {
-        config().getAppenders().forEach((n, a) -> {
+        loggerConfig().getAppenders().forEach((n, a) -> {
             if (a instanceof AbstractOutputStreamAppender) {
                 return;
             }
@@ -87,13 +85,13 @@ public final class LogColorPatch extends PackageModule {
             }
         });
 
-        var config = config();
+        var config = loggerConfig();
 
         this.configurations.clear();
         this.configurations.put("_root", Log4jConfiguration.root(config));
         this.configurations.put("root-logger", Log4jConfiguration.logger(config.getRootLogger()));
 
-        for (var lc : config().getLoggers().values()) {
+        for (var lc : loggerConfig().getLoggers().values()) {
             this.configurations.put("logger-config:" + lc.getName(), Log4jConfiguration.logger(lc));
         }
 
@@ -143,7 +141,7 @@ public final class LogColorPatch extends PackageModule {
                 id,
                 Boolean.toString(appender.ignoreExceptions()),
                 new AppenderRef[]{AppenderRef.createAppenderRef(rid, Level.INFO, null)},
-                config(),
+                loggerConfig(),
                 policy,
                 null
         );

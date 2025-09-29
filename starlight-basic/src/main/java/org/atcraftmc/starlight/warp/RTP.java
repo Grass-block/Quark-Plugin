@@ -1,11 +1,13 @@
 package org.atcraftmc.starlight.warp;
 
+import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.ChunkSnapshot;
@@ -18,21 +20,24 @@ import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
-@SLModule
+@ApplicationModule(id = "rtp")
 @QuarkCommand(name = "random-tp", aliases = "rtp", permission = "+quark.warps.rtp")
-public final class RTP extends CommandModule {
+public final class RTP extends SLCommandModule {
+
+    @Inject
+    private LanguageEntry language;
 
     @Override
     public void execute(CommandExecution context) {
-        MessageAccessor.send(this.getLanguage(), context.getSender(), "start", ConfigAccessor.getInt(this.getConfig(), "attempt"));
+        MessageAccessor.send(this.language, context.getSender(), "start", ConfigAccessor.getInt(this.config(), "attempt"));
 
         this.teleport(context.requireSenderAsPlayer(), (loc) -> {
             if (loc == null) {
-                MessageAccessor.send(this.getLanguage(), context.getSender(), "failed");
+                MessageAccessor.send(this.language, context.getSender(), "failed");
                 return;
             }
 
-            MessageAccessor.send(this.getLanguage(), context.getSender(), "success", loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+            MessageAccessor.send(this.language, context.getSender(), "success", loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
         });
     }
 
@@ -40,10 +45,10 @@ public final class RTP extends CommandModule {
     public void attempt(Random random, Player player, Consumer<Location> callback, int counter, boolean async) {
         (async ? TaskService.async() : TaskService.global()).delay(1, () -> {
 
-            var limit = ConfigAccessor.getInt(this.getConfig(), "limit");
-            var max = ConfigAccessor.getInt(this.getConfig(), "max-height");
-            var min = ConfigAccessor.getInt(this.getConfig(), "min-height");
-            var attempt = ConfigAccessor.getInt(this.getConfig(), "attempt");
+            var limit = ConfigAccessor.getInt(this.config(), "limit");
+            var max = ConfigAccessor.getInt(this.config(), "max-height");
+            var min = ConfigAccessor.getInt(this.config(), "min-height");
+            var attempt = ConfigAccessor.getInt(this.config(), "attempt");
 
             var x = random.nextInt(-limit, limit);
             var z = random.nextInt(-limit, limit);
@@ -126,7 +131,7 @@ public final class RTP extends CommandModule {
             World.class.getMethod("getChunkAtAsync", int.class, int.class);
             this.attempt(new Random(), player, callback, 0, true);
         } catch (NoSuchMethodException e) {
-            getL4jLogger().warn("using legacy thread-sync finder. lags may occur.");
+            this.handle().getLogger().warn("using legacy thread-sync finder. lags may occur.");
             this.attempt(new Random(), player, callback, 0, false);
         }
     }

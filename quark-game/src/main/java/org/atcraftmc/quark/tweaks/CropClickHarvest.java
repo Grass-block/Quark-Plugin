@@ -1,6 +1,8 @@
 package org.atcraftmc.quark.tweaks;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.Ageable;
@@ -12,18 +14,16 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.starlight.foundation.platform.BukkitDataAccess;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-@SLModule(version = "1.0.0")
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class CropClickHarvest extends PackageModule {
+@ApplicationModule(version = "1.0.0")
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class CropClickHarvest extends SLPackageModule {
     public static final Map<Material, Material> CROPS = new HashMap<>();
     public static final double X_RANGE = 0.15;
     public static final double Y_RANGE = 0.35;

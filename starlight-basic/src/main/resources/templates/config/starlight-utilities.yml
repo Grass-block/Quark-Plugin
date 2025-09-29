@@ -11,3 +11,5 @@ config:
     sound: true #will sound be send to someone bing AT
   position-align:
     fix-spawn-position: true
+  surrounding-refresh:
+    update-on-explode: false

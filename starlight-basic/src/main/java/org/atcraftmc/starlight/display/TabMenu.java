@@ -7,6 +7,8 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.method.MethodHandle;
 import me.gb2022.commons.reflect.method.MethodHandleO2;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.atcraftmc.qlib.language.Language;
@@ -18,17 +20,15 @@ import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 import org.atcraftmc.starlight.foundation.ComponentSerializer;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule(version = "2.0.3")
-public final class TabMenu extends PackageModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(id = "tab-menu", version = "2.0.3")
+public final class TabMenu extends SLPackageModule {
     public static final String UPDATE_TASK_TID = "sl-display:tab-menu:update";
 
     @SuppressWarnings("Convert2MethodRef")
@@ -87,13 +87,13 @@ public final class TabMenu extends PackageModule {
         var locale = LocaleService.locale(player);
         var lang = Starlight.lang();
 
-        var header = lang.inline(Language.generateTemplate(this.getConfig(), "header-ui"), locale, "starlight-display:tab-menu");
-        var footer = lang.inline(Language.generateTemplate(this.getConfig(), "footer-ui"), locale, "starlight-display:tab-menu");
+        var header = lang.inline(Language.generateTemplate(this.config(), "header-ui"), locale, "starlight-display:tab-menu");
+        var footer = lang.inline(Language.generateTemplate(this.config(), "footer-ui"), locale, "starlight-display:tab-menu");
 
         header = PlaceHolderService.formatPlayer(player, header);
         footer = PlaceHolderService.formatPlayer(player, footer);
 
-        if (getConfig().value("render-ping").bool()) {
+        if (config().value("render-ping").bool()) {
             for (var p : Bukkit.getOnlinePlayers()) {
                 var ping = Integer.parseInt(PlaceHolderService.PLAYER.get("ping-value", p));
                 VisualScoreboardService.instance().visualScoreboard(player).setTabColumn(p, ping, Component.text("ms"));

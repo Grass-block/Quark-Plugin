@@ -1,25 +1,25 @@
 package org.atcraftmc.starlight.api.event;
 
+import org.atcraftmc.starlight.framework.module.SLModuleHandle;
 import org.bukkit.event.HandlerList;
 import org.atcraftmc.starlight.core.event.CustomEvent;
 import org.atcraftmc.starlight.core.event.SLEvent;
-import org.atcraftmc.starlight.framework.module.ModuleMeta;
-import org.atcraftmc.starlight.util.ObjectOperationResult;
+import me.gb2022.modular.ObjectOperationResult;
 
 public abstract class ModuleEvent extends CustomEvent {
-    private final ModuleMeta meta;
+    private final SLModuleHandle meta;
 
-    protected ModuleEvent(ModuleMeta meta) {
+    protected ModuleEvent(SLModuleHandle meta) {
         this.meta = meta;
     }
 
-    public ModuleMeta getMeta() {
+    public SLModuleHandle getMeta() {
         return meta;
     }
 
     @SLEvent
     public static final class PreEnable extends ModuleEvent {
-        public PreEnable(ModuleMeta meta) {
+        public PreEnable(SLModuleHandle meta) {
             super(meta);
         }
 
@@ -32,7 +32,7 @@ public abstract class ModuleEvent extends CustomEvent {
     public static final class Enable extends ModuleEvent {
         private final ObjectOperationResult result;
 
-        public Enable(ModuleMeta meta, ObjectOperationResult result) {
+        public Enable(SLModuleHandle meta, ObjectOperationResult result) {
             super(meta);
             this.result = result;
         }
@@ -48,7 +48,7 @@ public abstract class ModuleEvent extends CustomEvent {
 
     @SLEvent
     public static final class PreDisable extends ModuleEvent {
-        public PreDisable(ModuleMeta meta) {
+        public PreDisable(SLModuleHandle meta) {
             super(meta);
         }
 
@@ -61,7 +61,7 @@ public abstract class ModuleEvent extends CustomEvent {
     public static final class Disable extends ModuleEvent {
         private final ObjectOperationResult result;
 
-        public Disable(ModuleMeta meta, ObjectOperationResult result) {
+        public Disable(SLModuleHandle meta, ObjectOperationResult result) {
             super(meta);
             this.result = result;
         }

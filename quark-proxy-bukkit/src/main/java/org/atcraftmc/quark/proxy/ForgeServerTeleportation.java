@@ -7,8 +7,8 @@ import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.permission.PermissionService;
 
 import java.util.List;
@@ -19,8 +19,8 @@ import java.util.Objects;
 */
 @CommandProvider(ForgeServerTeleportation.HubCommand.class)
 @QuarkCommand(name = "teleport-server", permission = "+quark.stp")
-@SLModule(version = "1.0.0")
-public final class ForgeServerTeleportation extends CommandModule {
+@ApplicationModule(version = "1.0.0")
+public final class ForgeServerTeleportation extends SLCommandModule {
     public static final String PREFIX = "{$client:connect}";
 
     @Override
@@ -37,7 +37,7 @@ public final class ForgeServerTeleportation extends CommandModule {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        ConfigurationSection section = this.getConfig().value("servers").section();
+        ConfigurationSection section = this.config().value("servers").section();
 
         String host = args[0];
 
@@ -58,7 +58,7 @@ public final class ForgeServerTeleportation extends CommandModule {
 
     @Override
     public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-        ConfigurationSection section = this.getConfig().value("servers").section();
+        ConfigurationSection section = this.config().value("servers").section();
         if (buffer.length == 1) {
             tabList.addAll(Objects.requireNonNull(section).getKeys(false));
         }

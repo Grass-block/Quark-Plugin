@@ -1,6 +1,8 @@
 package org.atcraftmc.quark.storage;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
@@ -14,17 +16,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BlockStateMeta;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@SLModule(version = "1.2")
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class PortableShulkerBox extends PackageModule {
+@ApplicationModule(version = "1.2")
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class PortableShulkerBox extends SLPackageModule {
     private final Map<String, Session> sessions = new HashMap<>();
 
     @Override

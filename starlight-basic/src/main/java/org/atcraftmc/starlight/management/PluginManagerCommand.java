@@ -1,6 +1,7 @@
 package org.atcraftmc.starlight.management;
 
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.module.ApplicationModule;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -11,8 +12,7 @@ import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.foundation.TextSender;
 import org.atcraftmc.starlight.foundation.platform.PluginUtil;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("removal")
 @QuarkCommand(name = "plugins", aliases = "pl", permission = "-bukkit.plugins")
-@SLModule(version = "1.1.0")
-public final class PluginManagerCommand extends CommandModule {
+@ApplicationModule(id = "plugin-manager-command", version = "1.1.0")
+public final class PluginManagerCommand extends SLCommandModule {
     private final PluginUtil.ModernPluginManager pluginManager = PluginUtil.INSTANCE;
     private final PluginManager bukkitPluginManager = Bukkit.getPluginManager();
 

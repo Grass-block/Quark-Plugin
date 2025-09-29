@@ -5,9 +5,10 @@ import org.atcraftmc.qlib.command.CommandManager;
 import org.atcraftmc.starlight.Starlight;
 import org.atcraftmc.qlib.config.ConfigEntry;
 import org.atcraftmc.qlib.language.LanguageEntry;
-import org.atcraftmc.starlight.framework.module.AbstractModule;
+import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 
-public abstract class ModuleCommand<M extends AbstractModule> extends AbstractCommand {
+public abstract class ModuleCommand<M extends SLModule> extends AbstractCommand {
     private M module;
 
     public ModuleCommand(M module) {
@@ -48,11 +49,11 @@ public abstract class ModuleCommand<M extends AbstractModule> extends AbstractCo
     }
 
     public final LanguageEntry getLanguage() {
-        return this.module.getLanguage();
+        return this.module.language();
     }
 
     public final String getModuleId() {
-        return this.getModule().getId();
+        return this.getModule().id();
     }
 
     public final String getModuleFullId() {
@@ -60,6 +61,6 @@ public abstract class ModuleCommand<M extends AbstractModule> extends AbstractCo
     }
 
     public final ConfigEntry getConfig() {
-        return this.module.getConfig();
+        return this.module.config();
     }
 }

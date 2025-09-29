@@ -8,10 +8,12 @@ import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import me.gb2022.commons.reflect.method.MethodHandle;
 import me.gb2022.commons.reflect.method.MethodHandleRO0;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.qlib.language.LanguageItem;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -34,11 +36,9 @@ import org.atcraftmc.starlight.foundation.TextSender;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.component.Components;
-import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
-import org.atcraftmc.starlight.framework.module.services.Registers;
+import me.gb2022.modular.module.ApplicationModule;
+import me.gb2022.modular.subcomponent.ComponentProvider;
+import org.atcraftmc.starlight.framework.module.SLModuleComponent;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.internal.PlayerIdentificationService;
 import org.atcraftmc.starlight.core.TaskService;
@@ -48,11 +48,11 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-@SLModule
-@AutoRegister(Registers.BUKKIT_EVENT)
+@ApplicationModule
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider({Guns_DimensionLiberation.DimLiberationCommand.class})
-@Components({Guns_DimensionLiberation.DataManager.class, Guns_DimensionLiberation.ConfigurationManager.class})
-public final class Guns_DimensionLiberation extends PackageModule implements PluginCommandExecutor {
+@ComponentProvider({Guns_DimensionLiberation.DataManager.class, Guns_DimensionLiberation.ConfigurationManager.class})
+public final class Guns_DimensionLiberation extends SLPackageModule implements PluginCommandExecutor {
     public static final MethodHandleRO0<World, String> DIM_ID = MethodHandle.select((ctx) -> {
         ctx.attempt(() -> World.class.getMethod("getKey"), (w) -> {
             var origin = w.getKey().toString();
@@ -132,7 +132,7 @@ public final class Guns_DimensionLiberation extends PackageModule implements Plu
         var process = MathHelper.clamp(explored / ((float) required), 0, 1);
         var formattedProcess = SharedObjects.NUMBER_FORMAT.format(process * 100) + "%";
 
-        var title = getLanguage().getMessageComponent(locale, "bossbar", worldLK, explored, required, formattedProcess).toSingleLine();
+        var title =this.language.getMessageComponent(locale, "bossbar", worldLK, explored, required, formattedProcess).toSingleLine();
         var color = config.color(world);
         var titleText = ComponentSerializer.legacy(TextExaminer.examine(title, locale));
 
@@ -169,11 +169,11 @@ public final class Guns_DimensionLiberation extends PackageModule implements Plu
         var dimId = DIM_ID.invoke(world);
         var worldLK = "{msg#common:world:" + dimId + "}";
 
-        getLanguage().broadcastMessage(false, false, "region-discovered", worldLK, rx, rz, player.getName());
+       this.language.broadcastMessage(false, false, "region-discovered", worldLK, rx, rz, player.getName());
 
         var locale = LocaleService.locale(player);
-        var title = getLanguage().getMessageComponent(locale, "region-discovered-title");
-        var subtitle = getLanguage().getMessageComponent(locale, "region-discovered-subtitle", worldLK, rx, rz).toSingleLine();
+        var title =this.language.getMessageComponent(locale, "region-discovered-title");
+        var subtitle =this.language.getMessageComponent(locale, "region-discovered-subtitle", worldLK, rx, rz).toSingleLine();
 
         player.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1, 0.7f);
 
@@ -296,14 +296,14 @@ public final class Guns_DimensionLiberation extends PackageModule implements Plu
     }
 
 
-    public static final class ConfigurationManager extends ModuleComponent<Guns_DimensionLiberation> {
+    public static final class ConfigurationManager extends SLModuleComponent<Guns_DimensionLiberation> {
         public int required(String world) {
-            return getConfig().getSection("goals").getInt(world, 1024);
+            return this.parent.config().getSection("goals").getInt(world, 1024);
         }
 
         public BarColor color(String world) {
             try {
-                return BarColor.valueOf(getConfig().getSection("progress-colors").getString(world));
+                return BarColor.valueOf(this.parent.config().getSection("progress-colors").getString(world));
             } catch (Throwable e) {
                 return BarColor.BLUE;
             }
@@ -314,12 +314,12 @@ public final class Guns_DimensionLiberation extends PackageModule implements Plu
         }
 
         public int multiplier(World world) {
-            return getConfig().getSection("score-multiplier").getInt(DIM_ID.invoke(world), 1);
+            return this.parent.config().getSection("score-multiplier").getInt(DIM_ID.invoke(world), 1);
         }
     }
 
 
-    public static final class DataManager extends ModuleComponent<Guns_DimensionLiberation> {
+    public static final class DataManager extends SLModuleComponent<Guns_DimensionLiberation> {
         private final Map<String, Long2ObjectOpenHashMap<String>> exploredData = new HashMap<>();
         private final Map<String, Long> playerPositionState = new HashMap<>();
         private final Map<String, Integer> counts = new HashMap<>();

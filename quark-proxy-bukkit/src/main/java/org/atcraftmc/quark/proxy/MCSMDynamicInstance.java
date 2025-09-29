@@ -5,7 +5,9 @@ import me.gb2022.commons.http.HttpMethod;
 import me.gb2022.commons.http.HttpRequest;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import org.apache.logging.log4j.Logger;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -15,9 +17,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
@@ -27,16 +27,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-@SLModule(defaultEnable = false, version = "1.2")
-@AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.REMOTE_MESSAGE})
+@ApplicationModule(defaultEnable = false, version = "1.2")
+@AutoRegister({Registrations.SERVER_EVENT, Registrations.PLUGIN_VPN_EVENT})
 @CommandProvider(MCSMDynamicInstance.JoinDynamicServerCommand.class)
-public final class MCSMDynamicInstance extends PackageModule {
+public final class MCSMDynamicInstance extends SLPackageModule {
     @Inject
     private Logger logger;
     
     @Override
     public void enable() {
-        if (!ConfigAccessor.getBool(this.getConfig(), "instance")) {
+        if (!ConfigAccessor.getBool(this.config(), "instance")) {
             return;
         }
         if (Bukkit.getOnlinePlayers().isEmpty()) {
@@ -46,7 +46,7 @@ public final class MCSMDynamicInstance extends PackageModule {
 
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent event) {
-        if (!ConfigAccessor.getBool(this.getConfig(),"instance")) {
+        if (!ConfigAccessor.getBool(this.config(), "instance")) {
             return;
         }
         this.logger.info("cancel server stopping process as POWER_SAVING");
@@ -55,7 +55,7 @@ public final class MCSMDynamicInstance extends PackageModule {
 
     @EventHandler
     public void onPlayerQuit(final PlayerQuitEvent event) {
-        if (!ConfigAccessor.getBool(this.getConfig(),"instance")) {
+        if (!ConfigAccessor.getBool(this.config(), "instance")) {
             return;
         }
         if (Bukkit.getOnlinePlayers().size() == 1) {
@@ -65,20 +65,20 @@ public final class MCSMDynamicInstance extends PackageModule {
 
     public void scheduleStop() {
         this.logger.info("starting stopping countdown");
-        TaskService.async().delay("quark:ps:countdown", ConfigAccessor.getInt(getConfig(),"shutdown-delay"), () -> {
+        TaskService.async().delay("quark:ps:countdown", ConfigAccessor.getInt(config(), "shutdown-delay"), () -> {
             this.logger.info("stopping server as POWER_SAVING");
             TaskService.global().run(() -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "stop"));
         });
     }
 
     public void startServer(CommandSender sender, String name, Consumer<Integer> handler) {
-        String apiKey = getConfig().value("api-key").string();
-        String daemon = getConfig().value("daemon").string();
+        String apiKey = config().value("api-key").string();
+        String daemon = config().value("daemon").string();
 
         TaskService.async().run(() -> {
             var response = HttpRequest.http(HttpMethod.GET, daemon + "/api/instance")
                     .param("apikey", apiKey)
-                    .param("daemonId", this.getConfig().value("daemon-id").string())
+                    .param("daemonId", this.config().value("daemon-id").string())
                     .param("uuid", name)
                     .browserBehavior(true)
                     .build()
@@ -88,11 +88,11 @@ public final class MCSMDynamicInstance extends PackageModule {
                 handler.accept(1);
                 return;
             }
-            MessageAccessor.send(this.getLanguage(), sender, "wakeup");
+            MessageAccessor.send(this.language, sender, "wakeup");
 
             var res = HttpRequest.http(HttpMethod.GET, daemon + "/api/protected_instance/open")
                     .param("apikey", apiKey)
-                    .param("daemonId", this.getConfig().value("daemon-id").string())
+                    .param("daemonId", this.config().value("daemon-id").string())
                     .param("uuid", name)
                     .build()
                     .request();

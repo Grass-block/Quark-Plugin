@@ -1,6 +1,7 @@
 package org.atcraftmc.quark.tweaks;
 
 import me.gb2022.commons.reflect.Inject;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.atcraftmc.starlight.migration.MessageAccessor;
@@ -10,16 +11,15 @@ import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import me.gb2022.modular.module.ApplicationModule;
 
 import java.util.List;
 import java.util.Objects;
 
 
-@SLModule(version = "1.2.0")
+@ApplicationModule(version = "1.2.0")
 @CommandProvider({FlySpeedModifier.FlySpeedCommand.class, FlySpeedModifier.FlyToggleCommand.class})
-public final class FlySpeedModifier extends PackageModule {
+public final class FlySpeedModifier extends SLPackageModule {
     @Inject("tip")
     private LanguageItem tip;
 

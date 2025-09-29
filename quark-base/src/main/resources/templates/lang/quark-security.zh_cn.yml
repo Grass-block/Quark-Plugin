@@ -8,8 +8,6 @@ language:
     protection-area: 保护区域
     permission-manager: 权限管理器
     account-activation: 账户验证
-  advanced-permission-control:
-    no-perm: '{global/#error}你没有权限这样做!(缺失权限节点{#var})'
   item-defender:
     illegal-item: '{global#warning}您所持有的物品 {#var} 属于非法物品，已被服务器没收并记录'
     warning-item: '{global#warning}您所持有的物品 {#var} 属于危险品，已被服务器记录!'

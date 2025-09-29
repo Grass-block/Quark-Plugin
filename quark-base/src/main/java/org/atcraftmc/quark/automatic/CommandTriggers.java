@@ -1,21 +1,21 @@
 package org.atcraftmc.quark.automatic;
 
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 import org.atcraftmc.starlight.core.TaskService;
 
 /**
  * <code:yml></code>
  */
-@SLModule(version = "1.0.0")
-public class CommandTriggers extends PackageModule {
+@ApplicationModule(version = "1.0.0")
+public class CommandTriggers extends SLPackageModule {
 
     public static void runCommand(String command, Player player) {
         TaskService.global().run(() -> {

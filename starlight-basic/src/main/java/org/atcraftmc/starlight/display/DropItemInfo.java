@@ -1,15 +1,15 @@
 package org.atcraftmc.starlight.display;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
 import net.kyori.adventure.text.Component;
 import org.atcraftmc.qlib.platform.PluginPlatform;
 import org.atcraftmc.qlib.texts.TextBuilder;
 import org.atcraftmc.starlight.core.TaskService;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
+import me.gb2022.modular.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Nameable;
 import org.bukkit.World;
@@ -22,9 +22,9 @@ import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
-@SLModule
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class DropItemInfo extends PackageModule {
+@ApplicationModule(id="drop-item-info")
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class DropItemInfo extends SLPackageModule {
 
     @Override
     public void enable() {
@@ -108,7 +108,7 @@ public final class DropItemInfo extends PackageModule {
     }
 
     public void setId(Item item) {
-        var template = getConfig().value("template").string();
+        var template = config().value("template").string();
 
         var stack = item.getItemStack();
         var type = stack.getType();

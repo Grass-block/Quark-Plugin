@@ -7,6 +7,8 @@ import me.gb2022.commons.http.HttpMethod;
 import me.gb2022.commons.http.HttpRequest;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
@@ -26,9 +28,7 @@ import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
 import org.atcraftmc.starlight.foundation.platform.Players;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.BanList;
@@ -42,10 +42,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule(version = "1.3.4")
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(id = "ip-defender", version = "1.3.4")
 @CommandProvider(IPDefender.IPQueryCommand.class)
-public final class IPDefender extends PackageModule implements PluginCommandExecutor {
+public final class IPDefender extends SLPackageModule implements PluginCommandExecutor {
     private static final RecordRegistry.A3<Player, String, String> RECORD = new RecordRegistry.A3<>(
             "ip-log",
             new RecordField<>("player", TextRenderer.literal("Player"), DataRenderer.PLAYER),
@@ -67,13 +67,13 @@ public final class IPDefender extends PackageModule implements PluginCommandExec
 
     @Override
     public void enable() {
-        this.service = switch (getConfig().value("service").string()) {
+        this.service = switch (config().value("service").string()) {
             case "ip-api" -> new IPService.IP_API();
             case "pconline" -> new IPService.PConLine();
             case "baidu" -> new IPService.Baidu();
             case "real-ip" -> new IPService.RealIP();
             default -> {
-                getL4jLogger().error("unknown service: {},using default ip-api service", getConfig().value("service").string());
+                this.handle().getLogger().error("unknown service: {},using default ip-api service", config().value("service").string());
                 yield new IPService.IP_API();
             }
         };
@@ -129,18 +129,18 @@ public final class IPDefender extends PackageModule implements PluginCommandExec
             map.put("new-ip", current);
         });
 
-        if (ConfigAccessor.getBool(this.getConfig(), "record")) {
+        if (ConfigAccessor.getBool(this.config(), "record")) {
             RecordService.record(RECORD.render(player, previous, current));
         }
 
-        if (ConfigAccessor.getBool(this.getConfig(), "auto_ban")) {
+        if (ConfigAccessor.getBool(this.config(), "auto_ban")) {
             var name = player.getName();
-            var reason = getLanguage().item("auto_ban_reason").message(LocaleService.locale(player));
+            var reason = this.language.item("auto_ban_reason").message(LocaleService.locale(player));
 
-            var day = ConfigAccessor.getInt(getConfig(), "auto_ban_day_time");
-            var hour = ConfigAccessor.getInt(getConfig(), "auto_ban_hour_time");
-            var minute = ConfigAccessor.getInt(getConfig(), "auto_ban_minute_time");
-            var second = ConfigAccessor.getInt(getConfig(), "auto_ban_second_time");
+            var day = ConfigAccessor.getInt(config(), "auto_ban_day_time");
+            var hour = ConfigAccessor.getInt(config(), "auto_ban_hour_time");
+            var minute = ConfigAccessor.getInt(config(), "auto_ban_minute_time");
+            var second = ConfigAccessor.getInt(config(), "auto_ban_second_time");
 
             var calendar = Calendar.getInstance();
 

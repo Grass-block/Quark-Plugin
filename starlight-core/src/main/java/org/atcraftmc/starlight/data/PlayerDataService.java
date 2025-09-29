@@ -1,13 +1,14 @@
 package org.atcraftmc.starlight.data;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
+import me.gb2022.modular.service.ApplicationService;
+import me.gb2022.modular.service.ServiceHolder;
+import me.gb2022.modular.service.ServiceLayer;
+import me.gb2022.modular.service.injection.ServiceInject;
+import me.gb2022.modular.service.injection.ServiceProvider;
 import org.atcraftmc.starlight.core.data.FlexibleMapService;
 import org.atcraftmc.starlight.data.storage.DataEntry;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
-import org.atcraftmc.starlight.framework.service.SLService;
-import org.atcraftmc.starlight.framework.service.ServiceHolder;
-import org.atcraftmc.starlight.framework.service.ServiceInject;
-import org.atcraftmc.starlight.framework.service.ServiceLayer;
 import org.atcraftmc.starlight.internal.PlayerIdentificationService;
 import org.atcraftmc.starlight.util.FilePath;
 import org.bukkit.Bukkit;
@@ -23,7 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-@SLService(id = "player-data", layer = ServiceLayer.FOUNDATION)
+@ApplicationService(id = "player-data", layer = ServiceLayer.FOUNDATION)
 public interface PlayerDataService extends IDataService {
     FlexibleMapService PLAYER_LOCAL = new FlexibleMapService("sl_playerdata_local");
     FlexibleMapService PLAYER_SHARED = new FlexibleMapService("sl_playerdata_shared");
@@ -31,15 +32,9 @@ public interface PlayerDataService extends IDataService {
     @ServiceInject
     ServiceHolder<PlayerDataService> INSTANCE = new ServiceHolder<>();
 
-    @ServiceInject
-    static void start() throws Exception {
-        INSTANCE.set(create(FilePath.pluginFolder("Starlight") + "/data/player"));
-        INSTANCE.get().onEnable();
-    }
-
-    @ServiceInject
-    static void stop() throws Exception {
-        INSTANCE.get().onDisable();
+    @ServiceProvider
+    static PlayerDataService start() throws Exception {
+        return create(FilePath.pluginFolder("Starlight") + "/data/player");
     }
 
     static NBTTagCompound getEntry(String id, String moduleId) {
@@ -168,15 +163,6 @@ public interface PlayerDataService extends IDataService {
         public synchronized NBTTagCompound getEntry(String id) {
             var transformed = PlayerIdentificationService.transformID(id);
 
-            /*
-            try {
-                redirectFile(id, transformed);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-             */
-
             return super.getEntry(transformed);
         }
 
@@ -187,14 +173,14 @@ public interface PlayerDataService extends IDataService {
         }
 
         @Override
-        public void onEnable() {
+        public void enable() {
             //DataFix.moveFolder("/player_data", "/data/player");
             BukkitUtil.registerEventListener(this.listener);
             this.open();
         }
 
         @Override
-        public void onDisable() {
+        public void disable() {
             BukkitUtil.unregisterEventListener(this.listener);
             this.close();
         }

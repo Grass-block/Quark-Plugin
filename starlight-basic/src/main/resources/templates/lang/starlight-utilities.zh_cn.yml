@@ -24,11 +24,6 @@ language:
   block-update-locker:
     lock: "{global#sys-info}已锁定方块更新。"
     unlock: "{global#sys-info}已解锁方块更新。"
-  custom-log-format:
-    enable: "{global#sys-operation}{#gray}自定义服务端日志格式已启用。"
-    disable: "{global#sys-operation}{#gray}自定义服务端日志格式已停用。"
-    reload: "{global#sys-operation}{#gray}已重载自定义服务端日志格式。"
-    restore: "{global#sys-operation}{#gray}已重置自定义服务端日志格式。"
   dynamic-view-distance:
     set-target: "{global#sys-operation}已将玩家 {#var} 的视野距离设置为 {#var} 个区块。"
     reset-target: "{global#sys-operation}已重置玩家 {#var} 的视野距离设置。"
@@ -41,7 +36,7 @@ language:
     cam-start: '{global#sys-info}镜头路径开始({#var} ticks)'
     cam-end: '{global#sys-info}镜头路径结束。'
   surrounding-refresh:
-    to-big: '{global#error}选取半径过大。'
+    to-big: '{global#error}半径过大。'
     not-found: '{global#error}目标玩家{#var}未找到。'
     success: '{global#success}正在向{#var}发送区域重刷新请求。'
     refresh-target: '{global#info}正在刷新您身边{#var}半径的区域，这可能导致卡顿，请不要移动。'
@@ -55,10 +50,9 @@ language:
     bind: "{global#sys-info}已将物品 {#var} 绑定到自定义语言键 {#var}。"
     unbind: "{global#sys-info}已将清除物品 {#var} 自定义语言键绑定。"
     bind-fail: "{global#sys-error}无法将自定义语言键绑定到空手。"
-    menu: "{#yellow}|| {#aqua}菜单 {#yellow}||"
-    donate: "{#yellow}|| {#green}赞助 {#yellow}||"
-    sign-in: "{#yellow}|| {#red}签到 {#yellow}||"
   tick-manager:
     freeze: "{global#warn}服务器已冻结。"
     unfreeze: "{global#info}服务器已解冻。"
     step: "{global#info}服务器已运行{#var}ticks。"
+  hitokoto:
+    sentence: "{hover(text,文字来自 {#red}[{#white}一言{#red}]{#gray}(https://hitokoto.cn/))}{#red}[{#white}一言{#red}] {#white}%s {#gray}——%s(%s)"

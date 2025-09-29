@@ -8,12 +8,14 @@ import me.gb2022.commons.reflect.Inject;
 import me.gb2022.commons.reflect.method.MethodHandle;
 import me.gb2022.commons.reflect.method.MethodHandleO1;
 import me.gb2022.commons.reflect.method.MethodHandleO2;
+import me.gb2022.modular.Registrations;
 import net.kyori.adventure.text.Component;
 import org.atcraftmc.qlib.language.Language;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.language.MinecraftLocale;
 import org.atcraftmc.qlib.platform.PluginPlatform;
 import org.atcraftmc.qlib.texts.TextBuilder;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.BanEntry;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -25,17 +27,15 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.starlight.foundation.ComponentSerializer;
 import org.atcraftmc.starlight.core.event.BanMessageFetchEvent;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 
 import java.util.Date;
 
-@AutoRegister({ServiceType.EVENT_LISTEN, ServiceType.PLUGIN_MESSAGE})
-@SLModule(version = "1.0.0")
-public final class CustomKickMessage extends PackageModule {
+@AutoRegister({Registrations.SERVER_EVENT, Registrations.PLUGIN_MESSAGE})
+@ApplicationModule(version = "1.0.0")
+public final class CustomKickMessage extends SLPackageModule {
     @SuppressWarnings("Convert2MethodRef")
     public static final MethodHandleO1<PlayerKickEvent, Component> SET_KICK_REASON = MethodHandle.select((ctx) -> {
         ctx.attempt(() -> PlayerKickEvent.class.getMethod("reason", Component.class), (e, c) -> e.reason(c));
@@ -66,7 +66,7 @@ public final class CustomKickMessage extends PackageModule {
         String msg = MessageAccessor.buildTemplate(
                 this.language,
                 LocaleService.locale(event.getPlayer()),
-                Language.generateTemplate(this.getConfig(), "ui")
+                Language.generateTemplate(this.config(), "ui")
         );
 
         var c = TextBuilder.buildComponent(msg.replace("{reason}", event.getReason()));
@@ -82,7 +82,7 @@ public final class CustomKickMessage extends PackageModule {
         }
 
         var locale = Language.locale(event.getProperty("locale", String.class));
-        var ui = MessageAccessor.buildTemplate(this.language, locale, Language.generateTemplate(this.getConfig(), "ui"));
+        var ui = MessageAccessor.buildTemplate(this.language, locale, Language.generateTemplate(this.config(), "ui"));
         event.setProperty("message", PluginPlatform.global().globalFormatMessage(ui.replace("{reason}", msg)));
     }
 
@@ -135,13 +135,13 @@ public final class CustomKickMessage extends PackageModule {
             msg = MessageAccessor.buildTemplate(
                     this.language,
                     locale,
-                    Language.generateTemplate(this.getConfig(), "ban-ui", (s) -> s.replace("@type", "ban-name"))
+                    Language.generateTemplate(this.config(), "ban-ui", (s) -> s.replace("@type", "ban-name"))
             );
         } else {
             msg = MessageAccessor.buildTemplate(
                     this.language,
                     locale,
-                    Language.generateTemplate(this.getConfig(), "ban-ui", (s) -> s.replace("@type", "ban-ip"))
+                    Language.generateTemplate(this.config(), "ban-ui", (s) -> s.replace("@type", "ban-ip"))
             );
         }
 

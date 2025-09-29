@@ -25,3 +25,7 @@ language:
     confirm: "{#green}确认"
     cancel: "{#red}取消"
     return: "{#red}返回上级"
+  ui-title:
+    menu: "{#yellow}|| {#aqua}菜单 {#yellow}||"
+    donate: "{#yellow}|| {#green}赞助 {#yellow}||"
+    sign-in: "{#yellow}|| {#red}签到 {#yellow}||"

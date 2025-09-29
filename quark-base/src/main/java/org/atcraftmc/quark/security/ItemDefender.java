@@ -3,6 +3,8 @@ package org.atcraftmc.quark.security;
 import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,17 +17,15 @@ import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.qlib.language.LanguageEntry;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.data.record.RecordEntry;
 
 import java.util.Date;
 import java.util.List;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule(version = "1.2.2", recordFormat = {})
-public final class ItemDefender extends PackageModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(version = "1.2.2")
+public final class ItemDefender extends SLPackageModule {
 
     @Inject
     private LanguageEntry language;
@@ -59,7 +59,7 @@ public final class ItemDefender extends PackageModule {
             return;
         }
 
-        if (ConfigAccessor.getBool(this.getConfig(), "op-ignore") && p.isOp()) {
+        if (ConfigAccessor.getBool(this.config(), "op-ignore") && p.isOp()) {
             return;
         }
 
@@ -87,7 +87,7 @@ public final class ItemDefender extends PackageModule {
             }
         }
 
-        if (ConfigAccessor.getBool(this.getConfig(), "record")) {
+        if (ConfigAccessor.getBool(this.config(), "record")) {
             this.record.addLine(
                     SharedObjects.DATE_FORMAT.format(new Date()),
                     b2 ? "Warning" : "Illegal",
@@ -106,7 +106,7 @@ public final class ItemDefender extends PackageModule {
                         .put("type", itemIllegal ? "illegal" : "warning")
                         .put("item", m.getKey().getKey()));
 
-        if (ConfigAccessor.getBool(this.getConfig(), "broadcast")) {
+        if (ConfigAccessor.getBool(this.config(), "broadcast")) {
             if (itemIllegal) {
                MessageAccessor.broadcast(this.language, true, false, "illegal-item-broadcast", p.getName(), m.getKey().toString());
             } else {
@@ -116,12 +116,12 @@ public final class ItemDefender extends PackageModule {
     }
 
     private boolean isItemIllegal(Material material) {
-        List<String> list = ConfigAccessor.configList(getConfig(), "illegal-list", String.class);
+        List<String> list = ConfigAccessor.configList(config(), "illegal-list", String.class);
         return list.contains(material.getKey().getKey());
     }
 
     private boolean isItemWarning(Material material) {
-        List<String> list = ConfigAccessor.configList(getConfig(), "warning-list", String.class);
+        List<String> list = ConfigAccessor.configList(config(), "warning-list", String.class);
         return list.contains(material.getKey().getKey());
     }
 }

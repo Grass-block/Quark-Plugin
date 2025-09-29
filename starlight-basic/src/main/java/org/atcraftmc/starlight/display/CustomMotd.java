@@ -8,6 +8,10 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedServerPing;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.APIIncompatibleException;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
+import me.gb2022.modular.subcomponent.ComponentProvider;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.qlib.texts.ComponentBlock;
@@ -20,13 +24,9 @@ import org.atcraftmc.starlight.foundation.TextSender;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.component.Components;
-import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLModuleComponent;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -43,11 +43,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@SLModule(version = "1.0.2")
+@ApplicationModule(id = "custom-motd", version = "1.0.2")
 @CommandProvider({CustomMotd.MotdCommand.class})
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@Components(CustomMotd.ProtocolLibSender.class)
-public final class CustomMotd extends PackageModule implements PluginCommandExecutor {
+@AutoRegister(Registrations.SERVER_EVENT)
+@ComponentProvider(CustomMotd.ProtocolLibSender.class)
+public final class CustomMotd extends SLPackageModule implements PluginCommandExecutor {
     public static final Pattern PATTERN = Pattern.compile("\\{[a-z]+}");
     private CachedServerIcon cachedServerIcon;
     private YamlConfiguration setting;
@@ -173,7 +173,7 @@ public final class CustomMotd extends PackageModule implements PluginCommandExec
         }
     }
 
-    public static final class ProtocolLibSender extends ModuleComponent<CustomMotd> {
+    public static final class ProtocolLibSender extends SLModuleComponent<CustomMotd> {
         private PacketAdapter handler;
 
         @Override
@@ -183,7 +183,7 @@ public final class CustomMotd extends PackageModule implements PluginCommandExec
 
         @Override
         public void enable() {
-            this.handler = new PacketAdapter(this.parent.getOwnerPlugin(), PacketType.Status.Server.OUT_SERVER_INFO) {
+            this.handler = new PacketAdapter(this.parent.ownerPlugin(), PacketType.Status.Server.OUT_SERVER_INFO) {
                 @Override
                 public void onPacketSending(PacketEvent e) {
                     WrappedServerPing ping = e.getPacket().getServerPings().read(0);

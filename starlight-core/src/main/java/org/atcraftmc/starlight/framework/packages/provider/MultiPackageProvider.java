@@ -1,10 +1,10 @@
 package org.atcraftmc.starlight.framework.packages.provider;
 
 import org.atcraftmc.starlight.Starlight;
-import org.atcraftmc.starlight.framework.packages.AbstractPackage;
-import org.atcraftmc.starlight.framework.packages.PackageManager;
+import org.atcraftmc.starlight.framework.packages.SLAbstractPackage;
+import org.atcraftmc.starlight.framework.packages.SLPackageManager;
 import org.atcraftmc.starlight.framework.packages.PluginPackage;
-import org.atcraftmc.starlight.framework.packages.initializer.PackageInitializer;
+import org.atcraftmc.starlight.framework.packages.SLPackageInitializer;
 import org.atcraftmc.starlight.util.ProductMetadata;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,7 +13,7 @@ import java.util.Set;
 
 public abstract class MultiPackageProvider extends JavaPlugin implements PackageProvider {
     private final ProductMetadata metadata = ProductMetadata.createFromResource(this);
-    private Set<AbstractPackage> packages = new HashSet<>();
+    private Set<SLAbstractPackage> packages = new HashSet<>();
     private String coreInstanceId;
 
     @Override
@@ -27,8 +27,8 @@ public abstract class MultiPackageProvider extends JavaPlugin implements Package
             return;
         }
         this.packages = createPackages();
-        for (AbstractPackage pkg : this.packages) {
-            PackageManager.registerPackage(pkg);
+        for (SLAbstractPackage pkg : this.packages) {
+            SLPackageManager.registerPackage(pkg);
         }
     }
 
@@ -37,15 +37,15 @@ public abstract class MultiPackageProvider extends JavaPlugin implements Package
         if (!this.isCoreContextMatch()) {
             return;
         }
-        for (AbstractPackage pkg : this.packages) {
-            PackageManager.unregisterPackage(pkg);
+        for (SLAbstractPackage pkg : this.packages) {
+            SLPackageManager.unregisterPackage(pkg);
         }
     }
 
     @Override
-    public Set<AbstractPackage> createPackages() {
-        Set<AbstractPackage> pkgs = new HashSet<>();
-        for (PackageInitializer initializer : createInitializers()) {
+    public Set<SLAbstractPackage> createPackages() {
+        Set<SLAbstractPackage> pkgs = new HashSet<>();
+        for (SLPackageInitializer initializer : createInitializers()) {
             pkgs.add(new PluginPackage(this, initializer));
         }
 
@@ -57,5 +57,5 @@ public abstract class MultiPackageProvider extends JavaPlugin implements Package
         return coreInstanceId;
     }
 
-    public abstract Set<PackageInitializer> createInitializers();
+    public abstract Set<SLPackageInitializer> createInitializers();
 }

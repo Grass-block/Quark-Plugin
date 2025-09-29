@@ -2,10 +2,20 @@ package org.atcraftmc.starlight.internal;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
+import me.gb2022.modular.subcomponent.ComponentProvider;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.texts.ComponentBlock;
 import org.atcraftmc.qlib.texts.TextBuilder;
+import org.atcraftmc.starlight.ProductInfo;
 import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.core.LocaleService;
+import org.atcraftmc.starlight.foundation.TextSender;
+import org.atcraftmc.starlight.foundation.platform.PluginUtil;
+import org.atcraftmc.starlight.framework.module.SLModuleComponent;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
+import org.atcraftmc.starlight.framework.packages.SLPackageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -13,25 +23,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
-import org.atcraftmc.starlight.ProductInfo;
-import org.atcraftmc.starlight.core.LocaleService;
-import org.atcraftmc.starlight.foundation.TextSender;
-import org.atcraftmc.starlight.foundation.platform.PluginUtil;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.component.Components;
-import org.atcraftmc.starlight.framework.module.component.ModuleComponent;
-import org.atcraftmc.starlight.framework.module.services.Registers;
-import org.atcraftmc.starlight.framework.packages.PackageManager;
 
 import java.util.List;
 
-@Components({InstallationCheck.Incomplete.class, InstallationCheck.Unregistered.class, InstallationCheck.CounterConflicts.class})
-@SLModule(internal = true)
-public final class InstallationCheck extends PackageModule {
+@ComponentProvider({InstallationCheck.Incomplete.class, InstallationCheck.Unregistered.class, InstallationCheck.CounterConflicts.class})
+@ApplicationModule(id = "installation-check", internal = true)
+public final class InstallationCheck extends SLPackageModule {
 
-    @AutoRegister(Registers.BUKKIT_EVENT)
-    public static final class Incomplete extends ModuleComponent<InstallationCheck> {
+    @AutoRegister(Registrations.SERVER_EVENT)
+    public static final class Incomplete extends SLModuleComponent<InstallationCheck> {
         public static final String WARN_EN = """
                 There is no plugin installed which requires starlight-core.
                 This should never happen because starlight-core.jar won't provide any feature.
@@ -69,8 +69,7 @@ public final class InstallationCheck extends PackageModule {
                             this.hasWorkload = true;
                             break;
                         }
-                    } catch (Throwable e) {
-                        continue;
+                    } catch (Throwable ignored) {
                     }
                 }
             }
@@ -126,8 +125,8 @@ public final class InstallationCheck extends PackageModule {
         }
     }
 
-    @AutoRegister(Registers.BUKKIT_EVENT)
-    public static final class Unregistered extends ModuleComponent<InstallationCheck> {
+    @AutoRegister(Registrations.SERVER_EVENT)
+    public static final class Unregistered extends SLModuleComponent<InstallationCheck> {
         private static final String WARN_OP = """
                 {#red} 您管理的服务器正在使用未经验证的 {#purple}Quark-Plugin{#red} 插件实例。
                 {#red} 请注意盗版软件可能导致的后门和数据泄露等风险。
@@ -155,7 +154,7 @@ public final class InstallationCheck extends PackageModule {
         }
     }
 
-    public static final class CounterConflicts extends ModuleComponent<InstallationCheck> {
+    public static final class CounterConflicts extends SLModuleComponent<InstallationCheck> {
         public static final String MAIN_CLASS = "org.kyoikumi.plugin.counter.Counter";
         public static final String PLUGIN_ID = "Counter";
         public static final List<String> CONFLICT_LIST = List.of("quark-display", "quark-chat");
@@ -179,7 +178,7 @@ public final class InstallationCheck extends PackageModule {
 
             for (String s : CONFLICT_LIST) {
                 this.logger.warn("rejected local package %s.".formatted(s));
-                PackageManager.addRejection(s);
+                SLPackageManager.addRejection(s);
             }
         }
     }

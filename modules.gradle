@@ -18,6 +18,7 @@ dependencies {
     compileOnly 'io.netty:netty-buffer:4.1.25.Final'
     compileOnly project(":starlight-core")
 
+
     compileOnly 'me.gb2022.commons:commons-nbt:1.0'
     compileOnly 'me.gb2022.commons:commons-math:1.0'
     compileOnly 'me.gb2022.commons:commons-container:1.0'
@@ -25,6 +26,7 @@ dependencies {
 
     compileOnly gbuildLib('org.atcraftmc.qlib:qlib-bukkit')
     compileOnly gbuildLib('me.gb2022.apm:apm-remote')
+    compileOnly gbuildLib("me.gb2022:modular-main")
 
     compileOnly 'me.gb2022.apm:apm-plugin:1.2.10'
 }

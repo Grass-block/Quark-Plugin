@@ -3,6 +3,8 @@ package org.atcraftmc.starlight.management;
 import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
@@ -10,9 +12,7 @@ import org.atcraftmc.qlib.language.MinecraftLocale;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -26,10 +26,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("deprecation")
-@SLModule(version = "2.0.0")
-@AutoRegister(ServiceType.EVENT_LISTEN)
+@ApplicationModule(id = "maintenance", version = "2.0.0")
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider(Maintenance.MaintenanceCommand.class)
-public final class Maintenance extends PackageModule {
+public final class Maintenance extends SLPackageModule {
     private final Set<UUID> allowed = new HashSet<>();
     private boolean active = false;
 
@@ -71,7 +71,7 @@ public final class Maintenance extends PackageModule {
             }
         }
 
-        var message = MessageAccessor.getMessage(this.getLanguage(), LocaleService.locale(p), "kick-message");
+        var message = MessageAccessor.getMessage(this.handle().getLanguage(), LocaleService.locale(p), "kick-message");
         var name = event.getPlayerProfile().getName();
 
         event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, PluginMessenger.queryKickMessage(name, message, locale.minecraft()));
@@ -83,7 +83,7 @@ public final class Maintenance extends PackageModule {
                 continue;
             }
 
-            var msg = MessageAccessor.getMessage(this.getLanguage(), LocaleService.locale(player), "kick-message");
+            var msg = MessageAccessor.getMessage(this.handle().getLanguage(), LocaleService.locale(player), "kick-message");
             player.kickPlayer(msg);
         }
     }
@@ -94,10 +94,10 @@ public final class Maintenance extends PackageModule {
         @Override
         public void suggest(CommandSuggestion suggestion) {
             suggestion.suggest(0, "allow", "disallow");
-            if (this.getModule().active) {
-                suggestion.suggest(0, "off");
+            if (!this.getModule().active) {
+                suggestion.suggest(0, "start");
             } else {
-                suggestion.suggest(0, "on");
+                suggestion.suggest(0, "end");
             }
 
             suggestion.matchArgument(0, "allow", (ctx) -> ctx.suggestPlayers(1));
@@ -112,7 +112,7 @@ public final class Maintenance extends PackageModule {
         public void execute(CommandExecution context) {
             var sender = context.getSender();
 
-            switch (context.requireEnum(0, "allow", "disallow", "on", "off")) {
+            switch (context.requireEnum(0, "allow", "disallow", "start", "end")) {
                 case "allow" -> {
                     var player = context.requireOfflinePlayer(1);
                     this.getModule().allowed.add(player.getUniqueId());
@@ -123,12 +123,12 @@ public final class Maintenance extends PackageModule {
                     this.getModule().allowed.remove(uuid);
                     MessageAccessor.send(this.getLanguage(), sender, "disallow", uuid);
                 }
-                case "enable" -> {
+                case "start" -> {
                     MessageAccessor.send(this.getLanguage(), sender, "start");
                     this.getModule().active = true;
                     this.getModule().kickAll();
                 }
-                case "disable" -> {
+                case "end" -> {
                     MessageAccessor.send(this.getLanguage(), sender, "end");
                     this.getModule().active = false;
                 }

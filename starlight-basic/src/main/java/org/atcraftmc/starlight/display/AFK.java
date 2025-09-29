@@ -3,7 +3,14 @@ package org.atcraftmc.starlight.display;
 import me.gb2022.commons.Formating;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.language.LanguageEntry;
+import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,22 +18,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.*;
-import org.atcraftmc.starlight.migration.ConfigAccessor;
-import org.atcraftmc.starlight.migration.MessageAccessor;
-import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
-import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-@SLModule(version = "1.1")
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class AFK extends PackageModule {
+@ApplicationModule(id = "afk", version = "1.1")
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class AFK extends SLPackageModule {
     private final Listener actionListener = new PlayerActionListener();
     private final Map<String, Long> lastAFK = new HashMap<>();
 
@@ -80,7 +80,7 @@ public final class AFK extends PackageModule {
 
         var timestamp = System.currentTimeMillis();
 
-        TaskService.async().delay(tid, ConfigAccessor.getInt(getConfig(), "timeout"), () -> {
+        TaskService.async().delay(tid, ConfigAccessor.getInt(config(), "timeout"), () -> {
             if (!player.isOnline()) {
                 return;
             }

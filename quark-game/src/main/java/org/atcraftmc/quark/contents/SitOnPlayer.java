@@ -1,5 +1,7 @@
 package org.atcraftmc.quark.contents;
 
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.event.EventHandler;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
@@ -7,13 +9,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.permissions.Permission;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 
-@AutoRegister({ServiceType.EVENT_LISTEN})
-@SLModule(version = "1.0")
-public final class SitOnPlayer extends PackageModule {
+@AutoRegister({Registrations.SERVER_EVENT})
+@ApplicationModule(version = "1.0")
+public final class SitOnPlayer extends SLPackageModule {
 
     @Inject("+quark.sit")
     public Permission sitPermission;

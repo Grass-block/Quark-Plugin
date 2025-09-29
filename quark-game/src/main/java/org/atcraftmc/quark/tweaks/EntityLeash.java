@@ -2,6 +2,8 @@ package org.atcraftmc.quark.tweaks;
 
 import me.gb2022.commons.container.MultiMap;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -11,17 +13,15 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityUnleashEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.TaskService;
 
 import java.util.HashSet;
 import java.util.Objects;
 
-@SLModule(version = "0.3", beta = true)
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class EntityLeash extends PackageModule {
+@ApplicationModule(version = "0.3", beta = true)
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class EntityLeash extends SLPackageModule {
     public static final String VIRTUAL_ENTITY_ID = "quark:ve:leash";
     private final MultiMap<LivingEntity, LivingEntity> virtualHolders = new MultiMap<>();
     private final MultiMap<Player, LivingEntity> playerHolders = new MultiMap<>();

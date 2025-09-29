@@ -3,6 +3,7 @@ package org.atcraftmc.quark.chat;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
@@ -16,9 +17,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.starlight.data.PlayerDataService;
 import org.atcraftmc.starlight.data.storage.StorageTable;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
@@ -27,9 +27,9 @@ import org.atcraftmc.starlight.util.BukkitSound;
 import java.util.HashSet;
 
 @QuarkCommand(name = "mail", playerOnly = true)
-@SLModule(id = "mail", version = "1.0.0")
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class Mail extends CommandModule {
+@ApplicationModule(id = "mail", version = "1.0.0")
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class Mail extends SLCommandModule {
 
     @Inject
     private LanguageEntry language;
@@ -60,7 +60,7 @@ public final class Mail extends CommandModule {
         }
 
         for (String s : keys) {
-            var template = this.getConfig().value("template").string();
+            var template = this.config().value("template").string();
             if (template == null) {
                 template = "%s@%s: %s";
             }
@@ -82,11 +82,11 @@ public final class Mail extends CommandModule {
 
     private void send(OfflinePlayer recipient, CommandSender sender, String content) {
         if (recipient.isOnline()) {
-            if (getConfig().value("sound").bool()) {
+            if (config().value("sound").bool()) {
                 BukkitSound.ANNOUNCE.play(recipient.getPlayer());
             }
 
-            if (ConfigAccessor.getBool(this.getConfig(), "send-direct-to-online-player")) {
+            if (ConfigAccessor.getBool(this.config(), "send-direct-to-online-player")) {
                 MessageAccessor.send(this.language, recipient.getPlayer(), "receive-direct", sender.getName(), content);
                 MessageAccessor.send(this.language, sender, "send-success", recipient, content);
                 return;

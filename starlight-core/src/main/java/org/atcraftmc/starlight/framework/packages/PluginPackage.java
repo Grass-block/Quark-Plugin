@@ -1,15 +1,14 @@
 package org.atcraftmc.starlight.framework.packages;
 
 import org.bukkit.plugin.Plugin;
-import org.atcraftmc.starlight.framework.packages.initializer.PackageInitializer;
 
 import java.util.logging.Logger;
 
-public class PluginPackage extends AbstractPackage {
+public class PluginPackage extends SLAbstractPackage {
     private final Plugin owning;
 
-    public PluginPackage(Plugin owning, PackageInitializer initializer) {
-        super(initializer);
+    public PluginPackage(Plugin owning, SLPackageInitializer initializer) {
+        super(initializer.getId(), initializer.getAvailability(), initializer);
         this.owning = owning;
     }
 

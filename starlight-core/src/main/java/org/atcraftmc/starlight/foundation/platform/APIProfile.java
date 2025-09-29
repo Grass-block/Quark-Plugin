@@ -1,6 +1,8 @@
 package org.atcraftmc.starlight.foundation.platform;
 
-public enum APIProfile {
+import me.gb2022.modular.PlatformProfile;
+
+public enum APIProfile implements PlatformProfile {
     BUKKIT("bukkit"),
     SPIGOT("spigot"),
     PAPER("paper/airplane/purpur"),

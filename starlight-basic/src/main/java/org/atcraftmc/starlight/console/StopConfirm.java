@@ -1,19 +1,19 @@
 package org.atcraftmc.starlight.console;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
+import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
-import org.atcraftmc.starlight.migration.MessageAccessor;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
 
 import java.util.List;
 
-@SLModule(defaultEnable = false)
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class StopConfirm extends PackageModule {
+@ApplicationModule(id = "stop-confirm", defaultEnable = false)
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class StopConfirm extends SLPackageModule {
     @EventHandler
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         if (!List.of(event.getMessage().split("")).contains("/stop")) {
@@ -25,7 +25,7 @@ public final class StopConfirm extends PackageModule {
         }
         event.setCancelled(true);
 
-        MessageAccessor.send(this.getLanguage(), event.getPlayer(), "hint");
+        MessageAccessor.send(this.handle().getLanguage(), event.getPlayer(), "hint");
     }
 
     @EventHandler
@@ -39,6 +39,6 @@ public final class StopConfirm extends PackageModule {
         }
         event.setCancelled(true);
 
-        MessageAccessor.send(this.getLanguage(), event.getSender(), "hint");
+        MessageAccessor.send(this.handle().getLanguage(), event.getSender(), "hint");
     }
 }

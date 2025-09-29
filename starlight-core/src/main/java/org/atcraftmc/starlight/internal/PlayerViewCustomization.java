@@ -1,11 +1,11 @@
 package org.atcraftmc.starlight.internal;
 
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
 
-@SLModule
+@ApplicationModule(id = "player-view-customization")
 @QuarkCommand(name = "player-view")
-public class PlayerViewCustomization extends CommandModule {
+public class PlayerViewCustomization extends SLCommandModule {
 
 }

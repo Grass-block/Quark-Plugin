@@ -1,16 +1,16 @@
 package org.atcraftmc.quark.contents;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule(version = "0.3",beta = true)
-public class ElytraAeronautics extends PackageModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(version = "0.3",beta = true)
+public class ElytraAeronautics extends SLPackageModule {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();

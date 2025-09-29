@@ -134,6 +134,10 @@ public final class LibraryManager {
         delete(Paths.get(this.workingDirectory + "/maven-libraries"));
     }
 
+    public Map<String, URL> getLoadedURLs() {
+        return loadedURLs;
+    }
+
     public void injectLibraries(Object context) {
         var cl = (URLClassLoader) context.getClass().getClassLoader();
         for (var url : this.loadedURLs.values()) {

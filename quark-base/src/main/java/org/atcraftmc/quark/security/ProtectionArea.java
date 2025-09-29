@@ -3,6 +3,8 @@ package org.atcraftmc.quark.security;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,18 +27,16 @@ import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.starlight.core.Region;
 import org.atcraftmc.starlight.core.SimpleRegion;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.data.record.RecordEntry;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 
 import java.util.*;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
+@AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider({ProtectionArea.ProtectionAreaCommand.class})
-@SLModule(version = "1.3.4", recordFormat = {"Time", "Player", "World", "X", "Y", "Z", "Region"})
-public final class ProtectionArea extends PackageModule {
+@ApplicationModule(version = "1.3.4", recordFormat = {"Time", "Player", "World", "X", "Y", "Z", "Region"})
+public final class ProtectionArea extends SLPackageModule {
     private final HashMap<String, SimpleRegion> regions = new HashMap<>();
 
     @Inject("limited-area;Time,Player,World,X,Y,Z,Region")
@@ -54,7 +54,7 @@ public final class ProtectionArea extends PackageModule {
     }
 
     public void loadRegions() {
-        NBTTagCompound tag = ModuleDataService.getEntry(this.getId());
+        NBTTagCompound tag = ModuleDataService.getEntry(this.id());
         this.regions.clear();
         for (String s : tag.getTagMap().keySet()) {
             this.regions.put(s, new SimpleRegion(tag.getCompoundTag(s)));
@@ -62,11 +62,11 @@ public final class ProtectionArea extends PackageModule {
     }
 
     public void saveRegions() {
-        NBTTagCompound tag = ModuleDataService.getEntry(this.getId());
+        NBTTagCompound tag = ModuleDataService.getEntry(this.id());
         for (String s : this.regions.keySet()) {
             tag.setCompoundTag(s, this.regions.get(s).serialize());
         }
-        ModuleDataService.save(this.getId());
+        ModuleDataService.save(this.id());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -110,9 +110,9 @@ public final class ProtectionArea extends PackageModule {
             for (Region s : this.regions.values()) {
                 if (s.asAABB().intersects(r.asAABB())) {
                     event.setCancelled(true);
-                    MessageAccessor.send(this.getLanguage(), player, "interact_blocked_we");
+                    MessageAccessor.send(this.language, player, "interact_blocked_we");
 
-                    if (!ConfigAccessor.getBool(this.getConfig(), "record")) {
+                    if (!ConfigAccessor.getBool(this.config(), "record")) {
                         return;
                     }
                     Player p = event.getPlayer();
@@ -142,9 +142,9 @@ public final class ProtectionArea extends PackageModule {
                     continue;
                 }
                 event.setCancelled(true);
-                MessageAccessor.send(this.getLanguage(), player, "interact_blocked");
+                MessageAccessor.send(this.language, player, "interact_blocked");
 
-                if (!ConfigAccessor.getBool(this.getConfig(), "record")) {
+                if (!ConfigAccessor.getBool(this.config(), "record")) {
                     return;
                 }
                 this.record.addLine(

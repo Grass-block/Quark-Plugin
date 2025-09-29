@@ -1,5 +1,6 @@
 package org.atcraftmc.starlight.foundation.platform;
 
+import me.gb2022.modular.APIIncompatibleException;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Method;

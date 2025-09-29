@@ -2,12 +2,12 @@ package org.atcraftmc.starlight.framework.packages.provider;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.atcraftmc.starlight.Starlight;
-import org.atcraftmc.starlight.framework.packages.initializer.PackageInitializer;
+import org.atcraftmc.starlight.framework.packages.SLPackageInitializer;
 
 public abstract class SingledPackageProvider extends JavaPlugin implements PackageProvider {
     private String coreInstanceId;
 
-    public abstract PackageInitializer createInitializer();
+    public abstract SLPackageInitializer createInitializer();
 
     @Override
     public void onEnable() {

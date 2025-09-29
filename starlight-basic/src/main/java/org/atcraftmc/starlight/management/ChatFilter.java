@@ -2,6 +2,7 @@ package org.atcraftmc.starlight.management;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import org.ahocorasick.trie.Trie;
@@ -10,9 +11,8 @@ import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.starlight.Configurations;
 import org.atcraftmc.starlight.api.ChatReportedEvent;
 import org.atcraftmc.starlight.core.TaskService;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.util.CachedInfo;
@@ -28,9 +28,9 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@SLModule(id = "chat-filter", version = "1.0.0")
-public final class ChatFilter extends PackageModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(id = "chat-filter", version = "1.0.0")
+public final class ChatFilter extends SLPackageModule {
     public static final char WRAP_START = '\ufffa';
     public static final char WRAP_END = '\ufffb';
     public static final String WRAP_START_S = String.valueOf(WRAP_START);
@@ -169,7 +169,7 @@ public final class ChatFilter extends PackageModule {
 
     @EventHandler
     public void handle(PlayerCommandPreprocessEvent event) {
-        var commands = ConfigAccessor.configList(getConfig(), "handled-commands", String.class);
+        var commands = ConfigAccessor.configList(config(), "handled-commands", String.class);
 
         var process = false;
         for (var c : commands) {
@@ -188,7 +188,7 @@ public final class ChatFilter extends PackageModule {
 
     @EventHandler
     public void handle(SignChangeEvent event) {
-        if (!getConfig().value("filter-sign").bool()) {
+        if (!config().value("filter-sign").bool()) {
             return;
         }
 
@@ -221,12 +221,12 @@ public final class ChatFilter extends PackageModule {
         if (this.flagged.contains(event.getUuid())) {
             MessageAccessor.send(this.language, Bukkit.getPlayerExact(event.getSender()), "reported-warn", event.getShorted());
 
-            if (!ConfigAccessor.getBool(this.getConfig(), "punish")) {
+            if (!ConfigAccessor.getBool(this.config(), "punish")) {
                 event.setOutcome(this.language.item("outcome-warn"));
                 return;
             }
 
-            var command = getConfig().value("punish-command").string().replace("{player}", event.getSender());
+            var command = config().value("punish-command").string().replace("{player}", event.getSender());
             TaskService.global().run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
 
             event.setOutcome(this.language.item("outcome-punished"));
@@ -234,9 +234,9 @@ public final class ChatFilter extends PackageModule {
     }
 
     public String process(String msg) {
-        var exceptPlayer = getConfig().value("except-player").bool();
-        var cover = getConfig().value("cover").bool();
-        var coverChar = getConfig().value("cover-char").string().charAt(0);
+        var exceptPlayer = config().value("except-player").bool();
+        var cover = config().value("cover").bool();
+        var coverChar = config().value("cover-char").string().charAt(0);
 
         msg = msg.replace(WRAP_START_S, "").replace(WRAP_END_S, "");
 

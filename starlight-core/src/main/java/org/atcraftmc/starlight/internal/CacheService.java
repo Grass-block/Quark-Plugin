@@ -1,16 +1,16 @@
 package org.atcraftmc.starlight.internal;
 
-import org.atcraftmc.starlight.framework.service.SLService;
-import org.atcraftmc.starlight.framework.service.Service;
-import org.atcraftmc.starlight.framework.service.ServiceHolder;
-import org.atcraftmc.starlight.framework.service.ServiceInject;
+import me.gb2022.modular.service.ApplicationService;
+import org.atcraftmc.starlight.framework.SLService;
+import me.gb2022.modular.service.ServiceHolder;
+import me.gb2022.modular.service.injection.ServiceInject;
 import org.atcraftmc.starlight.util.CachedInfo;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@SLService(id = "cache", impl = CacheService.Impl.class)
-public interface CacheService extends Service {
+@ApplicationService(id = "cache", impl = CacheService.Impl.class)
+public interface CacheService extends SLService {
 
     @ServiceInject
     ServiceHolder<CacheService> INSTANCE = new ServiceHolder<>();

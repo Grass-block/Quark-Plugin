@@ -1,17 +1,17 @@
 package org.atcraftmc.starlight.commands;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.APIIncompatibleException;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.bukkit.task.Task;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.qlib.command.select.EntitySelector;
 import org.atcraftmc.starlight.core.TaskService;
-import org.atcraftmc.starlight.foundation.platform.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import org.atcraftmc.starlight.framework.module.CommandModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -20,10 +20,10 @@ import org.bukkit.util.Vector;
 
 import java.util.function.Consumer;
 
-@SLModule
-@AutoRegister(ServiceType.EVENT_LISTEN)
-@QuarkCommand(name = "motion", permission = "-quark.util.motion")
-public final class EntityMotion extends CommandModule {
+@ApplicationModule(id = "entity-motion")
+@AutoRegister(Registrations.SERVER_EVENT)
+@QuarkCommand(name = "motion", permission = "-starlight.command.motion")
+public final class EntityMotion extends SLCommandModule {
     @Override
     public void checkCompatibility() throws APIIncompatibleException {
         Compatibility.requireMethod(() -> Location.class.getDeclaredMethod("getNearbyEntities", double.class, double.class, double.class));
@@ -59,7 +59,7 @@ public final class EntityMotion extends CommandModule {
         if (!(context.getSender() instanceof Player)) {
             return;
         }
-        MessageAccessor.send(this.getLanguage(), context.getSender(), "hint", target.size(), time, mode, x, y, z);
+        MessageAccessor.send(this.handle().getLanguage(), context.getSender(), "hint", target.size(), time, mode, x, y, z);
     }
 
     private void attempt(Entity e, int time, Vector value, boolean add) {

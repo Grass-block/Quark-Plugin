@@ -1,6 +1,8 @@
 package org.atcraftmc.quark.tweaks;
 
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -9,13 +11,11 @@ import org.bukkit.block.data.type.Door;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 
-@SLModule(version = "1.0.0")
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class DoubleDoorSync extends PackageModule {
+@ApplicationModule(version = "1.0.0")
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class DoubleDoorSync extends SLPackageModule {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {

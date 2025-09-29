@@ -2,6 +2,8 @@ package org.atcraftmc.quark.contents;
 
 import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.modular.Registrations;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -10,9 +12,7 @@ import org.atcraftmc.starlight.data.ModuleDataService;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
-import org.atcraftmc.starlight.framework.module.PackageModule;
-import org.atcraftmc.starlight.framework.module.SLModule;
-import org.atcraftmc.starlight.framework.module.services.ServiceType;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.util.CachedInfo;
 
@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Set;
 
 @SuppressWarnings("deprecation")
-@SLModule(version = "1.0.0")
+@ApplicationModule(version = "1.0.0")
 @CommandProvider(Neko.NekoCommand.class)
-@AutoRegister(ServiceType.EVENT_LISTEN)
-public final class Neko extends PackageModule {
+@AutoRegister(Registrations.SERVER_EVENT)
+public final class Neko extends SLPackageModule {
     private final Set<String> players = new HashSet<>();
 
     @Override
@@ -37,7 +37,7 @@ public final class Neko extends PackageModule {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (this.players.contains(event.getPlayer().getName())) {
 
-            String fix = MessageAccessor.getMessage(this.getLanguage(), LocaleService.locale(event.getPlayer()), "chat_postfix");
+            String fix = MessageAccessor.getMessage(this.language, LocaleService.locale(event.getPlayer()), "chat_postfix");
 
             event.setMessage(event.getMessage().trim() + fix);
         }
