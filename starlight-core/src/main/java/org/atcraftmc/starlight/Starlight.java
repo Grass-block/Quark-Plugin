@@ -1,6 +1,7 @@
 package org.atcraftmc.starlight;
 
 import me.gb2022.commons.Timer;
+import me.gb2022.modular.service.ServiceLayer;
 import me.gb2022.pluginsX.PluginService;
 import net.kyori.adventure.text.ComponentLike;
 import org.apache.logging.log4j.LogManager;
@@ -21,21 +22,21 @@ import org.atcraftmc.starlight.api.event.CoreEvent;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
-import org.atcraftmc.starlight.framework.SLService;
-import org.atcraftmc.starlight.framework.SLServiceManager;
-import org.atcraftmc.starlight.util.dependency.LibraryManager;
-import org.atcraftmc.starlight.util.dependency.MavenRepo;
 import org.atcraftmc.starlight.foundation.TextExaminer;
 import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
 import org.atcraftmc.starlight.foundation.platform.APIProfileTest;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
 import org.atcraftmc.starlight.foundation.platform.PluginUtil;
+import org.atcraftmc.starlight.framework.SLService;
+import org.atcraftmc.starlight.framework.SLServiceManager;
 import org.atcraftmc.starlight.framework.packages.SLPackageManager;
-import me.gb2022.modular.service.ServiceLayer;
 import org.atcraftmc.starlight.internal.command.InternalCommands;
 import org.atcraftmc.starlight.metrics.Metrics;
 import org.atcraftmc.starlight.util.FilePath;
 import org.atcraftmc.starlight.util.ProductMetadata;
+import org.atcraftmc.starlight.util.dependency.GradleDependency;
+import org.atcraftmc.starlight.util.dependency.LibraryManager;
+import org.atcraftmc.starlight.util.dependency.MavenRepo;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -46,6 +47,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.jar.JarFile;
@@ -72,7 +74,7 @@ public final class Starlight extends BukkitPluginConcept {
     private boolean debug = true;
 
     public static void reload(CommandSender audience) {
-        BukkitUtil.callEventDirect(new CoreEvent.Reload());
+        BukkitUtil.callEventUnsafe(new CoreEvent.Reload());
 
         var task = (Runnable) () -> {
             var manager = Bukkit.getPluginManager();
@@ -106,7 +108,7 @@ public final class Starlight extends BukkitPluginConcept {
 
         task.run();
 
-        BukkitUtil.callEventDirect(new CoreEvent.PostReload());
+        BukkitUtil.callEventUnsafe(new CoreEvent.PostReload());
     }
 
     public static Starlight instance() {
@@ -315,7 +317,7 @@ public final class Starlight extends BukkitPluginConcept {
         this.initializePluginEnv();
         this.initializeCoreConfiguration();
 
-        BukkitUtil.callEventDirect(new CoreEvent.Launch(this));
+        BukkitUtil.callEventUnsafe(new CoreEvent.Launch(this));
 
         operation("loading libraries...", () -> {
             var repo = getConfig().getString("config.dependency.maven-repo");
@@ -325,7 +327,20 @@ public final class Starlight extends BukkitPluginConcept {
             }
 
             this.libraryManager = new LibraryManager(repo, FilePath.cache());
-            this.libraryManager.resolveDependencies(this.metadata.getDependencies());
+
+            var deps = new HashSet<>(this.metadata.getDependencies());
+
+            try {
+                Class.forName("net.kyori.adventure.Adventure");
+            } catch (ClassNotFoundException e) {
+                this.logger().info("failed to locate library, injecting adventure API...");
+                deps.add(GradleDependency.fromGradle("net.kyori:adventure-api:4.17.0"));
+                deps.add(GradleDependency.fromGradle("net.kyori:adventure-text-serializer-gson:4.17.0"));
+                deps.add(GradleDependency.fromGradle("net.kyori:adventure-text-serializer-legacy:4.17.0"));
+                deps.add(GradleDependency.fromGradle("net.kyori:adventure-text-minimessage:4.17.0"));
+            }
+
+            this.libraryManager.resolveDependencies(deps);
             this.libraryManager.injectLibraries(this);
         });
 
@@ -346,7 +361,7 @@ public final class Starlight extends BukkitPluginConcept {
         LOGGER.info("done. ({} ms)", Timer.passedTime());
         this.initialized = true;
 
-        BukkitUtil.callEventDirect(new CoreEvent.PostLaunch(this));
+        BukkitUtil.callEventUnsafe(new CoreEvent.PostLaunch(this));
     }
 
     @Override
@@ -357,7 +372,7 @@ public final class Starlight extends BukkitPluginConcept {
         }
         this.initialized = false;
 
-        BukkitUtil.callEventDirect(new CoreEvent.Dispose(this));
+        BukkitUtil.callEventUnsafe(new CoreEvent.Dispose(this));
         Timer.restartTiming();
         LOGGER.info("stopping(v{}-{})...", ProductInfo.version(), ProductInfo.API_VERSION);
 
@@ -383,7 +398,7 @@ public final class Starlight extends BukkitPluginConcept {
         TaskService.runFinalizeTask();
 
         LOGGER.info("broadcasting dispose event...");
-        BukkitUtil.callEventDirect(new CoreEvent.PostDispose(this));
+        BukkitUtil.callEventUnsafe(new CoreEvent.PostDispose(this));
         PluginPlatform.global().remove("starlight:core");
 
         LOGGER.info("done ({} ms)", Timer.passedTime());
@@ -421,7 +436,7 @@ public final class Starlight extends BukkitPluginConcept {
     private static final class StarlightBukkitPlatform extends ForwardingPluginPlatform {
         @Override
         public MinecraftLocale locale(Object sender) {
-            return LocaleService.locale(((CommandSender) sender));
+            return LocaleService.locale(sender);
         }
 
         @Override

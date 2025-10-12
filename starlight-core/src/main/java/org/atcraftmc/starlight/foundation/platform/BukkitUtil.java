@@ -6,6 +6,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.texts.TextBuilder;
 import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.internal.PlatformPatcher;
+import org.atcraftmc.starlight.internal.platform.SpigotReflection;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
@@ -18,14 +21,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.util.Vector;
-import org.atcraftmc.starlight.internal.PlatformPatcher;
-import org.atcraftmc.starlight.core.TaskService;
-import org.atcraftmc.starlight.internal.platform.SpigotReflection;
 
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"unused", "Convert2MethodRef"})
@@ -61,29 +63,44 @@ public interface BukkitUtil {
     }
 
     @SafeVarargs
-    static <E extends Event> void callEvent(E event, Consumer<E>... outcomes) {
+    static <E extends Event> Future<E> callEvent(E event, Consumer<E>... outcomes) {
+        var f = new CompletableFuture<E>();
+
         Runnable command = () -> {
             Bukkit.getPluginManager().callEvent(event);
 
-            for (Consumer<E> outcome : outcomes) {
+            for (var outcome : outcomes) {
                 outcome.accept(event);
             }
+
+            f.complete(event);
         };
 
         if (event.isAsynchronous()) {
             TaskService.async().run(command);
-        } else {
-            TaskService.global().run(command);
+            return f;
         }
+
+        if (Bukkit.isPrimaryThread()) {
+            command.run();
+            return f;
+        }
+
+        TaskService.global().run(command);
+        return f;
     }
 
     @SafeVarargs
-    static <E extends Event> void callEventDirect(E event, Consumer<E>... outcomes) {
+    static <E extends Event> E callEventUnsafe(E event, Consumer<E>... outcomes) {
         try {
             Bukkit.getPluginManager().callEvent(event);
+
+            Bukkit.isPrimaryThread();
         } catch (Exception ignored) {
 
         }
+
+        return event;
     }
 
     static void registerEventListener(Listener listener) {
@@ -174,12 +191,12 @@ public interface BukkitUtil {
     }
 
     static String formatTPS(double tps) {
-        ChatColor col = (tps > 17 ? ChatColor.GREEN : tps > 10 ? ChatColor.YELLOW : ChatColor.RED);
+        var col = (tps > 17 ? ChatColor.GREEN : tps > 10 ? ChatColor.YELLOW : ChatColor.RED);
         return col + new DecimalFormat("0.00").format(tps);
     }
 
     static String formatMSPT(double mspt) {
-        ChatColor col = (mspt < 15 ? ChatColor.GREEN : mspt < 35 ? ChatColor.YELLOW : ChatColor.RED);
+        var col = (mspt < 25 ? ChatColor.GREEN : mspt < 50 ? ChatColor.YELLOW : ChatColor.RED);
         return col + new DecimalFormat("0.00").format(mspt);
     }
 

@@ -70,5 +70,4 @@ public final class FlexibleMapService extends JDBCBasedDataService<String> {
 
         I decode(String data);
     }
-
 }

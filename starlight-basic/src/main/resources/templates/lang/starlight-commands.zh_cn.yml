@@ -1,4 +1,11 @@
 language:
+  -module-name:
+    command-tab-fix: 指令补全过滤修复
+    entity-motion: 实体动量指令
+    command-exec: 实体代理执行指令
+    item-command: 物品指令触发器
+    world-edit-commands: WorldEdit指令补充
+    self-message: 发送信息
   entity-motion:
     hint: "{global#sys-success}已为{#var}个实体持续{#var}ticks设置动量: {#var}({#var},{#var},{#var})"
   command-exec:

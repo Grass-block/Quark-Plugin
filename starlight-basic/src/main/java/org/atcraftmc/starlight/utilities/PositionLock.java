@@ -20,9 +20,9 @@ import java.util.HashSet;
 import java.util.List;
 
 @AutoRegister(Registrations.SERVER_EVENT)
-@ApplicationModule(id = "player-position-lock", version = "1.0.0")
-@CommandProvider(PlayerPositionLock.LockPositionCommand.class)
-public final class PlayerPositionLock extends SLPackageModule {
+@ApplicationModule(id = "position-lock", version = "1.0.0")
+@CommandProvider(PositionLock.LockPositionCommand.class)
+public final class PositionLock extends SLPackageModule {
     private final HashSet<String> lockedPlayers = new HashSet<>();
 
 
@@ -52,7 +52,7 @@ public final class PlayerPositionLock extends SLPackageModule {
     }
 
     @QuarkCommand(name = "lock-position", permission = "+starlight.command.lock")
-    public static final class LockPositionCommand extends ModuleCommand<PlayerPositionLock> {
+    public static final class LockPositionCommand extends ModuleCommand<PositionLock> {
 
         @Override
         public void onCommand(CommandSender sender, String[] args) {

@@ -9,12 +9,12 @@
  */
 import {DefaultTheme, defineConfig} from 'vitepress'
 
-const logo: string = './logo2.png';
+const logo: string = 'https://raw.githubusercontent.com/Grass-block/Starlight/refs/heads/main/starlight-logo.png';
 
 // @ts-ignore
 export default defineConfig({
-    title: "ATCraft Wiki",
-    description: "ATC旗下MC服务器的Wiki",
+    title: "Starlight -「星辰」",
+    description: "ATCraftMC自主研发的新一代综合管理插件",
     lang: "zh-CN",
     lastUpdated: true,
     head: [['link', {rel: 'icon', href: logo}]],
@@ -53,19 +53,10 @@ function notFound(): DefaultTheme.NotFoundOptions {
 
 function nav(): DefaultTheme.NavItem[] {
     return [
-        {text: '🏠主页', link: '/'},
-        {text: '服务器', link: '/server/about'},
-        {text: 'starlight-Plugin', link: '/starlight/index.md'},
+        {text: '使用说明', link: '/content'},
+        {text: '开发指南', link: '/dev'},
+        {text: 'ATCraftMC️', link: 'https://atcraftmc.cn'},
         {text: '赞助', link: 'https://ifdian.net/a/TBSTmc'},
-        {
-            text: '更多', items: [
-                {text: '皮肤站', link: 'https://skin.tbstmc.xyz'},
-                {text: '官网', link: 'https://atcraftmc.cn'},
-                {text: '贡献者列表', link: '/contributors'},
-                {text: '3.0文档', link: 'https://wiki.tbstmc.xyz'},
-                {text: '4.0文档', link: 'https://www.atforever.world/wiki.html#welcome.md'},
-            ],
-        }
     ]
 }
 
@@ -78,32 +69,29 @@ function footer(): DefaultTheme.Footer {
 
 function sidebar(): DefaultTheme.Sidebar {
     return {
-        '/starlight/': sidebar_starlight(),
+        '/desc': [
+            {
+                text: '概览', items: [
+                    {text: '介绍', link: '/desc/index.md'},
+                    {text: '配置文件', link: '/desc/config.md'},
+                    {text: '文本组件', link: '/desc/text-component.md'},
+                    {text: '用户协议', link: '/desc/eula.md'},
+                ]
+            },
+            {
+                text: '二次开发', items: [
+                    {text: '数据包ID表', link: '/desc/dev/pack-scheme-id'},
+                    {text: '制作语言包', link: '/desc/dev/make-language-pack'},
+                    {text: '制作扩展包', link: '/desc/dev/make-extension-pack'},
+                    {text: '调整插件平台', link: '/desc/dev/platform-injection'}
+                ]
+            }],
+
     }
 }
 
 function sidebar_starlight(): DefaultTheme.SidebarItem[] {
-    return [
-        {
-            text: '概览', items: [
-                {text: '介绍', link: '/starlight/index.md'},
-                {text: '配置文件', link: '/starlight/config.md'},
-                {text: '文本组件', link: '/starlight/text-component.md'},
-                {text: '用户协议', link: '/starlight/eula.md'},
-            ]
-        },
-        {
-            text: '二次开发', items: [
-                {text: '数据包ID表', link: '/starlight/dev/pack-scheme-id'},
-                {text: '制作语言包', link: '/starlight/dev/make-language-pack'},
-                {text: '制作扩展包', link: '/starlight/dev/make-extension-pack'},
-
-                {text: '调整插件平台', link: '/starlight/dev/platform-injection'}
-            ]
-        },
-
-
-
+    return[
 
 
         {

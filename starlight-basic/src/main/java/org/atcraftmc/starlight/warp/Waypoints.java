@@ -1,10 +1,12 @@
 package org.atcraftmc.starlight.warp;
 
+import me.gb2022.commons.nbt.NBTTagCompound;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import me.gb2022.modular.Registrations;
 import me.gb2022.modular.module.ApplicationModule;
 import net.kyori.adventure.text.event.ClickEvent;
+import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.assertion.NumberLimitation;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
@@ -25,7 +27,9 @@ import org.atcraftmc.starlight.foundation.platform.Players;
 import org.atcraftmc.starlight.framework.module.SLCommandModule;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.migration.QuarkDataImporter;
 import org.atcraftmc.starlight.util.BukkitSound;
+import org.atcraftmc.starlight.util.NBTExaminer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -51,6 +55,9 @@ public final class Waypoints extends SLCommandModule {
 
     @Inject
     private LanguageEntry language;
+
+    @Inject
+    private Logger logger;
 
     @Inject("-starlight.waypoint.public")
     private Permission editPublicPermission;
@@ -79,6 +86,59 @@ public final class Waypoints extends SLCommandModule {
             StarlightCommandManager.getInstance().register(this.warpHomeCommand);
 
             PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tipHome));
+        }
+
+        QuarkDataImporter.registerModuleDataHandler("starlight:waypoints", QuarkDataImporter.WAYPOINT_DATA, (tag) -> {
+            var u0 = QuarkDataImporter.IMPORT_DATA_IDENTITY;
+            importWaypoint(u0, tag, true);
+        });
+
+        QuarkDataImporter.registerPlayerDataHandler("starlight:waypoints", (uuid, nbt) -> {
+            NBTExaminer.send(Bukkit.getConsoleSender(), nbt);
+
+            if (!nbt.hasKey("waypoint")) {
+                return;
+            }
+            importWaypoint(uuid, nbt.getCompoundTag("waypoint"), false);
+        });
+    }
+
+    private void importWaypoint(UUID owner, NBTTagCompound dom, boolean pub) {
+        for (var id : dom.getTagMap().keySet()) {
+            var d = dom.getCompoundTag(id);
+
+            try {
+                if (this.service.existName(id)) {
+                    this.logger.warn("skipped data import for waypoint {} in player data {} - exist.", id, owner);
+                    return;
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+            var wp = new Waypoint(
+                    UUID.randomUUID(),
+                    id,
+                    d.getString("world"),
+                    d.getDouble("x"),
+                    d.getDouble("y"),
+                    d.getDouble("z"),
+                    d.getFloat("yaw"),
+                    d.getFloat("pitch"),
+                    owner,
+                    Set.of()
+            );
+
+            if (pub) {
+                wp.setAllowed(Set.of("all"));
+            }
+
+            try {
+                this.service.add(wp);
+                this.logger.info("imported waypoint {} for {}.", wp.getName(), owner);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -205,13 +265,29 @@ public final class Waypoints extends SLCommandModule {
                 var name = w.getName();
                 var owner = w.getOwner();
                 var uuid = w.getUuid();
-                var component = this.language.item("list-item")
-                        .component(locale, name, w.getWorld(), ((int) w.getX()), ((int) w.getY()), ((int) w.getZ()), name);
-                var hover = this.language.item("list-hover")
-                        .component(locale, name, w.getWorld(), w.getX(), w.getY(), w.getZ(), w.getYaw(), w.getPitch(), owner, uuid);
-                var line = component.asComponent()
-                        .hoverEvent(hover.asComponent().asHoverEvent())
-                        .clickEvent(ClickEvent.runCommand("/waypoint tp %s".formatted(name)));
+                var component = this.language.item("list-item").component(
+                        locale,
+                        name,
+                        w.getWorld(),
+                        ((int) w.getX()),
+                        ((int) w.getY()),
+                        ((int) w.getZ()),
+                        name
+                );
+                var hover = this.language.item("list-hover").component(
+                        locale,
+                        name,
+                        w.getWorld(),
+                        w.getX(),
+                        w.getY(),
+                        w.getZ(),
+                        w.getYaw(),
+                        w.getPitch(),
+                        owner,
+                        uuid
+                );
+                var line = component.asComponent().hoverEvent(hover.asComponent().asHoverEvent()).clickEvent(ClickEvent.runCommand(
+                        "/waypoint tp %s".formatted(name)));
 
                 list.add(line);
             });
@@ -339,13 +415,10 @@ public final class Waypoints extends SLCommandModule {
 
             Consumer<CommandSuggestion> list = (ctx) -> {
                 try {
-                    ctx.suggest(
-                            1,
-                            getModule().service.listNameAccessible(suggestion.getSenderAsPlayer().getUniqueId())
-                                    .stream()
-                                    .filter((s) -> !s.contains("#home"))
-                                    .collect(Collectors.toSet())
-                    );
+                    ctx.suggest(1, getModule().service.listNameAccessible(suggestion.getSenderAsPlayer().getUniqueId())
+                            .stream()
+                            .filter((s) -> !s.contains("#home"))
+                            .collect(Collectors.toSet()));
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }

@@ -16,6 +16,7 @@ import me.gb2022.simpnet.util.BufferUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
@@ -36,6 +37,8 @@ import org.atcraftmc.starlight.framework.module.SLModuleComponent;
 import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.migration.QuarkDataImporter;
+import org.atcraftmc.starlight.util.FilePath;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -43,6 +46,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -65,10 +71,15 @@ public final class MusicPlayer extends SLPackageModule {
     private final GUIProvider<InventoryUI> musicUI = new MusicUI(this);
     private final MusicSession globalSession = new MusicSession(this);
     private MusicFileLoader loader;
+
     @Inject("music")
     private AssetGroup musicGroup;
+
     @Inject
     private LanguageEntry language;
+
+    @Inject
+    private Logger logger;
 
     @Override
     public void enable() {
@@ -87,6 +98,43 @@ public final class MusicPlayer extends SLPackageModule {
         } else {
             this.loader = new MusicFileLoader.LocalLoader(this.musicGroup);
         }
+
+        QuarkDataImporter.registerCustomDataHandler("starlight:music", (path) -> {
+            var folder = new File(path + "/assets/music");
+            var dest = new File(FilePath.slDataFolder() + "/assets/music");
+
+            if (!dest.exists()) {
+                if (!dest.mkdirs()) {
+                    this.logger.error("failed to create folder: {}", dest.getAbsolutePath());
+                    return;
+                }
+            }
+
+            for (var f : Objects.requireNonNull(folder.listFiles())) {
+                var file = new File(dest.getAbsolutePath() + "/" + f.getName());
+
+                if (file.exists() && file.length() > 0) {
+                    this.logger.warn("skipped existing file: {}", file.getName());
+                    continue;
+                }
+
+                try {
+                    if (!file.createNewFile()) {
+                        this.logger.error("failed to create file: {}", file.getName());
+                        continue;
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                try (var in = new FileInputStream(f); var out = new FileOutputStream(file)) {
+                    in.transferTo(out);
+                    this.logger.info("created music file: {}", file.getName());
+                } catch (IOException e) {
+                    this.logger.catching(e);
+                }
+            }
+        });
     }
 
     @Override

@@ -1,10 +1,7 @@
 package org.atcraftmc.starlight;
 
 import me.gb2022.modular.FeatureAvailability;
-import org.atcraftmc.starlight.commands.EntityMotion;
-import org.atcraftmc.starlight.commands.Execute;
-import org.atcraftmc.starlight.commands.ItemBinding;
-import org.atcraftmc.starlight.commands.WorldEditCommands;
+import org.atcraftmc.starlight.commands.*;
 import org.atcraftmc.starlight.console.*;
 import org.atcraftmc.starlight.display.*;
 import org.atcraftmc.starlight.framework.packages.SLPackageBuilder;
@@ -12,6 +9,7 @@ import org.atcraftmc.starlight.framework.packages.SLPackageInitializer;
 import org.atcraftmc.starlight.framework.packages.provider.MultiPackageProvider;
 import org.atcraftmc.starlight.management.*;
 import org.atcraftmc.starlight.security.*;
+import org.atcraftmc.starlight.sideload.InventoryMenu;
 import org.atcraftmc.starlight.sideload.RecipeLoader;
 import org.atcraftmc.starlight.utilities.*;
 import org.atcraftmc.starlight.warp.BackToDeath;
@@ -74,7 +72,7 @@ public final class SLBasicPackage extends MultiPackageProvider {
             i.module(DynamicViewDistance.class); //todo [DFU] miss
             i.module(Hitokoto.class);
             i.module(PlayerPingCommand.class);
-            i.module(PlayerPositionLock.class);
+            i.module(PositionLock.class);
             i.module(PositionAlign.class);
             i.module(SurroundingRefresh.class);
             i.module(TickManager.class);
@@ -87,6 +85,7 @@ public final class SLBasicPackage extends MultiPackageProvider {
     //command extension and triggers
     static SLPackageInitializer commands() {
         return SLPackageBuilder.of("starlight-commands", FeatureAvailability.BOTH, (i) -> {
+            i.module(CommandTabFix.class);
             i.module(Execute.class);
             i.module(EntityMotion.class);
             i.module(ItemBinding.class);
@@ -103,6 +102,7 @@ public final class SLBasicPackage extends MultiPackageProvider {
             i.module(IMGRegulationSync.class);
             i.module(IPDefender.class); //todo [DFU] miss
             i.module(PermissionManager.class); //todo [DFU] import permission data
+            i.module(WorldEditOperationDefender.class);
 
             i.service(WESessionTrackService.class);
 
@@ -114,21 +114,21 @@ public final class SLBasicPackage extends MultiPackageProvider {
     static SLPackageInitializer display() {
         return SLPackageBuilder.of("starlight-display", FeatureAvailability.BOTH, (i) -> {
             i.module(ActionBarHUD.class);
-            i.module("afk", AFK.class);
+            i.module(AFK.class);
             i.module(ChatFormat.class);
             i.module(CustomDeathMessage.class);
-            i.module("custom-motd", CustomMotd.class);
+            i.module(CustomMotd.class);
             i.module(CustomScoreboard.class);
-            i.module("drop-item-info", DropItemInfo.class);
-            i.module("hover-display", HoverDisplay.class); //todo [DFU] refine + import hover data
+            i.module(DropItemInfo.class);
+            //i.module("hover-display", HoverDisplay.class); //todo [DFU] refine + import hover data
             i.module(PlayerNameHeader.class); //todo [DFU] import header
             i.module(TabMenu.class);
-            i.module(WelcomeMessage.class); //todo [DFU] import status-> first-join-detection
+            i.module(WelcomeMessage.class);
             i.module(WESessionRenderer.class);
-            i.module(InventoryMenu.class);
+            i.module(CustomKickMessage.class);
 
             i.service(VisualScoreboardService.class);
-            i.service(PlayerWelcomeService.class);
+            i.service(PlayerWelcomeService.class); //todo [DFU] import status-> first-join-detection
 
             i.config("starlight-display");
             i.language("starlight-display", "zh_cn");
@@ -137,7 +137,8 @@ public final class SLBasicPackage extends MultiPackageProvider {
 
     static SLPackageInitializer sideload() {
         return SLPackageBuilder.of("starlight-sideload", FeatureAvailability.BOTH, (i) -> {
-            i.module("recipe-loader", RecipeLoader.class);
+            i.module(RecipeLoader.class);
+            i.module(InventoryMenu.class);
         });
     }
 

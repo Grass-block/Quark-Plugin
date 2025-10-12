@@ -2,6 +2,9 @@ package org.atcraftmc.starlight.core;
 
 import me.gb2022.commons.reflect.method.MethodHandle;
 import me.gb2022.commons.reflect.method.MethodHandleRO0;
+import me.gb2022.modular.service.ApplicationService;
+import me.gb2022.modular.service.ServiceLayer;
+import me.gb2022.modular.service.injection.ServiceInject;
 import org.atcraftmc.qlib.command.AbstractCommand;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
@@ -16,11 +19,9 @@ import org.atcraftmc.starlight.foundation.TextSender;
 import org.atcraftmc.starlight.foundation.command.CoreCommand;
 import org.atcraftmc.starlight.foundation.command.StarlightCommandManager;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
-import me.gb2022.modular.service.ApplicationService;
 import org.atcraftmc.starlight.framework.SLService;
-import me.gb2022.modular.service.injection.ServiceInject;
-import me.gb2022.modular.service.ServiceLayer;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -72,11 +73,11 @@ public interface LocaleService extends SLService {
     }
 
     @SuppressWarnings("deprecation")//because other server software still uses it.
-    static MinecraftLocale locale(CommandSender sender) {
+    static MinecraftLocale locale(Object sender) {
         if (sender instanceof ConsoleCommandSender || sender instanceof BlockCommandSender) {
             return MinecraftLocale.locale(Locale.getDefault());
         }
-        if (!(sender instanceof Player p)) {
+        if (!(sender instanceof OfflinePlayer p)) {
             return MinecraftLocale.locale(Locale.getDefault());
         }
 
@@ -89,12 +90,12 @@ public interface LocaleService extends SLService {
         return MinecraftLocale.minecraft(locale);
     }
 
-    static void setCustomLanguage(Player user, String value) {
+    static void setCustomLanguage(OfflinePlayer user, String value) {
         CUSTOM_LOCALE.set(PlayerDataService.PLAYER_SHARED, user.getUniqueId(), value);
         LOCALE_CACHE.put(user.getUniqueId(), getUserLocale(user));
     }
 
-    static String getUserLocale(Player user) {
+    static String getUserLocale(OfflinePlayer user) {
         try {
             var custom = CUSTOM_LOCALE.get(PlayerDataService.PLAYER_SHARED, user.getUniqueId());
 
@@ -110,7 +111,11 @@ public interface LocaleService extends SLService {
         } catch (Exception ignored) {
         }
 
-        return saveGetMCPlayerLocale(user);
+        if (!(user instanceof Player p)) {
+            return MinecraftLocale.locale(Locale.getDefault()).minecraft();
+        }
+
+        return saveGetMCPlayerLocale(p);
     }
 
     static String saveGetMCPlayerLocale(Player player) {

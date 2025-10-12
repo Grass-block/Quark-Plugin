@@ -20,7 +20,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 @ApplicationModule(id = "camera-movement", version = "1.0.0")
-@QuarkCommand(name = "camera", permission = "-quark.camera", playerOnly = true)
+@QuarkCommand(name = "camera", permission = "-starlight.camera", playerOnly = true)
 @AutoRegister(Registrations.SERVER_EVENT)
 public final class CameraMovement extends SLCommandModule {
 

@@ -23,7 +23,13 @@ public abstract class CustomEvent extends Event {
             f.setAccessible(true);
             f.set(this, async);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            try {
+                Field f = Event.class.getDeclaredField("isAsync");
+                f.setAccessible(true);
+                f.set(this, async);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         getHandlers();

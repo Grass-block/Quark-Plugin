@@ -16,5 +16,7 @@ dependencies {
     compileOnly "org.ahocorasick:ahocorasick:0.6.3"
     compileOnly projectLib("ProtocolLib")
     implementation projectLib("paper-logger")
+
+    implementation 'com.google.code.gson:gson:2.13.2'
 }
 

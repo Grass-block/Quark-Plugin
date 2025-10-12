@@ -1,34 +1,47 @@
-package org.atcraftmc.quark.commands;
+package org.atcraftmc.starlight.commands;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
 import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
-import org.atcraftmc.starlight.framework.module.SLPackageModule;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.server.ServerCommandEvent;
-import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.qlib.language.LanguageEntry;
+import org.atcraftmc.starlight.core.data.JDBCBasedDataService;
 import org.atcraftmc.starlight.data.ModuleDataService;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
-import me.gb2022.modular.module.ApplicationModule;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
-@ApplicationModule
+@ApplicationModule(id = "command-variables")
 @CommandProvider(CommandVariables.VariableCommand.class)
 @AutoRegister(Registrations.SERVER_EVENT)
 public class CommandVariables extends SLPackageModule implements PluginCommandExecutor {
-    public static final Pattern EXTRACT_VARIABLES = Pattern.compile("\\$\\[.*?]");
+    public static final Pattern EXTRACT_VARIABLES = Pattern.compile("\\$\\{.*?}");
 
     private final Map<String, DataStorage> storages = new HashMap<>();
+
+    @Inject
+    private LanguageEntry language;
 
     @Override
     public void enable() {
@@ -38,7 +51,7 @@ public class CommandVariables extends SLPackageModule implements PluginCommandEx
 
     @EventHandler
     public void onServerCommand(ServerCommandEvent e) {
-        if(e.getCommand().startsWith("/variable")||e.getCommand().startsWith("variable")){
+        if (e.getCommand().startsWith("/variable") || e.getCommand().startsWith("variable")) {
             return;
         }
         e.setCommand(variables(e.getCommand()));
@@ -46,7 +59,7 @@ public class CommandVariables extends SLPackageModule implements PluginCommandEx
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent e) {
-        if(e.getMessage().startsWith("/variable")||e.getMessage().startsWith("variable")){
+        if (e.getMessage().startsWith("/variable") || e.getMessage().startsWith("variable")) {
             return;
         }
         e.setMessage(variables(e.getMessage()));
@@ -72,10 +85,10 @@ public class CommandVariables extends SLPackageModule implements PluginCommandEx
             command = command.replace(expr, value);
         }
 
-        if(EXTRACT_VARIABLES.matcher(command).find()){
+        if (EXTRACT_VARIABLES.matcher(command).find()) {
             try {
                 return variables(command);
-            }catch (StackOverflowError e){
+            } catch (StackOverflowError e) {
                 return command;
             }
         }
@@ -115,7 +128,7 @@ public class CommandVariables extends SLPackageModule implements PluginCommandEx
                 MessageAccessor.send(this.language, sender, "set", sid, name, value);
             }
             case "get" -> {
-                var v = Objects.requireNonNullElse(data.get(name),"[null]");
+                var v = Objects.requireNonNullElse(data.get(name), "[null]");
                 MessageAccessor.send(this.language, sender, "get", sid, name, v);
             }
             case "delete" -> {
@@ -158,15 +171,37 @@ public class CommandVariables extends SLPackageModule implements PluginCommandEx
             }
         }
 
-        class Persistent implements DataStorage {
+        class Persistent extends JDBCBasedDataService<String> implements DataStorage {
+            private final Cache<String, String> cache = CacheBuilder.newBuilder().expireAfterAccess(Duration.ofMinutes(2)).build();
+
+            protected Persistent() {
+                super("");
+            }
+
+            @Override
+            public PreparedStatement attemptCreateTable(Connection conn) throws SQLException {
+                return conn.prepareStatement("create table sl_command_variables(name varchar(32),value varchar(256))");
+            }
+
 
             @Override
             public String get(String name) {
-                var data = ModuleDataService.get("variables");
-                if (!data.hasKey(name)) {
-                    return null;
+                try {
+                    return this.cache.get(name, () -> {
+                        try (var p = this.connection.prepareStatement("select value from sl_command_variables where name = ?")) {
+                            p.setString(1, name);
+
+                            try (var r = p.executeQuery()) {
+                                if (r.next()) {
+                                    return r.getString(1);
+                                }
+                                return "undefined";
+                            }
+                        }
+                    });
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
                 }
-                return data.getString(name);
             }
 
             @Override
@@ -188,6 +223,8 @@ public class CommandVariables extends SLPackageModule implements PluginCommandEx
                 data.remove(name);
                 data.save();
             }
+
+
         }
     }
 

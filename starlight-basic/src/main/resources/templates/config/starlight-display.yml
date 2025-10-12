@@ -52,3 +52,18 @@ config:
       - ' '
       - '  {msg#callback}'
       - "{#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一"
+  custom-kick-message:
+    ui:
+      - '{#yellow}>> {msg#header} {#yellow}<<'
+      - '{#return}'
+      - '{#reset}{reason}{#return}{#return}'
+      - '{msg#website-hint}'
+    ban-ui:
+      - '{#yellow}>> {msg#ban-header} {#yellow}<<'
+      - '{#return}'
+      - '{#reset}{msg#@type}'
+      - '{msg#ban-hint}{#return}'
+      - '{msg#ban-reason}{#return}{#return}'
+      - '{msg#ban-expire}'
+      - '{msg#ban-op}'
+      - '{msg#website-hint}'

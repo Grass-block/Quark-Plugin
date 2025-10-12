@@ -4,9 +4,9 @@ import me.gb2022.commons.math.SHA;
 import me.gb2022.commons.nbt.NBT;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import org.apache.logging.log4j.LogManager;
-import org.atcraftmc.starlight.data.storage.backend.DataStorage;
 import org.atcraftmc.starlight.data.storage.DataEntry;
 import org.atcraftmc.starlight.data.storage.StorageContext;
+import org.atcraftmc.starlight.data.storage.legacy.DataStorage;
 import org.atcraftmc.starlight.util.Identifiers;
 
 import java.io.ByteArrayInputStream;
@@ -44,11 +44,11 @@ public class DataService implements StorageContext {
 
     @Override
     public void save(DataEntry entry) {
-        this.saveEntry(entry.getId());
+        this.saveEntry(((DataEntry.LegacyDataEntry) entry).getId());
     }
 
     public synchronized DataEntry get(String id) {
-        return this.entries.computeIfAbsent(id, k -> new DataEntry(this.getEntry(id), this, k));
+        return this.entries.computeIfAbsent(id, k -> new DataEntry.LegacyDataEntry(this.getEntry(id), this, k));
     }
 
     public synchronized void open() {
@@ -67,8 +67,6 @@ public class DataService implements StorageContext {
             throw new RuntimeException(e);
         }
     }
-
-
 
 
     public File getFile(String id) {

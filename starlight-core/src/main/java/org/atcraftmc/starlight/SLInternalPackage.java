@@ -7,9 +7,9 @@ import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 import org.atcraftmc.starlight.core.ui.UIManager;
 import org.atcraftmc.starlight.data.record.RecordService;
 import org.atcraftmc.starlight.framework.packages.InternalPackage;
-import org.atcraftmc.starlight.framework.packages.SLPackageManager;
 import org.atcraftmc.starlight.framework.packages.SLPackageBuilder;
 import org.atcraftmc.starlight.framework.packages.SLPackageInitializer;
+import org.atcraftmc.starlight.framework.packages.SLPackageManager;
 import org.atcraftmc.starlight.internal.*;
 
 public interface SLInternalPackage {
@@ -31,6 +31,7 @@ public interface SLInternalPackage {
                 .service(UIManager.class)
                 .service(PlayerIdentificationService.class)
                 .service(ChatForwardingService.class)
+                .service(PlayerBanService.class)
 
                 .module("version-log-viewer", VersionLogViewer.class)
                 .module("modrinth-version-check", ModrinthVersionCheck.class)

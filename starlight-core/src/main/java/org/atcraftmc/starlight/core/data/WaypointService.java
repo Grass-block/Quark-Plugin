@@ -140,7 +140,7 @@ public final class WaypointService extends JDBCBasedDataService<Waypoint> {
                 }
 
                 var a = rs.getString("allowed").contains(user.toString());
-                var b = rs.getString("allowed").contains("_all_");
+                var b = rs.getString("allowed").contains("all");
                 var o = rs.getString("owner").equals(user.toString());
 
                 return a || b || o;

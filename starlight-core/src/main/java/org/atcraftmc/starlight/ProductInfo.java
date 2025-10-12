@@ -1,6 +1,7 @@
 package org.atcraftmc.starlight;
 
 import me.gb2022.commons.TriState;
+import org.atcraftmc.qlib.platform.PluginPlatform;
 import org.atcraftmc.qlib.texts.TextBuilder;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolders;
@@ -57,7 +58,7 @@ public interface ProductInfo {
 
     static String logo(JavaPlugin p) {
         return ChatColor.translateAlternateColorCodes('&', """
-                &d一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一
+                &d一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一
                 &d&l      ____ __              __ _        __   __\s
                 &d&l    / __// /_ ___ _ ____ / /(_)___ _ / /  / /_
                 &d&l   _\\ \\ / __// _ `// __// // // _ `// _ \\/ __/
@@ -65,13 +66,13 @@ public interface ProductInfo {
                 &d&l                         /___/                    -&fv%s
                 
                 &7 Artifact by &fGrassBlock2022, &7Copyright &f[C]ATCraftMC 2025.
-                &d一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一
+                &d一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一
                 """.formatted(p.getDescription().getVersion()));
     }
 
     static void sendStatsDisplay(CommandSender sender) {
         String dom = """
-                {#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一
+                {#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一
                 Statistics:
                   &7Version: &f%s
                   &7BuildTime: &f%s
@@ -82,7 +83,7 @@ public interface ProductInfo {
                   &7CoreUA: &f%s 
                   &7InstanceID: {click(copy,%s);color(gold)}[copy]{;}
                   &7ProductID: {click(copy,%s);color(gold)}[copy]{;}
-                {#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一
+                {#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一
                 """;
 
         var text = ChatColor.translateAlternateColorCodes('&', dom.formatted(
@@ -104,25 +105,27 @@ public interface ProductInfo {
         String s = """
                 {logo}
                 
-                 强大的Minecraft服务器综合管理插件。
+                 A plugin containing everything you need. :D
                 
-                 官方网站: {color(aqua);underline;click(link,https://playat.cn/quark-plugin)}https://playat.cn/quark-plugin{none}
-                 联系我们: {#aqua}tbstmc@163.com{none}
+                 Website & Docs: {#aqua}https://starlight-plugin.pages.dev{#reset}
+                 Official Release: {#aqua}https://modrinth.com/plugin/starlight-plugin{#reset}
+                 Contact: {#aqua}tbstmc@163.com{#reset}
                 
-                 测试服务器: ATCraft Network
-                 开发: GrassBlock2022
+                {#purple}> Credits & Special thanks:
+                {#white} - GrassBlock2022: {#gray}Core developer.
+                {#white} - Mipa/IdealMC: {#gray}Production environment test.
+                {#white} - Modrinth: {#gray}Publishing and version check service.
+                {#white} - OpenAI/ChatGPT: {#gray}Multi-language translations.
+                {#white} - {#gray}(and anyone who use this plugin and feedback)
                 
-                 {#red}[{#white}特别感谢{#red}]{#white}
-                  - Mipa: Folia平台测试
-                  - Modrinth: 提供更新服务
-                  - OpenAI: ChatGPT用于多语言翻译和API解读             
+                {#purple}> Third party libraries:
+                {#white} - LevelDB-JNI: {#gray}Legacy Data storage.
+                {#white} - AdventureAPI: {#gray}Player view implementation.
+                {#white} - JavaX-Mail: {#gray}SMTP Service implementation.
+                {#white} - Aho-Corasick: {#gray}Chat filtering algorithm.
                 
-                 {#red}[{#white}第三方库{#red}]{#white}
-                  - LevelDB: 数据存储
-                  - AdventureAPI: 玩家界面实现
-                
-                 {#white}Copyright @ATCraft Network(TBSTMC)(China). All Right Reserved.
-                {#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一
+                 {#white}Copyright @ATCraftMC(TBSTMC)(China). All Right Reserved.
+                {#purple}一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一
                 """;
         if (ProductService.isActivated()) {
             s = s.replace("{activate}", "已激活");
@@ -131,11 +134,13 @@ public interface ProductInfo {
         }
 
         if (!(sender instanceof ConsoleCommandSender)) {
-            String prefix = "{#yellow}一一一一一一一一一一一一一一一一一一一一一一一一一一一\n";
+            String prefix = "{#purple}一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一一\n";
 
             TextSender.sendBlock(sender, TextBuilder.build(prefix + s.replace("{logo}", textLogo())));
         } else {
-            TextSender.sendBlock(sender, TextBuilder.build(s.replace("{logo}", logo(Starlight.instance()))));
+            for (var s2 : PluginPlatform.global().globalFormatMessage(s.replace("{logo}", logo(Starlight.instance()))).split("\n")) {
+                sender.sendMessage(s2);
+            }
         }
     }
 }

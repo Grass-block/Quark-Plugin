@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "Starlight"
   text: "&nbsp;&nbsp;&nbsp;&nbsp;—「星辰」"
-  tagline: "下一代服务器综合与管理插件"
+  tagline: "ATCraftMC自主研发的新一代综合管理插件"
   alt: ATC
   actions:
       - theme: brand
@@ -14,34 +14,22 @@ hero:
         text: 扩展开发
         link: /dev
   image:
-    src: /vitepress-logo-large.svg
+    src: https://raw.githubusercontent.com/Grass-block/Starlight/refs/heads/main/starlight-logo.png
     alt: VitePress
 features:
-  - title: 
+  - title: 高度模块化
     icon: <img src="http://localhost:5173/logo2.png" />
     details:
-      关于服务器的说明，介绍和一些基本信息，可供玩家阅读并快速疑难解答。<br><br>
-      建议阅读人群：ATCraftMC服务器玩家
-      <div style="width:100%;padding-top:1em">
-      <a class="vp-button vp-button-light" href="/server/about.html">阅读</a>
-      <a class="vp-button vp-button-normal" href="/server/rule/rules">快速访问 | 服规</a>
-      </div>
-  - title: 关于「星尘」插件
+      模块化功能拆分细致，且每个模块均可单独启停。
+      各个模块之间完全独立，核心正常加载则整个插件将不被任何模块/子包影响。
+  - title: 易于维护
     icon: 🛠️
     details:
-      服务器定制插件（原名quark-plugin）的使用信息和配置信息。<br><br>
-      建议阅读人群：使用本插件的玩家及服务器管理员
-      <div style="width:100%;padding-top:1em">
-      <a class="vp-button vp-button-light" style="width:100px" href="/quark/index">阅读</a>
-      </div>
-  - title: 其他项目
+      配置文件一键自动刷新，支持开箱即用，无需复杂的准备配置工作。
+      不会注入服务器后端/原版数据，卸载无任何影响。
+  - title: 性能优越
     icon: 🧷
     details:
-      ATCraftMC名下其他产品的说明文档。<br>
-       - OFManagerLite<br>
-       - MCUpdaterV2<br>
-       - Velocity-Modded<br>
-      <div style="width:100%;padding-top:1em">
-      <a class="vp-button vp-button-light" style="width:100px" href="/other/mcu/index">阅读</a>
-      </div>
+      静止状态下实测插件占用服务器计算时间<1.5ms，启动时间小于650ms(仅供参考)
+      性能远高于同类功能的多插件替代实现。
 ---

@@ -1,13 +1,13 @@
 package org.atcraftmc.starlight.management;
 
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.qlib.command.LegacyCommandManager;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.starlight.foundation.platform.Players;
 import org.atcraftmc.starlight.framework.module.SLCommandModule;
-import me.gb2022.modular.module.ApplicationModule;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.atcraftmc.starlight.util.CachedInfo;
@@ -19,7 +19,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
-@ApplicationModule(id="ban",version = "1.0.0")
+@ApplicationModule(id = "ban", version = "1.0.0")
 @QuarkCommand(name = "ban")
 public final class Ban extends SLCommandModule {
 

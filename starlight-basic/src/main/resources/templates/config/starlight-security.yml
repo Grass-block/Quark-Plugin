@@ -13,3 +13,10 @@ config:
     broadcast: true
   permission-manager:
     default-group: --player
+
+  we-operation-defender:
+    warn-stack-length: 60
+    warn-selection-size: 128
+    warn-stack-effect-size: 256
+    max-selection-size: 128
+    max-edit-size: 384

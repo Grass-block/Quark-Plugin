@@ -1,5 +1,7 @@
-package org.atcraftmc.quark.security;
+package org.atcraftmc.starlight.security;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.entity.BaseEntity;
@@ -15,48 +17,125 @@ import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.APIIncompatibleException;
 import me.gb2022.modular.Registrations;
-import org.atcraftmc.quark.security.event.WEAction;
-import org.atcraftmc.quark.security.event.WESessionEditEvent;
-import org.atcraftmc.quark.security.event.WESessionPreEditEvent;
-import org.atcraftmc.quark.security.event.WESessionSelectEvent;
+import me.gb2022.modular.module.ApplicationModule;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.command.execute.CommandExecution;
+import org.atcraftmc.qlib.language.LanguageEntry;
+import org.atcraftmc.starlight.api.WEAction;
+import org.atcraftmc.starlight.api.WESessionEditEvent;
+import org.atcraftmc.starlight.api.WESessionPreEditEvent;
+import org.atcraftmc.starlight.api.WESessionSelectEvent;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
 import org.atcraftmc.starlight.framework.module.SLPackageModule;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3i;
-import org.atcraftmc.starlight.migration.ConfigAccessor;
-import org.atcraftmc.starlight.migration.MessageAccessor;
-import org.atcraftmc.starlight.SharedObjects;
-import org.atcraftmc.qlib.language.LanguageEntry;
-import me.gb2022.modular.APIIncompatibleException;
-import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import me.gb2022.modular.module.ApplicationModule;
-import org.atcraftmc.starlight.data.record.RecordEntry;
 
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 @SuppressWarnings("DuplicatedCode")
-@ApplicationModule(version = "1.2.5")
+@ApplicationModule(id = "we-operation-defender", version = "1.3")
 @AutoRegister(Registrations.SERVER_EVENT)
-public final class WESessionSizeLimit extends SLPackageModule {
-
-    @Inject("!quark.we.size.bypass")
+@CommandProvider(WorldEditOperationDefender.ConfirmCommand.class)
+public final class WorldEditOperationDefender extends SLPackageModule {
+    @Inject("-starlight.worldedit.size")
     public Permission bypassCheck;
-
+    private Cache<UUID, String> commandCache;
     @Inject
     private LanguageEntry language;
-
-    @Inject("we-size-limit;Time,Player,Action,X,Y,Z,Limit")
-    private RecordEntry record;
 
     @Override
     public void checkCompatibility() throws APIIncompatibleException {
         Compatibility.requirePlugin("WorldEdit");
     }
+
+    @Override
+    public void enable() throws Exception {
+        var d = Duration.ofSeconds(this.config().value("confirm-time").intValue(15));
+        this.commandCache = CacheBuilder.newBuilder().expireAfterWrite(d).build();
+    }
+
+    @EventHandler
+    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+        var m = event.getMessage();
+
+        if (!m.startsWith("//") || m.startsWith("//pos") || m.startsWith("//confirm")) {
+            return;
+        }
+
+        if (m.startsWith("//stack")) {
+            var b = m.split(" ");
+            if (b.length < 2) {
+                return;
+            }
+
+            var len = Integer.parseInt(b[1]);
+            if (len > this.config().value("warn-stack-length").intValue(50)) {
+                submitForCheck(event);
+                return;
+            }
+
+            var region = WESessionTrackService.getRegion(event.getPlayer());
+
+            if (region == null) {
+                return;
+            }
+
+            var box = region.asAABB();
+            var limit = ConfigAccessor.getInt(this.config(), "warn-stack-effect-size");
+
+            var x = box.x1 - box.x0;
+            var y = box.y1 - box.y0;
+            var z = box.z1 - box.z0;
+
+            if (x * len <= limit && y * len <= limit && z * len <= limit) {
+                return;
+            }
+
+            submitForCheck(event);
+            return;
+        }
+
+        var region = WESessionTrackService.getRegion(event.getPlayer());
+
+        if (region == null) {
+            return;
+        }
+
+        var box = region.asAABB();
+
+        var x = box.x1 - box.x0;
+        var y = box.y1 - box.y0;
+        var z = box.z1 - box.z0;
+
+        var limit = ConfigAccessor.getInt(this.config(), "warn-selection-size");
+
+        if (x <= limit && y <= limit && z <= limit) {
+            return;
+        }
+
+        submitForCheck(event);
+    }
+
+    private void submitForCheck(PlayerCommandPreprocessEvent event) {
+        this.language.item("confirm-required").send(event.getPlayer(), this.config().value("confirm-time").intValue(15));
+        this.commandCache.put(event.getPlayer().getUniqueId(), event.getMessage().substring(1));
+        event.setCancelled(true);
+    }
+
 
     @EventHandler
     public void onSelect(WESessionPreEditEvent event) {
@@ -84,7 +163,6 @@ public final class WESessionSizeLimit extends SLPackageModule {
         }
 
         event.setCancelled(true);
-        this.record.addLine(SharedObjects.DATE_FORMAT.format(new Date()), "Select", x, y, z, limit);
     }
 
     @EventHandler
@@ -131,12 +209,33 @@ public final class WESessionSizeLimit extends SLPackageModule {
         var wrapped = event.getMask();
         var wrapper = new RadiusLimitedExtent(wrapped, cx, cy, cz, limit, cancel);
 
-        wrapper.addAnnounce(() -> {
-            MessageAccessor.send(this.language, player, cancel ? "edit-limited" : "edit-limited-warn", limit);
-            this.record.addLine(SharedObjects.DATE_FORMAT.format(new Date()), "Edit", w, h, d, limit);
-        });
+        wrapper.addAnnounce(() -> MessageAccessor.send(this.language, player, cancel ? "edit-limited" : "edit-limited-warn", limit));
 
         event.setMask(wrapper);
+    }
+
+    @QuarkCommand(name = "/confirm", permission = "+starlight.worldedit.confirm")
+    public static final class ConfirmCommand extends ModuleCommand<WorldEditOperationDefender> {
+        @Override
+        public void execute(CommandExecution context) {
+            var player = context.requireSenderAsPlayer();
+
+            try {
+                var cached = this.getModule().commandCache.get(player.getUniqueId(), () -> "");
+
+                if (cached.isEmpty()) {
+                    getLanguage().item("action-not-found").send(player);
+                    return;
+                }
+
+                this.getModule().commandCache.invalidate(player.getUniqueId());
+
+                getLanguage().item("action-confirmed").send(player, cached);
+                player.performCommand(cached);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public static final class RadiusLimitedExtent implements Extent {

@@ -1,4 +1,12 @@
 language:
+  -module-name:
+    custom-language-pack-loader: '[核心]自定义插件语言加载器'
+    installation-check: '[核心]安装完整性检查'
+    modrinth-version-check: '[核心]Modrinth更新服务'
+    papi-support: '[核心]PlaceHolderAPI交互支持'
+    platform-patcher: '[核心]平台差异补丁'
+    protocol-lib-injector: '[核心]ProtocolLib平台代理'
+    version-log-viewer: '[核心]更新日志查看器'
   global-vars:
     sys-info: "{#aqua}系统{#dark_aqua} > {#gray}"
     sys-warning: "{#yellow}系统{#dark_aqua} > {#gray}"
@@ -97,6 +105,10 @@ language:
     no-require: "{global#sys-info}您的版本已经为最新版 {#var}，无需进行更新。"
     exception: "{global#sys-info}检查版本时出现错误，请查看控制台。"
     checking: "{global#sys-info}正在检查版本..."
+  data-update:
+    start: "{global#sys-info}已开始对项目{#var}进行数据导入升级, 请留意控制台信息。"
+    none: "{global#sys-error}未找到{#var}相关的数据导入项。"
+    done: "{global#sys-info}数据导入完成。"
   libraries:
     list: '{#aqua}已加载的第三方依赖库: '
     list-item: "{color(#44FFAA)}[%s]"
@@ -106,3 +118,8 @@ language:
       {#gray}文件大小: {#white}%s KiB
       {#gray}下载日期: {#white}%s
       {#gray}完整路径: {#white}%s
+  ban-service:
+    default-line:
+      - '{#gray}你已被 {#var} 因 {#var} 封禁。'
+      - '{#gray}你的封禁将在 {#var} 结束。'
+    default-kick-line: '{#gray}你已被踢出游戏: {#var}'

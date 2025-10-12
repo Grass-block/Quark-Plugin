@@ -1,4 +1,18 @@
 language:
+  -module-name:
+    action-bar-hud: 快捷栏HUD信息显示
+    afk: 挂机检测
+    chat-format: 聊天行格式化
+    custom-death-message: 自定义死亡信息格式
+    custom-kick-message: 自定义踢出信息
+    custom-motd: 自定义MOTD信息
+    custom-scoreboard: 自定义计分板提示信息
+    drop-item-info: 掉落物高亮信息
+    hover-display: 悬浮文本
+    player-name-header: 玩家头衔
+    tab-menu: TAB栏提示信息
+    welcome-message: 自定义欢迎信息
+    we-session-renderer: WorldEdit选区渲染器
   tab-menu:
     welcome-header: '欢迎来到{#aqua}{#server-name}{#reset}服务器!'
     tps: '{#gray}TPS: {#white}{#tps}{#white}/20'
@@ -51,3 +65,13 @@ language:
     text-refresh: '{global#success}成功刷新MOTD文字缓存。'
   drop-item-info:
     template: "{#red}{amount}{#yellow}x{translate;color(aqua)}{id}{;}"
+  custom-kick-message:
+    header: '{#white}您已被踢出 {#server-name}{#white} 服务器'
+    ban-header: '{#white}您已被 {#server-name}{#reset} 封禁'
+    ban-name: '{#gray}很抱歉,您的玩家档案名称已被此服务器封禁.'
+    ban-ip: '{#gray}很抱歉,您的IP地址已被此服务器封禁.'
+    ban-hint: '{#gray}如果您确认这是个错误, 请联系服务器管理员.'
+    ban-reason: '{#gray}封禁原因{#white}: {reason}'
+    ban-op: '{#gray}操作者{#white}: {source}'
+    ban-expire: '{#gray}此封禁将在 {#white}{expire}{#gray} 结束.'
+    website-hint: '{#gray}访问官网: {#aqua}{#underline}{#server-website}'

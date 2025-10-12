@@ -1,10 +1,17 @@
 language:
-  -module-names:
-    item-command: 物品命令绑定
-    surrounding-refresh: 环境方块刷新
-    player-ping-command: 玩家延迟查询
+  -module-name:
+    block-update-locker: 方块更新锁定
     calculator: 计算器
-  player-position-lock:
+    camera-movement: 自定义相机路径
+    chat-at: 聊天提及
+    chat-component: 富文本聊天支持
+    dynamic-view-distance: 自定义渲染距离
+    hitokoto: 「一言」
+    player-ping-command: 玩家延迟查询
+    position-align: 位置对齐指令
+    position-lock: 位置锁定指令
+    surrounding-refresh: 环境方块刷新
+  position-lock:
     lock: '{global#sys-info}您的位置已被锁定。'
     unlock: '{global#sys-info}您的位置已被解锁。'
     lock-player: '{global#sys-operation}您已锁定 {#var} 的位置。'

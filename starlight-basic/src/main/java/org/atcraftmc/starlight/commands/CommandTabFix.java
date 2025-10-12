@@ -1,13 +1,13 @@
-package org.atcraftmc.quark.commands;
+package org.atcraftmc.starlight.commands;
 
 import me.gb2022.commons.reflect.AutoRegister;
-import me.gb2022.modular.Registrations;
-import org.atcraftmc.qlib.command.LegacyCommandManager;
-import org.atcraftmc.starlight.core.TaskService;
 import me.gb2022.modular.APIIncompatibleException;
-import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import me.gb2022.modular.Registrations;
 import me.gb2022.modular.module.ApplicationModule;
 import me.gb2022.modular.subcomponent.ComponentProvider;
+import org.atcraftmc.qlib.command.LegacyCommandManager;
+import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
 import org.atcraftmc.starlight.framework.module.SLModuleComponent;
 import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.util.FilePath;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-@ApplicationModule(version = "1.2.0")
+@ApplicationModule(id = "command-tab-fix", version = "1.2.0")
 @AutoRegister(Registrations.SERVER_EVENT)
 @ComponentProvider({CommandTabFix.WEAddition.class,})
 public final class CommandTabFix extends SLPackageModule {

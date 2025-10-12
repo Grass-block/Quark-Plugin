@@ -16,6 +16,3 @@ config:
       - "water_bucket"
       - "respawn_anchor"
       - "end_crystal"
-  we-session-size-limit:
-    max-selection-size: 128
-    max-edit-size: 384

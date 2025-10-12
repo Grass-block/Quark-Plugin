@@ -1,16 +1,12 @@
 package org.atcraftmc.starlight.foundation.platform;
 
-import me.gb2022.commons.TriState;
 import me.gb2022.commons.reflect.method.*;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.atcraftmc.qlib.texts.TextBuilder;
-import org.atcraftmc.starlight.core.LocaleService;
-import org.atcraftmc.starlight.core.TaskService;
-import org.atcraftmc.starlight.core.event.BanMessageFetchEvent;
 import org.atcraftmc.starlight.foundation.ComponentSerializer;
-import org.atcraftmc.starlight.framework.SLModuleManager;
 import org.atcraftmc.starlight.internal.PlatformPatcher;
+import org.atcraftmc.starlight.internal.PlayerBanService;
 import org.atcraftmc.starlight.internal.platform.SpigotReflection;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
@@ -114,30 +110,7 @@ public interface Players {
 
     //----[Utilities]----
     static void banPlayer(String target, BanList.Type type, String reason, Date expire, String source) {
-        if (type == BanList.Type.NAME) {
-            var player = Bukkit.getPlayerExact(target);
-            if (player == null) {
-                return;
-            }
-            BanMessageFetchEvent e = new BanMessageFetchEvent(
-                    BanList.Type.NAME,
-                    reason,
-                    expire,
-                    source,
-                    player.getName(),
-                    LocaleService.saveGetMCPlayerLocale(player)
-            );
-            BukkitUtil.callEvent(e, (ev -> TaskService.entity(player).run(() -> {
-                if (SLModuleManager.getInstance().getStatus("quark-display:custom-kick-message") != TriState.TRUE) {
-                    KICK.invoke(player, TextBuilder.buildComponent("\u0002" + ev.getMessage()));
-                } else {
-                    KICK.invoke(player, TextBuilder.buildComponent(ev.getMessage()));
-                }
-                Bukkit.getBanList(type).addBan(target, reason, expire, source);
-            })));
-            return;
-        }
-        Bukkit.getBanList(type).addBan(target, reason, expire, source);
+        PlayerBanService.banPlayer(type, target, source, reason, expire);
     }
 
     static void renderBox(Player player, Location point0, Location point1, double density) {

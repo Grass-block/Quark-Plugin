@@ -1,4 +1,10 @@
 language:
+  -module-name:
+    clear-console: 控制台清理工具
+    console-execute: 控制台代理执行
+    custom-log-format: '[BETA]自定义日志格式'
+    log-color-patch: '[BETA]日志颜色修复'
+    stop-confirm: 停服确认
   console-execute:
     execute: "{global#sys-operation}已提交命令行: {#var}"
   clear-console:

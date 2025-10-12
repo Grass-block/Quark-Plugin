@@ -18,6 +18,7 @@ import org.atcraftmc.starlight.ProductInfo;
 import org.atcraftmc.starlight.SharedObjects;
 import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.core.data.flex.TableColumn;
 import org.atcraftmc.starlight.core.ui.TextRenderer;
 import org.atcraftmc.starlight.data.PlayerDataService;
 import org.atcraftmc.starlight.data.record.RecordService;
@@ -46,6 +47,7 @@ import java.util.Objects;
 @ApplicationModule(id = "ip-defender", version = "1.3.4")
 @CommandProvider(IPDefender.IPQueryCommand.class)
 public final class IPDefender extends SLPackageModule implements PluginCommandExecutor {
+    private static final TableColumn<String> IP_ADDRESS = TableColumn.string("ip_address", 128, "__");
     private static final RecordRegistry.A3<Player, String, String> RECORD = new RecordRegistry.A3<>(
             "ip-log",
             new RecordField<>("player", TextRenderer.literal("Player"), DataRenderer.PLAYER),
@@ -86,25 +88,21 @@ public final class IPDefender extends SLPackageModule implements PluginCommandEx
 
     public void check(Player player) {
         var current = query(player.getAddress(), MinecraftLocale.EN_US);
-        var data = PlayerDataService.get(player);
+        var data = IP_ADDRESS.get(PlayerDataService.PLAYER_SHARED, player.getUniqueId());
+        var state = TriState.UNKNOWN;
 
-        TriState state;
         String previous;
 
-        if (!data.hasKey("ip-address")) {
-            data.setString("ip-address", current);
-            data.save();
-
-            state = TriState.UNKNOWN;
+        if (data.equals("__")) {
+            IP_ADDRESS.set(PlayerDataService.PLAYER_SHARED, player.getUniqueId(), current);
             previous = null;
         } else {
-            previous = data.getString("ip-address");
+            previous = data;
 
             if (Objects.equals(previous, current)) {
                 state = TriState.FALSE;
             } else {
-                data.setString("ip-address", current);
-                data.save();
+                IP_ADDRESS.set(PlayerDataService.PLAYER_SHARED, player.getUniqueId(), current);
 
                 state = TriState.TRUE;
             }

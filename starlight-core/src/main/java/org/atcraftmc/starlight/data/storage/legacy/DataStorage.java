@@ -1,4 +1,4 @@
-package org.atcraftmc.starlight.data.storage.backend;
+package org.atcraftmc.starlight.data.storage.legacy;
 
 import me.gb2022.commons.container.Pair;
 

@@ -53,25 +53,14 @@ public final class SLModuleHandle extends ModuleHandle<SLModule, SLModuleHandle,
     }
 
     public String displayName(MinecraftLocale locale) {
-        var parts = this.getMetadata().key().id().split("-"); // 按 '-' 分割
-        var displayId = new StringBuilder();
+        var ns = this.getMetadata().key().namespace();
+        var id = this.getMetadata().key().id();
 
-        for (var part : parts) {
-            if (!part.isEmpty()) {
-                displayId.append(Character.toUpperCase(part.charAt(0))); // 首字母大写
-                displayId.append(part.substring(1).toLowerCase()); // 剩余部分小写
-            }
+        if (this.displayName != null && this.displayName.handle().hasAny(ns, "-module-name", id)) {
+            return "%s&7(&f%s&7)".formatted(id, this.displayName.message(locale));
+        } else {
+            return id;
         }
-
-        if (this.displayName != null && this.displayName.handle().hasAny(
-                this.getMetadata().key().namespace(),
-                "-module-name",
-                this.getMetadata().key().id()
-        )) {
-            return "%s&7(&f%s&7)".formatted(displayId.toString(), this.displayName.message(locale));
-        }
-
-        return displayId.toString();
     }
 
     public ConfigEntry getConfig() {

@@ -1,4 +1,4 @@
-package org.atcraftmc.starlight.display;
+package org.atcraftmc.starlight.sideload;
 
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;

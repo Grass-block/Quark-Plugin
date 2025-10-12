@@ -7,30 +7,35 @@ import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.starlight.ProductInfo;
 import org.atcraftmc.starlight.Starlight;
 import org.atcraftmc.starlight.core.LocaleService;
+import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.foundation.TextSender;
 import org.atcraftmc.starlight.foundation.command.CoreCommand;
 import org.atcraftmc.starlight.foundation.platform.APIProfileTest;
-import org.bukkit.command.CommandSender;
+import org.atcraftmc.starlight.migration.QuarkDataImporter;
 
-import java.util.List;
-
-@QuarkCommand(name = "starlight", permission = "+starlight.command.core", subCommands = {
-        ConfigCommand.class,
-        LanguageCommand.class,
-        ModuleCommand.class,
-        GlobalVarsCommand.class,
-        PackageCommand.class,
-        StarlightPluginCommand.ReloadCommand.class,
-        DebugCommand.class,
-        LibraryCommand.class,
-})
+@QuarkCommand(name = "starlight", permission = "+starlight.command.core", subCommands = {ConfigCommand.class, LanguageCommand.class, ModuleCommand.class, GlobalVarsCommand.class, PackageCommand.class, StarlightPluginCommand.ReloadCommand.class, DebugCommand.class, LibraryCommand.class,})
 public final class StarlightPluginCommand extends CoreCommand {
 
     @Override
     public void execute(CommandExecution context) {
-        switch (context.requireEnum(0, "info", "stats", "sync-commands")) {
+        switch (context.requireEnum(0, "info", "stats", "sync-commands", "update-data")) {
             case "info" -> ProductInfo.sendInfoDisplay(context.getSender());
             case "stats" -> ProductInfo.sendStatsDisplay(context.getSender());
+            case "update-data" -> {
+                var id = context.requireArgumentAt(1);
+
+                if (!QuarkDataImporter.has(id)) {
+                    Starlight.LANGUAGE.item("data-update:none").send(context.getSender(), id);
+                    return;
+                }
+
+                Starlight.LANGUAGE.item("data-update:start").send(context.getSender(), id);
+
+                TaskService.async().run(() -> {
+                    QuarkDataImporter.runDataUpdater(id);
+                    Starlight.LANGUAGE.item("data-update:done").send(context.getSender());
+                });
+            }
             case "sync-commands" -> {
                 LegacyCommandManager.sync();
                 Starlight.LANGUAGE.item("command:sync-commands").send(context.getSender());
@@ -39,18 +44,10 @@ public final class StarlightPluginCommand extends CoreCommand {
     }
 
     @Override
-    public void onCommandTab(CommandSender sender, String[] buffer, List<String> tabList) {
-        if (buffer.length == 1) {
-            tabList.add("info");
-            tabList.add("sync-commands");
-            tabList.add("stats");
-        }
-    }
-
-
-    @Override
     public void suggest(CommandSuggestion suggestion) {
         super.suggest(suggestion);
+        suggestion.suggest(0, "info", "stats", "sync-commands", "update-data");
+        suggestion.matchArgument(0, "update-data", (ctx) -> ctx.suggest(1, QuarkDataImporter.handlers()));
     }
 
     @QuarkCommand(name = "reload", permission = "-starlight.reload")

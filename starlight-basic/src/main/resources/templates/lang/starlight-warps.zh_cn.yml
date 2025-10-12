@@ -9,6 +9,7 @@ language:
     add-success: '{global#sys-operation}成功添加了导航点 {#var}。'
     remove: '{global#sys-operation}成功移除了导航点 {#var}。'
     remove-failed: '{global#sys-error}权限不足: 你不是 {#var} 的所有者, 且你没有starlight.waypoint.admin权限组。'
+    no-access: '{global#sys-error}权限不足: 你不是 {#var} 的所有者/授权访问者, 且你没有starlight.waypoint.admin权限组。'
     tp-success: '{global#sys-success}已将你传送到导航点 {#var}。'
     allow: '{global#sys-success}成功向玩家 {#var} 开放了 {#var} 导航点的访问。'
     allow-all: '{global#sys-success}成功向全部玩家开放了 {#var} 导航点的访问。'
@@ -23,13 +24,13 @@ language:
     list: '{#aqua}导航点列表: '
     list-item: "{color(#44FFAA)}[%s]{#white}%s: %s,%s,%s{color(white);click(command,/waypoint remove %s)} [{#red}X{#white}]"
     list-hover: |-
-     {color(#44FFAA)}名称: {#white}%s
-      世界: {#white}%s
-      坐标: {#white}[{#red}%s{#gray}, {#green}%s{#gray}, {#aqua}%s{#white}]
-      角度: {#purple}[%s,%s]
-      所有者: {#white}%s
-      UUID: {#white}%s
-      {#gold}[点击传送]
+      {color(#44FFAA)}名称: {#white}%s
+       世界: {#white}%s
+       坐标: {#white}[{#red}%s{#gray}, {#green}%s{#gray}, {#aqua}%s{#white}]
+       角度: {#purple}[%s,%s]
+       所有者: {#white}%s
+       UUID: {#white}%s
+       {#gold}[点击传送]
   back-to-death:
     back-not-set: "{global#sys-error}你还没死亡过。"
     back-tp-success: "{global#sys-success}已将你传送到上次死亡地点。"

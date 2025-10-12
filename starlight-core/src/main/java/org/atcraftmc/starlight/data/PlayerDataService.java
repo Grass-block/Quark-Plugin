@@ -12,7 +12,6 @@ import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
 import org.atcraftmc.starlight.internal.PlayerIdentificationService;
 import org.atcraftmc.starlight.util.FilePath;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -57,9 +56,6 @@ public interface PlayerDataService extends IDataService {
         return INSTANCE.get().getData(player);
     }
 
-    static DataEntry get(OfflinePlayer player) {
-        return INSTANCE.get().getData(player.getName());
-    }
 
     static DataEntry get(String playerName) {
         if (playerName.matches("^[a-f\\d]{4}(?:[a-f\\d]{4}_){4}[a-f\\d]{12}$")) {

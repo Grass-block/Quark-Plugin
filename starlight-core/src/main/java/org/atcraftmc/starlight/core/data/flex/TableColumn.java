@@ -4,6 +4,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.atcraftmc.starlight.core.data.FlexibleMapService;
 import org.atcraftmc.starlight.core.data.JDBCBasedDataService;
+import org.atcraftmc.starlight.data.storage.DataEntry;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -42,6 +43,10 @@ public abstract class TableColumn<I> {
         return new BooleanColumn(id, defaultValue);
     }
 
+    public static TableColumn<DataEntry> dom(String s) {
+        return new NBTColumn(s);
+    }
+
 
     //privates
     private DBInstance<I> getDBInstance(FlexibleMapService ds) {
@@ -54,8 +59,16 @@ public abstract class TableColumn<I> {
 
     public abstract void encodeStatement(PreparedStatement ps, I value) throws SQLException;
 
+    public I getDefaultValue(FlexibleMapService ds, UUID uuid) {
+        return defaultValue;
+    }
+
+    public I processValue(I value, FlexibleMapService ds, UUID uuid) {
+        return value;
+    }
+
     public final I get(FlexibleMapService ds, UUID uuid) {
-        return getDBInstance(ds).get(uuid, this.defaultValue);
+        return processValue(getDBInstance(ds).get(uuid, this.getDefaultValue(ds, uuid)), ds, uuid);
     }
 
     public final void set(FlexibleMapService ds, UUID uuid, I value) {
@@ -109,6 +122,7 @@ public abstract class TableColumn<I> {
                 throw new RuntimeException(e);
             }
         }
+
 
         public void set(UUID uuid, I value) {
             this.cache.put(uuid, value);
@@ -195,29 +209,4 @@ public abstract class TableColumn<I> {
         }
     }
 
-    private static final class CustomColumn<I> extends TableColumn<I> {
-        private final FlexibleMapService.Codec<I> codec;
-        private final int maxLength;
-
-        public CustomColumn(String name, I defaultValue, int maxLength, FlexibleMapService.Codec<I> codec) {
-            super(name, defaultValue);
-            this.codec = codec;
-            this.maxLength = maxLength;
-        }
-
-        @Override
-        public PreparedStatement createColumn(Connection conn) throws SQLException {
-            return conn.prepareStatement("ALTER TABLE _table_ ADD COLUMN _col_ varchar(" + this.maxLength + ") DEFAULT '" + this.defaultValue + "'");
-        }
-
-        @Override
-        public I dispatchResult(ResultSet rs) throws SQLException {
-            return this.codec.decode(rs.getString(1));
-        }
-
-        @Override
-        public void encodeStatement(PreparedStatement ps, I value) throws SQLException {
-            ps.setString(1, this.codec.encode(value));
-        }
-    }
 }
