@@ -12,7 +12,9 @@ import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.qlib.language.LanguageEntry;
 import org.atcraftmc.starlight.SharedObjects;
+import org.atcraftmc.starlight.core.data.BanEntryService;
 import org.atcraftmc.starlight.core.data.flex.TableColumn;
+import org.atcraftmc.starlight.core.objects.BanEntry;
 import org.atcraftmc.starlight.data.PlayerDataService;
 import org.atcraftmc.starlight.data.storage.DataEntry;
 import org.atcraftmc.starlight.data.storage.StorageTable;
@@ -22,6 +24,7 @@ import org.atcraftmc.starlight.foundation.platform.Compatibility;
 import org.atcraftmc.starlight.framework.module.SLModuleComponent;
 import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.atcraftmc.starlight.migration.QuarkDataImporter;
 import org.atcraftmc.starlight.util.CachedInfo;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -43,11 +46,29 @@ import java.util.UUID;
 @AutoRegister(Registrations.SERVER_EVENT)
 public final class Mute extends SLPackageModule implements Listener {
     public static final String DATA_ENTRY_ID = "starlight:mute";
-
     public static final TableColumn<DataEntry> MUTE_DATA = TableColumn.dom("chat_mute");
+
 
     @Inject
     private LanguageEntry language;
+
+    @Inject("starlight:shared/sl_mute")
+    private BanEntryService muteData;
+
+    @Override
+    public void enable() throws Exception {
+        QuarkDataImporter.registerPlayerDataHandler("starlight:mute", (uuid, nbt) -> {
+            if (!nbt.hasKey(DATA_ENTRY_ID)) {
+                return;
+            }
+            var e2 = MUTE_DATA.get(PlayerDataService.PLAYER_SHARED, uuid);
+
+            e2.getTagMap().clear();
+            e2.getTagMap().putAll(nbt.getCompoundTag(DATA_ENTRY_ID).getTagMap());
+
+            e2.save();
+        });
+    }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChatting(AsyncPlayerChatEvent event) {
@@ -78,13 +99,13 @@ public final class Mute extends SLPackageModule implements Listener {
 
 
     public void checkEvent(Player p, Cancellable event, boolean silent) {
-        var data = getBanEntryFor(p.getUniqueId());
-
-        if (!data.getBoolean("banned")) {
+        if(!this.muteData.isBanned(p.getUniqueId())){
             return;
         }
 
-        var expire = data.getLong("expired");
+        var entry = this.muteData.getValid(p.getUniqueId()).get(0);
+
+        var expire = entry.getExpires();
         var expired = SharedObjects.DATE_FORMAT.format(new Date(expire));
 
         if (expire != 0 && System.currentTimeMillis() > expire) {
@@ -105,13 +126,7 @@ public final class Mute extends SLPackageModule implements Listener {
 
 
     public void mute(OfflinePlayer p, long expire, String reason, CommandSender operator) {
-        var entry = getBanEntryFor(p.getUniqueId());
-
-        entry.setLong("expired", expire);
-        entry.setString("reason", reason);
-        entry.setBoolean("banned", true);
-
-        entry.save();
+        this.muteData.add(new BanEntry(UUID.randomUUID(),p.getUniqueId(),expire,reason,operator.getName()));
 
         var player = p.getPlayer();
         var expired = SharedObjects.DATE_FORMAT.format(new Date(expire));
@@ -130,14 +145,7 @@ public final class Mute extends SLPackageModule implements Listener {
     }
 
     public boolean unmute(OfflinePlayer p, CommandSender operator) {
-        var entry = getBanEntryFor(p.getUniqueId());
-
-        if (!entry.getBoolean("banned")) {
-            return false;
-        }
-
-        entry.setBoolean("banned", false);
-        entry.save();
+        this.muteData.pardon(p.getUniqueId());
 
         var player = p.getPlayer();
         if (player != null && !player.getName().equals(operator.getName())) {

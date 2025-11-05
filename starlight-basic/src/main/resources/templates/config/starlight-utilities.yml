@@ -2,14 +2,9 @@ config:
   dynamic-view-distance:
     max: 32
     calc-period: 100000
-  chat-at:
-    title-fadein: 10 #the title control time (ticks)
-    title-fadeout: 10
-    title-stay: 20
-    at-template: "{#green}@{player}{#reset}" #the @somebody template in chatline
-    at-title-template: "{#green}{player}: {#reset}{message}" #title shown on screen
-    sound: true #will sound be send to someone bing AT
   position-align:
     fix-spawn-position: true
   surrounding-refresh:
     update-on-explode: false
+  freecam:
+    anti-cheat: true

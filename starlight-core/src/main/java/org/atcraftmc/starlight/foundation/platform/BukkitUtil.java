@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.texts.TextBuilder;
 import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.api.event.ItemCreateEvent;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.internal.PlatformPatcher;
 import org.atcraftmc.starlight.internal.platform.SpigotReflection;
@@ -222,6 +223,8 @@ public interface BukkitUtil {
         loc.add(dx + 0.5, dy + 0.1, dz + 0.5);
         Item e = loc.getWorld().spawn(loc, Item.class);
         e.setItemStack(Objects.requireNonNull(item));
+
+        BukkitUtil.callEvent(new ItemCreateEvent(e));
     }
 
     static void createPermission(String perm) {

@@ -19,6 +19,7 @@ import org.atcraftmc.qlib.language.LanguageItem;
 import org.atcraftmc.starlight.Starlight;
 import org.atcraftmc.starlight.core.JDBCService;
 import org.atcraftmc.starlight.core.RemoteMessageService;
+import org.atcraftmc.starlight.core.data.BanEntryService;
 import org.atcraftmc.starlight.core.data.FlexibleMapService;
 import org.atcraftmc.starlight.core.data.RegionService;
 import org.atcraftmc.starlight.core.data.WaypointService;
@@ -155,6 +156,15 @@ public interface ModuleServices {
             });
             registerInjector(WaypointService.class, (a, m) -> {
                 var service = new WaypointService(a[1]);
+                try {
+                    service.init(JDBCService.getDB(a[0]).orElseThrow());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                return service;
+            });
+            registerInjector(BanEntryService.class, (a, m) -> {
+                var service = new BanEntryService(a[1]);
                 try {
                     service.init(JDBCService.getDB(a[0]).orElseThrow());
                 } catch (SQLException e) {

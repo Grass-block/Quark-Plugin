@@ -11,6 +11,10 @@ import org.bukkit.entity.Entity;
 import me.gb2022.modular.service.ApplicationService;
 import me.gb2022.modular.service.injection.ServiceInject;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.function.Consumer;
+
 
 @ApplicationService(id = "task")
 public interface TaskService extends SLService {
@@ -52,5 +56,15 @@ public interface TaskService extends SLService {
 
     static void runFinalizeTask() {
         CONTAINER.get().runFinalizeTask();
+    }
+
+    static <I> void future(Future<I> future, Consumer<I> consumer) {
+        async().run(()-> {
+            try {
+                consumer.accept(future.get());
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

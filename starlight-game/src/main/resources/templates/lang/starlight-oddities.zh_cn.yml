@@ -1,0 +1,15 @@
+language:
+  custom-block:
+    give: '{global#success}成功获取 {#var} *1'
+    give-failed: '{global#error}不存在名为 {#var} 的自定义方块。'
+  elevator:
+    item-name: '{#aqua}电梯'
+    item-lore:
+      - '{#gray}一个平平无奇的电梯方块。'
+      - '{#gray}如果{#white}垂直地放置它们并清空空间{#gray}，'
+      - '{#gray}在上面{#white}跳跃或潜行{#gray}的话，'
+      - '{#gray}没准会发生{#white}有趣的事情{#gray}...'
+    tip:
+      - "{#gray}使用金锭，红石和活塞来合成电梯方块，在他们上方跳跃或潜行可以快速上下。"
+      - "{#gray}为了电梯正常识别，电梯上方2格内部必须为空气。"
+      - "{#gray}您可在 {click(link,https://www.atforever.world/wiki.html#server-function.md)}{#white}[{#aqua}此处{#white}]{#gray}查询配方。"

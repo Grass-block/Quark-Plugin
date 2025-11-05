@@ -63,8 +63,6 @@ language:
     motd-command: '{global#info}服务器MOTD信息: '
     icon-refresh: '{global#success}成功刷新MOTD图片缓存。'
     text-refresh: '{global#success}成功刷新MOTD文字缓存。'
-  drop-item-info:
-    template: "{#red}{amount}{#yellow}x{translate;color(aqua)}{id}{;}"
   custom-kick-message:
     header: '{#white}您已被踢出 {#server-name}{#white} 服务器'
     ban-header: '{#white}您已被 {#server-name}{#reset} 封禁'

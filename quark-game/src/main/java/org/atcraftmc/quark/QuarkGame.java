@@ -5,7 +5,6 @@ import org.atcraftmc.quark.contents.music.MusicPlayer;
 import org.atcraftmc.quark.storage.ItemDropSecure;
 import org.atcraftmc.quark.storage.PortableFunctionalBlocks;
 import org.atcraftmc.quark.storage.PortableShulkerBox;
-import org.atcraftmc.quark.tweaks.*;
 import me.gb2022.modular.FeatureAvailability;
 import org.atcraftmc.starlight.framework.packages.SLPackageBuilder;
 import org.atcraftmc.starlight.framework.packages.SLPackageInitializer;

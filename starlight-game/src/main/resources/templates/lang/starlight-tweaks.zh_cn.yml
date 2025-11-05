@@ -1,0 +1,26 @@
+language:
+  -module-name:
+    crop-click-harvest: 作物采集
+    dispenser-interaction: 发射器交互修改
+    double-door-sync: 双开门同步
+    vein-miner: 连锁采集
+    realistic-sleep: 真实睡眠
+    portable-functional-blocks: 手持工作方块
+    portable-shulker-box: 快速打开潜影盒
+    item-drop-secure: 物品防丢
+  item-drop-secure:
+    warn: "{global#warning}由于安全原因你无法丢掉这个物品, 使用{#gold}/unlock-drop{#gray} 或 {click(command,/unlock-drop)}{#white}[{#green}点击{#white}]{;} {#gray}来临时解锁。"
+    unlock: "{global#info}你已解除物品丢弃安全锁。锁定将于{#var}秒后恢复。"
+    unlock-end: "{global#info}物品丢弃安全锁已经恢复。"
+  vein-miner:
+    tip: "{#gray}潜行挖掘可以一次采集相连放置的矿石，木头和树叶，当然，这也会消耗更多耐久。"
+  realistic-sleep:
+    sleep-day: '{global#sys-info}你正在非正常睡觉时间睡觉，请使用 {#gold}/leave-bed{#gray} 或者 {click(command,/leave-bed)}{#white}[{#green}点击此处{#white}]{reset}{#gray}来离开床。'
+    leave-bed: '{global#sys-info}你已离开床。你可以随时再次睡觉。'
+    tip: "{#gray}白天躺在床上可以恢复血量，在夜晚则可以帮助全服玩家跳过时间。"
+  dispenser-interaction:
+    tip: "{#gray}当收到信号时，发射器会尝试放置方块；如果正在发射的物品是工具，则会尝试用工具破坏面前的方块。"
+  portable-functional-blocks:
+    tip: "{#gray}部分工作方块（如锻造台，工作台等）可以直接在手上对空气右键打开。"
+  stair-seat:
+    tip: "{#gray}对着楼梯方块右键可以坐下。"

@@ -1,3 +1,11 @@
+### game-0.80.04
+
+- fixed door sync exception on mixed server.
+
+### basic-0.80.04
+
+- fixed item-drop display.
+
 ### basic-0.80.03
 
 - fixed language field `no-access` in `waypoint`.

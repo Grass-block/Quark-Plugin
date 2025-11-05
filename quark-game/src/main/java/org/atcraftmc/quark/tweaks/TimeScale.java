@@ -10,7 +10,7 @@ public class TimeScale extends SLPackageModule {
     @Override
     public void enable() {
         for (World world : Bukkit.getWorlds()) {
-
+            world.setTime();
         }
         super.enable();
     }

@@ -1,0 +1,9 @@
+language:
+  -module-name:
+    chat-at: 聊天提及
+    chat-component: 富文本聊天支持
+    mail: 邮件
+  chat-component:
+    tip:
+      - '{#gray}在聊天，告示牌和命令（部分支持）中，您可以使用富文本标签对文字添加更多效果。'
+      - '{#gray}点击{click(link,wiki.atcraftmc.cn)}[此处]{;}{#gray}了解更多。'

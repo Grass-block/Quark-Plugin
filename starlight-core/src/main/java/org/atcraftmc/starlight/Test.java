@@ -5,9 +5,10 @@ import me.gb2022.commons.nbt.NBT;
 import me.gb2022.commons.nbt.NBTTagCompound;
 import org.atcraftmc.starlight.util.Identifiers;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 import java.util.Base64;
+import java.util.UUID;
 
 public interface Test {
     String[] KEYS = {
@@ -181,7 +182,7 @@ public interface Test {
             "quark-web:server-queries"
     };
 
-    static void main(String[] args) {
+    static void main2(String[] args) {
         for (var s : new String[]{"4e843650-e7fc-39e8-b729-230907616d88"}) {
             var sha = SHA.getSHA1(Identifiers.internal(s), false);
 
@@ -196,16 +197,43 @@ public interface Test {
         }
     }
 
+    static void main(String[] args) {
+        for (int i = 0; i < 10000; i++) {
+            codec();
+        }
 
+        var last = System.currentTimeMillis();
 
-    class BanResult{
+        for (int i = 0; i < 100000; i++) {
+            codec();
+        }
 
+        System.out.println((System.currentTimeMillis() - last) / 100000F);
     }
 
-    class Entry {
 
-
-
+    static void object(NBTTagCompound t) {
+        t.setDouble(UUID.randomUUID().toString(), Math.random());
+        t.setDouble(UUID.randomUUID().toString(), Math.random());
+        t.setDouble(UUID.randomUUID().toString(), Math.random());
+        t.setString(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        t.setString(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        t.setString(UUID.randomUUID().toString(), UUID.randomUUID().toString());
     }
 
+    static void codec() {
+        var n = new NBTTagCompound();
+
+        object(n);
+
+        var bb = new ByteArrayOutputStream();
+
+        NBT.write(n, bb);
+
+        var b = Base64.getEncoder().encodeToString(bb.toByteArray());
+
+        var bbb = new ByteArrayInputStream(Base64.getDecoder().decode(b));
+
+        NBT.read(bbb);
+    }
 }

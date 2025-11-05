@@ -1,12 +1,12 @@
 package org.atcraftmc.starlight.core.custom;
 
+import org.atcraftmc.starlight.Starlight;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
-import org.atcraftmc.starlight.Starlight;
 
 import java.util.List;
 import java.util.Objects;

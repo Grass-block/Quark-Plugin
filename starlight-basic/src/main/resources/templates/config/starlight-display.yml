@@ -67,3 +67,5 @@ config:
       - '{msg#ban-expire}'
       - '{msg#ban-op}'
       - '{msg#website-hint}'
+  drop-item-info:
+    template: "{#red}{amount}{#yellow}x{translate;color(aqua)}{id}{;}"

@@ -1,0 +1,26 @@
+config:
+  realistic-sleep:
+    scale-per-player: 3.5
+    health-interval: 20
+    health-amount: 1
+  vein-miner:
+    max-iterations: 64
+    regex: "_ore|_leaves|_log|glowstone|ancient_debris"
+  item-drop-secure:
+    unlock-time: 120
+    list:
+      - "diamond_"
+      - "netherite_"
+      - "nether_star"
+      - "iron_boots"
+      - "iron_leggings"
+      - "iron_chestplate"
+      - "iron_helmet"
+      - "iron_pickaxe"
+      - "elytra"
+      - "iron_axe"
+      - "iron_shovel"
+      - "iron_sword"
+      - "iron_hoe"
+      - "golden_"
+      - "gold_"

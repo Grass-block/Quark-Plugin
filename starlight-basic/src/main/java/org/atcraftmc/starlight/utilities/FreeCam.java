@@ -1,0 +1,124 @@
+package org.atcraftmc.starlight.utilities;
+
+import me.gb2022.commons.reflect.AutoRegister;
+import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.qlib.language.LanguageItem;
+import org.atcraftmc.starlight.api.PluginMessages;
+import org.atcraftmc.starlight.api.PluginStorage;
+import org.atcraftmc.starlight.foundation.platform.Players;
+import org.atcraftmc.starlight.framework.module.SLCommandModule;
+import org.atcraftmc.starlight.internal.PlayerIdentificationService;
+import org.atcraftmc.starlight.migration.ConfigAccessor;
+import org.atcraftmc.starlight.migration.MessageAccessor;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.permissions.Permission;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@AutoRegister(Registrations.SERVER_EVENT)
+@ApplicationModule(id = "freecam", version = "1.0.0")
+@QuarkCommand(name = "freecam", playerOnly = true)
+public final class FreeCam extends SLCommandModule {
+    private final Map<String, GameMode> gameModes = new HashMap<>();
+    private final Map<String, Location> locations = new HashMap<>();
+
+    @Inject("tip")
+    private LanguageItem tip;
+
+    @Inject("-quark.freecam.bypass")
+    private Permission bypassPermission;
+
+    @Override
+    public void enable() throws Exception {
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
+        super.enable();
+    }
+
+    @Override
+    public void disable() throws Exception {
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            reset(p);
+        }
+        super.disable();
+    }
+
+    public void reset(Player player) {
+        var id = PlayerIdentificationService.transformPlayer(player);
+        if (!this.gameModes.containsKey(id)) {
+            return;
+        }
+        player.setGameMode(this.gameModes.get(id));
+        Players.teleport(player, this.locations.get(id));
+        this.gameModes.remove(id);
+        this.locations.remove(id);
+        MessageAccessor.send(this.language(), player, "reset");
+    }
+
+    public void start(Player player) {
+        var id = PlayerIdentificationService.transformPlayer(player);
+        if (this.gameModes.containsKey(id)) {
+            return;
+        }
+        this.locations.put(id, player.getLocation());
+        this.gameModes.put(id, player.getGameMode());
+        player.setGameMode(GameMode.SPECTATOR);
+        MessageAccessor.send(this.language(), player, "start");
+    }
+
+    public void toggle(Player p) {
+        if (this.gameModes.containsKey(PlayerIdentificationService.transformPlayer(p))) {
+            this.reset(p);
+        } else {
+            this.start(p);
+        }
+    }
+
+    private boolean inSession(Player p) {
+        return this.gameModes.containsKey(PlayerIdentificationService.transformPlayer(p));
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        this.reset(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        event.getPlayer().setGameMode(Bukkit.getDefaultGameMode());
+    }
+
+    @Override
+    public void onCommand(CommandSender sender, String[] args) {
+        this.toggle((Player) sender);
+    }
+
+    @EventHandler
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        if (event.getMessage().contains("freecam")) {
+            return;
+        }
+        if (!ConfigAccessor.getBool(this.config(), "anti-cheat")) {
+            return;
+        }
+        if (event.getPlayer().hasPermission(this.bypassPermission)) {
+            return;
+        }
+        if (this.inSession(event.getPlayer())) {
+            event.setCancelled(true);
+            MessageAccessor.send(this.language(), event.getPlayer(), "anti-cheat");
+        }
+    }
+}

@@ -15,3 +15,8 @@ language:
     unbind: "{global#sys-info}已将清除物品 {#var} 的命令行绑定。"
     bind-fail: "{global#sys-error}无法将命令行绑定到空手。"
     tip: "{#gray}使用{#gold}/item-command{#gray}可以将命令绑定在你的物品上，使用物品即可快速执行该命令。"
+  animate-block-command:
+    size-invalid: "{global#error}选区的{#var}轴大小有误, 请检查坐标顺序后重试。"
+    size-too-big: "{global#error}选区过大，三轴大小应小于{#var}个方块。"
+    no-result: "{global#warning}没有方块以播放动画，任务取消。"
+    success: "{global#success}成功创建动画(包含{#var}方块)。"

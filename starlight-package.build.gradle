@@ -16,6 +16,8 @@ dependencies {
     compileOnly 'me.gb2022.commons:commons-container:1.0'
     compileOnly 'me.gb2022.commons:commons-general:1.0'
 
+    compileOnly 'org.mongodb:bson:5.6.0'
+
     compileOnly gbuildLib('org.atcraftmc.qlib:qlib-bukkit')
     compileOnly gbuildLib('me.gb2022.apm:apm-remote')
     compileOnly gbuildLib('me.gb2022.apm:apm-plugin')

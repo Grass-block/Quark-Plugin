@@ -3,22 +3,20 @@ package org.atcraftmc.starlight.security;
 import me.gb2022.apm.local.PluginMessenger;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
+import me.gb2022.modular.APIIncompatibleException;
 import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
+import me.gb2022.modular.subcomponent.ComponentProvider;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
-import org.atcraftmc.starlight.core.SimpleRegion;
 import org.atcraftmc.starlight.core.data.RegionService;
 import org.atcraftmc.starlight.core.objects.Region;
-import org.atcraftmc.starlight.data.record.RecordEntry;
 import org.atcraftmc.starlight.data.record.registry.RecordField;
 import org.atcraftmc.starlight.data.record.registry.RecordRegistry;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
-import me.gb2022.modular.APIIncompatibleException;
 import org.atcraftmc.starlight.foundation.platform.Compatibility;
-import me.gb2022.modular.module.ApplicationModule;
-import me.gb2022.modular.subcomponent.ComponentProvider;
 import org.atcraftmc.starlight.framework.module.SLModuleComponent;
 import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.migration.ConfigAccessor;
@@ -33,13 +31,13 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.joml.Vector3d;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider(ExplosionDefender.ExplosionWhitelistCommand.class)
-@ApplicationModule(id="explosion-defender",version = "1.4.3")
+@ApplicationModule(id = "explosion-defender", version = "1.4.3")
 @ComponentProvider(ExplosionDefender.BlockExplosionListener.class)
 public final class ExplosionDefender extends SLPackageModule {
     private static final RecordRegistry.A5<String, Number, Number, Number, String> RECORD = new RecordRegistry.A5<>(
@@ -129,7 +127,7 @@ public final class ExplosionDefender extends SLPackageModule {
                                 context.requireArgumentDouble(8)
                         );
 
-                        service.add(new Region(context.requireArgumentAt(1), context.requireArgumentAt(2), p0, p1));
+                        service.add(new Region(UUID.randomUUID(), context.requireArgumentAt(1), context.requireArgumentAt(2), p0, p1));
                         MessageAccessor.send(this.getLanguage(), sender, "region-add", id);
                     }
                     case "remove" -> {

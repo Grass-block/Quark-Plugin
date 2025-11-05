@@ -1,6 +1,8 @@
 package org.atcraftmc.starlight;
 
 import me.gb2022.modular.FeatureAvailability;
+import org.atcraftmc.starlight.chat.ChatAt;
+import org.atcraftmc.starlight.chat.ChatComponent;
 import org.atcraftmc.starlight.commands.*;
 import org.atcraftmc.starlight.console.*;
 import org.atcraftmc.starlight.display.*;
@@ -67,15 +69,15 @@ public final class SLBasicPackage extends MultiPackageProvider {
             i.module(BlockUpdateLocker.class);
             i.module(Calculator.class);
             i.module(CameraMovement.class);
-            i.module(ChatAt.class);
-            i.module(ChatComponent.class);
-            i.module(DynamicViewDistance.class); //todo [DFU] miss
+            i.module(DynamicViewDistance.class);
             i.module(Hitokoto.class);
             i.module(PlayerPingCommand.class);
             i.module(PositionLock.class);
             i.module(PositionAlign.class);
             i.module(SurroundingRefresh.class);
             i.module(TickManager.class);
+            i.module(FreeCam.class);
+            i.module(FlyCommand.class);
 
             i.config("starlight-utilities");
             i.language("starlight-utilities", "zh_cn");
@@ -90,6 +92,7 @@ public final class SLBasicPackage extends MultiPackageProvider {
             i.module(EntityMotion.class);
             i.module(ItemBinding.class);
             i.module(WorldEditCommands.class);
+            i.module(AnimateBlockCommand.class);
 
             i.language("starlight-commands", "zh_cn");
         });
@@ -108,6 +111,16 @@ public final class SLBasicPackage extends MultiPackageProvider {
 
             i.config("starlight-security");
             i.language("starlight-security", "zh_cn");
+        });
+    }
+
+    static SLPackageInitializer chat() {
+        return SLPackageBuilder.of("starlight-chat", FeatureAvailability.BOTH, (i) -> {
+            i.module(ChatAt.class);
+            i.module(ChatComponent.class);
+
+            i.config("starlight-chat");
+            i.language("starlight-chat", "zh_cn");
         });
     }
 
@@ -143,7 +156,7 @@ public final class SLBasicPackage extends MultiPackageProvider {
     }
 
     static Set<SLPackageInitializer> initializers() {
-        return Set.of(management(), console(), warps(), utilities(), display(), security(), sideload(), commands());
+        return Set.of(management(), console(), warps(), utilities(), display(), security(), sideload(), commands(), chat());
     }
 
     @Override

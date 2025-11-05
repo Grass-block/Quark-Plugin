@@ -1,14 +1,15 @@
 package org.atcraftmc.starlight.display;
 
 import me.gb2022.commons.reflect.AutoRegister;
-import me.gb2022.modular.Registrations;
-import net.kyori.adventure.text.Component;
-import org.atcraftmc.qlib.platform.PluginPlatform;
-import org.atcraftmc.qlib.texts.TextBuilder;
-import org.atcraftmc.starlight.core.TaskService;
 import me.gb2022.modular.APIIncompatibleException;
-import org.atcraftmc.starlight.foundation.platform.Compatibility;
+import me.gb2022.modular.Registrations;
 import me.gb2022.modular.module.ApplicationModule;
+import net.kyori.adventure.text.Component;
+import org.atcraftmc.qlib.texts.TextBuilder;
+import org.atcraftmc.starlight.api.event.ItemCreateEvent;
+import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.foundation.ComponentSerializer;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
 import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.Bukkit;
 import org.bukkit.Nameable;
@@ -22,7 +23,9 @@ import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
-@ApplicationModule(id="drop-item-info")
+import java.util.Objects;
+
+@ApplicationModule(id = "drop-item-info")
 @AutoRegister(Registrations.SERVER_EVENT)
 public final class DropItemInfo extends SLPackageModule {
 
@@ -95,6 +98,11 @@ public final class DropItemInfo extends SLPackageModule {
 
 
     @EventHandler
+    public void onDropCreate(ItemCreateEvent event){
+        setId(event.getItem());
+    }
+
+    @EventHandler
     public void onItemMerge(final ItemMergeEvent event) {
         TaskService.entity(event.getTarget()).delay(1, () -> setId(event.getTarget()));
     }
@@ -113,10 +121,18 @@ public final class DropItemInfo extends SLPackageModule {
         var stack = item.getItemStack();
         var type = stack.getType();
         var id = (type.isBlock() ? "block." : "item.") + type.getKey().toString().replace(":", ".");
-        var s = PluginPlatform.global()
-                .globalFormatMessage(template.replace("{amount}", String.valueOf(stack.getAmount())).replace("{id}", id));
+        var s = template.replace("{amount}", String.valueOf(stack.getAmount()));
 
-        item.customName(TextBuilder.buildComponent(s));
+        if (!stack.getItemMeta().getDisplayName().isEmpty()) {
+            item.customName(TextBuilder.buildComponent(s.replace(
+                    "{id}",
+                    ComponentSerializer.legacy(Objects.requireNonNull(stack.getItemMeta()
+                                                                              .displayName()))
+            )));
+        } else {
+            item.customName(TextBuilder.buildComponent(s.replace("{id}", id)));
+        }
+
         item.setCustomNameVisible(true);
     }
 }

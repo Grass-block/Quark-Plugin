@@ -11,8 +11,9 @@ import java.util.UUID;
 /**
  * separated xyz coordinate is ONLY for acceleration.
  */
-public final class Region {
+public class Region {
     private final UUID uuid;
+    private final UUID owner;
     private final BsonDocument extraMetadata;
     private final String world;
     private final Vector3d point0;
@@ -33,7 +34,8 @@ public final class Region {
      * @param p0    point1
      * @param p1    point2
      */
-    public Region(String name, World world, Location p0, Location p1) {
+    public Region(UUID owner, String name, World world, Location p0, Location p1) {
+        this.owner = owner;
         this.world = world.getName();
         this.point0 = new Vector3d(p0.getX(), p0.getY(), p0.getZ());
         this.point1 = new Vector3d(p1.getX(), p1.getY(), p1.getZ());
@@ -41,10 +43,12 @@ public final class Region {
 
         this.uuid = UUID.randomUUID();
         this.extraMetadata = new BsonDocument();
+        this.deserializeMetadata(this.extraMetadata);
         this.name = name;
     }
 
-    public Region(String name, String world, Vector3d p0, Vector3d p1) {
+    public Region(UUID owner, String name, String world, Vector3d p0, Vector3d p1) {
+        this.owner = owner;
         this.world = world;
         this.point0 = p0;
         this.point1 = p1;
@@ -52,17 +56,26 @@ public final class Region {
 
         this.uuid = UUID.randomUUID();
         this.extraMetadata = new BsonDocument();
+        this.deserializeMetadata(this.extraMetadata);
         this.name = name;
     }
 
-    public Region(UUID uuid, String name, String world, Vector3d p0, Vector3d p1, BsonDocument extraMetadata) {
+    public Region(UUID uuid, UUID owner, String name, String world, Vector3d p0, Vector3d p1, BsonDocument extraMetadata) {
+        this.owner = owner;
         this.world = world;
         this.point0 = p0;
         this.point1 = p1;
         this.renderXYZ(p0, p1);
         this.extraMetadata = extraMetadata;
+        this.deserializeMetadata(extraMetadata);
         this.uuid = uuid;
         this.name = name;
+    }
+
+    public void serializeMetadata(BsonDocument metadata) {
+    }
+
+    public void deserializeMetadata(BsonDocument metadata) {
     }
 
     public void renderXYZ(Location p0, Location p1) {
@@ -158,5 +171,9 @@ public final class Region {
 
     public String getWorldId() {
         return this.world;
+    }
+
+    public UUID getOwner() {
+        return this.owner;
     }
 }

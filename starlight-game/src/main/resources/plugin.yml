@@ -1,0 +1,21 @@
+#identifier
+name: starlight-game
+version: '${core_version}'
+
+#api
+main: org.atcraftmc.starlight.SLGamePackage
+api-version: 1.16
+folia-supported: true
+load: POSTWORLD
+depend: [ "starlight-core" ]
+
+#description
+authors: [ "GrassBlock2022","TBSTCraft" ]
+website: https://atcarftmc.cn
+prefix: Starlight-Game
+description: |
+  Extension pack of Starlight plugin ecosystem providing game tweaks and oddities.
+  including packs:
+    - tweaks
+    - storage
+    - oddities
