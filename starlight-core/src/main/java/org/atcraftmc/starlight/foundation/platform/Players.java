@@ -121,13 +121,13 @@ public interface Players {
         double y1 = Math.max(point0.getY(), point1.getY()) + 1;
         double z1 = Math.max(point0.getZ(), point1.getZ()) + 1;
 
-        if ((x1 - x0) / density > 512) {
+        if ((x1 - x0) / density > 2048) {
             return;
         }
-        if ((y1 - y0) / density > 512) {
+        if ((y1 - y0) / density > 2048) {
             return;
         }
-        if ((z1 - z0) / density > 512) {
+        if ((z1 - z0) / density > 2048) {
             return;
         }
 

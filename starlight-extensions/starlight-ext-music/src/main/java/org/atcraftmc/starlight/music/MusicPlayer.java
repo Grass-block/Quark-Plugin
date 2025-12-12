@@ -7,8 +7,6 @@ import me.gb2022.apm.remote.event.message.RemoteMessageSurpassEvent;
 import me.gb2022.apm.remote.event.message.RemoteQueryEvent;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
-import me.gb2022.commons.reflect.method.MethodHandle;
-import me.gb2022.commons.reflect.method.MethodHandleO3;
 import me.gb2022.modular.Registrations;
 import me.gb2022.modular.module.ApplicationModule;
 import me.gb2022.modular.subcomponent.ComponentProvider;
@@ -16,12 +14,14 @@ import me.gb2022.simpnet.util.BufferUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.apache.logging.log4j.Logger;
 import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
+import org.atcraftmc.qlib.language.Language;
 import org.atcraftmc.qlib.language.LanguageEntry;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.core.LocaleService;
 import org.atcraftmc.starlight.core.RemoteMessageService;
 import org.atcraftmc.starlight.core.TaskService;
 import org.atcraftmc.starlight.core.ui.InventoryUI;
@@ -29,112 +29,69 @@ import org.atcraftmc.starlight.core.ui.TextRenderer;
 import org.atcraftmc.starlight.core.ui.UI;
 import org.atcraftmc.starlight.core.ui.providing.GUIProvider;
 import org.atcraftmc.starlight.core.ui.view.InventoryUIView;
-import org.atcraftmc.starlight.data.assets.AssetGroup;
+import org.atcraftmc.starlight.foundation.TextSender;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.ModuleCommand;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
 import org.atcraftmc.starlight.framework.module.SLModuleComponent;
 import org.atcraftmc.starlight.framework.module.SLPackageModule;
-import org.atcraftmc.starlight.migration.ConfigAccessor;
 import org.atcraftmc.starlight.migration.MessageAccessor;
-import org.atcraftmc.starlight.migration.QuarkDataImporter;
-import org.atcraftmc.starlight.util.FilePath;
-import org.bukkit.*;
-import org.bukkit.configuration.ConfigurationSection;
+import org.atcraftmc.starlight.music.resolve.MusicData;
+import org.atcraftmc.starlight.music.resolve.MusicResolveRequest;
+import org.atcraftmc.starlight.music.session.LegacyMusicSession;
+import org.atcraftmc.starlight.music.session.MusicSession;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 
 @CommandProvider(MusicPlayer.MusicCommand.class)
 @AutoRegister({Registrations.SERVER_EVENT, Registrations.PLUGIN_VPN_EVENT})
 @ComponentProvider({MusicPlayer.APMEventHandler.class, MusicPlayer.PlayerEventHandler.class})
 @ApplicationModule(id = "music-player", version = "1.0.3")
-public final class MusicPlayer extends SLPackageModule {
-    public static final String UNSUPPORTED_FORMAT = "unsupported-format";
-    public static final String RESOLVE_ERROR = "error-resolving";
-    public static final String NOT_FOUND = "not-found";
-    public static final String TIMEOUT = "timeout";
-    private static final MethodHandleO3<Player, Sound, Float, Float> PLAY_NOTE = MethodHandle.select((ctx) -> {
-        ctx.attempt(() -> {
-            Class.forName("org.bukkit.SoundCategory");
-            return null;
-        }, (p, s, power, pitch) -> p.playSound(p.getLocation(), s, SoundCategory.RECORDS, power, pitch));
-        ctx.dummy((p, s, power, pitch) -> p.playSound(p.getLocation(), s, power, pitch));
-    });
+public final class MusicPlayer extends SLPackageModule implements PlayerUIRenderer {
     private final GUIProvider<InventoryUI> musicUI = new MusicUI(this);
-    private final MusicSession globalSession = new MusicSession(this);
-    private MusicFileLoader loader;
-
-    @Inject("music")
-    private AssetGroup musicGroup;
+    private MusicSession globalSession;
 
     @Inject
     private LanguageEntry language;
 
-    @Inject
-    private Logger logger;
+    @Override
+    public void renderUI(Player player, MusicData currentMusic, int currentTick, boolean pause) {
+        String template = Language.generateTemplate(this.config(), "ui", (s) -> {
+            if (pause) {
+                s = s.replace("{msg#playing}", "{msg#paused}");
+            }
+            return s;
+        });
+        template = template.replace("{name}", currentMusic.getName().replace("_", " ")).replace("{time}",
+                                                                                                PlayerUIRenderer.formatTime(currentMusic.getMillsLength() * currentTick / currentMusic.getTickLength())
+        ).replace(
+                "{total}",
+                PlayerUIRenderer.formatTime(currentMusic.getMillsLength())
+        );
+
+        String ui = this.language().inline(template, LocaleService.locale(player));
+        TextSender.sendActionbarTitle(player, TextBuilder.build(ui));
+    }
 
     @Override
     public void enable() {
-        if (!this.musicGroup.existFolder()) {
-            this.saveDefaults();
-        }
-
+        this.globalSession = new LegacyMusicSession(this);
         this.globalSession.startSession();
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             this.globalSession.addPlayer(player);
         }
-
-        if (ConfigAccessor.getBool(this.config(), "remote")) {
-            this.loader = new MusicFileLoader.RemoteLoader(this.musicGroup, this.config().value("cdn-server").string());
-        } else {
-            this.loader = new MusicFileLoader.LocalLoader(this.musicGroup);
-        }
-
-        QuarkDataImporter.registerCustomDataHandler("starlight:music", (path) -> {
-            var folder = new File(path + "/assets/music");
-            var dest = new File(FilePath.slDataFolder() + "/assets/music");
-
-            if (!dest.exists()) {
-                if (!dest.mkdirs()) {
-                    this.logger.error("failed to create folder: {}", dest.getAbsolutePath());
-                    return;
-                }
-            }
-
-            for (var f : Objects.requireNonNull(folder.listFiles())) {
-                var file = new File(dest.getAbsolutePath() + "/" + f.getName());
-
-                if (file.exists() && file.length() > 0) {
-                    this.logger.warn("skipped existing file: {}", file.getName());
-                    continue;
-                }
-
-                try {
-                    if (!file.createNewFile()) {
-                        this.logger.error("failed to create file: {}", file.getName());
-                        continue;
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                try (var in = new FileInputStream(f); var out = new FileOutputStream(file)) {
-                    in.transferTo(out);
-                    this.logger.info("created music file: {}", file.getName());
-                } catch (IOException e) {
-                    this.logger.catching(e);
-                }
-            }
-        });
     }
 
     @Override
@@ -144,27 +101,13 @@ public final class MusicPlayer extends SLPackageModule {
                 TaskService.async().cancel(s);
             }
         }
-        this.globalSession.stopSession();
+
+        this.globalSession.destroySession();
     }
 
-    public void saveDefaults() {
-        this.musicGroup.save("Avicii-The_Days.mid");
-        this.musicGroup.save("Avicii-The_Nights.mid");
-        this.musicGroup.save("Avicii-Waiting_For_Love.mid");
-        this.musicGroup.save("Kiss_The_Rain.mid");
-        this.musicGroup.save("Beyond-海阔天空.mid");
-        this.musicGroup.save("HOYO-MiX_-_何者.mid");
-        this.musicGroup.save("HOYO-MiX_-_在银河中孤独摇摆.mid");
-        this.musicGroup.save("HOYO-MiX_-_BusyDayInMonstat.nbs");
-        this.musicGroup.save("HOYO-MiX_-_DayInMonstat.nbs");
-        this.musicGroup.save("HOYO-MiX_-_希望有羽毛和翅膀.nbs");
-        this.musicGroup.save("FripSide_-_only_my_railgun.nbs");
-        this.musicGroup.save("[BA]ConstantModerato.nbs");
-        this.musicGroup.save("买辣椒也用券_-_起风了.mid");
-    }
 
     public void pauseMusic(String player) {
-        MessageAccessor.broadcast(this.language, false, false, "cancel", player);
+        MessageAccessor.broadcast(this.language, false, false, "pause", player);
         this.globalSession.pause();
     }
 
@@ -178,91 +121,17 @@ public final class MusicPlayer extends SLPackageModule {
         this.globalSession.cancel();
     }
 
-    public void playMusic(String player, String music, int pitch, boolean dispatchInstrument, float speedMod, int interpolation) {
-        this.globalSession.play(select(music, pitch, dispatchInstrument, speedMod, interpolation));
-        MessageAccessor.broadcast(this.language, false, false, "play", player, music, pitch);
+    public void playMusic(MusicResolveRequest request) {
+        this.globalSession.play(MusicService.instance().dispatch(request));
+        MessageAccessor.broadcast(this.language, false, false, "play", request.actor(), request.music(), request.pitch());
     }
 
-    public void playNode(Set<Player> audience, int node, int off, EnumInstrument targetInstrument, float power) {
-        int base = node - 23 + off - 6;//wtf
-        if (base < 0 || base >= 72) {
-            return;
-        }
-
-        var remapped = switch (targetInstrument) {
-            case GUITAR ->
-                    base > 0 ? base < 24 ? EnumInstrument.BASS_GUITAR : base >= 48 ? EnumInstrument.XYLOPHONE : EnumInstrument.GUITAR : EnumInstrument.BASS_DRUM;
-            case PIANO ->
-                    base > 0 ? base < 24 ? EnumInstrument.BASS_GUITAR : base >= 48 ? EnumInstrument.BELL : EnumInstrument.PIANO : EnumInstrument.BASS_DRUM;
-            case STD_DRUM -> switch (node) {
-                case 38, 40 -> EnumInstrument.SNARE_DRUM;
-                case 42, 44, 46, 49, 51 -> EnumInstrument.HAT;
-                default -> EnumInstrument.BASS_DRUM;//35,36
-            };
-
-
-            default -> targetInstrument;
-        };
-
-
-        var off1 = base % 12;
-        var octave = base % 24 > 11 ? 1 : 0;
-
-        var n = switch (off1) {
-            case 6 -> Note.natural(octave, Note.Tone.C);
-            case 7 -> Note.sharp(octave, Note.Tone.C);
-            case 8 -> Note.natural(octave, Note.Tone.D);
-            case 9 -> Note.sharp(octave, Note.Tone.D);
-            case 10 -> Note.natural(octave, Note.Tone.E);
-            case 11 -> Note.natural(octave, Note.Tone.F);
-            case 0 -> Note.sharp(octave, Note.Tone.F);
-            case 1 -> Note.natural(octave, Note.Tone.G);
-            case 2 -> Note.sharp(octave, Note.Tone.G);
-            case 3 -> Note.natural(octave, Note.Tone.A);
-            case 4 -> Note.sharp(octave, Note.Tone.A);
-            case 5 -> Note.natural(octave, Note.Tone.B);
-            default -> throw new IllegalStateException("Unexpected value: " + off1);
-        };
-
-        float pitch = (float) Math.pow(2.0, (n.getId() - 12) / 12.0);
-
-        for (Player p : audience) {
-            PLAY_NOTE.invoke(p, remapped.bukkit(), power, pitch);
-        }
-    }
-
-    private MusicData select(String name, int pitch, boolean dispatchInstrument, float speedMod, int interpolation) {
-        var f = this.loader.load(name);
-
-        if (!f.exists()) {
-            throw new IllegalArgumentException(NOT_FOUND);
-        }
-
-        return MusicResolver.resolve(f, pitch, dispatchInstrument, speedMod, interpolation);
-    }
-
-
+    //todo: 音乐获取指令拆分 管理部分移动到MusicFileService
     @QuarkCommand(name = "music", permission = "+quark.music.play")
     public static final class MusicCommand extends ModuleCommand<MusicPlayer> {
         @Override
         public void suggest(CommandSuggestion suggestion) {
-            suggestion.suggest(0, "play", "pause", "resume", "cancel", "gui", "save-defaults", "trim");
-            suggestion.matchArgument(0, "play", (ctx) -> {
-                ctx.suggest(1, this.getModule().loader.list());
-                ctx.suggest(1, "random");
-
-                for (var i = 2; i < 8; i++) {
-                    ctx.suggest(i, "-p:0");
-                    ctx.suggest(i, "-p:12");
-                    ctx.suggest(i, "-p:-12");
-                    ctx.suggest(i, "-s:1");
-                    ctx.suggest(i, "-s:1.5");
-                    ctx.suggest(i, "-s:0.5");
-                    ctx.suggest(i, "-legacy");
-                    ctx.suggest(i, "-i:on");
-                    ctx.suggest(i, "-i:smart");
-                }
-            });
+            MusicCommandDispatcher.suggest(suggestion, 0);
         }
 
         @Override
@@ -275,9 +144,9 @@ public final class MusicPlayer extends SLPackageModule {
                     var page = context.hasArgumentAt(1) ? context.requireArgumentInteger(1) : 0;
                     getModule().musicUI.open(context.requireSenderAsPlayer(), page);
                 }
-                case "trim" -> getLanguage().item("trim").send(context.getSender(), getModule().loader.trim());
+                case "trim" -> getLanguage().item("trim").send(context.getSender(), MusicService.instance().trim());
                 case "save-defaults" -> {
-                    this.getModule().saveDefaults();
+                    MusicService.instance().saveDefaults();
                     MessageAccessor.send(this.getLanguage(), context.getSender(), "restore-defaults");
                 }
                 case "cancel" -> {
@@ -293,51 +162,16 @@ public final class MusicPlayer extends SLPackageModule {
                     service.broadcast("music:control", "resume;" + operator);
                 }
                 case "play" -> {
-                    var args = context.getArgs();
-
-                    int pitch = 0;
-                    float speedMod = 1.0f;
-
-                    ConfigurationSection pitchOffsets = this.getConfig().value("pitch-offsets").section();
-                    if (pitchOffsets != null && pitchOffsets.contains(args[1])) {
-                        pitch = pitchOffsets.getInt(args[1]);
-                    }
-
-                    boolean legacy = !List.of(args).contains("-legacy");
-                    int interpolation = 0;
-
-                    for (String s : args) {
-                        if (s.startsWith("-p:")) {
-                            pitch = Integer.parseInt(s.replace("-p:", ""));
-                        }
-                        if (s.startsWith("-s:")) {
-                            speedMod = Float.parseFloat(s.replace("-s:", ""));
-                        }
-                        if (s.startsWith("-i:")) {
-                            interpolation = s.replace("-i:", "").equals("smart") ? 1 : 2;
-                        }
-                    }
-
-                    String music;
-
-                    if (Objects.equals(args[1], "random")) {
-                        music = getModule().loader.random();
-                    } else {
-                        music = args[1];
-                    }
-
-                    if (!this.getModule().loader.list().contains(music)) {
-                        MessageAccessor.send(this.getLanguage(), context.getSender(), "not-found", music);
-                        return;
-                    }
-
-                    this.getModule().playMusic(operator, music, pitch, legacy, speedMod, interpolation);
-
-                    int finalPitch = pitch;
-                    float finalSpeedMod = speedMod;
+                    var request = MusicCommandDispatcher.selectMusic(context, 0);
+                    this.getModule().playMusic(request);
 
                     service.broadcast("music:control", msg -> {
-                        String data = "play;%s;%s;%d;%s;%f".formatted(operator, music, finalPitch, legacy, finalSpeedMod);
+                        String data = "play;%s;%s;%d;%s;%f".formatted(request.actor(),
+                                                                      request.music(),
+                                                                      request.pitch(),
+                                                                      request.dispatchInstrument(),
+                                                                      request.speedMod()
+                        );
                         BufferUtil.writeString(msg, data);
                     });
                 }
@@ -358,18 +192,24 @@ public final class MusicPlayer extends SLPackageModule {
 
         @APMRemoteEvent("music:get")
         public void onMusicFetch(RemoteMessenger ctx, RemoteQueryEvent event) {
-            this.parent.musicGroup.asInputStream(BufferUtil.readString(event.message()), (stream -> event.write((b) -> {
-                try {
-                    BufferUtil.writeArray(b, stream.readAllBytes());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            })));
+            var file = MusicService.instance().loadFile(BufferUtil.readString(event.message()));
+
+            try (var i = new FileInputStream(file)) {
+                event.write((b) -> {
+                    try {
+                        BufferUtil.writeArray(b, i.readAllBytes());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @APMRemoteEvent("music:list")
         public void onMusicList(RemoteMessenger ctx, RemoteQueryEvent event) {
-            event.write(String.join(";", this.parent.musicGroup.list().toArray(new String[0])));
+            event.write(String.join(";", MusicService.instance().list().toArray(new String[0])));
         }
 
         @APMRemoteEvent("music:control")
@@ -386,7 +226,9 @@ public final class MusicPlayer extends SLPackageModule {
                     var pitch = Integer.parseInt(commands[3]);
                     var speed = Float.parseFloat(commands[5]);
                     var legacy = Boolean.parseBoolean(commands[4]);
-                    TaskService.async().run(() -> this.parent.playMusic(player, music, pitch, legacy, speed, 0));
+
+                    var request = new MusicResolveRequest(player, music, pitch, legacy, speed, 0);
+                    TaskService.async().run(() -> this.parent.playMusic(request));
                 }
             }
         }
@@ -433,7 +275,7 @@ public final class MusicPlayer extends SLPackageModule {
 
         @Override
         public InventoryUIView initializeView(InventoryUI builder, Player viewer, Object... args) {
-            var list = new ArrayList<>(this.reference.loader.list());
+            var list = new ArrayList<>(MusicService.instance().list());
             list.sort(Comparator.naturalOrder());
             builder.title(TextRenderer.data(language().item("ui-title"), list.size() / 45));
             var view = builder.createInventoryUI(viewer);
@@ -514,7 +356,8 @@ public final class MusicPlayer extends SLPackageModule {
             } else {
                 UI.builder()
                         .icon(UI.icon(Material.GRAY_STAINED_GLASS_PANE))
-                        .name(TextRenderer.data(Starlight.lang().item("common", "ui", "prev")))
+                        .name(TextRenderer.data(Starlight.lang()
+                                                        .item("common", "ui", "prev")))
                         .operation(UI.SOUND_DISABLE)
                         .build(builder, 48);
             }
@@ -522,14 +365,16 @@ public final class MusicPlayer extends SLPackageModule {
             if (page != pages) {
                 UI.builder()
                         .icon(UI.icon(Material.BLUE_STAINED_GLASS_PANE))
-                        .name(TextRenderer.data(Starlight.lang().item("common", "ui", "next")))
+                        .name(TextRenderer.data(Starlight.lang()
+                                                        .item("common", "ui", "next")))
                         .operation((v, player, action) -> v.setData(renderData(v, page + 1)))
                         .operation(UI.SOUND_CLICK)
                         .build(builder, 50);
             } else {
                 UI.builder()
                         .icon(UI.icon(Material.GRAY_STAINED_GLASS_PANE))
-                        .name(TextRenderer.data(Starlight.lang().item("common", "ui", "next")))
+                        .name(TextRenderer.data(Starlight.lang()
+                                                        .item("common", "ui", "next")))
                         .operation(UI.SOUND_DISABLE)
                         .build(builder, 50);
             }

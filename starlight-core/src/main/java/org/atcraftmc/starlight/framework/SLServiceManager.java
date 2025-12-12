@@ -1,9 +1,10 @@
 package org.atcraftmc.starlight.framework;
 
 import me.gb2022.modular.APIIncompatibleException;
-import me.gb2022.modular.service.ServiceManager;
+import me.gb2022.modular.pack.IPackage;
 import me.gb2022.modular.service.ApplicationService;
 import me.gb2022.modular.service.ServiceLayer;
+import me.gb2022.modular.service.ServiceManager;
 import me.gb2022.modular.service.injection.ServiceProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +28,7 @@ public final class SLServiceManager extends ServiceManager<SLService> {
     }
 
     static <I extends SLService> void register(Class<I> service) {
-        INSTANCE.registerService(service);
+        INSTANCE.registerService(null, service);
     }
 
     static void unregister(Class<? extends SLService> service) {
@@ -119,7 +120,11 @@ public final class SLServiceManager extends ServiceManager<SLService> {
     }
 
     @Override
-    public <E extends SLService> E createImplementation(Class<E> service, String id) {
-        return SLServiceManager.createImplementation(service, ConfigContainer.getInstance().entry("starlight-core", id));
+    public <E extends SLService> E createImplementation(IPackage<?, ?, SLService> p, Class<E> service, String id) {
+        return SLServiceManager.createImplementation(
+                service,
+                ConfigContainer.getInstance().entry(p == null ? "starlight-core" : p.getId(), id)
+        );
     }
+
 }

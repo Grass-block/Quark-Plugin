@@ -10,13 +10,14 @@ import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.atcraftmc.qlib.language.MinecraftLocale;
+import org.atcraftmc.qlib.platform.PluginPlatform;
 import org.atcraftmc.qlib.texts.ComponentBlock;
+import org.atcraftmc.starlight.core.LocaleService;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.joml.Vector3i;
-import org.atcraftmc.starlight.core.LocaleService;
 
 import java.time.Duration;
 import java.util.Locale;
@@ -28,13 +29,11 @@ public interface TextSender {
 
     MethodHandleO1<CommandSender, ComponentLike> SEND_MESSAGE = MethodHandle.select((ctx) -> {
         ctx.attempt(() -> Player.class.getMethod("sendMessage", Component.class), (p, c) -> p.sendMessage(c));
-        ctx.attempt(
-                () -> CommandSender.Spigot.class.getMethod("sendMessage", BaseComponent.class),
-                (p, c) -> p.spigot().sendMessage(ComponentSerializer.bungee(c))
+        ctx.attempt(() -> CommandSender.Spigot.class.getMethod("sendMessage", BaseComponent.class),
+                    (p, c) -> p.spigot().sendMessage(ComponentSerializer.bungee(c))
         );
-        ctx.attempt(
-                () -> CommandSender.class.getMethod("sendMessage", String.class),
-                (p, c) -> p.sendMessage(ComponentSerializer.legacy(c))
+        ctx.attempt(() -> CommandSender.class.getMethod("sendMessage", String.class),
+                    (p, c) -> p.sendMessage(ComponentSerializer.legacy(c))
         );
     });
     MethodHandleO3<Player, ComponentLike, ComponentLike, Vector3i> SEND_TITLE = MethodHandle.select((ctx) -> {
@@ -61,14 +60,15 @@ public interface TextSender {
         });
         ctx.attempt(() -> Player.class.getMethod("spigot"), (p, c) -> {
             var bc = ComponentSerializer.bungee(c);
-            p.sendMessage(ChatMessageType.ACTION_BAR, bc);
+            p.spigot().sendMessage(ChatMessageType.ACTION_BAR, bc);
         });
     });
 
 
     //message
     static void sendMessage(CommandSender sender, ComponentLike message) {
-        SEND_MESSAGE.invoke(sender, TextExaminer.examine(message.asComponent(), LocaleService.locale(sender)));
+        var c = PluginPlatform.global().examineComponent(message, sender, LocaleService.locale(sender));
+        PluginPlatform.global().sendMessage(sender, c);
     }
 
     static void sendBlock(CommandSender sender, ComponentBlock block) {

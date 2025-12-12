@@ -5,5 +5,5 @@ plugins {
 apply from: '../../starlight-package.build.gradle'
 
 dependencies {
-
+    compileOnly project(":starlight-extensions:starlight-ext-music")
 }

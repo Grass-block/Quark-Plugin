@@ -3,6 +3,7 @@ package org.atcraftmc.starlight;
 import me.gb2022.modular.FeatureAvailability;
 import org.atcraftmc.starlight.core.RemoteMessageService;
 import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.core.custom.CustomBlockService;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 import org.atcraftmc.starlight.core.ui.UIManager;
 import org.atcraftmc.starlight.data.record.RecordService;
@@ -32,6 +33,7 @@ public interface SLInternalPackage {
                 .service(PlayerIdentificationService.class)
                 .service(ChatForwardingService.class)
                 .service(PlayerBanService.class)
+                .service(CustomBlockService.class)
 
                 .module("version-log-viewer", VersionLogViewer.class)
                 .module("modrinth-version-check", ModrinthVersionCheck.class)

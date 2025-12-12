@@ -1,7 +1,5 @@
 package org.atcraftmc.starlight.music.resolve;
 
-import org.atcraftmc.starlight.music.MusicData;
-
 import java.io.File;
 
 public interface MusicParser {

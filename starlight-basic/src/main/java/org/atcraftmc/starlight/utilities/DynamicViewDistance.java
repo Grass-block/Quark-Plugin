@@ -9,6 +9,7 @@ import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
 import org.atcraftmc.starlight.foundation.command.CommandProvider;
 import org.atcraftmc.starlight.foundation.command.PluginCommandExecutor;
+import org.atcraftmc.starlight.foundation.platform.APIProfile;
 import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.atcraftmc.starlight.utilities.viewdistance.CustomSettingStrategy;
 import org.atcraftmc.starlight.utilities.viewdistance.PlayerCountStrategy;
@@ -65,6 +66,7 @@ public final class DynamicViewDistance extends SLPackageModule implements Plugin
 
     @Override
     public void checkCompatibility() {
+        Compatibility.blackListPlatform(APIProfile.ARCLIGHT);
         Compatibility.requireMethod(() -> Player.class.getMethod("setSendViewDistance", int.class));
         Compatibility.requireMethod(() -> Player.class.getMethod("setViewDistance", int.class));
         Compatibility.requireMethod(() -> Player.class.getMethod("getLastLogin"));

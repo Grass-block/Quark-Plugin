@@ -59,6 +59,10 @@ public interface Configurations {
 
             var df = new File(FILE_CUSTOM.formatted(FilePath.slDataFolder(), name, justName));
 
+            if (df.exists() && df.length() > 0) {
+                continue;
+            }
+
             if (in != null) {
                 try {
                     if (df.createNewFile()) {

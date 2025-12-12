@@ -4,6 +4,8 @@ import me.gb2022.commons.http.HttpMethod;
 import me.gb2022.commons.http.HttpRequest;
 import org.apache.logging.log4j.Logger;
 import org.atcraftmc.starlight.Starlight;
+import org.atcraftmc.starlight.framework.SLPluginConcept;
+import org.jetbrains.annotations.NotNull;
 import sun.misc.Unsafe;
 
 import java.io.File;
@@ -17,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.jar.JarFile;
 
 public final class LibraryManager {
     public static final Logger LOGGER = Starlight.LOGGER;
@@ -24,10 +27,58 @@ public final class LibraryManager {
     private final String repositoryURL;
     private final String workingDirectory;
     private final Map<String, URL> loadedURLs = new HashMap<>();
+    private final boolean loadFully;
 
-    public LibraryManager(String repositoryURL, String workingDirectory) {
+    public LibraryManager(String repositoryURL, String workingDirectory, boolean loadFully) {
         this.repositoryURL = repositoryURL.replace("https://", "").replace("http://", "");
         this.workingDirectory = workingDirectory;
+        this.loadFully = loadFully;
+    }
+
+    public static void loadFullJar(@NotNull ClassLoader loader, File jar) {
+        LOGGER.info("target core jar file: {}", jar.getAbsolutePath());
+
+        var counter = 0;
+
+        try (JarFile jarFile = new JarFile(jar)) {
+            var entries = jarFile.entries();
+
+            while (entries.hasMoreElements()) {
+                var entry = entries.nextElement();
+                if (entry.isDirectory()) {
+                    continue;
+                }
+                if (!entry.getName().endsWith(".class")) {
+                    continue;
+                }
+
+                var className = entry.getName().replace("/", ".").replaceAll("\\.class$", "");
+
+                if (className.contains("Utils21")) {
+                    continue;
+                }
+
+                try {
+                    loader.loadClass(className);
+                    counter++;
+                } catch (Throwable e) {
+                    LOGGER.warn("failed to load class {}: {}", className, e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        LOGGER.info("loaded {} classes.", counter);
+    }
+
+    public static void prepareEnvironment(SLPluginConcept p) {
+        var lm = Starlight.instance().getLibraryManager();
+        lm.resolveDependencies(p.getMetadata().getDependencies());
+        lm.injectLibraries(p);
+        if(lm.loadFully){
+            LibraryManager.loadFullJar(p.classLoader(), p.getFile());
+        }
     }
 
     public String getPOMDocument(GradleDependency dependency) throws Exception {
@@ -161,6 +212,12 @@ public final class LibraryManager {
                     unsafe.getAndSetObject(c_current, addr, prev);
                 }
                 addURLMethod.invoke(cl, url);
+
+                if (this.loadFully) {
+                    loadFullJar(cl, new File(url.getFile()));
+                }
+
+
                 LOGGER.info("injected dependency: {}", new File(url.toURI()).getName());
             } catch (Exception e) {
                 throw new RuntimeException(e);

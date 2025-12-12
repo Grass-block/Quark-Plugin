@@ -24,3 +24,16 @@ config:
       - "iron_hoe"
       - "golden_"
       - "gold_"
+  realistic-minecart:
+    ui: '{run-mode}{#white}({msg#level}{level}) {#yellow}|{#white} {msg#speed}{speed} {#yellow}|{#white} {msg#acceleration}{acceleration}m/s^2'
+    max-speed: 1.5
+    auto-align: true
+    thrust-1-acceleration: 0.08
+    thrust-2-acceleration: 0.16
+    thrust-3-acceleration: 0.27
+    thrust-4-acceleration: 0.32
+    thrust-0-acceleration: 0
+    thrust--1-acceleration: -0.08
+    thrust--2-acceleration: -0.29
+    thrust--3-acceleration: -0.32
+    thrust--4-acceleration: -0.5

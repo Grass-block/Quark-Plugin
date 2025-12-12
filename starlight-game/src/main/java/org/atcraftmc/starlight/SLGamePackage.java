@@ -5,7 +5,7 @@ import org.atcraftmc.starlight.framework.packages.SLPackageBuilder;
 import org.atcraftmc.starlight.framework.packages.SLPackageInitializer;
 import org.atcraftmc.starlight.framework.packages.provider.MultiPackageProvider;
 import org.atcraftmc.starlight.framework.packages.provider.SLPackageProvider;
-import org.atcraftmc.starlight.oddities.CustomBlockService;
+import org.atcraftmc.starlight.core.custom.CustomBlockService;
 import org.atcraftmc.starlight.oddities.Elevator;
 import org.atcraftmc.starlight.tweaks.*;
 
@@ -27,6 +27,7 @@ public final class SLGamePackage extends MultiPackageProvider {
             i.module(PortableShulkerBox.class);
             i.module(ItemDropSecure.class);
             i.module(StairSeat.class);
+            i.module(RealisticMinecart.class);
         });
     }
 
@@ -34,8 +35,6 @@ public final class SLGamePackage extends MultiPackageProvider {
         return SLPackageBuilder.of("starlight-oddities", FeatureAvailability.BOTH, (i) -> {
             i.config("starlight-oddities");
             i.language("starlight-oddities", "zh_cn");
-
-            i.service(CustomBlockService.class);
             i.module(Elevator.class);
         });
     }

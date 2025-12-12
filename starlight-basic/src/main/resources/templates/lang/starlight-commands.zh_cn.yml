@@ -6,6 +6,7 @@ language:
     item-command: 物品指令触发器
     world-edit-commands: WorldEdit指令补充
     self-message: 发送信息
+    hats: 戴帽子
   entity-motion:
     hint: "{global#sys-success}已为{#var}个实体持续{#var}ticks设置动量: {#var}({#var},{#var},{#var})"
   command-exec:
@@ -20,3 +21,15 @@ language:
     size-too-big: "{global#error}选区过大，三轴大小应小于{#var}个方块。"
     no-result: "{global#warning}没有方块以播放动画，任务取消。"
     success: "{global#success}成功创建动画(包含{#var}方块)。"
+    tip: "{#gray}使用{#gold}/animate-block{#gray}可以让方块动起来，{click(command,/custom-item animate-helper 1);underline}[法杖]{;}{#gray}可以帮助您创建路径。"
+    item-name: '{#purple}动画创建法杖'
+    item-lore:
+        - '{#gray}此工具可方便您快速创建动画路径。'
+        - '{#gray}使用{#white}WorldEdit{#gray}标记选区后，'
+        - '{#gray}利用左键标记命令方块，右键标记目标位置'
+        - '{#gray}可以快速创建动画路径。'
+  hats:
+    empty: "{global#error}你没有拿着任何东西。"
+    not-found: "{global#error}指定的玩家不存在。"
+    failed: "{global#error}玩家的头盔槽位不为空。"
+    success: "{global#info}成功替换帽子。"

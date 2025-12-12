@@ -3,6 +3,9 @@ package org.atcraftmc.starlight.core.ui.view;
 import net.kyori.adventure.text.Component;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.atcraftmc.starlight.core.ui.element.ElementCallback;
+import org.atcraftmc.starlight.foundation.ComponentSerializer;
+import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,13 +14,9 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
-import org.atcraftmc.starlight.foundation.ComponentSerializer;
-import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
-import org.atcraftmc.starlight.core.ui.element.ElementCallback;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 public final class InventoryUIView implements Listener {
@@ -45,7 +44,7 @@ public final class InventoryUIView implements Listener {
     private static Inventory create(int nSlots, Component title) {
         try {
             return Bukkit.createInventory(null, nSlots, title);
-        } catch (NoSuchElementException e) {
+        } catch (Throwable e) {
             return Bukkit.createInventory(null, nSlots, ComponentSerializer.legacy(title));
         }
     }

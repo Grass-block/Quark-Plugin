@@ -1,7 +1,8 @@
-chat-at:
-  title-fadein: 10 #the title control time (ticks)
-  title-fadeout: 10
-  title-stay: 20
-  at-template: "{#green}@{player}{#reset}" #the @somebody template in chatline
-  at-title-template: "{#green}{player}: {#reset}{message}" #title shown on screen
-  sound: true #will sound be send to someone bing AT
+config:
+  chat-at:
+    title-fadein: 10 #the title control time (ticks)
+    title-fadeout: 10
+    title-stay: 20
+    at-template: "{#green}@{player}{#reset}" #the @somebody template in chatline
+    at-title-template: "{#green}{player}: {#reset}{message}" #title shown on screen
+    sound: true #will sound be send to someone bing AT

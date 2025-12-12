@@ -1,0 +1,13 @@
+language:
+  -module-name:
+    chat-sync: 集群聊天同步
+    geyser-skin-redirect: Geyser皮肤重映射
+    legacy-forwarding-protect: Bungeecord集群保护
+    client-transfer-support: 客户端跳转mod支持
+    proxy-ping: 集群Ping指标修正
+  bungee-connection-protect:
+    kick-message:
+      - '很抱歉，{#server-name}{#reset}集群保护系统无法认证您的连接。{#return}'
+      - '{#gray}请确认您的来源BC/Waterfall代理已经通过本服认证。'
+      - '{#gray}如果您确认这是个错误，请向开发者反馈。{#return}{#return}'
+      - '{#dark-gray}您的会话ID：{#dark-gray}%s'

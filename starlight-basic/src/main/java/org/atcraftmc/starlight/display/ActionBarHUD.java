@@ -29,12 +29,6 @@ public final class ActionBarHUD extends SLPackageModule {
     @Inject
     private LanguageEntry language;
 
-    @Override
-    public void checkCompatibility() throws APIIncompatibleException {
-        Compatibility.requireMethod(() -> Player.class.getDeclaredMethod("sendActionBar", BaseComponent[].class));
-        Compatibility.blackListPlatform(APIProfile.ARCLIGHT, APIProfile.BANNER, APIProfile.YOUER);
-    }
-
     private String render(Player player) {
         var loc = player.getLocation();
         var block = loc.getBlock();

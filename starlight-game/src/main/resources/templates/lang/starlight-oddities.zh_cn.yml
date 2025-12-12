@@ -1,7 +1,7 @@
 language:
-  custom-block:
-    give: '{global#success}成功获取 {#var} *1'
-    give-failed: '{global#error}不存在名为 {#var} 的自定义方块。'
+  -module-name:
+    elevator: 电梯方块
+    stair-seat: 楼梯座椅
   elevator:
     item-name: '{#aqua}电梯'
     item-lore:

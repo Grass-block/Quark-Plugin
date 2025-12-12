@@ -9,9 +9,13 @@ language:
     plugin-manager-command: 命令行插件管理器
     server-info: 服务器信息指令
     tps-bar: TPS可视化条
+    vm-garbage-cleaner: 自动化垃圾清理
   ban:
     msg-ban-complete: "{global#sys-success}已封禁玩家 {#var} 至 {#var},原因: {#var}。"
     broadcast: "{global#sys-info}玩家{#var} 因 {#var} 被操作者 {#var} 封禁至 {#var}。"
+  vm-garbage-cleaner:
+    gc-start: "{global#sys-operation}内存回收开始..."
+    gc-end: "{global#sys-operation}内存回收完成, 释放 %d MB。"
   maintenance:
     start: "{global#sys-operation}维护开始。"
     end: "{global#sys-operation}维护结束。"

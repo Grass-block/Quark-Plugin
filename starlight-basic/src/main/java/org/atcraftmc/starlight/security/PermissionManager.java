@@ -1,10 +1,13 @@
 package org.atcraftmc.starlight.security;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import me.gb2022.commons.reflect.AutoRegister;
 import me.gb2022.commons.reflect.Inject;
 import me.gb2022.modular.Registrations;
 import me.gb2022.modular.module.ApplicationModule;
 import org.apache.logging.log4j.Logger;
+import org.atcraftmc.qlib.bukkit.util.permission.DirectPermissionManager;
 import org.atcraftmc.qlib.bukkit.util.permission.PermissionEventHandler;
 import org.atcraftmc.qlib.bukkit.util.permission.PlayerPermissionManager;
 import org.atcraftmc.qlib.command.LegacyCommandManager;
@@ -33,13 +36,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 @AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider({PermissionManager.PermissionCommand.class})
 @ApplicationModule(id = "permission-manager", version = "1.0.3")
 public final class PermissionManager extends SLPackageModule implements PluginCommandExecutor, PermissionEventHandler {
-    private final PlayerPermissionManager service = new PlayerPermissionManager(Starlight.instance(), this);
+    private final PlayerPermissionManager service = new DirectPermissionManager(this, Starlight.instance());
     private final Map<String, List<String>> tags = new HashMap<>();
     private final Map<String, ConfigurationSection> groups = new HashMap<>();
     private final PermissionStorageService dataService = new PermissionStorageService();
@@ -75,16 +80,7 @@ public final class PermissionManager extends SLPackageModule implements PluginCo
     }
 
     public PermissionData data(OfflinePlayer player) {
-        try {
-            if (!this.dataService.exist(player.getUniqueId())) {
-                this.dataService.add(player.getUniqueId(), new PermissionData(player.isOp() ? "--operator" : "--player"));
-                this.logger.info("created permission data for {}({})", player.getName(), player.getUniqueId());
-            }
-
-            return this.dataService.get(player.getUniqueId()).orElseThrow();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return this.dataService.safeGet(player);
     }
 
     public void sync(Player player, PermissionAttachment attachment) {
@@ -123,9 +119,17 @@ public final class PermissionManager extends SLPackageModule implements PluginCo
             map.put(s, false);
         }
 
-        map.forEach(attachment::setPermission);
+        for (var perms : attachment.getPermissions().keySet()) {
+            attachment.unsetPermission(perms);
+        }
 
-        TaskService.async().delay(10, LegacyCommandManager::sync);
+        //System.out.println(k + "->" + v);
+        map.forEach(attachment::setPermission);
+        //todo: unset权限自动刷新
+        player.recalculatePermissions();
+
+
+        TaskService.global().delay(10, LegacyCommandManager::sync);
     }
 
     @Override
@@ -156,7 +160,8 @@ public final class PermissionManager extends SLPackageModule implements PluginCo
         this.service.release();
     }
 
-    //command
+    //todo: 权限应用异常
+    //todo: GuestMode权限识别异常
     @Override
     public void execute(CommandExecution context) {
         var target = context.requireOfflinePlayer(1);
@@ -205,13 +210,13 @@ public final class PermissionManager extends SLPackageModule implements PluginCo
             throw new RuntimeException(e);
         }
 
-        if (!target.isOnline()) {
+        if (target.getPlayer() == null) {
             return;
         }
 
         var attachment = this.service.attachment(target.getPlayer());
         this.sync(Objects.requireNonNull(target.getPlayer()), attachment);
-        attachment.refresh();
+        this.service.refresh(target.getPlayer());
     }
 
     @Override
@@ -253,6 +258,8 @@ public final class PermissionManager extends SLPackageModule implements PluginCo
     }
 
     public static final class PermissionStorageService extends JDBCBasedDataService<PermissionData> {
+        private final Cache<UUID, PermissionData> cache = CacheBuilder.newBuilder().expireAfterAccess(Duration.ofMinutes(3)).build();
+
         public PermissionStorageService() {
             super("_null_");
         }
@@ -290,6 +297,18 @@ public final class PermissionManager extends SLPackageModule implements PluginCo
             return new PermissionData(group, tags, allowedPermissions, disallowedPermissions);
         }
 
+        public PermissionData safeGet(OfflinePlayer player) {
+            try {
+                if (!this.exist(player.getUniqueId())) {
+                    this.add(player.getUniqueId(), new PermissionData(player.isOp() ? "--operator" : "--player"));
+                }
+
+                return this.get(player.getUniqueId()).orElseThrow();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         public boolean exist(UUID uuid) throws SQLException {
             try (var p = connection.prepareStatement("SELECT uuid FROM SL_PERMISSION WHERE uuid = ? LIMIT 1")) {
                 p.setString(1, uuid.toString());
@@ -304,6 +323,8 @@ public final class PermissionManager extends SLPackageModule implements PluginCo
                 return false;
             }
 
+            this.cache.put(uuid, data);
+
             try (var p = this.connection.prepareStatement(
                     "INSERT INTO SL_PERMISSION (perm_group, perm_tags, perm_allowed, perm_disallowed,uuid) VALUES (?, ?, ?, ?, ?)")) {
                 encode(p, data);
@@ -315,6 +336,8 @@ public final class PermissionManager extends SLPackageModule implements PluginCo
         public boolean update(UUID uuid, PermissionData data) throws SQLException {
             var sql = "UPDATE SL_PERMISSION SET perm_group = ?, perm_tags = ?, perm_allowed = ?, perm_disallowed = ? WHERE uuid = ?";
 
+            this.cache.put(uuid, data);
+
             try (var ps = connection.prepareStatement(sql)) {
                 encode(ps, data);
                 ps.setString(5, uuid.toString());
@@ -323,15 +346,23 @@ public final class PermissionManager extends SLPackageModule implements PluginCo
         }
 
         public Optional<PermissionData> get(UUID uuid) throws SQLException {
-            try (var p = connection.prepareStatement("SELECT * FROM SL_PERMISSION WHERE uuid = ? LIMIT 1")) {
-                p.setString(1, uuid.toString());
-                try (var rs = p.executeQuery()) {
-                    if (rs.next()) {
-                        return Optional.of(decode(rs));
+            try {
+                return Optional.of(this.cache.get(uuid, () -> {
+                    try (var p = connection.prepareStatement("SELECT * FROM SL_PERMISSION WHERE uuid = ? LIMIT 1")) {
+                        p.setString(1, uuid.toString());
+                        try (var rs = p.executeQuery()) {
+                            if (rs.next()) {
+                                return decode(rs);
+                            }
+                            return null;
+                        }
                     }
-                    return Optional.empty();
-                }
+                }));
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
             }
+
+
         }
     }
 }

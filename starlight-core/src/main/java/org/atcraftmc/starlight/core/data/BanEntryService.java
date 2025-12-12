@@ -41,18 +41,18 @@ public final class BanEntryService extends JDBCBasedDataService<BanEntry> {
     public void add(BanEntry data) {
         try (var p = this.connection.prepareStatement(
                 "insert into _ban_ (id,target,expire,reason,operator,valid) VALUES (?, ?, ?, ?, ?, true)")) {
-            p.setString(0, data.getBanId().toString());
-            p.setString(1, data.getTarget().toString());
-            p.setLong(2, data.getExpires());
-            p.setString(3, data.getReason());
-            p.setString(4, data.getOperator());
+            p.setString(1, data.getBanId().toString());
+            p.setString(2, data.getTarget().toString());
+            p.setLong(3, data.getExpires());
+            p.setString(4, data.getReason());
+            p.setString(5, data.getOperator());
 
             p.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        this.stateCache.invalidate(data.getBanId());
+        this.stateCache.invalidate(data.getTarget());
         this.entryCache.invalidate(data.getBanId());
     }
 
@@ -77,7 +77,7 @@ public final class BanEntryService extends JDBCBasedDataService<BanEntry> {
     public boolean isBanned(UUID uuid) {
         try {
             return this.stateCache.get(uuid, () -> {
-                try (var s = this.connection.prepareStatement("SELECT id from _ban_ where target=? and expire<?")) {
+                try (var s = this.connection.prepareStatement("SELECT id from _ban_ where target=? and expire>? and valid = true")) {
                     s.setString(1, uuid.toString());
                     s.setLong(2, System.currentTimeMillis());
 
@@ -117,7 +117,7 @@ public final class BanEntryService extends JDBCBasedDataService<BanEntry> {
             return this.entryCache.get(uuid, () -> {
                 var res = new ArrayList<BanEntry>();
 
-                try (var s = this.connection.prepareStatement("SELECT * from _ban_ where target=? and expire<?")) {
+                try (var s = this.connection.prepareStatement("SELECT * from _ban_ where target=? and expire>? and valid = true")) {
                     s.setString(1, uuid.toString());
                     s.setLong(2, System.currentTimeMillis());
 
@@ -138,11 +138,13 @@ public final class BanEntryService extends JDBCBasedDataService<BanEntry> {
     }
 
     public void pardon(UUID uniqueId) {
-        try (var ps = this.connection.prepareStatement("UPDATE _ban_ SET valid = false WHERE uuid = ?")) {
+        try (var ps = this.connection.prepareStatement("UPDATE _ban_ SET valid = false WHERE target = ?")) {
             ps.setString(1, uniqueId.toString());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        this.stateCache.invalidate(uniqueId);
     }
 }

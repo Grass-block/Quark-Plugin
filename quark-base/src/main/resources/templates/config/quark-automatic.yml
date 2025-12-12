@@ -1,7 +1,4 @@
 config:
-  vm-garbage-cleaner:
-    broadcast: false
-    period: 10000
   garbage-cleaner:
     world-whitelist: [ ]
     clean-interval: 24000

@@ -140,6 +140,11 @@ public final class WorldEditOperationDefender extends SLPackageModule {
     @EventHandler
     public void onSelect(WESessionPreEditEvent event) {
         var limit = ConfigAccessor.getInt(this.config(), "max-selection-size");
+
+        if (event.getRegion() == null) {
+            return;
+        }
+
         var box = event.getRegion().asAABB();
 
         var x = box.x1 - box.x0;

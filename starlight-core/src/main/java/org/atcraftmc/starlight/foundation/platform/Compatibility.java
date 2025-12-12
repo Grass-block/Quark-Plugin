@@ -25,7 +25,7 @@ public interface Compatibility {
         try {
             supplier.get();
         } catch (Throwable e) {
-            throw new APIIncompatibleException(e.getMessage());
+            throw new APIIncompatibleException("Missing class: " + e.getMessage());
         }
     }
 
@@ -33,27 +33,27 @@ public interface Compatibility {
         try {
             supplier.get();
         } catch (Throwable e) {
-            throw new APIIncompatibleException(e.getMessage());
+            throw new APIIncompatibleException("Missing method: " + e.getMessage());
         }
     }
 
     static void blackListPlatform(APIProfile... platform) {
         for (APIProfile profile : platform) {
             if (APIProfileTest.getAPIProfile() == profile) {
-                throw new APIIncompatibleException("unsupported platform: " + profile.name);
+                throw new APIIncompatibleException("Unsupported platform: " + profile.name);
             }
         }
     }
 
     static void requirePlugin(String name) {
         if (Bukkit.getPluginManager().getPlugin(name) == null) {
-            throw new APIIncompatibleException("plugin not found: " + name);
+            throw new APIIncompatibleException("Plugin not found: " + name);
         }
     }
 
     static void assertion(boolean complete) {
         if (!complete) {
-            throw new APIIncompatibleException("assertion failed");
+            throw new APIIncompatibleException("Assertion failed");
         }
     }
 

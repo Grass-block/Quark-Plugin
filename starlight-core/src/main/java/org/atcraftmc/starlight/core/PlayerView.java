@@ -3,9 +3,9 @@ package org.atcraftmc.starlight.core;
 import net.kyori.adventure.text.Component;
 import org.atcraftmc.qlib.bukkit.task.Task;
 import org.atcraftmc.qlib.bukkit.task.TaskScheduler;
+import org.atcraftmc.starlight.foundation.TextSender;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.atcraftmc.starlight.foundation.TextSender;
 
 import java.util.*;
 import java.util.function.Function;

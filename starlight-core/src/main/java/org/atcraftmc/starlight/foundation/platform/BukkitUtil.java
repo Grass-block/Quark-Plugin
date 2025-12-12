@@ -221,8 +221,13 @@ public interface BukkitUtil {
         double dz = r.nextDouble(-0.05, 0.05);
 
         loc.add(dx + 0.5, dy + 0.1, dz + 0.5);
-        Item e = loc.getWorld().spawn(loc, Item.class);
-        e.setItemStack(Objects.requireNonNull(item));
+        Item e;
+        try {
+            e = loc.getWorld().spawn(loc, Item.class);
+            e.setItemStack(Objects.requireNonNull(item));
+        } catch (IllegalArgumentException e3) {
+            e = loc.getWorld().dropItem(loc, item);
+        }
 
         BukkitUtil.callEvent(new ItemCreateEvent(e));
     }

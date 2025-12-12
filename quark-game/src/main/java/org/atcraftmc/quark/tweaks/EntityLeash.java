@@ -28,7 +28,7 @@ public final class EntityLeash extends SLPackageModule {
 
     @Override
     public void enable() {
-        TaskService.async().timer("quark:leash:tick", 2, 2, () -> {
+        TaskService.async().timer("quark:leash:tickAppend", 2, 2, () -> {
             for (Entity e : new HashSet<>(this.virtualHolders.keySet())) {
                 LivingEntity target = this.virtualHolders.get(e);
 
@@ -43,7 +43,7 @@ public final class EntityLeash extends SLPackageModule {
 
     @Override
     public void disable() {
-        TaskService.async().cancel("quark:leash:tick");
+        TaskService.async().cancel("quark:leash:tickAppend");
         for (Entity e : new HashSet<>(this.virtualHolders.keySet())) {
             e.remove();
         }

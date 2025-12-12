@@ -7,6 +7,7 @@ import me.gb2022.modular.service.ServiceHolder;
 import me.gb2022.modular.service.ServiceLayer;
 import me.gb2022.modular.service.injection.ServiceInject;
 import me.gb2022.modular.service.injection.ServiceProvider;
+import org.atcraftmc.qlib.PluginConcept;
 import org.atcraftmc.starlight.Starlight;
 import org.atcraftmc.starlight.api.event.ModuleEvent;
 import org.atcraftmc.starlight.foundation.platform.APIProfile;
@@ -17,7 +18,6 @@ import org.atcraftmc.starlight.framework.module.SLModuleHandle;
 import org.atcraftmc.starlight.migration.DataFix;
 import org.atcraftmc.starlight.util.ExceptionUtil;
 import org.atcraftmc.starlight.util.FilePath;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,8 +32,8 @@ public final class SLModuleManager extends ModuleManagerV2<SLModule, SLModuleHan
 
     public static final String DATA_FILE = "%s/data/modules.properties";
 
-    public SLModuleManager(Plugin parent) {
-        super(parent.getLog4JLogger());
+    public SLModuleManager(PluginConcept parent) {
+        super(parent.logger());
     }
 
     @ServiceProvider

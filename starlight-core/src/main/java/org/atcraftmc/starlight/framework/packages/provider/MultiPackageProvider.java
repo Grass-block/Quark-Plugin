@@ -1,26 +1,27 @@
 package org.atcraftmc.starlight.framework.packages.provider;
 
 import org.atcraftmc.starlight.Starlight;
-import org.atcraftmc.starlight.framework.packages.SLAbstractPackage;
-import org.atcraftmc.starlight.framework.packages.SLPackageManager;
+import org.atcraftmc.starlight.framework.SLPluginConcept;
 import org.atcraftmc.starlight.framework.packages.PluginPackage;
+import org.atcraftmc.starlight.framework.packages.SLAbstractPackage;
 import org.atcraftmc.starlight.framework.packages.SLPackageInitializer;
+import org.atcraftmc.starlight.framework.packages.SLPackageManager;
 import org.atcraftmc.starlight.util.ProductMetadata;
+import org.atcraftmc.starlight.util.dependency.LibraryManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class MultiPackageProvider extends JavaPlugin implements PackageProvider {
+public abstract class MultiPackageProvider extends JavaPlugin implements PackageProvider, SLPluginConcept {
     private final ProductMetadata metadata = ProductMetadata.createFromResource(this);
     private Set<SLAbstractPackage> packages = new HashSet<>();
     private String coreInstanceId;
 
     @Override
     public void onEnable() {
-        var lm = Starlight.instance().getLibraryManager();
-        lm.resolveDependencies(this.metadata.getDependencies());
-        lm.injectLibraries(this);
+        LibraryManager.prepareEnvironment(this);
 
         this.coreInstanceId = Starlight.instance().getInstanceUUID();
         if (!this.isCoreExist()) {
@@ -30,6 +31,21 @@ public abstract class MultiPackageProvider extends JavaPlugin implements Package
         for (SLAbstractPackage pkg : this.packages) {
             SLPackageManager.registerPackage(pkg);
         }
+    }
+
+    @Override
+    public ClassLoader classLoader() {
+        return super.getClassLoader();
+    }
+
+    @Override
+    public File getFile() {
+        return super.getFile();
+    }
+
+    @Override
+    public ProductMetadata getMetadata() {
+        return this.metadata;
     }
 
     @Override

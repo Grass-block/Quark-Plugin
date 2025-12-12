@@ -50,7 +50,6 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.jar.JarFile;
 
 /**
  * <h3>江城子·腐竹之歌</h3>
@@ -253,40 +252,7 @@ public final class Starlight extends BukkitPluginConcept {
             throw new RuntimeException("cannot find plugin!");
         }
 
-        LOGGER.info("target core jar file: {}", jar.getAbsolutePath());
-
-        var counter = 0;
-
-        try (JarFile jarFile = new JarFile(jar)) {
-            var entries = jarFile.entries();
-
-            while (entries.hasMoreElements()) {
-                var entry = entries.nextElement();
-                if (entry.isDirectory()) {
-                    continue;
-                }
-                if (!entry.getName().endsWith(".class")) {
-                    continue;
-                }
-
-                var className = entry.getName().replace("/", ".").replaceAll("\\.class$", "");
-
-                if (className.contains("Utils21")) {
-                    continue;
-                }
-
-                try {
-                    loader.loadClass(className);
-                    counter++;
-                } catch (Throwable e) {
-                    LOGGER.warn("failed to load class {}: {}", className, e.getMessage());
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        LOGGER.info("loaded {} classes.", counter);
+        LibraryManager.loadFullJar(this.getClassLoader(), jar);
     }
 
     @Override
@@ -326,7 +292,7 @@ public final class Starlight extends BukkitPluginConcept {
                 repo = MavenRepo.valueOf(repo).getUrl();
             }
 
-            this.libraryManager = new LibraryManager(repo, FilePath.cache());
+            this.libraryManager = new LibraryManager(repo, FilePath.cache(), !this.fastBoot);
 
             var deps = new HashSet<>(this.metadata.getDependencies());
 

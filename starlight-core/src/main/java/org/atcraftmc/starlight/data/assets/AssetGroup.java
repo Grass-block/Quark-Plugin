@@ -1,9 +1,8 @@
 package org.atcraftmc.starlight.data.assets;
 
 import me.gb2022.commons.file.Files;
-import org.atcraftmc.starlight.ProductInfo;
-import org.bukkit.plugin.Plugin;
 import org.atcraftmc.starlight.util.FilePath;
+import org.bukkit.plugin.Plugin;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -28,6 +27,17 @@ public final class AssetGroup {
         this.cached = cached;
 
         this.folder = new File(this.folder());
+    }
+
+    public int trim() {
+        var c = 0;
+        for (var fn : this.loaders.keySet()) {
+            var f = new File(this.folder(), fn);
+            if (f.renameTo(new File(this.folder(), fn.replace(" ", "_")))) {
+                c++;
+            }
+        }
+        return c;
     }
 
     public void save(String name) {

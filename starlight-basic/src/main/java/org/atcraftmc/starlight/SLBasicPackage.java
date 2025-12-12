@@ -10,6 +10,7 @@ import org.atcraftmc.starlight.framework.packages.SLPackageBuilder;
 import org.atcraftmc.starlight.framework.packages.SLPackageInitializer;
 import org.atcraftmc.starlight.framework.packages.provider.MultiPackageProvider;
 import org.atcraftmc.starlight.management.*;
+import org.atcraftmc.starlight.proxy.*;
 import org.atcraftmc.starlight.security.*;
 import org.atcraftmc.starlight.sideload.InventoryMenu;
 import org.atcraftmc.starlight.sideload.RecipeLoader;
@@ -34,6 +35,7 @@ public final class SLBasicPackage extends MultiPackageProvider {
             i.module(ServerInfo.class);
             i.module(KickOnReload.class);
             i.module(PluginManagerCommand.class);
+            i.module(VMGarbageCleaner.class);
 
             i.config("starlight-management");
             i.language("starlight-management", "zh_cn");
@@ -54,7 +56,7 @@ public final class SLBasicPackage extends MultiPackageProvider {
 
     static SLPackageInitializer warps() {
         return SLPackageBuilder.of("starlight-warps", FeatureAvailability.BOTH, (i) -> {
-            i.module(Waypoints.class); //todo [DFU] import waypoints
+            i.module(Waypoints.class);
             i.module(RTP.class);
             i.module(TPA.class);
             i.module(BackToDeath.class);
@@ -78,21 +80,38 @@ public final class SLBasicPackage extends MultiPackageProvider {
             i.module(TickManager.class);
             i.module(FreeCam.class);
             i.module(FlyCommand.class);
+            i.module(ParticleFont.class);
 
             i.config("starlight-utilities");
             i.language("starlight-utilities", "zh_cn");
         });
     }
 
+    static SLPackageInitializer proxy() {
+        return SLPackageBuilder.of("starlight-proxy", FeatureAvailability.BOTH, (i) -> {
+            i.module(ProxyChatSync.class);
+            i.module(GeyserSkinRedirect.class);
+            i.module(LegacyForwardingProtect.class);
+            i.module(ProxyPing.class);
+            i.module(ClientTransferSupport.class);
+
+            i.config("starlight-proxy");
+            i.language("starlight-proxy", "zh_cn");
+        });
+    }
+
     //command extension and triggers
     static SLPackageInitializer commands() {
         return SLPackageBuilder.of("starlight-commands", FeatureAvailability.BOTH, (i) -> {
-            i.module(CommandTabFix.class);
-            i.module(Execute.class);
-            i.module(EntityMotion.class);
-            i.module(ItemBinding.class);
-            i.module(WorldEditCommands.class);
             i.module(AnimateBlockCommand.class);
+            i.module(CommandTabFix.class);
+
+            i.module(EntityMotion.class);
+            i.module(Execute.class);
+            i.module(HatCommand.class);
+            i.module(ItemBinding.class);
+            i.module(SelfMessage.class);
+            i.module(WorldEditCommands.class);
 
             i.language("starlight-commands", "zh_cn");
         });
@@ -106,6 +125,7 @@ public final class SLBasicPackage extends MultiPackageProvider {
             i.module(IPDefender.class); //todo [DFU] miss
             i.module(PermissionManager.class); //todo [DFU] import permission data
             i.module(WorldEditOperationDefender.class);
+            i.module(GuestMode.class);
 
             i.service(WESessionTrackService.class);
 
@@ -156,7 +176,7 @@ public final class SLBasicPackage extends MultiPackageProvider {
     }
 
     static Set<SLPackageInitializer> initializers() {
-        return Set.of(management(), console(), warps(), utilities(), display(), security(), sideload(), commands(), chat());
+        return Set.of(management(), console(), warps(), utilities(), display(), security(), sideload(), commands(), chat(), proxy());
     }
 
     @Override

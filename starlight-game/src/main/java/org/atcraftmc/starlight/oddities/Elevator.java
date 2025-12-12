@@ -9,6 +9,7 @@ import org.atcraftmc.starlight.api.PluginMessages;
 import org.atcraftmc.starlight.api.PluginStorage;
 import org.atcraftmc.starlight.api.customization.CustomBlock;
 import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.core.custom.CustomBlockService;
 import org.atcraftmc.starlight.foundation.crafting.RecipeBuilder;
 import org.atcraftmc.starlight.foundation.crafting.RecipeManager;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
@@ -45,7 +46,7 @@ public final class Elevator extends SLPackageModule {
                                            RecipeBuilder.symbol('@', Material.REDSTONE)
         );
         RecipeManager.register(recipe);
-        CustomBlockService.instance().registerBlock("elevator", this.block);
+        CustomBlockService.instance().registerBlock(this.block);
     }
 
     @Override

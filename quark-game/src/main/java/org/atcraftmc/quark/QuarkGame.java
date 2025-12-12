@@ -39,7 +39,7 @@ public final class QuarkGame extends MultiPackageProvider {
                     i.module("neko", Neko.class);
                     i.module("elytra-aeronautics", ElytraAeronautics.class);
                     i.module("music-player", MusicPlayer.class);
-                    i.module("hats", Hats.class);
+                    i.module("hats", HatCommand.class);
                     i.module("sit-on-player", SitOnPlayer.class);
 
                     i.language("quark-contents", "zh_cn");

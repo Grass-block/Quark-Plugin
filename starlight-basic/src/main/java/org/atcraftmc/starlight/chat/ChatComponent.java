@@ -8,6 +8,8 @@ import me.gb2022.commons.reflect.method.MethodHandleO2;
 import me.gb2022.commons.reflect.method.MethodHandleRO1;
 import me.gb2022.modular.APIIncompatibleException;
 import me.gb2022.modular.Registrations;
+import me.gb2022.modular.module.ApplicationModule;
+import me.gb2022.modular.subcomponent.ComponentProvider;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.atcraftmc.qlib.Pipeline;
@@ -22,16 +24,15 @@ import org.atcraftmc.starlight.core.placeholder.PlaceHolderService;
 import org.atcraftmc.starlight.core.placeholder.PlaceHolders;
 import org.atcraftmc.starlight.core.ui.InventoryUI;
 import org.atcraftmc.starlight.foundation.ComponentSerializer;
-import org.atcraftmc.starlight.foundation.platform.*;
-import me.gb2022.modular.module.ApplicationModule;
-import me.gb2022.modular.subcomponent.ComponentProvider;
+import org.atcraftmc.starlight.foundation.platform.BukkitDataAccess;
+import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
+import org.atcraftmc.starlight.foundation.platform.Compatibility;
 import org.atcraftmc.starlight.framework.module.SLModuleComponent;
 import org.atcraftmc.starlight.framework.module.SLPackageModule;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.util.Objects;
@@ -105,18 +106,6 @@ public final class ChatComponent extends SLPackageModule {
     @Override
     public void disable() {
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
-    }
-
-    @EventHandler
-    public void onChatting(AsyncPlayerChatEvent event) {
-        if (APIProfileTest.isPaperCompat()) {
-            return;
-        }
-        var msg = event.getMessage();
-        for (var f : pipeline.list()) {
-            msg = f.apply(event.getPlayer(), msg);
-        }
-        event.setMessage(TextBuilder.build(msg, true).toString());
     }
 
     @EventHandler

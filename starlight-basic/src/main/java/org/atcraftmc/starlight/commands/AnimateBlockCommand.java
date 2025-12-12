@@ -1,5 +1,6 @@
 package org.atcraftmc.starlight.commands;
 
+import me.gb2022.commons.reflect.Inject;
 import me.gb2022.commons.reflect.method.MethodHandle;
 import me.gb2022.commons.reflect.method.MethodHandleO1;
 import me.gb2022.modular.module.ApplicationModule;
@@ -7,13 +8,21 @@ import org.atcraftmc.qlib.command.QuarkCommand;
 import org.atcraftmc.qlib.command.assertion.NumberLimitation;
 import org.atcraftmc.qlib.command.execute.CommandExecution;
 import org.atcraftmc.qlib.command.execute.CommandSuggestion;
+import org.atcraftmc.qlib.language.LanguageItem;
+import org.atcraftmc.starlight.api.PluginMessages;
+import org.atcraftmc.starlight.api.PluginStorage;
+import org.atcraftmc.starlight.api.customization.CustomBlock;
+import org.atcraftmc.starlight.api.customization.CustomItem;
 import org.atcraftmc.starlight.core.TaskService;
+import org.atcraftmc.starlight.core.custom.CustomBlockService;
 import org.atcraftmc.starlight.framework.module.SLCommandModule;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -37,6 +46,25 @@ public final class AnimateBlockCommand extends SLCommandModule {
         c.attempt(() -> Block.class.getMethod("setBlockData", BlockData.class, boolean.class), (e, a) -> e.setBlockData(a, false));
         c.dummy(Block::setBlockData);
     });
+
+    private final HelperWandItem item = new HelperWandItem();
+    @Inject("tip")
+    private LanguageItem tip;
+
+    @Override
+    public void enable() throws Exception{
+        super.enable();
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
+        CustomBlockService.instance().registerItem(this.item);
+    }
+
+    @Override
+    public void disable() throws Exception{
+        PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
+        CustomBlockService.instance().unregisterItem("animate-block-helper");
+        super.disable();
+    }
+
 
     @Override
     public void suggest(CommandSuggestion suggestion) {
@@ -82,15 +110,15 @@ public final class AnimateBlockCommand extends SLCommandModule {
             return;
         }
 
-        if (x1 - x0 > 8) {
+        if (x1 - x0 > 16) {
             this.language().item("size-too-big").send(context.getSender(), 8);
             return;
         }
-        if (y1 - y0 > 8) {
+        if (y1 - y0 > 16) {
             this.language().item("size-too-big").send(context.getSender(), 8);
             return;
         }
-        if (z1 - z0 > 8) {
+        if (z1 - z0 > 16) {
             this.language().item("size-too-big").send(context.getSender(), 8);
             return;
         }
@@ -244,5 +272,25 @@ public final class AnimateBlockCommand extends SLCommandModule {
 
     }
 
+    public final class HelperWandItem extends CustomItem {
 
+        private HelperWandItem() {
+            super("animate-block-helper");
+        }
+
+        @Override
+        public LanguageItem getDisplayName(ItemStack stack) {
+            return language().item("item-name");
+        }
+
+        @Override
+        public LanguageItem getDescription(ItemStack stack) {
+            return language().item("item-lore");
+        }
+
+        @Override
+        public Material getActualBlock() {
+            return Material.STICK;
+        }
+    }
 }

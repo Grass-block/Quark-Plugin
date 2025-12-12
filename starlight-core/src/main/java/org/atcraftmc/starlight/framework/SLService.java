@@ -30,12 +30,6 @@ public interface SLService extends Service, Listener {
         }
     }
 
-    static void stopBase() {
-        for (int i = BASE_SERVICES.length - 1; i > 0; i--) {
-            SLServiceManager.unregister(BASE_SERVICES[i]);
-        }
-    }
-
     @Override
     default void enable() throws Exception {
         Service.super.enable();

@@ -1,9 +1,6 @@
 package org.atcraftmc.starlight.music.resolve;
 
 import me.gb2022.commons.container.Pair;
-import org.atcraftmc.starlight.music.EnumInstrument;
-import org.atcraftmc.starlight.music.MusicData;
-import org.atcraftmc.starlight.music.MusicNode;
 
 import java.io.File;
 import java.io.IOException;

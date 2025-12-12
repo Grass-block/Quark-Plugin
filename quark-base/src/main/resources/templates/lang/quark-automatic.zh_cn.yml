@@ -3,9 +3,6 @@ language:
     vm-garbage-cleaner: 运行环境自动优化
     garbage-cleaner: 嗲落伍自动清扫
     auto-save: "[实验]自动保存"
-  vm-garbage-cleaner:
-    gc-start: "{global#sys-operation}内存回收开始..."
-    gc-end: "{global#sys-operation}内存回收完成, 释放 %d MB。"
   garbage-cleaner:
     remain: "{global#sys-info}距离垃圾回收剩余: {#var} {#gray}秒，请注意保管个人物品。"
     start: "{global#sys-info}垃圾回收开始!"

@@ -8,6 +8,7 @@ language:
     portable-functional-blocks: 手持工作方块
     portable-shulker-box: 快速打开潜影盒
     item-drop-secure: 物品防丢
+    realistic-minecart: 真实矿车
   item-drop-secure:
     warn: "{global#warning}由于安全原因你无法丢掉这个物品, 使用{#gold}/unlock-drop{#gray} 或 {click(command,/unlock-drop)}{#white}[{#green}点击{#white}]{;} {#gray}来临时解锁。"
     unlock: "{global#info}你已解除物品丢弃安全锁。锁定将于{#var}秒后恢复。"
@@ -24,3 +25,11 @@ language:
     tip: "{#gray}部分工作方块（如锻造台，工作台等）可以直接在手上对空气右键打开。"
   stair-seat:
     tip: "{#gray}对着楼梯方块右键可以坐下。"
+  realistic-minecart:
+    run-mode-run: "{#aqua}运行"
+    run-mode-boost: "{#green}加速"
+    run-mode-break: "{#purple}减速"
+    run-mode-stop: "{#gray}停车"
+    acceleration: "加速度: "
+    speed: "速度: "
+    level: "档位: "

@@ -13,7 +13,8 @@ config:
     broadcast: true
   permission-manager:
     default-group: --player
-
+  guest-mode:
+    affect-world: [ ]
   we-operation-defender:
     warn-stack-length: 60
     warn-selection-size: 128

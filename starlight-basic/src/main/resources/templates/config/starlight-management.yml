@@ -5,6 +5,9 @@ config:
     op-ignore: false
   tps-bar:
     line: "{#white}TPS: {tps}     {#white}MSPT: {mspt}"
+  vm-garbage-cleaner:
+    broadcast: false
+    period: 1000
   chat-report:
     append: '{click(command,/chat-report %s);color(red)}[!]' #report interactive text
   chat-filter:

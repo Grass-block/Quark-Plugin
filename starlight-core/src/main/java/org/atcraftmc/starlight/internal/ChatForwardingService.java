@@ -1,16 +1,19 @@
 package org.atcraftmc.starlight.internal;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
+import me.gb2022.modular.service.ApplicationService;
+import me.gb2022.modular.service.injection.ServiceInject;
 import net.kyori.adventure.text.Component;
+import org.atcraftmc.qlib.texts.TextBuilder;
 import org.atcraftmc.starlight.api.event.ChatForwardingEvent;
 import org.atcraftmc.starlight.foundation.ComponentSerializer;
 import org.atcraftmc.starlight.foundation.TextSender;
 import org.atcraftmc.starlight.foundation.platform.BukkitUtil;
-import me.gb2022.modular.service.ApplicationService;
 import org.atcraftmc.starlight.framework.SLService;
-import me.gb2022.modular.service.injection.ServiceInject;
 import org.bukkit.Bukkit;
-import org.bukkit.event.*;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 @ApplicationService(id = "chat-forwarding")
@@ -39,7 +42,7 @@ public interface ChatForwardingService extends SLService {
     class PaperEventHandler implements Listener {
         @EventHandler(priority = EventPriority.MONITOR)
         public void onChatting(AsyncChatEvent event) {
-            if(event.isCancelled()){
+            if (event.isCancelled()) {
                 return;
             }
 
@@ -55,7 +58,7 @@ public interface ChatForwardingService extends SLService {
                     continue;
                 }
 
-                TextSender.sendMessage(player, e.getExamined());
+                TextSender.sendMessage(player, msg);
             }
 
             var e = new ChatForwardingEvent(Bukkit.getConsoleSender(), event.getPlayer(), event.message());
@@ -76,11 +79,12 @@ public interface ChatForwardingService extends SLService {
                 return;
             }
 
+            //todo: possible hidden chat forwarding
+            var component = TextBuilder.buildComponent(event.getFormat().formatted(event.getPlayer(), event.getMessage()));
+
             event.setCancelled(true);
             for (var player : Bukkit.getOnlinePlayers()) {
-                var msg = event.getFormat().formatted(event.getPlayer(), event.getMessage());
-
-                var e = new ChatForwardingEvent(player, event.getPlayer(), Component.text(msg));
+                var e = new ChatForwardingEvent(player, event.getPlayer(), component);
                 BukkitUtil.callEvent(e);
 
                 if (e.isCancelled()) {
@@ -90,9 +94,7 @@ public interface ChatForwardingService extends SLService {
                 TextSender.sendMessage(player, e.getExamined());
             }
 
-            var msg = event.getFormat().formatted(event.getPlayer(), event.getMessage());
-
-            var e = new ChatForwardingEvent(Bukkit.getConsoleSender(), event.getPlayer(), Component.text(msg));
+            var e = new ChatForwardingEvent(Bukkit.getConsoleSender(), event.getPlayer(), component);
             BukkitUtil.callEvent(e);
 
             if (e.isCancelled()) {

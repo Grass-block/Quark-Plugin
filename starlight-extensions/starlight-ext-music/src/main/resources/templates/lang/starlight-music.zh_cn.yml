@@ -17,3 +17,10 @@ language:
     ui-legacy-control-open: "{#purple}启用旧版解析: [开]"
     ui-legacy-control-close: "{#gray}启用旧版解析: [关]"
     ui-cancel: "{#red}停止播放"
+  music-game:
+    m-puncher-diamond-name: "{#white}音乐击打棒{#gray}[{#aqua}蓝{#gray}]"
+    m-puncher-diamond-lore: "{#gray}用于击打蓝色音符的节奏棒..."
+    m-puncher-gold-name: "{#white}音乐击打棒{#gray}[{#gold}金{#gray}]"
+    m-puncher-gold-lore: "{#gray}用于击打金色音符的节奏棒..."
+    m-puncher-iron-name: "{#white}音乐击打棒{#gray}[{#white}白{#gray}]"
+    m-puncher-iron-lore: "{#gray}用于击打白色音符的节奏棒..."

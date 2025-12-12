@@ -7,6 +7,9 @@ language:
     platform-patcher: '[核心]平台差异补丁'
     protocol-lib-injector: '[核心]ProtocolLib平台代理'
     version-log-viewer: '[核心]更新日志查看器'
+  custom-block:
+    give: '{global#success}成功获取 {#var} *1'
+    give-failed: '{global#error}不存在名为 {#var} 的自定义方块。'
   global-vars:
     sys-info: "{#aqua}系统{#dark_aqua} > {#gray}"
     sys-warning: "{#yellow}系统{#dark_aqua} > {#gray}"

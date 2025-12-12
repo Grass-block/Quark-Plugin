@@ -28,7 +28,7 @@ public final class ForceSprint extends SLCommandModule {
     public void enable() {
         super.enable();
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.add(this.tip));
-        TaskService.async().timer("sprint:tick", 10, 10, () -> {
+        TaskService.async().timer("sprint:tickAppend", 10, 10, () -> {
             for (String player : this.players) {
                 Player p = Bukkit.getPlayerExact(player);
                 if (p == null) {
@@ -45,7 +45,7 @@ public final class ForceSprint extends SLCommandModule {
         super.disable();
         PluginStorage.set(PluginMessages.CHAT_ANNOUNCE_TIP_PICK, (s) -> s.remove(this.tip));
 
-        TaskService.async().cancel("sprint:tick");
+        TaskService.async().cancel("sprint:tickAppend");
     }
 
     @Override

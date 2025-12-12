@@ -2,21 +2,9 @@ language:
   -module-name:
     custom-recipe: 自定义合成配方
     elevator: 电梯方块
-    realistic-minecart: 真实矿车
-    music-player: 音乐播放器
     neko: 玩家变猫娘
     stair-seat: 楼梯座椅
-    hats: 戴帽子
   stair-seat:
-
-  realistic-minecart:
-    run-mode-run: "{#aqua}运行"
-    run-mode-boost: "{#green}加速"
-    run-mode-break: "{#purple}减速"
-    run-mode-stop: "{#gray}停车"
-    acceleration: "加速度: "
-    speed: "速度: "
-    level: "档位: "
   114514:
     message:
       - '{#purple}已经到顶啦~'
@@ -24,14 +12,4 @@ language:
     chat-postfix: '喵~'
     to: '{global#sys-operation}已将 {#var} 变成猫娘。'
     back: '{global#sys-operation}已将 {#var} 变回人类。'
-  custom-recipe:
-    reload: "{global#sys-info}成功重载配方组。"
-    restore: "{global#sys-info}成功保存样例配方组。"
-  item-counter:
-  hats:
-    empty: "{global#error}你没有拿着任何东西。"
-    not-found: "{global#error}指定的玩家不存在。"
-    failed: "{global#error}玩家的头盔槽位不为空。"
-    success: "{global#info}成功替换帽子。"
-  elevator:
 

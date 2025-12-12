@@ -1,9 +1,5 @@
 package org.atcraftmc.starlight.music.resolve;
 
-import org.atcraftmc.starlight.music.EnumInstrument;
-import org.atcraftmc.starlight.music.MusicData;
-import org.atcraftmc.starlight.music.MusicNode;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
@@ -69,7 +65,7 @@ public final class MIDIParser implements MusicParser {
     public MusicData load(File file, int offset, boolean remap, float speedMod, int interpolation) {
         try {
             var sequence = MidiSystem.getSequence(new FileInputStream(file));
-            var name = file.getName().replace("_", "-");
+            var name = file.getName().replace("_", " ");
 
             return loadMidi(name, sequence, offset, remap, speedMod, interpolation);
         } catch (InvalidMidiDataException | IOException e) {

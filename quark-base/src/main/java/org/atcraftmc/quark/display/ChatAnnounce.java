@@ -31,7 +31,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
 
-@ApplicationModule(version = "0.3.0")
+@ApplicationModule(id = "chat-announce", version = "0.3.0")
 @AutoRegister(Registrations.SERVER_EVENT)
 @CommandProvider(ChatAnnounce.HintCommand.class)
 public final class ChatAnnounce extends SLPackageModule {
@@ -49,13 +49,13 @@ public final class ChatAnnounce extends SLPackageModule {
 
         this.tick();
         int p = ConfigAccessor.getInt(this.config(), "period");
-        TaskService.async().timer("chat-announce:tick", p, p, this::tick);
+        TaskService.async().timer("chat-announce:tickAppend", p, p, this::tick);
     }
 
     @Override
     public void disable() {
         this.sessions = null;
-        TaskService.async().cancel("chat-announce:tick");
+        TaskService.async().cancel("chat-announce:tickAppend");
     }
 
     @SuppressWarnings("deprecation")

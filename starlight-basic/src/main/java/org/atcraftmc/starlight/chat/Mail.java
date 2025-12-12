@@ -1,81 +1,33 @@
 package org.atcraftmc.starlight.chat;
 
-import org.atcraftmc.starlight.core.data.JDBCBasedDataService;
+import org.atcraftmc.qlib.command.QuarkCommand;
+import org.atcraftmc.starlight.chat.mail.MailMessage;
+import org.atcraftmc.starlight.chat.mail.MailMessageStatus;
+import org.atcraftmc.starlight.core.JDBCService;
+import org.atcraftmc.starlight.foundation.command.CommandProvider;
+import org.atcraftmc.starlight.foundation.command.ModuleCommand;
+import org.atcraftmc.starlight.framework.module.SLPackageModule;
+import org.atcraftmc.starlight.migration.QuarkDataImporter;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.util.UUID;
+import java.sql.Timestamp;
 
-public class Mail {
-    private final MailDataService mailDataService = new MailDataService("sl_mail");
+@CommandProvider(Mail.MailCommand.class)
+public class Mail extends SLPackageModule {
 
 
-    public void viewMessage(Message msg) {
+    private final JDBCMailDataService dataService = new JDBCMailDataService();
 
+
+    @Override
+    public void enable() throws Exception {
+        this.dataService.init(JDBCService.getDB(JDBCService.SL_SHARED).orElseThrow());
     }
 
-    public static final class Message {
-        private final UUID uuid;
-        private final long date;
-        private final String sender;
-        private final String title;
-        private final String content;
+    @QuarkCommand(name = "mail", permission = "+starlight.mail", subCommands = {})
+    public static final class MailCommand extends ModuleCommand<Mail> {
 
-        private Message(UUID uuid, long date, String sender, String title, String content) {
-            this.uuid = uuid;
-            this.date = date;
-            this.sender = sender;
-            this.title = title;
-            this.content = content;
-        }
-
-        public static Message send(String sender, String title, String content) {
-            var date = System.currentTimeMillis();
-            var uuid = UUID.randomUUID();
-            return new Message(uuid, date, sender, title, content);
-        }
-
-        public UUID getUuid() {
-            return uuid;
-        }
-
-        public long getDate() {
-            return date;
-        }
-
-        public String getContent() {
-            return content;
-        }
-
-        public String getSender() {
-            return sender;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-    }
-
-    //private static final class MailMarkupService extends JDBCBasedDataService {}
-
-    private static final class MailDataService extends JDBCBasedDataService<Message> {
-        public static final String NOTIFY_ALL = "__all__";
-
-        public MailDataService(String table) {
-            super(table);
-        }
-
-        @Override
-        public PreparedStatement attemptCreateTable(Connection conn) {
-            return null;
-        }
-
-        public void send(Message msg, String recipient) {
-
-        }
-
-        public void markAsRead(UUID messageId) {
-
-        }
     }
 }

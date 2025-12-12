@@ -94,10 +94,12 @@ public final class TabMenu extends SLPackageModule {
         footer = PlaceHolderService.formatPlayer(player, footer);
 
         if (config().value("render-ping").bool()) {
-            for (var p : Bukkit.getOnlinePlayers()) {
-                var ping = Integer.parseInt(PlaceHolderService.PLAYER.get("ping-value", p));
-                VisualScoreboardService.instance().visualScoreboard(player).setTabColumn(p, ping, Component.text("ms"));
-            }
+            TaskService.global().run(()->{
+                for (var p : Bukkit.getOnlinePlayers()) {
+                    var ping = Integer.parseInt(PlaceHolderService.PLAYER.get("ping-value", p));
+                    VisualScoreboardService.instance().visualScoreboard(player).setTabColumn(p, ping, Component.text("ms"));
+                }
+            });
         }
 
         var h = TextBuilder.buildComponent(header);

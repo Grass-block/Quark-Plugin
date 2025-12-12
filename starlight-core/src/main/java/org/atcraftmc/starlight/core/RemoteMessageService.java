@@ -32,7 +32,7 @@ public class RemoteMessageService implements SLService {
     public static RemoteMessageService create() {
         var config = Configurations.secret("plugin-vpn");
 
-        if (!config.getBoolean("enable")) {
+        if (!config.getBoolean("enabled")) {
             return new RemoteMessageService();
         }
 

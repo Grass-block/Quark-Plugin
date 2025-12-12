@@ -9,6 +9,11 @@ language:
     position-align: 位置对齐指令
     position-lock: 位置锁定指令
     surrounding-refresh: 环境方块刷新
+    particle-font: 粒子文本绘制
+  particle-font:
+    done: '{global#sys-info}渲染完成({#var}, {#var} 个粒子)。'
+    no-fonts: '{global#error}无字体，请在{#white}/assets/font{#gray}放入ttf或otf字体。'
+    trim: '{global#sys-info}成功调整 {#var} 个文件名格式。'
   position-lock:
     lock: '{global#sys-info}您的位置已被锁定。'
     unlock: '{global#sys-info}您的位置已被解锁。'

@@ -19,16 +19,16 @@ import org.atcraftmc.starlight.core.permission.PermissionService;
 @ApplicationModule(id="advanced-permission-control",version = "1.1")
 @AutoRegister(Registrations.SERVER_EVENT)
 public final class AdvancedPermissionControl extends SLPackageModule {
-    @Inject("+quark.player.chat")
+    @Inject("+starlight.player.chat")
     public Permission chatPermission;
 
-    @Inject("+quark.player.interact")
+    @Inject("+starlight.player.interact")
     public Permission interactPermission;
 
-    @Inject("+quark.player.break")
+    @Inject("+starlight.player.break")
     public Permission breakPermission;
 
-    @Inject("+quark.player.interactentity")
+    @Inject("+starlight.player.interact.entity")
     public Permission interactEntityPermission;
 
     private void testPermission(Cancellable event, Player player, Permission permission) {

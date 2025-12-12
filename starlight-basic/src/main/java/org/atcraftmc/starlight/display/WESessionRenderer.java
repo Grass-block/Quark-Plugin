@@ -40,7 +40,7 @@ public final class WESessionRenderer extends SLPackageModule implements Flexible
 
     @Override
     public void enable() {
-        TaskService.global().timer("quark:we-renderer:main", 0, 5, () -> {
+        TaskService.global().timer("quark:we-renderer:main", 0, 10, () -> {
             for (var p : Bukkit.getOnlinePlayers()) {
                 if (getMode(p) != RenderMode.PERSISTENT) {
                     continue;
@@ -76,7 +76,7 @@ public final class WESessionRenderer extends SLPackageModule implements Flexible
     private void render(Player p) {
         var t = new AtomicInteger();
 
-        TaskService.global().timer(0, 5, (ctx) -> {
+        TaskService.global().timer(0, 10, (ctx) -> {
             t.addAndGet(5);
 
             if (t.get() > 25) {

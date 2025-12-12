@@ -4,7 +4,7 @@ include 'quark-base'
 include 'quark-game'
 //include 'quark-web'
 
-include 'quark-proxy-bukkit'
+//include 'quark-proxy-bukkit'
 include 'quark-proxy-velocity'
 
 //include 'quark-bundler'
@@ -18,9 +18,10 @@ include 'starlight-basic'
 include 'starlight-extensions:starlight-ext-lobby'
 include 'starlight-extensions:starlight-ext-music'
 include 'starlight-extensions:starlight-ext-tcraft'
+include 'starlight-extensions:starlight-ext-balance'
 
 include 'starlight-games:starlight-game-mug'
-
-findProject(':starlight-extensions:starlight-ext-tcraft')?.name = 'starlight-ext-tcraft'
 include 'starlight-game'
+
+
 

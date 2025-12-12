@@ -1,3 +1,5 @@
+- fixed crash on module API missing
+
 ### game-0.80.04
 
 - fixed door sync exception on mixed server.

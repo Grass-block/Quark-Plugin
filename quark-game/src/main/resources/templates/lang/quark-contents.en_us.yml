@@ -5,7 +5,7 @@ language:
     realistic-minecart: Realistic Minecart
     music-player: Music Player
     stair-seat: Stair Seat
-    hats: Hats
+    hats: HatCommand
   stair-seat:
     tip: "{#gray}right-click a stair block to sit down."
   realistic-minecart:
